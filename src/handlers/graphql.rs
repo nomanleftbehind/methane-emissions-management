@@ -9,7 +9,7 @@ use juniper::serde::ser::Error as SerdeError;
 use crate::db::DbPool;
 use crate::models::errors::GraphQLErrors;
 use crate::models::key::Key;
-use crate::schema_graphql::{create_context, SchemaGraphQL};
+use crate::schemas::root::{create_context, SchemaGraphQL};
 
 pub async fn playground() -> HttpResponse {
     let html = playground_source("/graphql", None);

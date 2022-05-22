@@ -8,7 +8,5 @@ pub mod db;
 pub mod handlers;
 pub mod models;
 pub mod schema;
-pub mod schema_graphql;
-pub mod db2 {
-    pub mod user;
-}
+pub mod schemas;
+pub mod resolvers;

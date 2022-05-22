@@ -12,7 +12,7 @@ use dotenv::dotenv;
 use ::lib::db::{establish_connection, DatabaseKind};
 use ::lib::handlers::graphql::{graphql, playground};
 use ::lib::models::key::Key;
-use ::lib::schema_graphql::create_schema;
+use ::lib::schemas::root::create_schema;
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
@@ -32,7 +32,7 @@ async fn main() -> io::Result<()> {
     let schema = std::sync::Arc::new(create_schema());
 
     // database connection pool
-    let db_pool = establish_connection(DatabaseKind::Example);
+    let db_pool = establish_connection(DatabaseKind::Emissions);
 
     // run pending migrations
     let connection = db_pool.get().unwrap();
@@ -67,5 +67,9 @@ async fn main() -> io::Result<()> {
         }))*/
     });
 
-    server.bind(format!("{}:{}", host, port)).unwrap().run().await
+    server
+        .bind(format!("{}:{}", host, port))
+        .unwrap()
+        .run()
+        .await
 }

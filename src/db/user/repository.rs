@@ -1,5 +1,5 @@
 use crate::db::DbPool;
-use crate::db2::user::user::{User, UserNewForm};
+use crate::db::user::user::{User, UserNewForm};
 use crate::diesel::{
     debug_query, insert_into,
     pg::Pg,

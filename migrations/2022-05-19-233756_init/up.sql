@@ -24,12 +24,13 @@ CREATE TABLE license_change (
     "id" uuid DEFAULT uuid_generate_v4 () NOT NULL PRIMARY KEY,
     "status" TEXT NOT NULL DEFAULT 'Operating',
     "substance" TEXT NOT NULL DEFAULT 'Oil Well Effluent',
-    "date" TIMESTAMP(3) NOT NULL,
+    "date" TIMESTAMP NOT NULL,
     "comment" TEXT,
     "link_to_documentation" TEXT,
     "created_by_id" uuid REFERENCES "user"(id) ON DELETE RESTRICT ON UPDATE CASCADE NOT NULL,
     "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
-    "updated_by_id" uuid REFERENCES "user"(id) ON DELETE RESTRICT ON UPDATE CASCADE NOT NULL
+    "updated_by_id" uuid REFERENCES "user"(id) ON DELETE RESTRICT ON UPDATE CASCADE NOT NULL,
+    "updated_at" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 INSERT INTO

@@ -1,21 +1,13 @@
+use crate::db::license_change::license_change::{LicenseChange, NewLicenseChangeForm};
+use crate::schemas::root::{Context, MutationRoot, QueryRoot};
 use std::convert::TryInto;
-// use std::sync::Arc;
 
-use juniper::{graphql_object, EmptySubscription, FieldResult, RootNode};
+use juniper::{graphql_object, FieldResult};
 
-use crate::db::DbPool;
-use crate::db2::user::{self, user::User};
+use crate::db::user::{self, user::User};
 use crate::models::thermostat_status::*;
-use actix_web::web::Data;
 
-#[derive(Clone)]
-pub struct Context {
-    pub db_pool: Data<DbPool>,
-}
-
-impl juniper::Context for Context {}
-
-pub struct QueryRoot;
+use uuid::Uuid;
 
 #[graphql_object(context = Context)]
 impl QueryRoot {
@@ -66,8 +58,6 @@ impl QueryRoot {
     }
 }
 
-pub struct MutationRoot;
-
 #[graphql_object(context = Context)]
 impl MutationRoot {
     #[graphql(description = "Set the thermostat status")]
@@ -82,14 +72,30 @@ impl MutationRoot {
         let result = ThermostatStatus::get_latest(connection)?;
         Ok(result)
     }
-}
 
-pub type SchemaGraphQL = RootNode<'static, QueryRoot, MutationRoot, EmptySubscription<Context>>;
+    fn create_license_change(
+        context: &Context,
+        new_license_change: NewLicenseChangeForm,
+    ) -> FieldResult<LicenseChange> {
+        let created_license_change = LicenseChange::insert(&context.db_pool, new_license_change)?;
 
-pub fn create_schema() -> SchemaGraphQL {
-    SchemaGraphQL::new(QueryRoot {}, MutationRoot {}, EmptySubscription::new())
-}
+        Ok(created_license_change.into())
+    }
 
-pub fn create_context(db_pool: Data<DbPool>) -> Context {
-    Context { db_pool }
+    fn create_license_change_pg_connection(
+        context: &Context,
+        new_license_change: NewLicenseChangeForm,
+    ) -> FieldResult<LicenseChange> {
+        let connection = &context.db_pool.get()?;
+        LicenseChange::insert_pg_connection(connection, new_license_change)?;
+
+        let result = LicenseChange::get_latest(connection)?;
+        Ok(result)
+    }
+
+    fn delete_license_change(context: &Context, id: Uuid) -> FieldResult<LicenseChange> {
+        let deleted_license_change = LicenseChange::delete(&context.db_pool, id)?;
+
+        Ok(deleted_license_change.into())
+    }
 }

@@ -9,6 +9,7 @@ table! {
         created_by_id -> Uuid,
         created_at -> Timestamp,
         updated_by_id -> Uuid,
+        updated_at -> Timestamp,
     }
 }
 
