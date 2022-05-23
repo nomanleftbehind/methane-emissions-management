@@ -1,15 +1,14 @@
-// pub mod license_change;
 pub mod repository;
 
+use crate::db::user::{self, User};
 use crate::schema::license_change;
-use chrono::NaiveDateTime;
 use crate::schemas::root::Context;
-use juniper::{graphql_object, GraphQLInputObject};
+use chrono::NaiveDateTime;
+use juniper::{graphql_object, FieldResult, GraphQLInputObject};
 use uuid::Uuid;
 
 #[derive(Queryable)]
-#[diesel(belongs_to(parent = "User"))]
-#[diesel(belongs_to(parent = "AssocUser", foreign_key = "created_by_id"))]
+#[diesel(belongs_to(parent = "User", foreign_key = "created_by_id"))]
 pub struct LicenseChange {
     id: Uuid,
     status: String,
@@ -22,7 +21,6 @@ pub struct LicenseChange {
     updated_by_id: Uuid,
     updated_at: NaiveDateTime,
 }
-
 
 #[derive(GraphQLInputObject, Insertable)]
 #[table_name = "license_change"]
@@ -77,5 +75,9 @@ impl LicenseChange {
 
     fn updated_at(&self) -> &NaiveDateTime {
         &self.updated_at
+    }
+
+    fn created_by(&self, context: &Context) -> FieldResult<User> {
+        user::repository::Repository::find_by_id(&context.db_pool, &self.created_by_id)
     }
 }

@@ -2,8 +2,8 @@ use crate::db::DbPool;
 use actix_web::web::Data;
 use juniper::{EmptySubscription, RootNode};
 
-pub struct QueryRoot;
-pub struct MutationRoot;
+pub struct Query;
+pub struct Mutation;
 
 // #[derive(Clone)]
 pub struct Context {
@@ -12,10 +12,10 @@ pub struct Context {
 
 impl juniper::Context for Context {}
 
-pub type SchemaGraphQL = RootNode<'static, QueryRoot, MutationRoot, EmptySubscription<Context>>;
+pub type SchemaGraphQL = RootNode<'static, Query, Mutation, EmptySubscription<Context>>;
 
 pub fn create_schema() -> SchemaGraphQL {
-    SchemaGraphQL::new(QueryRoot {}, MutationRoot {}, EmptySubscription::new())
+    SchemaGraphQL::new(Query {}, Mutation {}, EmptySubscription::new())
 }
 
 pub fn create_context(db_pool: Data<DbPool>) -> Context {

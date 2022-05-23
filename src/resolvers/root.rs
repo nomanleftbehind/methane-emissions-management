@@ -1,18 +1,18 @@
-use crate::schemas::root::{Context, MutationRoot, QueryRoot};
+use crate::schemas::root::{Context, Mutation, Query};
 use std::convert::TryInto;
 
 use juniper::{graphql_object, FieldResult};
 
 use crate::db::{
     license_change::{self, LicenseChange, NewLicenseChangeForm},
-    user::{self, user::User},
+    user::{self, User},
 };
 use crate::models::thermostat_status::*;
 
 use uuid::Uuid;
 
 #[graphql_object(context = Context)]
-impl QueryRoot {
+impl Query {
     #[graphql(description = "Query the current (latest) thermostat status")]
     fn thermostat_status(context: &Context) -> FieldResult<ThermostatStatus> {
         let connection = &context.db_pool.get()?;
@@ -58,10 +58,14 @@ impl QueryRoot {
 
         Ok(users.into_iter().map(|u| u.into()).collect())
     }
+
+    async fn all_license_changes(context: &Context) -> FieldResult<Vec<LicenseChange>> {
+        license_change::repository::Repository::all(&context.db_pool)
+    }
 }
 
 #[graphql_object(context = Context)]
-impl MutationRoot {
+impl Mutation {
     #[graphql(description = "Set the thermostat status")]
     fn set_thermostat_status(
         context: &Context,
