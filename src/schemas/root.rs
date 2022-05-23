@@ -5,7 +5,7 @@ use juniper::{EmptySubscription, RootNode};
 pub struct QueryRoot;
 pub struct MutationRoot;
 
-#[derive(Clone)]
+// #[derive(Clone)]
 pub struct Context {
     pub db_pool: Data<DbPool>,
 }
@@ -19,5 +19,7 @@ pub fn create_schema() -> SchemaGraphQL {
 }
 
 pub fn create_context(db_pool: Data<DbPool>) -> Context {
-    Context { db_pool }
+    Context {
+        db_pool,
+    }
 }

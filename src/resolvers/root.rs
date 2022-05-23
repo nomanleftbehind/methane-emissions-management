@@ -1,10 +1,12 @@
-use crate::db::license_change::license_change::{LicenseChange, NewLicenseChangeForm};
 use crate::schemas::root::{Context, MutationRoot, QueryRoot};
 use std::convert::TryInto;
 
 use juniper::{graphql_object, FieldResult};
 
-use crate::db::user::{self, user::User};
+use crate::db::{
+    license_change::{self, LicenseChange, NewLicenseChangeForm},
+    user::{self, user::User},
+};
 use crate::models::thermostat_status::*;
 
 use uuid::Uuid;
@@ -77,24 +79,26 @@ impl MutationRoot {
         context: &Context,
         new_license_change: NewLicenseChangeForm,
     ) -> FieldResult<LicenseChange> {
-        let created_license_change = LicenseChange::insert(&context.db_pool, new_license_change)?;
+        let created_license_change =
+            license_change::repository::Repository::insert(&context.db_pool, new_license_change)?;
 
         Ok(created_license_change.into())
     }
 
-    fn create_license_change_pg_connection(
-        context: &Context,
-        new_license_change: NewLicenseChangeForm,
-    ) -> FieldResult<LicenseChange> {
-        let connection = &context.db_pool.get()?;
-        LicenseChange::insert_pg_connection(connection, new_license_change)?;
+    // fn create_license_change_pg_connection(
+    //     context: &Context,
+    //     new_license_change: NewLicenseChangeForm,
+    // ) -> FieldResult<LicenseChange> {
+    //     let connection = &context.db_pool.get()?;
+    //     LicenseChange::insert_pg_connection(connection, new_license_change)?;
 
-        let result = LicenseChange::get_latest(connection)?;
-        Ok(result)
-    }
+    //     let result = LicenseChange::get_latest(connection)?;
+    //     Ok(result)
+    // }
 
     fn delete_license_change(context: &Context, id: Uuid) -> FieldResult<LicenseChange> {
-        let deleted_license_change = LicenseChange::delete(&context.db_pool, id)?;
+        let deleted_license_change =
+            license_change::repository::Repository::delete(&context.db_pool, id)?;
 
         Ok(deleted_license_change.into())
     }

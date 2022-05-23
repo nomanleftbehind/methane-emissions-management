@@ -1,8 +1,10 @@
 pub mod license_change;
 pub mod user;
 
-use diesel::pg::PgConnection;
-use diesel::r2d2::{ConnectionManager, Pool, PoolError, PooledConnection};
+use diesel::{
+    pg::PgConnection,
+    r2d2::{ConnectionManager, Pool, PoolError, PooledConnection},
+};
 use dotenv::dotenv;
 use std::env;
 
