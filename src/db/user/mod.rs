@@ -1,8 +1,10 @@
-pub mod repository;
+mod repository;
+pub use repository::Repository;
 
+use crate::db::license_change::{self, LicenseChange};
 use crate::schema::user;
 use crate::schemas::root::Context;
-use juniper::{graphql_object, GraphQLInputObject};
+use juniper::{graphql_object, FieldResult, GraphQLInputObject};
 use uuid::Uuid;
 
 #[derive(Queryable, Clone)]
@@ -60,11 +62,15 @@ impl User {
         &self.password
     }
 
-    fn role(&self, arg: String, _ctx: &Context) -> String {
+    fn role(&self) -> &str {
+        &self.role
+    }
 
-        // println!("role arg: {:?}", ctx.db_pool);
-        println!("role arg: {}", arg);
-        arg
-        // &self.role
+    fn license_changes_created(&self, context: &Context) -> FieldResult<Vec<LicenseChange>> {
+        license_change::Repository::find_by_created_by_id(&context.db_pool, &self.id)
+    }
+
+    fn license_changes_updated(&self, context: &Context) -> FieldResult<Vec<LicenseChange>> {
+        license_change::Repository::find_by_updated_by_id(&context.db_pool, &self.id)
     }
 }

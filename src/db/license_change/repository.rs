@@ -60,12 +60,25 @@ impl Repository {
         Ok(query.get_result(&connection)?)
     }
 
-    pub fn find_by_user_id(
+    pub fn find_by_created_by_id(
         pool: &Data<DbPool>,
         key_user_id: &Uuid,
     ) -> FieldResult<Vec<LicenseChange>> {
         let connection = pool.get()?;
         let query = license_change.filter(created_by_id.eq(key_user_id));
+
+        let sql = debug_query::<Pg, _>(&query).to_string();
+        debug!("{}", sql);
+
+        Ok(query.get_results(&connection)?)
+    }
+
+    pub fn find_by_updated_by_id(
+        pool: &Data<DbPool>,
+        key_user_id: &Uuid,
+    ) -> FieldResult<Vec<LicenseChange>> {
+        let connection = pool.get()?;
+        let query = license_change.filter(updated_by_id.eq(key_user_id));
 
         let sql = debug_query::<Pg, _>(&query).to_string();
         debug!("{}", sql);

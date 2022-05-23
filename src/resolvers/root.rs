@@ -40,7 +40,7 @@ impl Query {
         let range: usize = range.try_into()?;
         let end = start + range;
 
-        let users = user::repository::Repository::find_by_name(&context.db_pool, &first_name)?;
+        let users = user::Repository::find_by_name(&context.db_pool, &first_name)?;
 
         // for user in &users {
         //     context
@@ -60,7 +60,7 @@ impl Query {
     }
 
     async fn all_license_changes(context: &Context) -> FieldResult<Vec<LicenseChange>> {
-        license_change::repository::Repository::all(&context.db_pool)
+        license_change::Repository::all(&context.db_pool)
     }
 }
 
@@ -84,7 +84,7 @@ impl Mutation {
         new_license_change: NewLicenseChangeForm,
     ) -> FieldResult<LicenseChange> {
         let created_license_change =
-            license_change::repository::Repository::insert(&context.db_pool, new_license_change)?;
+            license_change::Repository::insert(&context.db_pool, new_license_change)?;
 
         Ok(created_license_change.into())
     }
@@ -101,8 +101,7 @@ impl Mutation {
     // }
 
     fn delete_license_change(context: &Context, id: Uuid) -> FieldResult<LicenseChange> {
-        let deleted_license_change =
-            license_change::repository::Repository::delete(&context.db_pool, id)?;
+        let deleted_license_change = license_change::Repository::delete(&context.db_pool, id)?;
 
         Ok(deleted_license_change.into())
     }

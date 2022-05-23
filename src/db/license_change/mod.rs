@@ -1,4 +1,5 @@
-pub mod repository;
+mod repository;
+pub use repository::Repository;
 
 use crate::db::user::{self, User};
 use crate::schema::license_change;
@@ -78,6 +79,6 @@ impl LicenseChange {
     }
 
     fn created_by(&self, context: &Context) -> FieldResult<User> {
-        user::repository::Repository::find_by_id(&context.db_pool, &self.created_by_id)
+        user::Repository::find_by_id(&context.db_pool, &self.created_by_id)
     }
 }
