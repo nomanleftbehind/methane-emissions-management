@@ -31,7 +31,7 @@ pub struct NewLicenseChangeForm {
     date: NaiveDateTime,
     comment: Option<String>,
     link_to_documentation: Option<String>,
-    // This is a temporary solution. The goal is to have this generated from user session
+    // TODO: This is a temporary solution. The goal is to have this generated from user session
     created_by_id: Uuid,
     updated_by_id: Uuid,
 }
