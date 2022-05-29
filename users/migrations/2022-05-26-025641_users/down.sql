@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS users CASCADE;
+
+DROP TABLE IF EXISTS valid_roles;
+
+DROP TABLE IF EXISTS controllers;
+
+DROP EXTENSION IF EXISTS "uuid-ossp";
