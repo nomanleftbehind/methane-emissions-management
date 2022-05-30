@@ -1,12 +1,12 @@
 use super::model::{NewUser, UserObject};
 use crate::graphql_module::context::get_redis_conn_from_ctx;
 use crate::graphql_module::modules;
-use crate::graphql_module::modules::utils::Role;
-use crate::graphql_module::modules::utils::RoleGuard;
+use crate::graphql_module::modules::utils::user_utils::Role;
+use crate::graphql_module::modules::utils::user_utils::RoleGuard;
 use crate::graphql_module::schema::AppSchema;
 use crate::graphql_module::{
     context::get_conn_from_ctx,
-    modules::utils::{hash_password, is_admin, verify_password},
+    modules::utils::user_utils::{hash_password, is_admin, verify_password},
 };
 use crate::redis::{create_connection, get_post_cache_key};
 use async_graphql::Error;

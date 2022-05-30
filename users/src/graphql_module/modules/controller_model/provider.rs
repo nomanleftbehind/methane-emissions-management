@@ -1,44 +1,57 @@
-use super::model::{NewUser, UserObject};
-use crate::schema::users;
+use super::models::{Controller, FormController};
+use crate::schema::controllers;
 use diesel::prelude::*;
+use uuid::Uuid;
 
-pub fn get_all_users(conn: &PgConnection) -> QueryResult<Vec<UserObject>> {
-    use crate::schema::users::dsl::*;
-    users.load(conn)
+pub fn get_all(conn: &PgConnection) -> QueryResult<Vec<Controller>> {
+    controllers::table.load(conn)
 }
-pub fn get_user_by_id(user_id: Uuid, conn: &PgConnection) -> QueryResult<UserObject> {
-    users::table.filter(users::id.eq(user_id)).first(conn)
+pub fn get_post_by_id(id: Uuid, conn: &PgConnection) -> QueryResult<Controller> {
+    controllers::table
+        .filter(controllers::id.eq(id))
+        .first::<Controller>(conn)
 }
-pub fn get_user_by_email(user_email: String, conn: &PgConnection) -> QueryResult<UserObject> {
-    users::table.filter(users::email.eq(user_email)).first(conn)
+pub fn get_by_posts_by_author(
+    author_id: Uuid,
+    conn: &PgConnection,
+) -> QueryResult<Vec<Controller>> {
+    controllers::table
+        .filter(controllers::created_by_id.eq(author_id))
+        .load(conn)
 }
-pub fn get_user_by_username(user_username: String, conn: &PgConnection) -> QueryResult<UserObject> {
-    users::table
-        .filter(users::username.eq(user_username))
-        .first(conn)
-}
-pub fn create_user(form: NewUser, conn: &PgConnection) -> QueryResult<UserObject> {
-    diesel::insert_into(users::table)
+// pub fn get_for_user(conn: &PgConnection, created_by_id: Uuid) -> QueryResult<>
+pub fn create_post(form: FormController, conn: &PgConnection) -> QueryResult<Controller> {
+    diesel::insert_into(controllers::table)
         .values(form)
-        .get_result(conn)
+        .get_result::<Controller>(conn)?;
+    controllers::table
+        .order(controllers::id.desc())
+        .select(controllers::all_columns)
+        .first(conn)
+        .map_err(Into::into)
 }
-pub fn delete_user(user_id: i32, conn: &PgConnection) -> QueryResult<bool> {
-    use crate::schema::users::dsl::*;
-    diesel::delete(users.filter(id.eq(user_id))).execute(conn)?;
+pub fn delete_post(post_author: Uuid, post_id: Uuid, conn: &PgConnection) -> QueryResult<bool> {
+    diesel::delete(
+        controllers::table
+            .filter(controllers::created_by_id.eq(post_author))
+            .find(post_id),
+    )
+    .execute(conn)?;
+
     Ok(true)
 }
-pub fn update_user_details(
-    user_id: i32,
-    form: NewUser,
+
+pub fn update_post(
+    post_id: Uuid,
+    created_by_id: Uuid,
+    form: FormController,
     conn: &PgConnection,
-) -> QueryResult<UserObject> {
-    diesel::update(users::table)
-        .filter(users::id.eq(user_id))
-        .set(form)
-        .get_result(conn)
-}
-pub fn update_password(new_hash: String, conn: &PgConnection) -> QueryResult<usize> {
-    diesel::update(users::table)
-        .set(users::hash.eq(new_hash))
-        .execute(conn)
+) -> QueryResult<Controller> {
+    diesel::update(
+        controllers::table
+            .filter(controllers::created_by_id.eq(created_by_id))
+            .find(post_id),
+    )
+    .set(form)
+    .get_result::<Controller>(conn)
 }

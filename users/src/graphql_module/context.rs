@@ -1,7 +1,9 @@
+use super::modules::controller_model::resolver::Subscription;
 use super::modules::user_model::provider;
-use super::schema::{
-    AppSchema, AppSchemaBuilder, Mutation as SchemaMutation, Query as SchemaQuery,
-};
+use super::schema::{AppSchema, AppSchemaBuilder, Mutation, Query};
+// use super::schema::{
+//     AppSchema, AppSchemaBuilder, Mutation as SchemaMutation, Query as SchemaQuery,
+// };
 use crate::db::{DbPool, DbPooledConnection};
 use actix_cors::Cors;
 use actix_web::{
@@ -23,6 +25,8 @@ use redis::{
     Client as RedisClient,
 };
 use std::env::var;
+use std::sync::{Arc, Mutex};
+use crate::graphql_module::modules::utils::{kafka::create_producer, error::ServiceError};
 
 pub fn configure_service(cfg: &mut web::ServiceConfig) {
     cfg.service(graphql).service(graphql_playground).service(
@@ -65,17 +69,45 @@ pub async fn index_ws(
 
 embed_migrations!();
 
-pub fn create_schema(pool: DbPool) -> AppSchema {
-    Schema::build(
-        SchemaQuery::default(),
-        SchemaMutation::default(),
-        EmptySubscription,
-    )
-    .enable_federation()
-    // Add a global data that can be accessed in the Schema
-    .data(pool)
-    .extension(ApolloTracing)
-    .finish()
+// pub fn create_schema(pool: DbPool) -> AppSchema {
+//     Schema::build(
+//         SchemaQuery::default(),
+//         SchemaMutation::default(),
+//         EmptySubscription,
+//     )
+//     .enable_federation()
+//     // Add a global data that can be accessed in the Schema
+//     .data(pool)
+//     .extension(ApolloTracing)
+//     .finish()
+// }
+pub fn create_schema(
+    pool: DbPool,
+    redis_pool: RedisClient,
+    redis_connection: RedisManager,
+) -> AppSchema {
+    //  SQL Database
+    let arc_pool = Arc::new(pool);
+    //  Kafka Queue
+    let kafka_consumer = Mutex::new(0);
+    // Caching Service
+    let arc_redis_connection = Arc::new(redis_connection);
+
+    Schema::build(Query::default(), Mutation::default(), Subscription)
+        .enable_federation()
+        .data(arc_redis_connection)
+        // Add a global data that can be accessed in the Schema
+        //  Redis Caching Client
+        .data(redis_pool)
+        //  SQL Database Pool
+        .data(arc_pool)
+        //  Kafka Queue
+        .data(create_producer())
+        .data(kafka_consumer)
+        //  Apollo Tracing
+        .extension(ApolloTracing)
+        //  Build Schema
+        .finish()
 }
 pub fn run_migrations(pool: &DbPool) {
     let conn = pool

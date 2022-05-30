@@ -16,14 +16,17 @@ async-graphql = {version = "4.0.1", features = ["apollo_tracing"]}
 async-graphql-actix-web = "4.0.1"
 chrono = {version = "0.4", features = ["serde"]}
 common-utils = {path = "../common-utils"}
+derive_more = "0.99.17"
 diesel = {version = "1.4.8", features = ["postgres", "uuidv07", "r2d2", "chrono", "numeric"]}
 diesel_migrations = "1.4.0"
 dotenv = "0.15.0"
 env_logger = "0.9"
 failure = "0.1.8"
+futures = "0.3.21"
 jsonwebtoken = "8.0.1"
 lazy_static = "1.4.0"
 log = "0.4"
+rdkafka = {version = "0.28.0", features = ["cmake-build"]}
 redis = {version = "0.21.5", features = ["tokio-comp", "connection-manager"]}
 serde = "1.0"
 serde_derive = "1.0"

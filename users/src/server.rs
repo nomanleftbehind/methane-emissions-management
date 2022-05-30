@@ -2,6 +2,11 @@ use crate::db::{establish_connection, DatabaseKind};
 use crate::graphql_module::context::{
     configure_service, create_schema, graphql, graphql_playground, run_migrations,
 };
+use crate::graphql_module::modules::utils::{
+    error::ServiceError,
+    rate_limiter::RateLimiter,
+    redis::{create_client, create_connection, start_pubsub, RedisDatabase},
+};
 use actix_cors::Cors;
 use actix_web::{get, middleware::Logger, route, web, App, HttpServer, Responder};
 use actix_web_lab::respond::Html;
@@ -16,7 +21,33 @@ pub async fn new_server(port: u32) -> std::io::Result<()> {
 
     let db_pool = establish_connection(DatabaseKind::Example);
     run_migrations(&db_pool);
-    let schema = web::Data::new(create_schema(db_pool));
+
+    //  Create a Redis Client `
+    let redis_client = create_client(RedisDatabase::Example)
+        .await
+        .expect("Unable to create Redis Client Connection");
+
+    //  Redis Config
+    let redis_connection_manager = redis_client
+        .get_tokio_connection_manager()
+        .await
+        .expect("Cannot Create Redis Connection Manager");
+
+    // let schema = web::Data::new(create_schema(db_pool));
+
+    //  GraphQl Schema
+    let schema = web::Data::new(create_schema(
+        db_pool,
+        redis_client.clone(),
+        redis_connection_manager.clone(),
+    ));
+
+    //  In Memory API Limiter
+    let redis_api_limiter = web::Data::new(RateLimiter::new(redis_connection_manager));
+
+    start_pubsub(&redis_client)
+        .await
+        .expect("Unable to start Redis Pub/ Sub");
 
     log::info!("{}", &schema.sdl());
     log::info!("🚀 Starting HTTP server on port {} ", port);
@@ -25,6 +56,7 @@ pub async fn new_server(port: u32) -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
+            .app_data(redis_api_limiter.clone())
             .app_data(schema.clone())
             .configure(configure_service)
             .wrap(Cors::permissive())

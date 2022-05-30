@@ -1,5 +1,5 @@
 use super::resolver::User;
-use crate::graphql_module::modules::utils::Role;
+use crate::graphql_module::modules::utils::user_utils::Role;
 use crate::schema::users;
 use async_graphql::{InputObject, SimpleObject, ID};
 use chrono::{Local, NaiveDateTime};
