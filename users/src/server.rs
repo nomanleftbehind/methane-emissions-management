@@ -45,9 +45,9 @@ pub async fn new_server(port: u32) -> std::io::Result<()> {
     //  In Memory API Limiter
     let redis_api_limiter = web::Data::new(RateLimiter::new(redis_connection_manager));
 
-    start_pubsub(&redis_client)
-        .await
-        .expect("Unable to start Redis Pub/ Sub");
+    // start_pubsub(&redis_client)
+    //     .await
+    //     .expect("Unable to start Redis Pub/ Sub");
 
     log::info!("{}", &schema.sdl());
     log::info!("🚀 Starting HTTP server on port {} ", port);

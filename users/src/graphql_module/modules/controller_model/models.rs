@@ -1,4 +1,4 @@
-use super::resolver::{ControllerInput, ControllerObject, User};
+use super::resolver::{ControllerInput, ControllerObject, User2};
 use crate::schema::controllers;
 use async_graphql::{InputObject, ID};
 use chrono::NaiveDateTime;
@@ -37,7 +37,7 @@ impl From<&Controller> for ControllerObject {
     fn from(oop: &Controller) -> Self {
         ControllerObject {
             id: oop.id.into(),
-            created_by_id: User::convert(oop.id),
+            created_by_id: User2::convert(oop.id),
             created_at: oop.created_at.clone(),
             updated_at: oop.updated_at.clone(),
             manufacturer: oop.manufacturer.clone(),
@@ -62,8 +62,8 @@ impl From<&ControllerInput> for FormController {
     }
 }
 
-impl User {
-    fn convert(id: Uuid) -> User {
+impl User2 {
+    fn convert(id: Uuid) -> User2 {
         Self { id: id.into() }
     }
 }

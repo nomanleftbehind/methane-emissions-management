@@ -26,7 +26,7 @@ pub struct PostQuery;
 #[derive(SimpleObject, Serialize, Deserialize, Clone)]
 pub struct ControllerObject {
     pub id: ID,
-    pub created_by_id: User,
+    pub created_by_id: User2,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub manufacturer: Option<String>,
@@ -39,8 +39,8 @@ pub struct ControllerObject {
 impl PostQuery {
     /// Resolver Reference
     #[graphql(entity)]
-    pub async fn get_user_details(&self, #[graphql(key)] id: ID) -> User {
-        User { id }
+    pub async fn get_user_details(&self, #[graphql(key)] id: ID) -> User2 {
+        User2 { id }
     }
     #[graphql(entity)]
     pub async fn get_post_details(
@@ -126,23 +126,23 @@ pub fn get_post_detail(ctx: &Context<'_>, post_id: ID) -> Option<ControllerObjec
 /// Gets the Post under the author: UserId
 pub fn get_posts_user(ctx: &Context<'_>, user_id: ID) -> Vec<ControllerObject> {
     provider::get_by_posts_by_author(parse_id(user_id), &get_conn_from_ctx(ctx))
-        .expect("Cannot get any User Posts")
+        .expect("Cannot get any User2 Posts")
         .iter()
         .map(|s| ControllerObject::from(s))
         .collect()
 }
 #[derive(Serialize, Deserialize, Clone)]
-pub struct User {
+pub struct User2 {
     pub id: ID,
 }
 #[Object(extends)]
-impl User {
+impl User2 {
     /// The Key needed for
     #[graphql(external)]
-    pub async fn id(&self, id: ID) -> User {
-        User { id }
+    pub async fn id(&self, id: ID) -> User2 {
+        User2 { id }
     }
-    /// Load all Posts under User
+    /// Load all Posts under User2
     #[graphql(name = "getPostsByUser")]
     pub async fn get_user_posts(&self, ctx: &Context<'_>, id: ID) -> Vec<ControllerObject> {
         get_posts_user(ctx, id)
