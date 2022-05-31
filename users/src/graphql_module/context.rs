@@ -87,7 +87,7 @@ pub fn create_schema(
     redis_connection: RedisManager,
 ) -> AppSchema {
     //  SQL Database
-    let arc_pool = Arc::new(pool);
+    // let arc_pool = Arc::new(pool);
     //  Kafka Queue
     let kafka_consumer = Mutex::new(0);
     // Caching Service
@@ -100,7 +100,9 @@ pub fn create_schema(
         //  Redis Caching Client
         .data(redis_pool)
         //  SQL Database Pool
-        .data(arc_pool)
+        // changed from arc_pool to pool because was getting
+        // Error { message: "Data `r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::pg::connection::PgConnection>>` does not exist.", extensions: None }'
+        .data(pool)
         //  Kafka Queue
         .data(create_producer())
         .data(kafka_consumer)
