@@ -4,10 +4,10 @@ use super::models::FormController;
 use super::models::NEW_POST_USER_CACHE;
 use super::{models::Controller, provider};
 use crate::graphql_module::context::{get_conn_from_ctx, get_redis_conn_from_ctx};
-use crate::graphql_module::modules::utils::rate_limiter::RateLimiter;
-use crate::graphql_module::modules::utils::redis::{create_connection, get_post_cache_key};
+use crate::graphql_module::utils::rate_limiter::RateLimiter;
+use crate::graphql_module::utils::redis::{create_connection, get_post_cache_key};
 use crate::{
-    graphql_module::modules::{utils::error::ServiceError, utils::kafka},
+    graphql_module::utils::{error::ServiceError, kafka},
     graphql_module::{
         context::get_redis_conn_manager,
         schema::{Mutation, Query},
@@ -228,7 +228,7 @@ impl PostMutation {
 
 //  Get the latest Posts
 //  Subscriptions
-use crate::graphql_module::modules::utils::kafka::{
+use crate::graphql_module::utils::kafka::{
     create_consumer, create_producer, get_kafka_consumer_id, send_message,
 };
 use futures::{Stream, StreamExt};

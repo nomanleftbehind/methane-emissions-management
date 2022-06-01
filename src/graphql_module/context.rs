@@ -1,5 +1,5 @@
-use super::modules::controller_model::resolver::Subscription;
-use super::modules::user_model::provider;
+use super::models::controller_model::resolver::Subscription;
+use super::models::user_model::provider;
 use super::schema::{AppSchema, AppSchemaBuilder, Mutation, Query};
 // use super::schema::{
 //     AppSchema, AppSchemaBuilder, Mutation as SchemaMutation, Query as SchemaQuery,
@@ -17,7 +17,7 @@ use async_graphql::{
     Context, EmptyMutation, EmptySubscription, Schema,
 };
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
-use common_utils::token::get_role;
+use crate::graphql_module::common_utils::token::get_role;
 use diesel::{result::Error as DbError, QueryDsl};
 use diesel_migrations::{embed_migrations, MigrationError};
 use redis::{
@@ -26,7 +26,7 @@ use redis::{
 };
 use std::env::var;
 use std::sync::{Arc, Mutex};
-use crate::graphql_module::modules::utils::{kafka::create_producer, error::ServiceError};
+use crate::graphql_module::utils::{kafka::create_producer, error::ServiceError};
 
 pub fn configure_service(cfg: &mut web::ServiceConfig) {
     cfg.service(graphql).service(graphql_playground).service(

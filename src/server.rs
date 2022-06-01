@@ -2,7 +2,7 @@ use crate::db::{establish_connection, DatabaseKind};
 use crate::graphql_module::context::{
     configure_service, create_schema, graphql, graphql_playground, run_migrations,
 };
-use crate::graphql_module::modules::utils::{
+use crate::graphql_module::utils::{
     error::ServiceError,
     rate_limiter::RateLimiter,
     redis::{create_client, create_connection, start_pubsub, RedisDatabase},

@@ -1,8 +1,8 @@
 use std::sync::Mutex;
 
 use super::error::ServiceError;
-use crate::graphql_module::modules::controller_model::models::NEW_POST_USER_CACHE;
-use crate::graphql_module::modules::controller_model::resolver::ControllerObject;
+use crate::graphql_module::models::controller_model::models::NEW_POST_USER_CACHE;
+use crate::graphql_module::models::controller_model::resolver::ControllerObject;
 use actix_web::{web::Data, HttpResponse};
 use actix_web_lab::__reexports::tokio;
 use redis::aio::ConnectionManager;

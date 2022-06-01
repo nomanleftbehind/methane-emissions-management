@@ -3,8 +3,8 @@ use std::sync::Mutex;
 use actix_web::{web::Data, HttpResponse};
 use redis::aio::ConnectionManager;
 use redis::{Client, RedisError, ToRedisArgs, RedisResult, aio::Connection};
-use crate::graphql_module::modules::user_model::resolver::User;
-use common_utils::error::ServiceError;
+use crate::graphql_module::models::user_model::resolver::User;
+use crate::graphql_module::common_utils::error::ServiceError;
 use std::env;
 use lazy_static::lazy_static;
 

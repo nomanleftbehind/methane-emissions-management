@@ -1,5 +1,5 @@
-use super::modules::controller_model::resolver::{PostMutation, PostQuery, Subscription};
-use super::modules::user_model::resolver::{AuthUser, UserMutate};
+use super::models::controller_model::resolver::{PostMutation, PostQuery, Subscription};
+use super::models::user_model::resolver::{AuthUser, UserMutate};
 use async_graphql::{MergedObject, Schema, SchemaBuilder};
 
 #[derive(MergedObject, Default)]

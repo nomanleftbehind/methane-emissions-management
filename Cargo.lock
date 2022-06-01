@@ -837,24 +837,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "common-utils"
-version = "0.1.0"
-dependencies = [
- "actix-web",
- "async-graphql",
- "async-graphql-actix-web",
- "chrono",
- "derive_more",
- "diesel",
- "jsonwebtoken",
- "lazy_static",
- "serde",
- "strum",
- "strum_macros",
- "thiserror",
-]
-
-[[package]]
 name = "concurrent-queue"
 version = "1.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2784,7 +2766,6 @@ dependencies = [
  "async-graphql",
  "async-graphql-actix-web",
  "chrono",
- "common-utils",
  "derive_more",
  "diesel",
  "diesel_migrations",
@@ -2803,6 +2784,7 @@ dependencies = [
  "slab",
  "strum",
  "strum_macros",
+ "thiserror",
  "uuid",
 ]
 
