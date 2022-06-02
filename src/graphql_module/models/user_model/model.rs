@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 use uuid::Uuid;
 
-//  Database Models
+// Database Models
 #[derive(Identifiable, Debug, Clone, PartialEq, Serialize, Deserialize, Queryable)]
 #[table_name = "users"]
 pub struct UserObject {

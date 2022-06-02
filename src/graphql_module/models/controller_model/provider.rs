@@ -1,4 +1,4 @@
-use super::models::{Controller, FormController};
+use super::models::{Controller, ControllerForm};
 use crate::schema::controllers;
 use diesel::prelude::*;
 use uuid::Uuid;
@@ -20,7 +20,7 @@ pub fn get_by_posts_by_author(
         .load(conn)
 }
 // pub fn get_for_user(conn: &PgConnection, created_by_id: Uuid) -> QueryResult<>
-pub fn create_post(form: FormController, conn: &PgConnection) -> QueryResult<Controller> {
+pub fn create_post(form: ControllerForm, conn: &PgConnection) -> QueryResult<Controller> {
     diesel::insert_into(controllers::table)
         .values(form)
         .get_result::<Controller>(conn)?;
@@ -44,7 +44,7 @@ pub fn delete_post(post_author: Uuid, post_id: Uuid, conn: &PgConnection) -> Que
 pub fn update_post(
     post_id: Uuid,
     created_by_id: Uuid,
-    form: FormController,
+    form: ControllerForm,
     conn: &PgConnection,
 ) -> QueryResult<Controller> {
     diesel::update(

@@ -1,9 +1,10 @@
 use super::model::{NewUser, UserObject};
+use crate::graphql_module::common_utils::token::Role as AuthRole;
 use crate::graphql_module::context::get_redis_conn_from_ctx;
 use crate::graphql_module::models;
+use crate::graphql_module::schema::AppSchema;
 use crate::graphql_module::utils::user_utils::Role;
 use crate::graphql_module::utils::user_utils::RoleGuard;
-use crate::graphql_module::schema::AppSchema;
 use crate::graphql_module::{
     context::get_conn_from_ctx,
     utils::user_utils::{hash_password, is_admin, verify_password},
@@ -12,7 +13,6 @@ use crate::redis::{create_connection, get_post_cache_key};
 use async_graphql::Error;
 use async_graphql::*;
 use chrono::NaiveDateTime;
-use crate::graphql_module::common_utils::token::Role as AuthRole;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 // use crate::graphql_module::modules::user_model::provider;
@@ -21,9 +21,16 @@ use redis::{aio::ConnectionManager, AsyncCommands, RedisError, Value};
 use uuid::Uuid;
 
 #[derive(Default)]
-pub struct AuthUser;
+pub struct UserQuery;
 
-#[derive(SimpleObject, Serialize, Deserialize, Clone, Debug)]
+#[derive(
+    SimpleObject, /* directly maps all the fields of a struct to GraphQL object */
+    Serialize,
+    Deserialize,
+    Clone,
+    Debug,
+)]
+#[graphql(complex)] // `complex` attribute required for `ComplexObject` macro to take effect.
 pub struct User {
     pub id: ID,
     pub created_at: NaiveDateTime,
@@ -36,12 +43,19 @@ pub struct User {
     pub role: String,
 }
 
+#[ComplexObject] // let's you write user-defined resolvers for the calculated fields
+impl User {
+    async fn full_name(&self) -> String {
+        format!("{} {}", self.first_name, self.last_name)
+    }
+}
+
 #[Object]
-impl AuthUser {
+impl UserQuery {
     /// Reference Resolver for User Details
     #[graphql(entity)]
     pub async fn get_user_details(&self, ctx: &Context<'_>, id: ID) -> Result<Option<User>, Error> {
-        find_user_details(ctx, id)
+        find_user_details(ctx, &id)
     }
 
     #[graphql(name = "getAllUsers")]
@@ -88,7 +102,7 @@ impl AuthUser {
             Value::Nil => {
                 log::info!("Unable to find cache under this id, accessing Database.. 😂");
 
-                let user = find_user_details(ctx, id).expect("Unable to get User Details");
+                let user = find_user_details(ctx, &id).expect("Unable to get User Details");
                 let _: () = redis::pipe()
                     .atomic()
                     .set(&cache_key, user.clone())
@@ -123,31 +137,31 @@ impl AuthUser {
         Ok(user)
     }
 }
-pub fn find_user_details(ctx: &Context<'_>, id: ID) -> Result<Option<User>, Error> {
+pub fn find_user_details(ctx: &Context<'_>, id: &ID) -> Result<Option<User>, Error> {
     let conn = &get_conn_from_ctx(ctx);
     let id = id
         .to_string()
         .parse::<Uuid>()
         .expect("Unable to get Id from String");
-    let user = provider::get_user_by_id(id, conn)
+        println!("user id: {}", id);
+    let user = provider::get_user_by_id(&id, conn)
         .ok()
         .map(|x| User::from(&x));
     Ok(user)
 }
 
-// --------------------------------------
 #[derive(Default)]
-pub struct UserMutate;
+pub struct UserMutation;
 ///  User Mutation Classes types
 #[derive(InputObject, Deserialize, Serialize, Clone)]
-#[graphql(input_name = "userRegisterInput")]
-pub struct UserInput {
-    pub username: String,
-    pub password: String,
+#[graphql(input_name = "registerInput")]
+pub struct RegisterInput {
     pub first_name: String,
     pub last_name: String,
-    pub location: String,
+    pub username: String,
+    pub location: Option<String>,
     pub email: String,
+    pub password: String,
     pub role: Role,
 }
 
@@ -159,20 +173,24 @@ pub struct SignInInput {
 }
 
 #[Object]
-impl UserMutate {
+impl UserMutation {
     // #[graphql(name = "registerUsers", guard = "RoleGuard::new(AuthRole::Admin)", visible = "is_admin")]
     #[graphql(name = "registerUser")]
     /// This will register the users in our database
-    pub async fn register_user(&self, ctx: &Context<'_>, user: UserInput) -> Result<User, Error> {
+    pub async fn register_user(
+        &self,
+        ctx: &Context<'_>,
+        register: RegisterInput,
+    ) -> Result<User, Error> {
         let conn = &get_conn_from_ctx(ctx);
         let new_user = NewUser {
-            first_name: user.first_name,
-            last_name: user.last_name,
-            username: user.username,
-            location: Some(user.location),
-            email: user.email,
-            hash: hash_password(user.password.as_str()).expect("Unable to hash user password"),
-            role: user.role.to_string(),
+            first_name: register.first_name,
+            last_name: register.last_name,
+            username: register.username,
+            location: register.location,
+            email: register.email,
+            hash: hash_password(register.password.as_str()).expect("Unable to hash user password"),
+            role: register.role.to_string(),
         };
         let user_created =
             provider::create_user(new_user, conn).expect("Cannot create user right now");
@@ -188,7 +206,10 @@ impl UserMutate {
                 if matching {
                     let role = AuthRole::from_str(user.role.as_str())
                         .expect("Unable to convert to AuthRole");
-                    return Ok(crate::graphql_module::common_utils::token::generate_token(user.username, role));
+                    return Ok(crate::graphql_module::common_utils::token::generate_token(
+                        user.username,
+                        role,
+                    ));
                 }
             }
         }

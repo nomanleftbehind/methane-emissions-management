@@ -7,7 +7,7 @@ pub fn get_all_users(conn: &PgConnection) -> QueryResult<Vec<UserObject>> {
     use crate::schema::users::dsl::*;
     users.load(conn)
 }
-pub fn get_user_by_id(user_id: Uuid, conn: &PgConnection) -> QueryResult<UserObject> {
+pub fn get_user_by_id(user_id: &Uuid, conn: &PgConnection) -> QueryResult<UserObject> {
     users::table.filter(users::id.eq(user_id)).first(conn)
 }
 pub fn get_user_by_email(user_email: String, conn: &PgConnection) -> QueryResult<UserObject> {

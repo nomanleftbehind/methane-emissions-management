@@ -23,7 +23,7 @@ pub struct Controller {
 
 #[derive(Insertable, Serialize, AsChangeset, Deserialize, Debug, Clone, PartialEq)]
 #[table_name = "controllers"]
-pub struct FormController {
+pub struct ControllerForm {
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
@@ -37,7 +37,7 @@ impl From<&Controller> for ControllerObject {
     fn from(oop: &Controller) -> Self {
         ControllerObject {
             id: oop.id.into(),
-            created_by_id: User2::convert(oop.id),
+            created_by_id: oop.created_by_id.into(),
             created_at: oop.created_at.clone(),
             updated_at: oop.updated_at.clone(),
             manufacturer: oop.manufacturer.clone(),
@@ -48,7 +48,7 @@ impl From<&Controller> for ControllerObject {
     }
 }
 
-impl From<&ControllerInput> for FormController {
+impl From<&ControllerInput> for ControllerForm {
     fn from(f: &ControllerInput) -> Self {
         Self {
             created_by_id: f.created_by_id.parse::<Uuid>().expect(""),

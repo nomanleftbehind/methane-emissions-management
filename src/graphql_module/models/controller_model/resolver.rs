@@ -1,9 +1,11 @@
-use std::sync::Mutex;
-
-use super::models::FormController;
+use super::super::user_model::provider::get_user_by_id;
+use super::super::user_model::resolver::find_user_details;
+use super::models::ControllerForm;
 use super::models::NEW_POST_USER_CACHE;
 use super::{models::Controller, provider};
+use crate::db::DbPool;
 use crate::graphql_module::context::{get_conn_from_ctx, get_redis_conn_from_ctx};
+use crate::graphql_module::models::user_model::resolver::User;
 use crate::graphql_module::utils::rate_limiter::RateLimiter;
 use crate::graphql_module::utils::redis::{create_connection, get_post_cache_key};
 use crate::{
@@ -13,20 +15,24 @@ use crate::{
         schema::{Mutation, Query},
     },
 };
+use async_graphql::dataloader::{DataLoader, Loader};
 use async_graphql::Error;
 use async_graphql::*;
 use chrono::{Local, NaiveDateTime};
 use redis::{aio::ConnectionManager, AsyncCommands, RedisError, Value};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 use uuid::Uuid;
 
 #[derive(Default)]
-pub struct PostQuery;
+pub struct ControllerQuery;
 
 #[derive(SimpleObject, Serialize, Deserialize, Clone)]
+#[graphql(complex)]
 pub struct ControllerObject {
     pub id: ID,
-    pub created_by_id: User2,
+    pub created_by_id: ID,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub manufacturer: Option<String>,
@@ -35,8 +41,36 @@ pub struct ControllerObject {
     pub function: Option<String>,
 }
 
+#[ComplexObject]
+impl ControllerObject {
+    async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
+        find_user_details(ctx, &self.created_by_id)
+    }
+}
+
+// pub struct UserLoader {
+//     pub pool: Arc<DbPool>,
+// }
+
+// #[async_trait::async_trait]
+// impl Loader<Uuid> for UserLoader {
+//     type Value = User;
+//     type Error = Error;
+
+//     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+//         let conn = self.pool.get().expect("Can't get DB connection");
+//         let details = get_user_by_id(keys, &conn).expect("Can't get planets' details");
+
+//         Ok(details
+//             .fetch(&self.pool)
+//             .map_ok(|name: String| name)
+//             .map_err(Arc::new)
+//             .try_collect().await?)
+//     }
+// }
+
 #[Object]
-impl PostQuery {
+impl ControllerQuery {
     /// Resolver Reference
     #[graphql(entity)]
     pub async fn get_user_details(&self, #[graphql(key)] id: ID) -> User2 {
@@ -150,7 +184,7 @@ impl User2 {
 }
 
 #[derive(Default)]
-pub struct PostMutation;
+pub struct ControllerMutation;
 
 #[derive(InputObject)]
 pub struct ControllerInput {
@@ -163,7 +197,7 @@ pub struct ControllerInput {
     pub function: Option<String>,
 }
 #[Object]
-impl PostMutation {
+impl ControllerMutation {
     /// Create A New Post
     /// The server responds by caching the new Post with Default
     #[graphql(name = "createPost")]
@@ -172,7 +206,7 @@ impl PostMutation {
         ctx: &Context<'_>,
         form: ControllerInput,
     ) -> Result<ControllerObject, Error> {
-        let post = provider::create_post(FormController::from(&form), &get_conn_from_ctx(ctx))?;
+        let post = provider::create_post(ControllerForm::from(&form), &get_conn_from_ctx(ctx))?;
         let serialized_post = serde_json::to_string(&ControllerObject::from(&post))
             .map_err(|_| ServiceError::InternalError)?;
 
@@ -195,7 +229,7 @@ impl PostMutation {
         let new_post = provider::update_post(
             parse_id(post_id.clone()),
             parse_id(user_id),
-            FormController::from(&form),
+            ControllerForm::from(&form),
             &get_conn_from_ctx(ctx),
         )
         .expect("");

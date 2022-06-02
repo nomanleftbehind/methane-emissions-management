@@ -12,7 +12,7 @@ actix-cors = "0.6"
 actix-web = "4.0.1"
 actix-web-lab = "0.16.1"
 argonautica = "0.2.0"
-async-graphql = {version = "4.0.1", features = ["apollo_tracing"]}
+async-graphql = {version = "4.0.1", features = ["dataloader", "apollo_tracing"]}
 async-graphql-actix-web = "4.0.1"
 chrono = {version = "0.4", features = ["serde"]}
 # common-utils = {path = "../common-utils"}
