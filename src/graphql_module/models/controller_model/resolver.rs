@@ -1,9 +1,10 @@
-use super::super::user_model::provider::get_user_by_id;
+use super::super::user_model::provider::{get_user_by_id, get_users_by_ids};
 use super::super::user_model::resolver::find_user_details;
 use super::models::ControllerForm;
 use super::models::NEW_POST_USER_CACHE;
 use super::{models::Controller, provider};
 use crate::db::DbPool;
+use crate::graphql_module::loader::user::UserLoader;
 use crate::graphql_module::context::{get_conn_from_ctx, get_redis_conn_from_ctx};
 use crate::graphql_module::models::user_model::resolver::User;
 use crate::graphql_module::utils::rate_limiter::RateLimiter;
@@ -21,14 +22,13 @@ use async_graphql::*;
 use chrono::{Local, NaiveDateTime};
 use redis::{aio::ConnectionManager, AsyncCommands, RedisError, Value};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 use uuid::Uuid;
 
 #[derive(Default)]
 pub struct ControllerQuery;
 
-#[derive(SimpleObject, Serialize, Deserialize, Clone)]
+#[derive(SimpleObject, Serialize, Deserialize, Clone, Debug)]
 #[graphql(complex)]
 pub struct ControllerObject {
     pub id: ID,
@@ -46,28 +46,23 @@ impl ControllerObject {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         find_user_details(ctx, &self.created_by_id)
     }
+    async fn created_by2(&self, ctx: &Context<'_>) -> Result<User> {
+        println!("{:?}", &self);
+
+        let loader = ctx
+            .data_unchecked::<DataLoader<UserLoader>>()
+            /* .expect("Can't get data loader") */;
+        let user_id = self
+            .created_by_id
+            .to_string()
+            .parse::<Uuid>()
+            .expect("Can't convert id");
+        let user = loader.load_one(user_id).await?;
+        user.ok_or_else(|| "Not found".into())
+    }
 }
 
-// pub struct UserLoader {
-//     pub pool: Arc<DbPool>,
-// }
 
-// #[async_trait::async_trait]
-// impl Loader<Uuid> for UserLoader {
-//     type Value = User;
-//     type Error = Error;
-
-//     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-//         let conn = self.pool.get().expect("Can't get DB connection");
-//         let details = get_user_by_id(keys, &conn).expect("Can't get planets' details");
-
-//         Ok(details
-//             .fetch(&self.pool)
-//             .map_ok(|name: String| name)
-//             .map_err(Arc::new)
-//             .try_collect().await?)
-//     }
-// }
 
 #[Object]
 impl ControllerQuery {

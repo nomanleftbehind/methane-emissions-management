@@ -1,10 +1,14 @@
 use super::models::controller_model::resolver::Subscription;
 use super::models::user_model::provider;
 use super::schema::{AppSchema, AppSchemaBuilder, Mutation, Query};
+use crate::graphql_module::loader::user::UserLoader;
+use async_graphql::dataloader::DataLoader;
 // use super::schema::{
 //     AppSchema, AppSchemaBuilder, Mutation as SchemaMutation, Query as SchemaQuery,
 // };
 use crate::db::{DbPool, DbPooledConnection};
+use crate::graphql_module::common_utils::token::get_role;
+use crate::graphql_module::utils::{error::ServiceError, kafka::create_producer};
 use actix_cors::Cors;
 use actix_web::{
     get, guard, middleware::Logger, route, web, App, Error, HttpRequest, HttpResponse, HttpServer,
@@ -17,7 +21,6 @@ use async_graphql::{
     Context, EmptyMutation, EmptySubscription, Schema,
 };
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
-use crate::graphql_module::common_utils::token::get_role;
 use diesel::{result::Error as DbError, QueryDsl};
 use diesel_migrations::{embed_migrations, MigrationError};
 use redis::{
@@ -26,7 +29,6 @@ use redis::{
 };
 use std::env::var;
 use std::sync::{Arc, Mutex};
-use crate::graphql_module::utils::{kafka::create_producer, error::ServiceError};
 
 pub fn configure_service(cfg: &mut web::ServiceConfig) {
     cfg.service(graphql).service(graphql_playground).service(
@@ -93,6 +95,8 @@ pub fn create_schema(
     // Caching Service
     let arc_redis_connection = Arc::new(redis_connection);
 
+    let user_data_loader = DataLoader::new(UserLoader { pool: pool.clone() }, async_std::task::spawn,);
+
     Schema::build(Query::default(), Mutation::default(), Subscription)
         .enable_federation()
         .data(arc_redis_connection)
@@ -103,6 +107,7 @@ pub fn create_schema(
         // changed from arc_pool to pool because was getting
         // Error { message: "Data `r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::pg::connection::PgConnection>>` does not exist.", extensions: None }'
         .data(pool)
+        .data(user_data_loader)
         //  Kafka Queue
         .data(create_producer())
         .data(kafka_consumer)
