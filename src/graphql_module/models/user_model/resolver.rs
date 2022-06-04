@@ -143,7 +143,6 @@ pub fn find_user_details(ctx: &Context<'_>, id: &ID) -> Result<Option<User>, Err
         .to_string()
         .parse::<Uuid>()
         .expect("Unable to get Id from String");
-        println!("user id: {}", id);
     let user = provider::get_user_by_id(&id, conn)
         .ok()
         .map(|x| User::from(&x));

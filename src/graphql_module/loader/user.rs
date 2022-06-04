@@ -16,8 +16,7 @@ impl Loader<Uuid> for UserLoader {
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let conn = self.pool.get().expect("Can't get DB connection");
-        let users = get_users_by_ids(keys, &conn).expect("Can't get planets' details");
-
+        let users = get_users_by_ids(keys, &conn).expect("Can't get controller's creator");
 
         Ok(users
             .iter()

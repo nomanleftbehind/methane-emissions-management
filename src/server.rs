@@ -33,14 +33,15 @@ pub async fn new_server(port: u32) -> std::io::Result<()> {
         .await
         .expect("Cannot Create Redis Connection Manager");
 
-    // let schema = web::Data::new(create_schema(db_pool));
-
     //  GraphQl Schema
-    let schema = web::Data::new(create_schema(
-        db_pool,
-        redis_client.clone(),
-        redis_connection_manager.clone(),
-    ));
+    let schema = web::Data::new(
+        create_schema(
+            db_pool,
+            redis_client.clone(),
+            redis_connection_manager.clone(),
+        )
+        .await,
+    );
 
     //  In Memory API Limiter
     let redis_api_limiter = web::Data::new(RateLimiter::new(redis_connection_manager));

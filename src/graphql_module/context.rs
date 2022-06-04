@@ -1,33 +1,29 @@
-use super::models::controller_model::resolver::Subscription;
-use super::models::user_model::provider;
-use super::schema::{AppSchema, AppSchemaBuilder, Mutation, Query};
-use crate::graphql_module::loader::user::UserLoader;
-use async_graphql::dataloader::DataLoader;
-// use super::schema::{
-//     AppSchema, AppSchemaBuilder, Mutation as SchemaMutation, Query as SchemaQuery,
-// };
+use super::{
+    models::controller_model::resolver::Subscription,
+    schema::{AppSchema, Mutation, Query},
+};
 use crate::db::{DbPool, DbPooledConnection};
-use crate::graphql_module::common_utils::token::get_role;
-use crate::graphql_module::utils::{error::ServiceError, kafka::create_producer};
-use actix_cors::Cors;
+use crate::graphql_module::{
+    common_utils::token::get_role,
+    loader::UserLoader,
+    loader::{get_loaders, LoaderRegistry},
+    utils::kafka::create_producer,
+};
 use actix_web::{
-    get, guard, middleware::Logger, route, web, App, Error, HttpRequest, HttpResponse, HttpServer,
-    Responder,
+    get, guard, route,
+    web::{self, Data},
+    Error, HttpRequest, HttpResponse, Responder,
 };
 use actix_web_lab::respond::Html;
 use async_graphql::{
+    dataloader::DataLoader,
     extensions::ApolloTracing,
     http::{playground_source, GraphQLPlaygroundConfig},
-    Context, EmptyMutation, EmptySubscription, Schema,
+    Context, Schema,
 };
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
-use diesel::{result::Error as DbError, QueryDsl};
-use diesel_migrations::{embed_migrations, MigrationError};
-use redis::{
-    aio::Connection as RedisConnection, aio::ConnectionManager as RedisManager,
-    Client as RedisClient,
-};
-use std::env::var;
+use diesel_migrations::embed_migrations;
+use redis::{aio::ConnectionManager as RedisManager, Client as RedisClient};
 use std::sync::{Arc, Mutex};
 
 pub fn configure_service(cfg: &mut web::ServiceConfig) {
@@ -71,19 +67,7 @@ pub async fn index_ws(
 
 embed_migrations!();
 
-// pub fn create_schema(pool: DbPool) -> AppSchema {
-//     Schema::build(
-//         SchemaQuery::default(),
-//         SchemaMutation::default(),
-//         EmptySubscription,
-//     )
-//     .enable_federation()
-//     // Add a global data that can be accessed in the Schema
-//     .data(pool)
-//     .extension(ApolloTracing)
-//     .finish()
-// }
-pub fn create_schema(
+pub async fn create_schema(
     pool: DbPool,
     redis_pool: RedisClient,
     redis_connection: RedisManager,
@@ -95,7 +79,13 @@ pub fn create_schema(
     // Caching Service
     let arc_redis_connection = Arc::new(redis_connection);
 
-    let user_data_loader = DataLoader::new(UserLoader { pool: pool.clone() }, async_std::task::spawn,);
+    let user_data_loader =
+        DataLoader::new(UserLoader { pool: pool.clone() }, async_std::task::spawn);
+
+    let loaders = get_loaders(&pool).await;
+    let loader_registry_data = Data::new(LoaderRegistry { loaders });
+
+    println!("LOADER REGISTRY DATA {:?}", loader_registry_data);
 
     Schema::build(Query::default(), Mutation::default(), Subscription)
         .enable_federation()
@@ -121,11 +111,6 @@ pub fn run_migrations(pool: &DbPool) {
         .get()
         .expect("Database Connection Pool - Migrations error!");
     embedded_migrations::run(&conn).expect("Failed to run database migrations");
-
-    // This step makes absolutely no sense
-    // if let Ok(hash) = var("PASSWORD_SECRET_KEY") {
-    //     provider::update_password(hash, &conn);
-    // };
 }
 pub fn get_conn_from_ctx(ctx: &Context<'_>) -> DbPooledConnection {
     ctx.data::<DbPool>()

@@ -4,7 +4,7 @@ use super::models::ControllerForm;
 use super::models::NEW_POST_USER_CACHE;
 use super::{models::Controller, provider};
 use crate::db::DbPool;
-use crate::graphql_module::loader::user::UserLoader;
+use crate::graphql_module::loader::UserLoader;
 use crate::graphql_module::context::{get_conn_from_ctx, get_redis_conn_from_ctx};
 use crate::graphql_module::models::user_model::resolver::User;
 use crate::graphql_module::utils::rate_limiter::RateLimiter;
@@ -47,7 +47,6 @@ impl ControllerObject {
         find_user_details(ctx, &self.created_by_id)
     }
     async fn created_by2(&self, ctx: &Context<'_>) -> Result<User> {
-        println!("{:?}", &self);
 
         let loader = ctx
             .data_unchecked::<DataLoader<UserLoader>>()

@@ -37,5 +37,6 @@ strum_macros = "0.24.0"
 uuid = {version = "0.8.2", features = ["serde", "v4"]}# We need to use version 0.8.* because that's the version async-graphql uses
 tokio = "1.18.2"
 async-std = "1.11.0"
+anymap = "0.12.1"
 
 thiserror = "1.0.30"
