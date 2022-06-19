@@ -1,5 +1,5 @@
-use crate::db::DbPool;
-use crate::graphql_module::models::user_model::{provider::get_users_by_ids, resolver::User};
+use crate::repository::db::DbPool;
+use crate::repository::user::{provider::get_users_by_ids, resolver::User};
 use async_graphql::dataloader::Loader;
 use async_graphql::*;
 use std::collections::HashMap;

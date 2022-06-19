@@ -2,7 +2,7 @@ use actix_web::Result;
 use argonautica::{Error as HasherError, Hasher, Verifier};
 use async_graphql::Guard;
 use async_graphql::*;
-use crate::graphql_module::common_utils::token::Role as AuthRole;
+use crate::utils::token::Role as AuthRole;
 use jsonwebtoken;
 use serde::{Deserialize, Serialize};
 use std::env::var;

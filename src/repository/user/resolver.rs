@@ -1,23 +1,13 @@
-use super::model::{NewUser, UserObject};
-use crate::graphql_module::common_utils::token::Role as AuthRole;
-use crate::graphql_module::context::get_redis_conn_from_ctx;
-use crate::graphql_module::models;
-use crate::graphql_module::schema::AppSchema;
-use crate::graphql_module::utils::user_utils::Role;
-use crate::graphql_module::utils::user_utils::RoleGuard;
-use crate::graphql_module::{
-    context::get_conn_from_ctx,
-    utils::user_utils::{hash_password, is_admin, verify_password},
-};
-use crate::redis::{create_connection, get_post_cache_key};
-use async_graphql::Error;
-use async_graphql::*;
+use super::{model::NewUser, provider};
+use crate::graphql::context::{get_conn_from_ctx, get_redis_conn_from_ctx};
+use crate::utils::redis::{create_connection, get_post_cache_key};
+use crate::utils::token::Role as AuthRole;
+use crate::utils::user_utils::{hash_password, is_admin, verify_password, Role, RoleGuard};
+use async_graphql::{Error, *};
 use chrono::NaiveDateTime;
+use redis::{AsyncCommands, Value};
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
-// use crate::graphql_module::modules::user_model::provider;
-use super::provider;
-use redis::{aio::ConnectionManager, AsyncCommands, RedisError, Value};
 use uuid::Uuid;
 
 #[derive(Default)]
@@ -205,10 +195,7 @@ impl UserMutation {
                 if matching {
                     let role = AuthRole::from_str(user.role.as_str())
                         .expect("Unable to convert to AuthRole");
-                    return Ok(crate::graphql_module::common_utils::token::generate_token(
-                        user.username,
-                        role,
-                    ));
+                    return Ok(crate::utils::token::generate_token(user.username, role));
                 }
             }
         }

@@ -1,12 +1,6 @@
-use std::sync::Mutex;
-
 use super::error::ServiceError;
-use crate::graphql_module::models::controller_model::models::NEW_POST_USER_CACHE;
-use crate::graphql_module::models::controller_model::resolver::ControllerObject;
-use actix_web::{web::Data, HttpResponse};
-use actix_web_lab::__reexports::tokio;
-use redis::aio::ConnectionManager;
-use redis::{aio::Connection, Client, RedisError, RedisResult, ToRedisArgs};
+use crate::repository::{controller::resolver::ControllerObject, user::resolver::User};
+use redis::{aio::Connection, Client, RedisError, ToRedisArgs};
 use std::env;
 
 lazy_static! {
@@ -44,6 +38,20 @@ pub fn get_post_cache_key(post_id: &str) -> String {
 /// Write the Value into a vector of bytes, in this case, we are caching a Post
 /// and turning into a string so we can use it as an argument for K-V pair
 /// 'write_redis_args', each item is a single argument
+impl ToRedisArgs for User {
+    fn write_redis_args<W>(&self, out: &mut W)
+    where
+        W: ?Sized + redis::RedisWrite,
+    {
+        out.write_arg_fmt(
+            serde_json::to_string(self).expect("Cannot Serialize PostObject as String"),
+        )
+    }
+}
+
+/// Write the Value into a vector of bytes, in this case, we are caching a Post
+/// and turning into a string so we can use it as an argument for K-V pair
+/// 'write_redis_args', each item is a single argument
 impl ToRedisArgs for ControllerObject {
     fn write_redis_args<W>(&self, out: &mut W)
     where
@@ -59,7 +67,7 @@ impl ToRedisArgs for ControllerObject {
 //  Senders are not programmed to send their messages to specific receivers
 //  Rather, they will publish messages irrespectively without having the
 //  knowledge of what subscribers there may be
-pub async fn start_pubsub(client: &Client) -> Result<(), ServiceError> {
+pub async fn start_pubsub(_client: &Client) -> Result<(), ServiceError> {
     // let mut pubsub_conn = create_connection(client).await?.into_pubsub();
 
     todo!()

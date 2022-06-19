@@ -1,26 +1,15 @@
-use super::super::user_model::provider::{get_user_by_id, get_users_by_ids};
-use super::super::user_model::resolver::find_user_details;
-use super::models::ControllerForm;
-use super::models::NEW_POST_USER_CACHE;
-use super::{models::Controller, provider};
-use crate::db::DbPool;
-use crate::graphql_module::loader::UserLoader;
-use crate::graphql_module::context::{get_conn_from_ctx, get_redis_conn_from_ctx};
-use crate::graphql_module::models::user_model::resolver::User;
-use crate::graphql_module::utils::rate_limiter::RateLimiter;
-use crate::graphql_module::utils::redis::{create_connection, get_post_cache_key};
-use crate::{
-    graphql_module::utils::{error::ServiceError, kafka},
-    graphql_module::{
-        context::get_redis_conn_manager,
-        schema::{Mutation, Query},
-    },
+use super::{super::user::resolver::find_user_details, models::ControllerForm, provider};
+use crate::graphql::context::{get_conn_from_ctx, get_redis_conn_from_ctx, get_redis_conn_manager};
+use crate::loader::UserLoader;
+use crate::repository::user::resolver::User;
+use crate::utils::{
+    error::ServiceError,
+    kafka,
+    redis::{create_connection, get_post_cache_key},
 };
-use async_graphql::dataloader::{DataLoader, Loader};
-use async_graphql::Error;
-use async_graphql::*;
-use chrono::{Local, NaiveDateTime};
-use redis::{aio::ConnectionManager, AsyncCommands, RedisError, Value};
+use async_graphql::{dataloader::DataLoader, Error, *};
+use chrono::NaiveDateTime;
+use redis::{AsyncCommands, Value};
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
 use uuid::Uuid;
@@ -47,7 +36,6 @@ impl ControllerObject {
         find_user_details(ctx, &self.created_by_id)
     }
     async fn created_by2(&self, ctx: &Context<'_>) -> Result<User> {
-
         let loader = ctx
             .data_unchecked::<DataLoader<UserLoader>>()
             /* .expect("Can't get data loader") */;
@@ -61,20 +49,12 @@ impl ControllerObject {
     }
 }
 
-
-
 #[Object]
 impl ControllerQuery {
-    /// Resolver Reference
-    #[graphql(entity)]
-    pub async fn get_user_details(&self, #[graphql(key)] id: ID) -> User2 {
-        User2 { id }
-    }
-    #[graphql(entity)]
-    pub async fn get_post_details(
+    pub async fn get_controller_details(
         &self,
         ctx: &Context<'_>,
-        #[graphql(key)] post_id: ID,
+        post_id: ID,
     ) -> Option<ControllerObject> {
         let cache_key = get_post_cache_key(post_id.to_string().as_str());
         let mut redis_connection_manager = get_redis_conn_manager(ctx).await;
@@ -86,7 +66,7 @@ impl ControllerQuery {
         //  Chain multiple commands and query it to the connection manager
         match cached_post {
             Value::Nil => {
-                let post = get_post_detail(ctx, post_id);
+                let post = get_controller_detail(ctx, post_id);
                 let _: () = redis::pipe()
                     .atomic()
                     .set(&cache_key, post.clone())
@@ -123,7 +103,7 @@ impl ControllerQuery {
         //  Check If Cache Object is available
         match cached_object {
             Value::Nil => {
-                let post = get_post_detail(ctx, post_id);
+                let post = get_controller_detail(ctx, post_id);
 
                 let _: () = redis::pipe()
                     .atomic()
@@ -139,42 +119,28 @@ impl ControllerQuery {
             _ => None,
         }
     }
-    #[graphql(name = "getPostsbyAuthor")]
-    async fn get_post_by_authorid(&self, ctx: &Context<'_>, user_id: ID) -> Vec<ControllerObject> {
-        get_posts_user(ctx, user_id)
+    #[graphql(name = "getControllersbyAuthor")]
+    async fn get_controller_by_authorid(
+        &self,
+        ctx: &Context<'_>,
+        user_id: ID,
+    ) -> Vec<ControllerObject> {
+        get_controllers_user(ctx, user_id)
     }
 }
 
-/// Gets the Post Information by using the Post Id
-pub fn get_post_detail(ctx: &Context<'_>, post_id: ID) -> Option<ControllerObject> {
+pub fn get_controller_detail(ctx: &Context<'_>, post_id: ID) -> Option<ControllerObject> {
     provider::get_post_by_id(parse_id(post_id), &get_conn_from_ctx(ctx))
         .ok()
         .map(|f| ControllerObject::from(&f))
 }
 /// Gets the Post under the author: UserId
-pub fn get_posts_user(ctx: &Context<'_>, user_id: ID) -> Vec<ControllerObject> {
+pub fn get_controllers_user(ctx: &Context<'_>, user_id: ID) -> Vec<ControllerObject> {
     provider::get_by_posts_by_author(parse_id(user_id), &get_conn_from_ctx(ctx))
-        .expect("Cannot get any User2 Posts")
+        .expect("Cannot get any User Posts")
         .iter()
         .map(|s| ControllerObject::from(s))
         .collect()
-}
-#[derive(Serialize, Deserialize, Clone)]
-pub struct User2 {
-    pub id: ID,
-}
-#[Object(extends)]
-impl User2 {
-    /// The Key needed for
-    #[graphql(external)]
-    pub async fn id(&self, id: ID) -> User2 {
-        User2 { id }
-    }
-    /// Load all Posts under User2
-    #[graphql(name = "getPostsByUser")]
-    pub async fn get_user_posts(&self, ctx: &Context<'_>, id: ID) -> Vec<ControllerObject> {
-        get_posts_user(ctx, id)
-    }
 }
 
 #[derive(Default)]
@@ -256,9 +222,7 @@ impl ControllerMutation {
 
 //  Get the latest Posts
 //  Subscriptions
-use crate::graphql_module::utils::kafka::{
-    create_consumer, create_producer, get_kafka_consumer_id, send_message,
-};
+use crate::utils::kafka::{create_consumer, get_kafka_consumer_id};
 use futures::{Stream, StreamExt};
 use rdkafka::{producer::FutureProducer, Message};
 pub struct Subscription;

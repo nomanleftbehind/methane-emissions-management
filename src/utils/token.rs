@@ -1,9 +1,8 @@
-use actix_web::{HttpRequest, HttpResponse};
+use actix_web::HttpRequest;
 use chrono::{Duration, Local};
 use jsonwebtoken::{
-    decode, encode,
-    errors::{Error as JsonError, ErrorKind},
-    DecodingKey, EncodingKey, Header, TokenData, Validation,
+    decode, encode, errors::Error as JsonError, DecodingKey, EncodingKey, Header, TokenData,
+    Validation,
 };
 use serde::{Deserialize, Serialize};
 use std::{env::var, str::FromStr};

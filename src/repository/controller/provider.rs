@@ -1,5 +1,5 @@
 use super::models::{Controller, ControllerForm};
-use crate::schema::controllers;
+use crate::repository::schema::controllers;
 use diesel::prelude::*;
 use uuid::Uuid;
 

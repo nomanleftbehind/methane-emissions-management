@@ -1,19 +1,8 @@
-use super::{
-    models::controller_model::resolver::Subscription,
-    schema::{AppSchema, Mutation, Query},
-};
-use crate::db::{DbPool, DbPooledConnection};
-use crate::graphql_module::{
-    common_utils::token::get_role,
-    loader::UserLoader,
-    loader::{get_loaders, LoaderRegistry},
-    utils::kafka::create_producer,
-};
-use actix_web::{
-    get, guard, route,
-    web::{self, Data},
-    Error, HttpRequest, HttpResponse, Responder,
-};
+use super::schema::{AppSchema, Mutation, Query};
+use crate::repository::controller::resolver::Subscription;
+use crate::repository::db::{DbPool, DbPooledConnection};
+use crate::{loader::UserLoader, utils::kafka::create_producer, utils::token::get_role};
+use actix_web::{get, guard, route, web, Error, HttpRequest, HttpResponse, Responder};
 use actix_web_lab::respond::Html;
 use async_graphql::{
     dataloader::DataLoader,
@@ -65,7 +54,7 @@ pub async fn index_ws(
     GraphQLSubscription::new(Schema::clone(&*schema)).start(&req, payload)
 }
 
-embed_migrations!();
+embed_migrations!("./src/repository/migrations");
 
 pub async fn create_schema(
     pool: DbPool,
@@ -81,11 +70,6 @@ pub async fn create_schema(
 
     let user_data_loader =
         DataLoader::new(UserLoader { pool: pool.clone() }, async_std::task::spawn);
-
-    let loaders = get_loaders(&pool).await;
-    let loader_registry_data = Data::new(LoaderRegistry { loaders });
-
-    println!("LOADER REGISTRY DATA {:?}", loader_registry_data);
 
     Schema::build(Query::default(), Mutation::default(), Subscription)
         .enable_federation()

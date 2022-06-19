@@ -1,9 +1,9 @@
 use derive_more::{Display, Error};
 
 use actix_web::{
-    error, get,
+    error,
     http::{header::ContentType, StatusCode},
-    App, HttpResponse,
+    HttpResponse,
 };
 
 #[derive(Display, Error, Debug)]

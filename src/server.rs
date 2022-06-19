@@ -1,20 +1,11 @@
-use crate::db::{establish_connection, DatabaseKind};
-use crate::graphql_module::context::{
-    configure_service, create_schema, graphql, graphql_playground, run_migrations,
-};
-use crate::graphql_module::utils::{
-    error::ServiceError,
+use crate::graphql::context::{configure_service, create_schema, run_migrations};
+use crate::repository::db::{establish_connection, DatabaseKind};
+use crate::utils::{
     rate_limiter::RateLimiter,
-    redis::{create_client, create_connection, start_pubsub, RedisDatabase},
+    redis::{create_client, RedisDatabase},
 };
 use actix_cors::Cors;
-use actix_web::{get, middleware::Logger, route, web, App, HttpServer, Responder};
-use actix_web_lab::respond::Html;
-use async_graphql::{
-    http::{playground_source, GraphQLPlaygroundConfig},
-    EmptyMutation, EmptySubscription, Schema,
-};
-use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 
 pub async fn new_server(port: u32) -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));

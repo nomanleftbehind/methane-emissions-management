@@ -1,5 +1,5 @@
-use super::models::controller_model::resolver::{ControllerMutation, ControllerQuery, Subscription};
-use super::models::user_model::resolver::{UserQuery, UserMutation};
+use crate::repository::controller::resolver::{ControllerMutation, ControllerQuery, Subscription};
+use crate::repository::user::resolver::{UserQuery, UserMutation};
 use async_graphql::{MergedObject, Schema, SchemaBuilder};
 
 #[derive(MergedObject, Default)]

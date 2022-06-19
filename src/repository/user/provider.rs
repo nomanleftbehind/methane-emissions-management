@@ -1,11 +1,11 @@
 use super::model::{NewUser, UserObject};
-use crate::schema::users;
+use crate::repository::schema::users;
 use diesel::prelude::*;
 use diesel::dsl::any;
 use uuid::Uuid;
 
 pub fn get_all_users(conn: &PgConnection) -> QueryResult<Vec<UserObject>> {
-    use crate::schema::users::dsl::*;
+    use crate::repository::schema::users::dsl::*;
     users.load(conn)
 }
 pub fn get_users_by_ids(user_ids: &[Uuid], conn: &PgConnection) -> QueryResult<Vec<UserObject>> {
@@ -30,7 +30,7 @@ pub fn create_user(form: NewUser, conn: &PgConnection) -> QueryResult<UserObject
         .get_result(conn)
 }
 pub fn delete_user(user_id: Uuid, conn: &PgConnection) -> QueryResult<bool> {
-    use crate::schema::users::dsl::*;
+    use crate::repository::schema::users::dsl::*;
     diesel::delete(users.filter(id.eq(user_id))).execute(conn)?;
     Ok(true)
 }

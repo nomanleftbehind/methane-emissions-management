@@ -1,4 +1,3 @@
-use super::redis as utils;
 use chrono::{Timelike, Utc};
 use redis::aio::ConnectionManager;
 

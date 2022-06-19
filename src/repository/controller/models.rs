@@ -1,6 +1,5 @@
-use super::resolver::{ControllerInput, ControllerObject, User2};
-use crate::schema::controllers;
-use async_graphql::{InputObject, ID};
+use super::resolver::{ControllerInput, ControllerObject};
+use crate::repository::schema::controllers;
 use chrono::NaiveDateTime;
 use diesel::{AsChangeset, Insertable, Queryable};
 use serde::{Deserialize, Serialize};
@@ -59,11 +58,5 @@ impl From<&ControllerInput> for ControllerForm {
             serial_number: f.serial_number.clone(),
             function: f.function.clone(),
         }
-    }
-}
-
-impl User2 {
-    fn convert(id: Uuid) -> User2 {
-        Self { id: id.into() }
     }
 }

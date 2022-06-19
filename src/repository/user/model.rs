@@ -1,8 +1,8 @@
 use super::resolver::User;
-use crate::graphql_module::utils::user_utils::Role;
-use crate::schema::users;
-use async_graphql::{InputObject, SimpleObject, ID};
-use chrono::{Local, NaiveDateTime};
+use crate::repository::schema::users;
+use crate::utils::user_utils::Role;
+use async_graphql::SimpleObject;
+use chrono::NaiveDateTime;
 use diesel::AsChangeset;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
