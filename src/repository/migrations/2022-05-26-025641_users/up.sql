@@ -12,7 +12,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS "users" (
   "id" uuid DEFAULT uuid_generate_v4 () NOT NULL PRIMARY KEY,
   "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  -- 
   "first_name" VARCHAR(50) NOT NULL,
   "last_name" VARCHAR(50) NOT NULL,
   "username" VARCHAR(30) NOT NULL UNIQUE,
@@ -28,7 +27,6 @@ CREATE TABLE IF NOT EXISTS "controllers" (
   "id" uuid DEFAULT uuid_generate_v4 () NOT NULL PRIMARY KEY,
   "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  -- "created_by_id" SERIAL REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE NOT NULL,
   "created_by_id" uuid REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE NOT NULL,
   "updated_by_id" uuid REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE NOT NULL,
   /*
@@ -75,6 +73,16 @@ VALUES
     'USER'
   ),
   (
+    'Billy',
+    'Bob',
+    'Billy Boy',
+    'Tucson',
+    'billy.bob@example.com',
+    --hash for actual password hihi
+    '$argon2id$v=19$m=4096,t=192,p=4$UQbCa3kohFOHJ8E3oW9rBJeOjXqUTOpsKbqBTTepByE$1doCCX9t8cAGxVqL5Sl/2EcY+Q+H6Wo8/bPeG7SJ0Ds',
+    'ADMIN'
+  ),
+  (
     'Alex',
     'Smith',
     'lex',
@@ -113,6 +121,20 @@ WITH "controllers_ins" (
       '726141',
       'pressure controller',
       'jane.smith@example.com'
+    ),
+    (
+      'Allstar',
+      'STDFY1',
+      '73bd027f',
+      'level controller',
+      'billy.bob@example.com'
+    ),
+    (
+      'Phantom',
+      'DPY6',
+      '8dfo29vn2',
+      'pressure controller',
+      'billy.bob@example.com'
     )
 )
 INSERT INTO

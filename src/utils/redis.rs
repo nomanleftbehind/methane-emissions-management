@@ -31,7 +31,7 @@ pub async fn create_connection(redis_client: Client) -> Result<Connection, Servi
         .map_err(|_| ServiceError::InternalError)
 }
 /// Post Caching Key
-pub fn get_post_cache_key(post_id: &str) -> String {
+pub fn get_controller_cache_key(post_id: &str) -> String {
     format!("{}:{}", BLOG_KEY_PREFIX.as_str(), post_id)
 }
 

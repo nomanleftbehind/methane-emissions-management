@@ -39,7 +39,7 @@ impl From<&Controller> for ControllerObject {
         ControllerObject {
             id: oop.id.into(),
             created_by_id: oop.created_by_id.into(),
-            updated_by_id: oop.created_by_id.into(),
+            updated_by_id: oop.updated_by_id.into(),
             created_at: oop.created_at.clone(),
             updated_at: oop.updated_at.clone(),
             manufacturer: oop.manufacturer.clone(),

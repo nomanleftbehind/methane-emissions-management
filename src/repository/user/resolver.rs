@@ -1,6 +1,6 @@
 use super::{model::NewUser, provider};
 use crate::graphql::context::{get_conn_from_ctx, get_redis_conn_from_ctx};
-use crate::utils::redis::{create_connection, get_post_cache_key};
+use crate::utils::redis::{create_connection, get_controller_cache_key};
 use crate::utils::token::Role as AuthRole;
 use crate::utils::user_utils::{hash_password, is_admin, verify_password, Role, RoleGuard};
 use async_graphql::{Error, *};
@@ -77,7 +77,7 @@ impl UserQuery {
     )]
     /// This is the test of a description
     pub async fn get_users_by_id(&self, ctx: &Context<'_>, id: ID) -> Option<User> {
-        let cache_key = get_post_cache_key(id.to_string().as_str());
+        let cache_key = get_controller_cache_key(id.to_string().as_str());
         let redis_client = get_redis_conn_from_ctx(ctx).await;
         let mut redis_connection = create_connection(redis_client)
             .await

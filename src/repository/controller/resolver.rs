@@ -5,7 +5,7 @@ use crate::repository::user::resolver::User;
 use crate::utils::{
     error::ServiceError,
     kafka,
-    redis::{create_connection, get_post_cache_key},
+    redis::{create_connection, get_controller_cache_key},
 };
 use async_graphql::{dataloader::DataLoader, Error, *};
 use chrono::NaiveDateTime;
@@ -57,7 +57,7 @@ impl ControllerQuery {
         ctx: &Context<'_>,
         post_id: ID,
     ) -> Option<ControllerObject> {
-        let cache_key = get_post_cache_key(post_id.to_string().as_str());
+        let cache_key = get_controller_cache_key(post_id.to_string().as_str());
         let mut redis_connection_manager = get_redis_conn_manager(ctx).await;
         let cached_post: Value = redis_connection_manager
             .get(cache_key.clone())
@@ -82,8 +82,8 @@ impl ControllerQuery {
         }
     }
 
-    #[graphql(name = "getAllPost")]
-    async fn get_post(&self, ctx: &Context<'_>) -> Vec<ControllerObject> {
+    #[graphql(name = "getAllControllers")]
+    async fn get_controller(&self, ctx: &Context<'_>) -> Vec<ControllerObject> {
         let conn = get_conn_from_ctx(ctx);
         provider::get_all(&conn)
             .expect("Cannot get Blog ControllerObject ")
@@ -91,9 +91,9 @@ impl ControllerQuery {
             .map(ControllerObject::from)
             .collect()
     }
-    #[graphql(name = "getPostbyId")]
-    pub async fn get_post_by_id(&self, ctx: &Context<'_>, post_id: ID) -> Option<ControllerObject> {
-        let cache_key = get_post_cache_key(post_id.to_string().as_str());
+    #[graphql(name = "getControllerById")]
+    pub async fn get_controller_by_id(&self, ctx: &Context<'_>, post_id: ID) -> Option<ControllerObject> {
+        let cache_key = get_controller_cache_key(post_id.to_string().as_str());
         let redis_client = get_redis_conn_from_ctx(ctx).await;
 
         let mut redis_connection = create_connection(redis_client)
@@ -196,7 +196,7 @@ impl ControllerMutation {
         )
         .expect("");
         //  Delete the cache under this value
-        let cache_key = get_post_cache_key(post_id.to_string().as_str());
+        let cache_key = get_controller_cache_key(post_id.to_string().as_str());
         let redis_connection_manager = get_redis_conn_manager(ctx);
         redis_connection_manager.await.del(cache_key).await?;
 
@@ -215,7 +215,7 @@ impl ControllerMutation {
             .expect("Couldn't delete Post");
 
         //  Deletes the cache under this postid
-        let cache_key = get_post_cache_key(post_id.to_string().as_str());
+        let cache_key = get_controller_cache_key(post_id.to_string().as_str());
         get_redis_conn_manager(ctx).await.del(cache_key).await?;
 
         Ok(true)
