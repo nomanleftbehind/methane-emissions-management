@@ -22,6 +22,7 @@ pub struct ControllerQuery;
 pub struct ControllerObject {
     pub id: ID,
     pub created_by_id: ID,
+    pub updated_by_id: ID,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub manufacturer: Option<String>,
@@ -149,6 +150,7 @@ pub struct ControllerMutation;
 #[derive(InputObject)]
 pub struct ControllerInput {
     pub created_by_id: ID,
+    pub updated_by_id: ID,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub manufacturer: Option<String>,

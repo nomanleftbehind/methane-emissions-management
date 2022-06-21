@@ -14,6 +14,7 @@ pub struct Controller {
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub created_by_id: Uuid,
+    pub updated_by_id: Uuid,
     pub manufacturer: Option<String>,
     pub model: Option<String>,
     pub serial_number: Option<String>,
@@ -24,6 +25,7 @@ pub struct Controller {
 #[table_name = "controllers"]
 pub struct ControllerForm {
     pub created_by_id: Uuid,
+    pub updated_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub manufacturer: Option<String>,
@@ -37,6 +39,7 @@ impl From<&Controller> for ControllerObject {
         ControllerObject {
             id: oop.id.into(),
             created_by_id: oop.created_by_id.into(),
+            updated_by_id: oop.created_by_id.into(),
             created_at: oop.created_at.clone(),
             updated_at: oop.updated_at.clone(),
             manufacturer: oop.manufacturer.clone(),
@@ -51,6 +54,7 @@ impl From<&ControllerInput> for ControllerForm {
     fn from(f: &ControllerInput) -> Self {
         Self {
             created_by_id: f.created_by_id.parse::<Uuid>().expect(""),
+            updated_by_id: f.updated_by_id.parse::<Uuid>().expect(""),
             created_at: f.created_at,
             updated_at: f.updated_at,
             manufacturer: f.manufacturer.clone(),

@@ -30,11 +30,11 @@ CREATE TABLE IF NOT EXISTS "controllers" (
   "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   -- "created_by_id" SERIAL REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE NOT NULL,
   "created_by_id" uuid REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE NOT NULL,
+  "updated_by_id" uuid REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE NOT NULL,
   /*
    Diesel won't generate joinable! macro if foreign key is referenced twice.
    That's why we commented out 'updated_by' field for now.
    */
-  -- "updated_by" SERIAL REFERENCES users (id) ON UPDATE CASCADE NOT NULL,
   "manufacturer" VARCHAR(50),
   "model" VARCHAR(50),
   "serial_number" VARCHAR(50),
@@ -121,7 +121,8 @@ INSERT INTO
     "model",
     "serial_number",
     "function",
-    "created_by_id"
+    "created_by_id",
+    "updated_by_id"
   )
 SELECT
   i."manufacturer",
@@ -129,6 +130,7 @@ SELECT
   i."serial_number",
   i."function",
   -- CAST(i."date" AS timestamp without time zone),
+  u.id,
   u.id
 FROM
   "users" u
