@@ -1,4 +1,8 @@
-use super::{super::user::resolver::find_user_details, models::ControllerForm, provider};
+use super::{
+    super::user::resolver::find_user_details,
+    models::{ControllerForm, ControllerUpdateForm},
+    provider,
+};
 use crate::graphql::context::{get_conn_from_ctx, get_redis_conn_from_ctx, get_redis_conn_manager};
 use crate::loader::UserLoader;
 use crate::repository::user::resolver::User;
@@ -55,9 +59,9 @@ impl ControllerQuery {
     pub async fn get_controller_details(
         &self,
         ctx: &Context<'_>,
-        post_id: ID,
+        controller_id: ID,
     ) -> Option<ControllerObject> {
-        let cache_key = get_controller_cache_key(post_id.to_string().as_str());
+        let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
         let mut redis_connection_manager = get_redis_conn_manager(ctx).await;
         let cached_post: Value = redis_connection_manager
             .get(cache_key.clone())
@@ -67,7 +71,7 @@ impl ControllerQuery {
         //  Chain multiple commands and query it to the connection manager
         match cached_post {
             Value::Nil => {
-                let post = get_controller_detail(ctx, post_id);
+                let post = get_controller_detail(ctx, controller_id);
                 let _: () = redis::pipe()
                     .atomic()
                     .set(&cache_key, post.clone())
@@ -92,8 +96,12 @@ impl ControllerQuery {
             .collect()
     }
     #[graphql(name = "getControllerById")]
-    pub async fn get_controller_by_id(&self, ctx: &Context<'_>, post_id: ID) -> Option<ControllerObject> {
-        let cache_key = get_controller_cache_key(post_id.to_string().as_str());
+    pub async fn get_controller_by_id(
+        &self,
+        ctx: &Context<'_>,
+        controller_id: ID,
+    ) -> Option<ControllerObject> {
+        let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
         let redis_client = get_redis_conn_from_ctx(ctx).await;
 
         let mut redis_connection = create_connection(redis_client)
@@ -104,7 +112,7 @@ impl ControllerQuery {
         //  Check If Cache Object is available
         match cached_object {
             Value::Nil => {
-                let post = get_controller_detail(ctx, post_id);
+                let post = get_controller_detail(ctx, controller_id);
 
                 let _: () = redis::pipe()
                     .atomic()
@@ -130,14 +138,14 @@ impl ControllerQuery {
     }
 }
 
-pub fn get_controller_detail(ctx: &Context<'_>, post_id: ID) -> Option<ControllerObject> {
-    provider::get_post_by_id(parse_id(post_id), &get_conn_from_ctx(ctx))
+pub fn get_controller_detail(ctx: &Context<'_>, controller_id: ID) -> Option<ControllerObject> {
+    provider::get_controller_by_id(parse_id(controller_id), &get_conn_from_ctx(ctx))
         .ok()
         .map(|f| ControllerObject::from(&f))
 }
 /// Gets the Post under the author: UserId
 pub fn get_controllers_user(ctx: &Context<'_>, user_id: ID) -> Vec<ControllerObject> {
-    provider::get_by_posts_by_author(parse_id(user_id), &get_conn_from_ctx(ctx))
+    provider::get_by_controllers_by_author(parse_id(user_id), &get_conn_from_ctx(ctx))
         .expect("Cannot get any User Posts")
         .iter()
         .map(|s| ControllerObject::from(s))
@@ -158,67 +166,108 @@ pub struct ControllerInput {
     pub serial_number: Option<String>,
     pub function: Option<String>,
 }
+
+#[derive(InputObject)]
+pub struct ControllerUpdateInput {
+    pub manufacturer: Option<String>,
+    pub model: Option<String>,
+    pub serial_number: Option<String>,
+    pub function: Option<String>,
+}
+
 #[Object]
 impl ControllerMutation {
-    /// Create A New Post
-    /// The server responds by caching the new Post with Default
-    #[graphql(name = "createPost")]
-    async fn create_post(
+    /// Create A New Controller
+    /// The server responds by caching the new Controller with Default
+    #[graphql(name = "createController")]
+    async fn create_controller(
         &self,
         ctx: &Context<'_>,
         form: ControllerInput,
     ) -> Result<ControllerObject, Error> {
-        let post = provider::create_post(ControllerForm::from(&form), &get_conn_from_ctx(ctx))?;
-        let serialized_post = serde_json::to_string(&ControllerObject::from(&post))
+        let post =
+            provider::create_controller(ControllerForm::from(&form), &get_conn_from_ctx(ctx))?;
+        let serialized_controller = serde_json::to_string(&ControllerObject::from(&post))
             .map_err(|_| ServiceError::InternalError)?;
 
         //  In the mutation, post creation a messgage is sent to the kafka.
         let producer = ctx
             .data::<FutureProducer>()
             .expect("Cannot get Kafka Producer");
-        kafka::send_message(producer, serialized_post).await;
+        kafka::send_message(producer, serialized_controller).await;
         Ok(ControllerObject::from(&post))
     }
-    #[graphql(name = "updatePosts")]
-    async fn update_post(
+    #[graphql(name = "updateController")]
+    async fn update_controller(
         &self,
         ctx: &Context<'_>,
         form: ControllerInput,
-        post_id: ID,
+        controller_id: ID,
         user_id: ID,
     ) -> Result<ControllerObject, Error> {
         //  Convert the grahql input into readable database input
-        let new_post = provider::update_post(
-            parse_id(post_id.clone()),
+        let new_post = provider::update_controller(
+            parse_id(controller_id.clone()),
             parse_id(user_id),
             ControllerForm::from(&form),
             &get_conn_from_ctx(ctx),
         )
         .expect("");
         //  Delete the cache under this value
-        let cache_key = get_controller_cache_key(post_id.to_string().as_str());
+        let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
         let redis_connection_manager = get_redis_conn_manager(ctx);
         redis_connection_manager.await.del(cache_key).await?;
 
-        //  Convert Post (from the database), into Graphql object
+        //  Convert Controller (from the database), into Graphql object
         Ok(ControllerObject::from(&new_post))
     }
-    #[graphql(name = "deletePosts")]
-    async fn delete_post(
+    #[graphql(name = "deleteController")]
+    async fn delete_controller(
         &self,
         ctx: &Context<'_>,
-        post_author: ID,
-        post_id: ID,
+        controller_author: ID,
+        controller_id: ID,
     ) -> Result<bool, Error> {
         let conn = get_conn_from_ctx(ctx);
-        provider::delete_post(parse_id(post_author), parse_id(post_id.clone()), &conn)
-            .expect("Couldn't delete Post");
+        provider::delete_controller(
+            parse_id(controller_author),
+            parse_id(controller_id.clone()),
+            &conn,
+        )
+        .expect("Couldn't delete Controller");
 
         //  Deletes the cache under this postid
-        let cache_key = get_controller_cache_key(post_id.to_string().as_str());
+        let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
         get_redis_conn_manager(ctx).await.del(cache_key).await?;
 
         Ok(true)
+    }
+
+    #[graphql(name = "updateController2")]
+    async fn update_controller2(
+        &self,
+        ctx: &Context<'_>,
+        form: ControllerUpdateInput,
+        controller_id: ID,
+    ) -> Result<ControllerObject, Error> {
+        println!("controller_id: {:?}, form: {:?}", controller_id, form.manufacturer);
+        //  Convert the grahql input into readable database input
+        let new_post = provider::update_controller2(
+            parse_id(controller_id.clone()),
+            ControllerUpdateForm::from(&form),
+            &get_conn_from_ctx(ctx),
+        )
+        .expect("");
+
+        println!("new_post: {:?}", &new_post);
+        //  Delete the cache under this value
+        let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
+        println!("cache_key: {:?}", &cache_key);
+        let redis_connection_manager = get_redis_conn_manager(ctx);
+        redis_connection_manager.await.del(cache_key).await?;
+
+        //  Convert Controller (from the database), into Graphql object
+        Ok(ControllerObject::from(&new_post))
     }
 }
 

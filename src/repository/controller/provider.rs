@@ -1,4 +1,4 @@
-use super::models::{Controller, ControllerForm};
+use super::models::{Controller, ControllerForm, ControllerUpdateForm};
 use crate::repository::schema::controllers;
 use diesel::prelude::*;
 use uuid::Uuid;
@@ -6,12 +6,12 @@ use uuid::Uuid;
 pub fn get_all(conn: &PgConnection) -> QueryResult<Vec<Controller>> {
     controllers::table.load(conn)
 }
-pub fn get_post_by_id(id: Uuid, conn: &PgConnection) -> QueryResult<Controller> {
+pub fn get_controller_by_id(id: Uuid, conn: &PgConnection) -> QueryResult<Controller> {
     controllers::table
         .filter(controllers::id.eq(id))
         .first::<Controller>(conn)
 }
-pub fn get_by_posts_by_author(
+pub fn get_by_controllers_by_author(
     author_id: Uuid,
     conn: &PgConnection,
 ) -> QueryResult<Vec<Controller>> {
@@ -20,7 +20,7 @@ pub fn get_by_posts_by_author(
         .load(conn)
 }
 // pub fn get_for_user(conn: &PgConnection, created_by_id: Uuid) -> QueryResult<>
-pub fn create_post(form: ControllerForm, conn: &PgConnection) -> QueryResult<Controller> {
+pub fn create_controller(form: ControllerForm, conn: &PgConnection) -> QueryResult<Controller> {
     diesel::insert_into(controllers::table)
         .values(form)
         .get_result::<Controller>(conn)?;
@@ -30,19 +30,23 @@ pub fn create_post(form: ControllerForm, conn: &PgConnection) -> QueryResult<Con
         .first(conn)
         .map_err(Into::into)
 }
-pub fn delete_post(post_author: Uuid, post_id: Uuid, conn: &PgConnection) -> QueryResult<bool> {
+pub fn delete_controller(
+    post_author: Uuid,
+    controller_id: Uuid,
+    conn: &PgConnection,
+) -> QueryResult<bool> {
     diesel::delete(
         controllers::table
             .filter(controllers::created_by_id.eq(post_author))
-            .find(post_id),
+            .find(controller_id),
     )
     .execute(conn)?;
 
     Ok(true)
 }
 
-pub fn update_post(
-    post_id: Uuid,
+pub fn update_controller(
+    controller_id: Uuid,
     created_by_id: Uuid,
     form: ControllerForm,
     conn: &PgConnection,
@@ -50,8 +54,18 @@ pub fn update_post(
     diesel::update(
         controllers::table
             .filter(controllers::created_by_id.eq(created_by_id))
-            .find(post_id),
+            .find(controller_id),
     )
     .set(form)
     .get_result::<Controller>(conn)
+}
+
+pub fn update_controller2(
+    controller_id: Uuid,
+    form: ControllerUpdateForm,
+    conn: &PgConnection,
+) -> QueryResult<Controller> {
+    diesel::update(controllers::table.find(controller_id))
+        .set(form)
+        .get_result::<Controller>(conn)
 }
