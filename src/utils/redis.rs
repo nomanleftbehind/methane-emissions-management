@@ -14,8 +14,8 @@ pub enum RedisDatabase {
 }
 /// Connect to Redis
 pub async fn create_client(cache: RedisDatabase) -> Result<Client, RedisError> {
-    let a = env::var("REDIS_URL").expect("Nope didn't get redis url");
-    println!("REDIS_URL: {}", a);
+    // let a = env::var("REDIS_URL").expect("Nope didn't get redis url");
+    // println!("REDIS_URL: {}", a);
     let redis_url = match cache {
         RedisDatabase::Example => env::var("REDIS_URL").expect("Cannot Read Redis URI"),
         _ => env::var("REDIS_URL_TEST").expect("Cannot Redis TEST URL"),

@@ -102,12 +102,16 @@ impl ControllerQuery {
         controller_id: ID,
     ) -> Option<ControllerObject> {
         let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
+        println!("cache_key: {:?}", cache_key);
         let redis_client = get_redis_conn_from_ctx(ctx).await;
 
+        println!("redis_client: {:?}", redis_client);
+        
         let mut redis_connection = create_connection(redis_client)
-            .await
-            .expect("Unable to create Redis DB Connection");
+        .await
+        .expect("Unable to create Redis DB Connection");
         let cached_object = redis_connection.get(cache_key.clone()).await.expect("");
+        println!("cached_object: {:?}", cached_object);
 
         //  Check If Cache Object is available
         match cached_object {
@@ -285,7 +289,7 @@ impl Subscription {
         ctx: &'ctx Context<'_>,
     ) -> impl Stream<Item = ControllerObject> + 'ctx {
         let kafka_consumer = ctx
-            .data::<Mutex<Uuid>>()
+            .data::<Mutex<i32>>()
             .expect("Cannot get the Kafka Consumer counter");
         let consumer_id = get_kafka_consumer_id(kafka_consumer);
         let consumer = create_consumer(consumer_id);

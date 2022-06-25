@@ -38,9 +38,9 @@ pub(crate) fn create_consumer(group_id: String) -> StreamConsumer {
         .expect("Cannot Subscribe to specific topics");
     consumer
 }
-pub(crate) fn get_kafka_consumer_id(consumer_count: &Mutex<Uuid>) -> String {
+pub(crate) fn get_kafka_consumer_id(consumer_count: &Mutex<i32>) -> String {
     let mut counter = consumer_count.lock().expect("Cannot lock counter");
-    // *counter +=1;
+    *counter +=1;
     format!("Kafka Consumers: {}", *counter)
 }
 

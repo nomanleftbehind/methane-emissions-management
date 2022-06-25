@@ -66,14 +66,15 @@ pub async fn create_schema(
     //  Kafka Queue
     let kafka_consumer = Mutex::new(0);
     // Caching Service
-    let arc_redis_connection = Arc::new(redis_connection);
+    // Leaving this here as this was used originally
+    // let arc_redis_connection = Arc::new(redis_connection);
 
     let user_data_loader =
         DataLoader::new(UserLoader { pool: pool.clone() }, async_std::task::spawn);
 
     Schema::build(Query::default(), Mutation::default(), Subscription)
         .enable_federation()
-        .data(arc_redis_connection)
+        .data(redis_connection)
         // Add a global data that can be accessed in the Schema
         //  Redis Caching Client
         .data(redis_pool)
