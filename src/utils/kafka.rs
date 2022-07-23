@@ -7,7 +7,7 @@ use rdkafka::{
     ClientConfig,
 };
 use std::{env::var, sync::Mutex, time::Duration};
-use uuid::Uuid;
+// use uuid::Uuid;
 
 lazy_static! {
     static ref KAFKA_BROKER: String =

@@ -63,23 +63,23 @@ impl ControllerQuery {
     ) -> Option<ControllerObject> {
         let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
         let mut redis_connection_manager = get_redis_conn_manager(ctx).await;
-        let cached_post: Value = redis_connection_manager
+        let cached_controller: Value = redis_connection_manager
             .get(cache_key.clone())
             .await
             .expect("");
         //  Check if the data in cache exists, if none, retrieve the data from the database
         //  Chain multiple commands and query it to the connection manager
-        match cached_post {
+        match cached_controller {
             Value::Nil => {
-                let post = get_controller_detail(ctx, controller_id);
+                let controller = get_controller_detail(ctx, controller_id);
                 let _: () = redis::pipe()
                     .atomic()
-                    .set(&cache_key, post.clone())
+                    .set(&cache_key, controller.clone())
                     .expire(&cache_key, 60)
                     .query_async(&mut redis_connection_manager)
                     .await
                     .expect("Internal Error Occurred while attempting to cache the object");
-                return post;
+                return controller;
             }
             Value::Data(cache) => serde_json::from_slice(&cache).expect(""),
             _ => None,
@@ -106,27 +106,27 @@ impl ControllerQuery {
         let redis_client = get_redis_conn_from_ctx(ctx).await;
 
         println!("redis_client: {:?}", redis_client);
-        
+
         let mut redis_connection = create_connection(redis_client)
-        .await
-        .expect("Unable to create Redis DB Connection");
+            .await
+            .expect("Unable to create Redis DB Connection");
         let cached_object = redis_connection.get(cache_key.clone()).await.expect("");
         println!("cached_object: {:?}", cached_object);
 
         //  Check If Cache Object is available
         match cached_object {
             Value::Nil => {
-                let post = get_controller_detail(ctx, controller_id);
+                let controller = get_controller_detail(ctx, controller_id);
 
                 let _: () = redis::pipe()
                     .atomic()
-                    .set(&cache_key, post.clone())
+                    .set(&cache_key, controller.clone())
                     .expire(&cache_key, 60)
                     .query_async(&mut redis_connection)
                     .await
                     .expect("Internal Error Occurred while attempting to cache the object");
 
-                return post;
+                return controller;
             }
             Value::Data(cache) => serde_json::from_slice(&cache).expect(""),
             _ => None,
@@ -147,10 +147,10 @@ pub fn get_controller_detail(ctx: &Context<'_>, controller_id: ID) -> Option<Con
         .ok()
         .map(|f| ControllerObject::from(&f))
 }
-/// Gets the Post under the author: UserId
+/// Gets the Controller under the author: UserId
 pub fn get_controllers_user(ctx: &Context<'_>, user_id: ID) -> Vec<ControllerObject> {
-    provider::get_by_controllers_by_author(parse_id(user_id), &get_conn_from_ctx(ctx))
-        .expect("Cannot get any User Posts")
+    provider::get_controllers_by_author(parse_id(user_id), &get_conn_from_ctx(ctx))
+        .expect("Cannot get any User Controllers")
         .iter()
         .map(|s| ControllerObject::from(s))
         .collect()
@@ -189,42 +189,19 @@ impl ControllerMutation {
         ctx: &Context<'_>,
         form: ControllerInput,
     ) -> Result<ControllerObject, Error> {
-        let post =
+        let controller =
             provider::create_controller(ControllerForm::from(&form), &get_conn_from_ctx(ctx))?;
-        let serialized_controller = serde_json::to_string(&ControllerObject::from(&post))
+        let serialized_controller = serde_json::to_string(&ControllerObject::from(&controller))
             .map_err(|_| ServiceError::InternalError)?;
 
-        //  In the mutation, post creation a messgage is sent to the kafka.
+        //  In the mutation, controller creation a messgage is sent to the kafka.
         let producer = ctx
             .data::<FutureProducer>()
             .expect("Cannot get Kafka Producer");
         kafka::send_message(producer, serialized_controller).await;
-        Ok(ControllerObject::from(&post))
+        Ok(ControllerObject::from(&controller))
     }
-    #[graphql(name = "updateController")]
-    async fn update_controller(
-        &self,
-        ctx: &Context<'_>,
-        form: ControllerInput,
-        controller_id: ID,
-        user_id: ID,
-    ) -> Result<ControllerObject, Error> {
-        //  Convert the grahql input into readable database input
-        let new_post = provider::update_controller(
-            parse_id(controller_id.clone()),
-            parse_id(user_id),
-            ControllerForm::from(&form),
-            &get_conn_from_ctx(ctx),
-        )
-        .expect("");
-        //  Delete the cache under this value
-        let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
-        let redis_connection_manager = get_redis_conn_manager(ctx);
-        redis_connection_manager.await.del(cache_key).await?;
 
-        //  Convert Controller (from the database), into Graphql object
-        Ok(ControllerObject::from(&new_post))
-    }
     #[graphql(name = "deleteController")]
     async fn delete_controller(
         &self,
@@ -240,42 +217,39 @@ impl ControllerMutation {
         )
         .expect("Couldn't delete Controller");
 
-        //  Deletes the cache under this postid
+        //  Deletes the cache under this controllerid
         let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
         get_redis_conn_manager(ctx).await.del(cache_key).await?;
 
         Ok(true)
     }
 
-    #[graphql(name = "updateController2")]
-    async fn update_controller2(
+    #[graphql(name = "updateController")]
+    async fn update_controller(
         &self,
         ctx: &Context<'_>,
         form: ControllerUpdateInput,
         controller_id: ID,
     ) -> Result<ControllerObject, Error> {
-        println!("controller_id: {:?}, form: {:?}", controller_id, form.manufacturer);
         //  Convert the grahql input into readable database input
-        let new_post = provider::update_controller2(
+        let new_controller = provider::update_controller(
             parse_id(controller_id.clone()),
             ControllerUpdateForm::from(&form),
             &get_conn_from_ctx(ctx),
         )
         .expect("");
 
-        println!("new_post: {:?}", &new_post);
         //  Delete the cache under this value
         let cache_key = get_controller_cache_key(controller_id.to_string().as_str());
-        println!("cache_key: {:?}", &cache_key);
         let redis_connection_manager = get_redis_conn_manager(ctx);
         redis_connection_manager.await.del(cache_key).await?;
 
         //  Convert Controller (from the database), into Graphql object
-        Ok(ControllerObject::from(&new_post))
+        Ok(ControllerObject::from(&new_controller))
     }
 }
 
-//  Get the latest Posts
+//  Get the latest Controllers
 //  Subscriptions
 use crate::utils::kafka::{create_consumer, get_kafka_consumer_id};
 use futures::{Stream, StreamExt};
@@ -284,7 +258,7 @@ pub struct Subscription;
 //  The API client can be notified of the event by a subscription that listens to Kafka consumer
 #[Subscription]
 impl Subscription {
-    async fn latest_post<'ctx>(
+    async fn latest_controller<'ctx>(
         &self,
         ctx: &'ctx Context<'_>,
     ) -> impl Stream<Item = ControllerObject> + 'ctx {

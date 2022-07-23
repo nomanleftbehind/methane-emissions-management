@@ -1,4 +1,4 @@
-use users::server::new_server;
+use emissions::server::new_server;
 use failure::Error;
 use dotenv::dotenv;
 

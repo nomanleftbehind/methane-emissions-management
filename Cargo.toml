@@ -1,7 +1,7 @@
 [package]
 authors = ["Doma Sucic <domagoj.sucic1@gmail.com"]
 edition = "2021"
-name = "users"
+name = "emissions"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -15,7 +15,6 @@ argonautica = "0.2.0"
 async-graphql = {version = "4.0.1", features = ["dataloader", "apollo_tracing"]}
 async-graphql-actix-web = "4.0.1"
 chrono = {version = "0.4", features = ["serde"]}
-# common-utils = {path = "../common-utils"}
 derive_more = "0.99.17"
 diesel = {version = "1.4.8", features = ["postgres", "uuidv07", "r2d2", "chrono", "numeric"]}
 diesel_migrations = "1.4.0"
