@@ -1,7 +1,11 @@
 use super::schema::{AppSchema, Mutation, Query};
 use crate::repository::controller::resolver::Subscription;
 use crate::repository::db::{DbPool, DbPooledConnection};
-use crate::{loader::UserLoader, utils::kafka::create_producer, utils::token::get_role};
+use crate::{
+    loader::{ControllerLoader, UserLoader},
+    utils::kafka::create_producer,
+    utils::token::get_role,
+};
 use actix_web::{get, guard, route, web, Error, HttpRequest, HttpResponse, Responder};
 use actix_web_lab::respond::Html;
 use async_graphql::{
@@ -71,6 +75,10 @@ pub async fn create_schema(
 
     let user_data_loader =
         DataLoader::new(UserLoader { pool: pool.clone() }, async_std::task::spawn);
+    let controller_data_loader = DataLoader::new(
+        ControllerLoader { pool: pool.clone() },
+        async_std::task::spawn,
+    );
 
     Schema::build(Query::default(), Mutation::default(), Subscription)
         .enable_federation()
@@ -83,6 +91,7 @@ pub async fn create_schema(
         // Error { message: "Data `r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::pg::connection::PgConnection>>` does not exist.", extensions: None }'
         .data(pool)
         .data(user_data_loader)
+        .data(controller_data_loader)
         //  Kafka Queue
         .data(create_producer())
         .data(kafka_consumer)

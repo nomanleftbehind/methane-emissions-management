@@ -19,6 +19,17 @@ pub fn get_controllers_by_author(
         .filter(controllers::created_by_id.eq(author_id))
         .load(conn)
 }
+
+pub fn find_many_controllers_by_author_ids(
+    author_ids: &[Uuid],
+    conn: &PgConnection,
+) -> QueryResult<Vec<Controller>> {
+    let result = controllers::table
+        .filter(controllers::created_by_id.eq_any(author_ids))
+        .load(conn)?;
+    Ok(result)
+}
+
 // pub fn get_for_user(conn: &PgConnection, created_by_id: Uuid) -> QueryResult<>
 pub fn create_controller(form: ControllerForm, conn: &PgConnection) -> QueryResult<Controller> {
     diesel::insert_into(controllers::table)

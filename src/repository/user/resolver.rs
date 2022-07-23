@@ -1,9 +1,11 @@
 use super::{model::NewUser, provider};
 use crate::graphql::context::{get_conn_from_ctx, get_redis_conn_from_ctx};
+use crate::loader::ControllerLoader;
+use crate::repository::controller::resolver::ControllerObject;
 use crate::utils::redis::{create_connection, get_controller_cache_key};
 use crate::utils::token::Role as AuthRole;
 use crate::utils::user_utils::{hash_password, is_admin, verify_password, Role, RoleGuard};
-use async_graphql::{Error, *};
+use async_graphql::{dataloader::DataLoader, Error, *};
 use chrono::NaiveDateTime;
 use redis::{AsyncCommands, Value};
 use serde::{Deserialize, Serialize};
@@ -37,6 +39,24 @@ pub struct User {
 impl User {
     async fn full_name(&self) -> String {
         format!("{} {}", self.first_name, self.last_name)
+    }
+
+    async fn created_controllers(&self, ctx: &Context<'_>) -> Result<Vec<ControllerObject>> {
+        let loader = ctx.data_unchecked::<DataLoader<ControllerLoader>>();
+
+        let user_id = self
+            .id
+            .to_string()
+            .parse::<Uuid>()
+            .expect("Can't convert id");
+        let controllers_option = loader.load_one(user_id).await?;
+
+        let result = match controllers_option {
+            None => Vec::new(),
+            Some(controllers) => controllers,
+        };
+
+        Ok(result)
     }
 }
 
