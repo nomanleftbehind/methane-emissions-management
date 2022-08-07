@@ -86,8 +86,8 @@ impl ControllerQuery {
         }
     }
 
-    #[graphql(name = "getAllControllers")]
-    async fn get_controller(&self, ctx: &Context<'_>) -> Vec<ControllerObject> {
+    // #[graphql(name = "getAllControllers")]
+    async fn all_controllers(&self, ctx: &Context<'_>) -> Vec<ControllerObject> {
         let conn = get_conn_from_ctx(ctx);
         provider::get_all(&conn)
             .expect("Cannot get Blog ControllerObject ")

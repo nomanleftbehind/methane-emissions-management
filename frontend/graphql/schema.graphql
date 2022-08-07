@@ -1,0 +1,119 @@
+input ControllerInput {
+  createdById: ID!
+  updatedById: ID!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  manufacturer: String
+  model: String
+  serialNumber: String
+  function: String
+}
+
+type ControllerObject {
+  id: ID!
+  createdById: ID!
+  updatedById: ID!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  manufacturer: String
+  model: String
+  serialNumber: String
+  function: String
+  createdBy: User
+  createdBy2: User!
+}
+
+input ControllerUpdateInput {
+  manufacturer: String
+  model: String
+  serialNumber: String
+  function: String
+}
+
+type Mutation {
+  # This will register the users in our database
+  registerUser(register: registerInput!): User!
+
+  # The user should be able to
+  signInUser(input: signInInput!): String!
+
+  # Create A New Controller
+  # The server responds by caching the new Controller with Default
+  createController(form: ControllerInput!): ControllerObject!
+  deleteController(controllerAuthor: ID!, controllerId: ID!): Boolean!
+  updateController(
+    form: ControllerUpdateInput!
+    controllerId: ID!
+  ): ControllerObject!
+}
+
+# ISO 8601 combined date and time without timezone.
+#
+# # Examples
+#
+# * `2015-07-01T08:59:60.123`,
+scalar NaiveDateTime
+
+type Query {
+  allUsers(token: String!): [User!]!
+  getAllbyEmail(userEmail: String!): User
+
+  # This is the test of a description
+  getAllbyId(id: ID!): User
+  getControllerDetails(controllerId: ID!): ControllerObject
+  allControllers: [ControllerObject!]!
+  getControllerById(controllerId: ID!): ControllerObject
+  getControllersbyAuthor(userId: ID!): [ControllerObject!]!
+  _service: _Service!
+  _entities(representations: [_Any!]!): [_Entity]!
+}
+
+enum Role {
+  ADMIN
+  USER
+  ENGINEER
+}
+
+type Subscription {
+  latestController: ControllerObject!
+}
+
+type User {
+  id: ID!
+  createdAt: NaiveDateTime!
+  firstName: String!
+  lastName: String!
+  username: String!
+  location: String
+  email: String!
+  hash: String!
+  role: String!
+  fullName: String!
+  createdControllers: [ControllerObject!]!
+}
+
+# The `_Any` scalar is used to pass representations of entities from external
+# services into the root `_entities` field for execution.
+scalar _Any
+
+union _Entity = User
+
+type _Service {
+  sdl: String
+}
+
+# User Mutation Classes types
+input registerInput {
+  firstName: String!
+  lastName: String!
+  username: String!
+  location: String
+  email: String!
+  password: String!
+  role: Role!
+}
+
+input signInInput {
+  username: String!
+  password: String!
+}
