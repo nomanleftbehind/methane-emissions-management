@@ -47,18 +47,18 @@ impl Controllers {
     fn view_data(&self) -> Html {
         match self.list {
             Some(ref list) => {
-                let projects = list.iter().map(|project| {
+                let controllers = list.iter().map(|controller| {
                     html! {
                         <div>
                             <li>
-                                <strong>{ &project["manufacturer"].as_str().unwrap() }</strong>
+                                <strong>{ &controller["manufacturer"].as_str().unwrap() }</strong>
                             </li>
                             <ul>
-                                <li>{ &project["createdById"].as_str().unwrap() }</li>
-                                <li>{ &project["id"].as_str().unwrap() }</li>
+                                <li>{ &controller["createdById"].as_str().unwrap() }</li>
+                                <li>{ &controller["id"].as_str().unwrap() }</li>
                                 <li>
-                                    <a href={ project["model"].as_str().unwrap().to_owned() }>
-                                        { &project["model"].as_str().unwrap() }
+                                    <a href={ controller["model"].as_str().unwrap().to_owned() }>
+                                        { &controller["model"].as_str().unwrap() }
                                     </a>
                                 </li>
                             </ul>
@@ -68,7 +68,7 @@ impl Controllers {
 
                 html! {
                     <ul>
-                        { for projects }
+                        { for controllers }
                     </ul>
                 }
             }
@@ -159,7 +159,7 @@ impl Component for Controllers {
                 }
                 self.fetch_task = None;
 
-                // redraw so that the page displays projects data
+                // redraw so that the page displays controllers data
                 true
             }
         }

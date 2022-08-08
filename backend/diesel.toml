@@ -2,5 +2,5 @@
 # see diesel.rs/guides/configuring-diesel-cli
 
 [print_schema]
-# Run `diesel migration run` from `src/repository`
+# Run `diesel migration run` from `backend/src/repository`
 file = "schema.rs"

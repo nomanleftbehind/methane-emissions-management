@@ -64,7 +64,7 @@ impl Component for App {
             <>
                 <div class="logo-title">
                     <img src="imgs/budshome.png" />
-                    <strong>{ "frontend" }</strong>
+                    <strong>{ "Emissions App" }</strong>
                 </div>
                 <div class=home_cls>
                     <Anchor route=Route::Users>
