@@ -1,13 +1,28 @@
 use std::fmt::Debug;
 use wasm_bindgen_futures::spawn_local;
 
-use yew::services::fetch::{FetchService, FetchTask, Request, Response};
-use yew::{format::Json, prelude::*};
+// use reqwasm::http::Re;
+
+// use yew::services::fetch::{FetchService, FetchTask, Request, Response};
+use http::{Request, Response};
+use yew::prelude::*;
 
 use graphql_client::GraphQLQuery;
 use serde_json::{from_str, Value};
 
 use crate::util::common::gql_uri;
+
+pub type Text = Result<String, ::anyhow::Error>;
+pub struct Json<T>(pub T);
+
+impl<'a, T> From<Json<&'a T>> for Text
+    where
+        T: ::serde::Serialize,
+    {
+        fn from(value: Json<&'a T>) -> Text {
+            serde_json::to_string(&value.0).map_err(::anyhow::Error::from)
+        }
+    }
 
 ////////////////////////////////////////////////////
 // Fetch controllers data use `yew::services::fetch` //
@@ -95,7 +110,7 @@ impl Component for Controllers {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(ctx: &Context<Self>) -> Self {
         Self {
             fetch_task: None,
             list: None,
@@ -104,7 +119,7 @@ impl Component for Controllers {
         }
     }
 
-    fn rendered(&mut self, first_render: bool) {
+    fn rendered(&mut self, _ctx: &Context<Self>, first_render: bool) {
         let link = self.link.clone();
         if first_render {
             spawn_local(async move {
@@ -113,7 +128,7 @@ impl Component for Controllers {
         }
     }
 
-    fn update(&mut self, msg: Self::Message) -> bool {
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::PassRequest => {
                 // build graphql query body
@@ -142,7 +157,7 @@ impl Component for Controllers {
                         });
 
                 // pass the request and callback to the fetch service
-                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                let task = web_sys::fetch(request, callback).expect("failed to start request");
 
                 // store the task so it isn't canceled immediately
                 self.fetch_task = Some(task);

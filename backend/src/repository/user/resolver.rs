@@ -69,7 +69,7 @@ impl UserQuery {
     }
 
     // #[graphql(name = "getAllUsers")]
-    pub async fn all_users(&self, ctx: &Context<'_>, token: String) -> Result<Vec<User>, Error> {
+    pub async fn all_users(&self, ctx: &Context<'_>, _token: String) -> Result<Vec<User>, Error> {
         let conn = &get_conn_from_ctx(ctx);
         let users = provider::get_all_users(conn)
             .expect("Cannot get Users")

@@ -3,14 +3,10 @@ use serde_json::Value;
 use std::fmt::Debug;
 use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::{spawn_local, JsFuture};
-use yew::web_sys::{Request, RequestInit, RequestMode, Response};
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
+use web_sys::{window, Request, RequestInit, RequestMode, Response};
+use yew::{html, Component, Context, Html};
 
 use crate::util::common::gql_uri;
-
-/////////////////////////////////////////
-// Fetch users data use `yew::web_sys` //
-/////////////////////////////////////////
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct FetchError {
@@ -41,11 +37,11 @@ async fn fetch_users() -> Result<Vec<Value>, FetchError> {
     let mut req_opts = RequestInit::new();
     req_opts.method("POST");
     req_opts.body(Some(&JsValue::from_str(&query.to_string())));
-    req_opts.mode(RequestMode::Cors); // 可以不写，默认为 Cors
+    req_opts.mode(RequestMode::Cors); // Can not be written, the default is Cors
 
     let request = Request::new_with_str_and_init(&gql_uri(), &req_opts)?;
 
-    let window = yew::utils::window();
+    let window = window().unwrap();
     let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
     let resp: Response = resp_value.dyn_into().unwrap();
     let resp_text = JsFuture::from(resp.text()?).await?;
@@ -62,7 +58,6 @@ async fn fetch_users() -> Result<Vec<Value>, FetchError> {
 
 pub struct Users {
     list: Vec<Value>,
-    link: ComponentLink<Self>,
 }
 
 pub enum Msg {
@@ -73,15 +68,12 @@ impl Component for Users {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self {
-            list: Vec::new(),
-            link,
-        }
+    fn create(_ctx: &Context<Self>) -> Self {
+        Self { list: Vec::new() }
     }
 
-    fn rendered(&mut self, first_render: bool) {
-        let link = self.link.clone();
+    fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
+        let link = ctx.link().clone();
         if first_render {
             spawn_local(async move {
                 let res = fetch_users().await;
@@ -90,7 +82,7 @@ impl Component for Users {
         }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::UpdateList(res) => {
                 self.list = res;
@@ -99,11 +91,11 @@ impl Component for Users {
         }
     }
 
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _ctx: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _ctx: &Context<Self>) -> Html {
         let users = self.list.iter().map(|user| {
             html! {
                 <div>
