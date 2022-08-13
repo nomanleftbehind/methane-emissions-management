@@ -22,6 +22,7 @@ lazy_static = "1.4.0"
 toml = "0.5.8"
 
 gloo = "0.8.0"
+gloo-utils = "0.1"
 http = "0.2.8"
 reqwasm = "0.5"
 web-sys = "0.3"

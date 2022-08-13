@@ -56,7 +56,7 @@ scalar NaiveDateTime
 
 type Query {
   allUsers(token: String!): [User!]!
-  getAllbyEmail(userEmail: String!): User
+  getUserByEmail(userEmail: String!): User
 
   # This is the test of a description
   getAllbyId(id: ID!): User

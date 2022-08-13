@@ -1279,6 +1279,7 @@ dependencies = [
  "console_error_panic_hook",
  "getrandom",
  "gloo 0.8.0",
+ "gloo-utils",
  "graphql_client",
  "http",
  "instant",

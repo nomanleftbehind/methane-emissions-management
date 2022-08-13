@@ -3,23 +3,24 @@ use yew_router::prelude::*;
 
 use crate::components::nav::Nav;
 use crate::pages::{
-    author_list::AuthorList, home::Home, page_not_found::PageNotFound, post_list::PostList,
-    users::Users,
+    author_list::AuthorList, controller::Controller, controllers::Controllers, home::Home,
+    page_not_found::PageNotFound, post_list::PostList, users::Users,
 };
-// use crate::pages::home::Home;
-// use crate::pages::page_not_found::PageNotFound;
-// use crate::pages::post_list::PostList;
 
 #[derive(Routable, PartialEq, Clone, Debug)]
 pub enum Route {
+    #[at("/")]
+    Home,
     #[at("/posts")]
     Posts,
     #[at("/authors")]
     Authors,
-    #[at("/")]
-    Home,
     #[at("/users")]
     Users,
+    #[at("/controller/:id/:email")]
+    Controller { id: String, email: String },
+    #[at("/users/:id/controllers")]
+    Controllers { id: String },
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -56,8 +57,14 @@ fn switch(routes: &Route) -> Html {
         Route::Authors => {
             html! { <AuthorList /> }
         }
+        Route::Controllers { id } => {
+            html! { <Controllers user_id={id.clone()} /> }
+        }
         Route::Users => {
             html! { <Users /> }
+        }
+        Route::Controller { id, email } => {
+            html! { <Controller username={id.clone()} article_slug={email.clone()} /> }
         }
         Route::Home => {
             html! { <Home /> }

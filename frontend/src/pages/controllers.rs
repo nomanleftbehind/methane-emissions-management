@@ -1,203 +1,131 @@
-use std::fmt::Debug;
-use wasm_bindgen_futures::spawn_local;
-
-// use reqwasm::http::Re;
-
-// use yew::services::fetch::{FetchService, FetchTask, Request, Response};
-use http::{Request, Response};
+use graphql_client::GraphQLQuery;
+use serde_json::{json, Value};
 use yew::prelude::*;
 
-use graphql_client::GraphQLQuery;
-use serde_json::{from_str, Value};
-
-use crate::util::common::gql_uri;
-
-pub type Text = Result<String, ::anyhow::Error>;
-pub struct Json<T>(pub T);
-
-impl<'a, T> From<Json<&'a T>> for Text
-    where
-        T: ::serde::Serialize,
-    {
-        fn from(value: Json<&'a T>) -> Text {
-            serde_json::to_string(&value.0).map_err(::anyhow::Error::from)
-        }
-    }
-
-////////////////////////////////////////////////////
-// Fetch controllers data use `yew::services::fetch` //
-////////////////////////////////////////////////////
+use crate::util::{
+    common::{fetch_gql_data, FetchState},
+    constant::CFG,
+};
 
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "./graphql/schema.graphql",
-    query_path = "./graphql/all_controllers.graphql",
-    response_derives = "Debug"
+    query_path = "./graphql/controllers_by_creator.graphql"
 )]
-struct AllControllers;
+struct ControllersByCreatorData;
 
-#[derive(Debug)]
+async fn query_str(user_id: String) -> String {
+    let build_query =
+        ControllersByCreatorData::build_query(controllers_by_creator_data::Variables { user_id });
+    let query = json!(build_query);
+
+    query.to_string()
+}
+
 pub enum Msg {
-    PassRequest,
-    ReceiveResponse(Result<Vec<Value>, anyhow::Error>),
+    SetState(FetchState<Value>),
+    GetData,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct Props {
+    pub user_id: String,
+}
+
 pub struct Controllers {
-    fetch_task: Option<FetchTask>,
-    list: Option<Vec<Value>>,
-    link: ComponentLink<Self>,
-    error: Option<String>,
-}
-
-impl Controllers {
-    fn view_fetching(&self) -> Html {
-        if self.fetch_task.is_some() {
-            html! { <p>{ "Fetching data..." }</p> }
-        } else {
-            html! { <p></p> }
-        }
-    }
-
-    fn view_data(&self) -> Html {
-        match self.list {
-            Some(ref list) => {
-                let controllers = list.iter().map(|controller| {
-                    html! {
-                        <div>
-                            <li>
-                                <strong>{ &controller["manufacturer"].as_str().unwrap() }</strong>
-                            </li>
-                            <ul>
-                                <li>{ &controller["createdById"].as_str().unwrap() }</li>
-                                <li>{ &controller["id"].as_str().unwrap() }</li>
-                                <li>
-                                    <a href={ controller["model"].as_str().unwrap().to_owned() }>
-                                        { &controller["model"].as_str().unwrap() }
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    }
-                });
-
-                html! {
-                    <ul>
-                        { for controllers }
-                    </ul>
-                }
-            }
-            None => {
-                html! {
-                     <p>
-                        { "No data." }
-                     </p>
-                }
-            }
-        }
-    }
-
-    fn view_error(&self) -> Html {
-        if let Some(ref error) = self.error {
-            html! { <p>{ error.clone() }</p> }
-        } else {
-            html! {}
-        }
-    }
+    data: FetchState<Value>,
 }
 
 impl Component for Controllers {
     type Message = Msg;
-    type Properties = ();
+    type Properties = Props;
 
-    fn create(ctx: &Context<Self>) -> Self {
+    fn create(_ctx: &Context<Self>) -> Self {
         Self {
-            fetch_task: None,
-            list: None,
-            link,
-            error: None,
+            data: FetchState::NotFetching,
         }
     }
 
-    fn rendered(&mut self, _ctx: &Context<Self>, first_render: bool) {
-        let link = self.link.clone();
+    fn view(&self, _ctx: &Context<Self>) -> Html {
+        match &self.data {
+            FetchState::NotFetching => html! { "NotFetching" },
+            FetchState::Fetching => html! { "Fetching" },
+            FetchState::Success(controllers_data) => view_controllers(controllers_data),
+            FetchState::Failed(err) => html! { err },
+        }
+    }
+
+    fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
         if first_render {
-            spawn_local(async move {
-                link.send_message(Msg::PassRequest);
-            });
+            ctx.link().send_message(Msg::GetData);
         }
     }
 
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::PassRequest => {
-                // build graphql query body
-                let build_query = AllControllers::build_query(all_controllers::Variables {});
-                let query = Json(&build_query);
+            Msg::SetState(fetch_state) => {
+                self.data = fetch_state;
 
-                // build the request
-                let request = Request::post(&gql_uri())
-                    .body(query)
-                    .expect("Could not build request.");
-
-                // construct a callback
-                let callback =
-                    self.link
-                        .callback(|response: Response<Result<String, anyhow::Error>>| {
-                            let resp_body = response.into_body();
-                            let resp_str = resp_body.as_ref().unwrap();
-
-                            let projects_value: Value = from_str(&resp_str).unwrap();
-                            let projects_vec = projects_value["data"]["allControllers"]
-                                .as_array()
-                                .unwrap()
-                                .to_owned();
-
-                            Msg::ReceiveResponse(Ok(projects_vec))
-                        });
-
-                // pass the request and callback to the fetch service
-                let task = web_sys::fetch(request, callback).expect("failed to start request");
-
-                // store the task so it isn't canceled immediately
-                self.fetch_task = Some(task);
-
-                // redraw so that the page displays a 'fetching...' message
                 true
             }
-            Msg::ReceiveResponse(data) => {
-                match data {
-                    Ok(projects_vec) => {
-                        self.list = Some(projects_vec);
+            Msg::GetData => {
+                let props = ctx.props().clone();
+                ctx.link().send_future(async {
+                    match fetch_gql_data(&query_str(props.user_id).await).await {
+                        Ok(data) => Msg::SetState(FetchState::Success(data)),
+                        Err(err) => Msg::SetState(FetchState::Failed(err)),
                     }
-                    Err(error) => self.error = Some(error.to_string()),
-                }
-                self.fetch_task = None;
+                });
 
-                // redraw so that the page displays controllers data
-                true
+                ctx.link().send_message(Msg::SetState(FetchState::Fetching));
+
+                false
             }
         }
     }
 
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        let link = self.link.clone();
-        spawn_local(async move {
-            link.send_message(Msg::PassRequest);
-        });
+    fn changed(&mut self, ctx: &Context<Self>) -> bool {
+        ctx.link().send_message(Msg::GetData);
 
         false
     }
+}
 
-    fn view(&self) -> Html {
+fn view_controllers(controllers_data: &Value) -> Html {
+    let document = gloo_utils::document();
+    document.set_title(&format!(
+        "{} - {}",
+        CFG.get("site.title").unwrap(),
+        "Articles"
+    ));
+
+    let controllers_vec = controllers_data["getControllersbyAuthor"]
+        .as_array()
+        .unwrap();
+    let controllers = controllers_vec.iter().map(|controller| {
         html! {
-            <>
-                <h1>{ "all controllers" }</h1>
-
-                { self.view_fetching() }
-                { self.view_data() }
-                { self.view_error() }
-            </>
+            <tr>
+                <td> { controller["manufacturer"].as_str().unwrap() } </td>
+                <td> { controller["model"].as_str().unwrap() } </td>
+                <td> { controller["serialNumber"].as_str().unwrap() } </td>
+                <td> { controller["function"].as_str().unwrap() } </td>
+            </tr>
         }
+    });
+
+    html! {
+        <table>
+            <thead>
+                <tr>
+                    <th> { "Manufacturer" } </th>
+                    <th> { "Model" } </th>
+                    <th> { "Serial Number" } </th>
+                    <th> { "Function" } </th>
+                </tr>
+            </thead>
+            <tbody>
+                { for controllers }
+            </tbody>
+        </table>
     }
 }

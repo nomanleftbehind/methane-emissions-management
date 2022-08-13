@@ -79,8 +79,8 @@ impl UserQuery {
         Ok(users)
     }
 
-    #[graphql(name = "getAllbyEmail")]
-    pub async fn get_users_by_email(
+    #[graphql(name = "getUserByEmail")]
+    pub async fn get_user_by_email(
         &self,
         ctx: &Context<'_>,
         user_email: String,

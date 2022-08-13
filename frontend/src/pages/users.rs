@@ -1,23 +1,14 @@
 use graphql_client::GraphQLQuery;
 use serde_json::Value;
 use std::fmt::Debug;
-use wasm_bindgen::{prelude::*, JsCast};
+
+use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::{spawn_local, JsFuture};
-use web_sys::{window, Request, RequestInit, RequestMode, Response};
+use web_sys::{Request, RequestInit, RequestMode, Response};
 use yew::{html, Component, Context, Html};
 
 use crate::util::common::gql_uri;
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct FetchError {
-    err: JsValue,
-}
-
-impl From<JsValue> for FetchError {
-    fn from(value: JsValue) -> Self {
-        Self { err: value }
-    }
-}
+use crate::util::common::FetchError;
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -39,9 +30,9 @@ async fn fetch_users() -> Result<Vec<Value>, FetchError> {
     req_opts.body(Some(&JsValue::from_str(&query.to_string())));
     req_opts.mode(RequestMode::Cors); // Can not be written, the default is Cors
 
-    let request = Request::new_with_str_and_init(&gql_uri(), &req_opts)?;
+    let request = Request::new_with_str_and_init(&gql_uri().await, &req_opts)?;
 
-    let window = window().unwrap();
+    let window = web_sys::window().unwrap();
     let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
     let resp: Response = resp_value.dyn_into().unwrap();
     let resp_text = JsFuture::from(resp.text()?).await?;

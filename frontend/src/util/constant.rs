@@ -11,9 +11,11 @@ lazy_static! {
 
         let mut map = HashMap::new();
 
-        map.insert("addr", config.gql.addr);
-        map.insert("port", config.gql.port.to_string());
-        map.insert("path",config.gql.path);
+        map.insert("site.title", config.site.title);
+
+        map.insert("gql.addr", config.gql.addr);
+        map.insert("gql.port", config.gql.port.to_string());
+        map.insert("gql.path",config.gql.path);
 
         map
     };
@@ -21,7 +23,13 @@ lazy_static! {
 
 #[derive(Deserialize)]
 struct Config {
+    site: Site,
     gql: Gql,
+}
+
+#[derive(Deserialize)]
+struct Site {
+    title: String,
 }
 
 #[derive(Deserialize)]
