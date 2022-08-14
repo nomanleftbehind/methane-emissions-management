@@ -4,5 +4,10 @@ query ControllersByCreatorData($userId: ID!) {
     model
     serialNumber
     function
+    createdAt
+    updatedAt
+    createdBy2 {
+      email
+    }
   }
 }

@@ -7,6 +7,8 @@ use crate::util::{
     constant::CFG,
 };
 
+type NaiveDateTime = String;
+
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "./graphql/schema.graphql",
@@ -102,25 +104,33 @@ fn view_controllers(controllers_data: &Value) -> Html {
     let controllers_vec = controllers_data["getControllersbyAuthor"]
         .as_array()
         .unwrap();
-    let controllers = controllers_vec.iter().map(|controller| {
+    let controllers = controllers_vec.iter().enumerate().map(|(i, controller)| {
         html! {
             <tr>
+                <td> { i + 1 } </td>
                 <td> { controller["manufacturer"].as_str().unwrap() } </td>
                 <td> { controller["model"].as_str().unwrap() } </td>
                 <td> { controller["serialNumber"].as_str().unwrap() } </td>
                 <td> { controller["function"].as_str().unwrap() } </td>
+                <td> { controller["createdAt"].as_str().unwrap() } </td>
+                <td> { controller["updatedAt"].as_str().unwrap() } </td>
+                <td> { controller["createdBy2"]["email"].as_str().unwrap() } </td>
             </tr>
         }
     });
 
     html! {
-        <table>
+        <table class="table-test">
             <thead>
                 <tr>
+                    <th> { "Index" } </th>
                     <th> { "Manufacturer" } </th>
                     <th> { "Model" } </th>
                     <th> { "Serial Number" } </th>
                     <th> { "Function" } </th>
+                    <th> { "Created At" } </th>
+                    <th> { "Updated At" } </th>
+                    <th> { "Created By" } </th>
                 </tr>
             </thead>
             <tbody>
