@@ -16,3 +16,4 @@ pub mod loader;
 pub mod repository;
 pub mod server;
 pub mod utils;
+pub mod auth;

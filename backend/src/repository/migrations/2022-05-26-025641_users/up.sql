@@ -23,6 +23,15 @@ CREATE TABLE IF NOT EXISTS "users" (
 
 CREATE UNIQUE INDEX "users_email_index" ON "users" ("email");
 
+CREATE TABLE IF NOT EXISTS "active_sessions" (
+  "session_user_id" uuid NOT NULL,
+  "token_hash" bytea NOT NULL,
+  "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "expires_at" TIMESTAMP,
+  PRIMARY KEY("session_user_id", "token_hash"),
+  FOREIGN KEY("session_user_id") REFERENCES "users"("id")
+);
+
 CREATE TABLE IF NOT EXISTS "controllers" (
   "id" uuid DEFAULT uuid_generate_v4 () NOT NULL PRIMARY KEY,
   "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -92,6 +101,33 @@ VALUES
     '$argon2id$v=19$m=4096,t=192,p=4$wpE8nmwz3NdSWl2R7gNCvd+6Xv26/pO20K4CBqK3hGQ$A69ioT1OB/6cEz99WVqSy38EPBpvTBCACouF3w+rKRY',
     'ENGINEER'
   );
+
+WITH "active_sessions_ins" ("token_hash", "expires_at", "email") AS (
+  VALUES
+    (
+      bytea('gdgffd'),
+      '2022-08-14 00:00:00',
+      'alex.smith@example.com'
+    ),
+    (
+      bytea('fhjr'),
+      '2022-08-15 00:00:00',
+      'jane.smith@example.com'
+    )
+)
+INSERT INTO
+  "active_sessions" (
+    "token_hash",
+    "expires_at",
+    "session_user_id"
+  )
+SELECT
+  i."token_hash",
+  CAST(i."expires_at" AS TIMESTAMP),
+  u."id"
+FROM
+  "users" u
+  JOIN "active_sessions_ins" i ON i.email = u.email;
 
 WITH "controllers_ins" (
   "manufacturer",

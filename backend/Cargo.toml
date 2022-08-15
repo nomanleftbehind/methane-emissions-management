@@ -11,9 +11,11 @@ actix = "0.13.0"
 actix-cors = "0.6"
 actix-web = "4.0.1"
 actix-web-lab = "0.16.1"
+anymap = "0.12.1"
 argonautica = "0.2.0"
 async-graphql = {version = "4.0.1", features = ["dataloader", "apollo_tracing"]}
 async-graphql-actix-web = "4.0.1"
+async-std = "1.11.0"
 chrono = {version = "0.4", features = ["serde"]}
 derive_more = "0.99.17"
 diesel = {version = "1.4.8", features = ["postgres", "uuidv07", "r2d2", "chrono", "numeric"]}
@@ -33,9 +35,14 @@ serde_json = "1.0"
 slab = "0.4.2"
 strum = "0.24.0"
 strum_macros = "0.24.0"
-uuid = {version = "0.8.2", features = ["serde", "v4"]}# We need to use version 0.8.* because that's the version async-graphql uses
 tokio = "1.18.2"
-async-std = "1.11.0"
-anymap = "0.12.1"
+uuid = {version = "0.8.2", features = ["serde", "v4"]}# We need to use version 0.8.* because that's the version async-graphql uses
 
 thiserror = "1.0.30"
+
+base64 = "0.13"
+cookie = {version = "0.16", features = ["secure"]}
+hmac = {version = "0.12", features = ["std"]}
+sha2 = "0.10"
+secrecy = { version = "0.8", features = ["serde"] }
+tracing = "0.1"

@@ -17,7 +17,7 @@ use async_graphql::{
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse, GraphQLSubscription};
 use diesel_migrations::embed_migrations;
 use redis::{aio::ConnectionManager as RedisManager, Client as RedisClient};
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 
 pub fn configure_service(cfg: &mut web::ServiceConfig) {
     cfg.service(graphql).service(graphql_playground).service(
@@ -60,6 +60,9 @@ pub async fn index_ws(
 
 embed_migrations!("./src/repository/migrations");
 
+#[derive(Clone)]
+pub struct SessionCookieName(pub String);
+
 pub async fn create_schema(
     pool: DbPool,
     redis_pool: RedisClient,
@@ -89,6 +92,7 @@ pub async fn create_schema(
         //  SQL Database Pool
         // changed from arc_pool to pool because was getting
         // Error { message: "Data `r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::pg::connection::PgConnection>>` does not exist.", extensions: None }'
+        .data(SessionCookieName(String::from("emissions_session")))
         .data(pool)
         .data(user_data_loader)
         .data(controller_data_loader)
