@@ -1,6 +1,6 @@
+use super::Controller;
 use crate::graphql::{
     context::ContextExt,
-    controller::Controller,
     dataloaders::{CreatedControllersLoader, UpdatedControllersLoader},
 };
 use async_graphql::dataloader::DataLoader;

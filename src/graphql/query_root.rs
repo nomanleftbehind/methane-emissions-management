@@ -1,10 +1,10 @@
 use super::{
+    domain::{User, UserBy},
     sql::query_user,
-    user::{User, UserBy},
 };
 use crate::graphql::{
     context::ContextExt,
-    controller::Controller,
+    domain::Controller,
     sql::{query_all_users, query_user_by_id, query_user_posts},
 };
 use async_graphql::*;

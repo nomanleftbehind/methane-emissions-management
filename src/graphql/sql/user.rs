@@ -1,5 +1,4 @@
-use crate::graphql::controller::Controller;
-use crate::graphql::user::{User, UserBy};
+use crate::graphql::domain::{Controller, User, UserBy};
 use sqlx::PgExecutor;
 use uuid::Uuid;
 

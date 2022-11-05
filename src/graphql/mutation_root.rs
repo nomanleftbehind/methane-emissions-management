@@ -1,7 +1,7 @@
 use crate::authentication::{register, validate_credentials, Credentials, AUTH_COOKIE_NAME};
 use crate::graphql::{
     context::ContextExt,
-    user::{LoginUserInput, RegisterUserInput, User},
+    domain::{LoginUserInput, RegisterUserInput, User},
 };
 use ::http::header::SET_COOKIE;
 use async_graphql::*;

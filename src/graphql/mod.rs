@@ -5,9 +5,8 @@ pub mod query_root;
 
 pub mod context;
 pub mod dataloaders;
-pub mod controller;
 pub mod sql;
-pub mod user;
+pub mod domain;
 
 pub use mutation_root::MutationRoot;
 pub use query_root::QueryRoot;
