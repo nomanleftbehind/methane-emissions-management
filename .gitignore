@@ -1,3 +1,9 @@
 /target
 .env
 dist
+
+/configuration/base.yaml
+/prisma
+/node_modules
+package.json
+package-lock.json

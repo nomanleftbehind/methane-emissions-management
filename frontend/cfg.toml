@@ -1,7 +1,0 @@
-[gql]
-addr = "localhost"
-path = "graphql"
-port = 8081
-
-[site]
-title = "Emissions App"
