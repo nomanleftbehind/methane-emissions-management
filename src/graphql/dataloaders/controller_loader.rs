@@ -1,6 +1,6 @@
 use crate::graphql::domain::Controller;
 use actix_web::web::Data;
-use async_graphql::{dataloader::*, *};
+use async_graphql::dataloader::Loader;
 use itertools::Itertools;
 use sqlx::PgPool;
 use std::collections::HashMap;
@@ -22,24 +22,23 @@ impl Loader<Uuid> for CreatedControllersLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut posts = sqlx::query_as!(
+        let mut controllers = sqlx::query_as!(
             Controller,
             "SELECT * FROM controllers WHERE created_by_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
         .await?;
-        posts.sort_by_key(|controller| controller.created_by_id);
+        controllers.sort_by_key(|controller| controller.created_by_id);
 
-        let created_posts = posts
+        let created_controllers = controllers
             .into_iter()
             .group_by(|controller| controller.created_by_id)
             .into_iter()
             .map(|(created_by_id, group)| (created_by_id, group.collect()))
             .collect();
 
-        // println!("{:?}", &user_posts);
-        Ok(created_posts)
+        Ok(created_controllers)
     }
 }
 
@@ -59,22 +58,22 @@ impl Loader<Uuid> for UpdatedControllersLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut posts = sqlx::query_as!(
+        let mut controllers = sqlx::query_as!(
             Controller,
             "SELECT * FROM controllers WHERE updated_by_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
         .await?;
-        posts.sort_by_key(|controller| controller.created_by_id);
+        controllers.sort_by_key(|controller| controller.updated_by_id);
 
-        let updated_posts = posts
+        let updated_controllers = controllers
             .into_iter()
-            .group_by(|controller| controller.created_by_id)
+            .group_by(|controller| controller.updated_by_id)
             .into_iter()
             .map(|(updated_by_id, group)| (updated_by_id, group.collect()))
             .collect();
 
-        Ok(updated_posts)
+        Ok(updated_controllers)
     }
 }

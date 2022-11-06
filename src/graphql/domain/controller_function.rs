@@ -1,19 +1,13 @@
 use crate::graphql::{context::ContextExt, dataloaders::UserLoader, domain::User};
-use async_graphql::dataloader::DataLoader;
-use async_graphql::*;
+use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use sqlx::{types::time::PrimitiveDateTime, FromRow};
 use uuid::Uuid;
 
-#[derive(SimpleObject, Clone, FromRow, Debug)]
+#[derive(SimpleObject, Debug, Clone, FromRow, PartialEq)]
 #[graphql(complex)]
-pub struct Controller {
+pub struct ControllerFunction {
     pub id: Uuid,
-    pub fdc_rec_id: String,
-    pub manufacturer_id: Uuid,
-    pub model: Option<String>,
-    pub serial_number: Option<String>,
-    pub function_id: Option<Uuid>,
-    pub facility_id: Uuid,
+    pub function: String,
     pub created_by_id: Uuid,
     pub created_at: PrimitiveDateTime,
     pub updated_by_id: Uuid,
@@ -21,15 +15,15 @@ pub struct Controller {
 }
 
 #[ComplexObject]
-impl Controller {
-    async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>> {
+impl ControllerFunction {
+    async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
 
         created_by
     }
 
-    async fn updated_by(&self, ctx: &Context<'_>) -> Result<Option<User>> {
+    async fn updated_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let updated_by = loader.load_one(self.updated_by_id).await;
 

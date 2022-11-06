@@ -1,7 +1,10 @@
-use super::Controller;
+use super::{Controller, ControllerFunction};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{CreatedControllersLoader, UpdatedControllersLoader},
+    dataloaders::{
+        CreatedControllerFunctionsLoader, CreatedControllersLoader,
+        UpdatedControllerFunctionsLoader, UpdatedControllersLoader,
+    },
 };
 use async_graphql::dataloader::DataLoader;
 use async_graphql::*;
@@ -53,6 +56,28 @@ impl User {
         let controllers = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no updated controllers
         let result = controllers.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_controller_functions(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerFunction>> {
+        let loader = ctx.get_loader::<DataLoader<CreatedControllerFunctionsLoader>>();
+        let controller_functions = loader.load_one(self.id).await?;
+        let result = controller_functions.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_controller_functions(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerFunction>> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedControllerFunctionsLoader>>();
+        let controller_functions = loader.load_one(self.id).await?;
+        let result = controller_functions.unwrap_or(vec![]);
 
         Ok(result)
     }

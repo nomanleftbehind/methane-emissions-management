@@ -1,4 +1,7 @@
-use crate::graphql::dataloaders::{CreatedControllersLoader, UpdatedControllersLoader, UserLoader};
+use super::{
+    CreatedControllerFunctionsLoader, CreatedControllersLoader, UpdatedControllerFunctionsLoader,
+    UpdatedControllersLoader, UserLoader,
+};
 use actix_web::web::Data;
 use anymap::{any::Any, Map};
 use async_graphql::dataloader::DataLoader;
@@ -23,16 +26,29 @@ impl LoaderRegistry {
 pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let mut loaders: LoaderMap = LoaderMap::new();
 
-    let user_by_post_id_loader = DataLoader::new(UserLoader::new(pool.clone()), tokio::spawn);
+    let user_by_id_loader = DataLoader::new(UserLoader::new(pool.clone()), tokio::spawn);
 
-    let posts_by_creator_id_loader =
+    let controllers_by_creator_id_loader =
         DataLoader::new(CreatedControllersLoader::new(pool.clone()), tokio::spawn);
-    let posts_by_updater_id_loader =
+
+    let controllers_by_updater_id_loader =
         DataLoader::new(UpdatedControllersLoader::new(pool.clone()), tokio::spawn);
 
-    loaders.insert(user_by_post_id_loader);
-    loaders.insert(posts_by_creator_id_loader);
-    loaders.insert(posts_by_updater_id_loader);
+    let controller_functions_by_creator_id_loader = DataLoader::new(
+        CreatedControllerFunctionsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    let controller_functions_by_updater_id_loader = DataLoader::new(
+        UpdatedControllerFunctionsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    loaders.insert(user_by_id_loader);
+    loaders.insert(controllers_by_creator_id_loader);
+    loaders.insert(controllers_by_updater_id_loader);
+    loaders.insert(controller_functions_by_creator_id_loader);
+    loaders.insert(controller_functions_by_updater_id_loader);
 
     loaders
 }

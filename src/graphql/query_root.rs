@@ -1,6 +1,6 @@
 use super::{
-    domain::{User, UserBy},
-    sql::query_user,
+    domain::{ControllerFunction, User, UserBy},
+    sql::{query_all_controller_functions, query_user},
 };
 use crate::graphql::{
     context::ContextExt,
@@ -13,16 +13,18 @@ pub struct QueryRoot;
 
 #[Object]
 impl QueryRoot {
-    async fn me(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
+    async fn me(&self, ctx: &Context<'_>) -> Result<Option<User>> {
         let cookie = ctx.get_cookie();
 
         match cookie {
             Err(_) => Ok(None),
             Ok(cookie) => {
                 let user_id = ctx.get_session_manager()?.user_id(cookie).await?;
-                let user = query_user_by_id(ctx.db_pool(), user_id).await?;
+                let user = query_user_by_id(ctx.db_pool(), user_id)
+                    .await
+                    .map_err(Error::from);
 
-                Ok(user)
+                user
             }
         }
     }
@@ -58,5 +60,14 @@ impl QueryRoot {
         let users = query_all_users(pool).await.map_err(Error::from);
 
         users
+    }
+
+    async fn all_controller_functions(&self, ctx: &Context<'_>) -> Result<Vec<ControllerFunction>> {
+        let pool = ctx.db_pool();
+        let controller_functions = query_all_controller_functions(pool)
+            .await
+            .map_err(Error::from);
+
+        controller_functions
     }
 }
