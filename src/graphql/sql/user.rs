@@ -15,7 +15,7 @@ pub async fn query_user<'e, E: PgExecutor<'e>>(
                     id
                 )
                 .fetch_optional(executor)
-                .await?
+                .await
             }
             UserBy::Email(email) => sqlx::query_as!(
                 User,
@@ -23,9 +23,9 @@ pub async fn query_user<'e, E: PgExecutor<'e>>(
                 email
             )
             .fetch_optional(executor)
-            .await?,
+            .await,
         };
-    Ok(user)
+    user
 }
 
 pub async fn query_user_posts<'e, E: PgExecutor<'e>>(

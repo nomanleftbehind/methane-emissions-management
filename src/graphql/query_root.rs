@@ -1,6 +1,6 @@
 use super::{
-    domain::{ControllerFunction, User, UserBy},
-    sql::{query_all_controller_functions, query_user},
+    domain::{ControllerFunction, Facility, FacilityBy, User, UserBy},
+    sql::{query_all_controller_functions, query_facilities, query_user},
 };
 use crate::graphql::{
     context::ContextExt,
@@ -50,6 +50,22 @@ impl QueryRoot {
             .map_err(Error::from);
 
         posts
+    }
+
+    async fn facilities_by(
+        &self,
+        ctx: &Context<'_>,
+        by: FacilityBy,
+        #[graphql(default = 10)] limit: i64,
+        #[graphql(default = 0)] offset: i64,
+    ) -> Result<Vec<Facility>> {
+        let pool = ctx.db_pool();
+
+        let facilities = query_facilities(pool, by, limit, offset)
+            .await
+            .map_err(Error::from);
+
+        facilities
     }
 
     async fn all_users(&self, ctx: &Context<'_>, test_str: String) -> Result<Vec<User>> {
