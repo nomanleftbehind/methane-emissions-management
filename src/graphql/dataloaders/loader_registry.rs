@@ -1,6 +1,7 @@
 use super::{
-    CreatedControllerFunctionsLoader, CreatedControllersLoader, UpdatedControllerFunctionsLoader,
-    UpdatedControllersLoader, UserLoader,
+    CreatedControllerFunctionsLoader, CreatedControllersLoader, CreatedFacilitiesLoader,
+    FacilityControllersLoader, FacilityLoader, UpdatedControllerFunctionsLoader,
+    UpdatedControllersLoader, UpdatedFacilitiesLoader, UserLoader,
 };
 use actix_web::web::Data;
 use anymap::{any::Any, Map};
@@ -34,10 +35,19 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let controllers_by_updater_id_loader =
         DataLoader::new(UpdatedControllersLoader::new(pool.clone()), tokio::spawn);
 
+    let controllers_by_facility_id_loader =
+        DataLoader::new(FacilityControllersLoader::new(pool.clone()), tokio::spawn);
+
     let controller_functions_by_creator_id_loader = DataLoader::new(
         CreatedControllerFunctionsLoader::new(pool.clone()),
         tokio::spawn,
     );
+
+    let facility_by_id_loader = DataLoader::new(FacilityLoader::new(pool.clone()), tokio::spawn);
+    let facilities_by_creator_id_loader =
+        DataLoader::new(CreatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
+    let facilities_by_updater_id_loader =
+        DataLoader::new(UpdatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
 
     let controller_functions_by_updater_id_loader = DataLoader::new(
         UpdatedControllerFunctionsLoader::new(pool.clone()),
@@ -45,10 +55,17 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
 
     loaders.insert(user_by_id_loader);
+
     loaders.insert(controllers_by_creator_id_loader);
     loaders.insert(controllers_by_updater_id_loader);
+    loaders.insert(controllers_by_facility_id_loader);
+
     loaders.insert(controller_functions_by_creator_id_loader);
     loaders.insert(controller_functions_by_updater_id_loader);
+
+    loaders.insert(facility_by_id_loader);
+    loaders.insert(facilities_by_creator_id_loader);
+    loaders.insert(facilities_by_updater_id_loader);
 
     loaders
 }

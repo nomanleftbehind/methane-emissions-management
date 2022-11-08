@@ -1,6 +1,9 @@
-use crate::graphql::{context::ContextExt, dataloaders::UserLoader, domain::User};
-use async_graphql::dataloader::DataLoader;
-use async_graphql::*;
+use crate::graphql::{
+    context::ContextExt,
+    dataloaders::{FacilityLoader, UserLoader},
+    domain::{Facility, User},
+};
+use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use sqlx::{types::time::PrimitiveDateTime, FromRow};
 use uuid::Uuid;
 
@@ -22,17 +25,24 @@ pub struct Controller {
 
 #[ComplexObject]
 impl Controller {
-    async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>> {
+    async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
 
         created_by
     }
 
-    async fn updated_by(&self, ctx: &Context<'_>) -> Result<Option<User>> {
+    async fn updated_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let updated_by = loader.load_one(self.updated_by_id).await;
 
         updated_by
+    }
+
+    async fn facility(&self, ctx: &Context<'_>) -> Result<Option<Facility>, Error> {
+        let loader = ctx.get_loader::<DataLoader<FacilityLoader>>();
+        let facility = loader.load_one(self.facility_id).await;
+
+        facility
     }
 }

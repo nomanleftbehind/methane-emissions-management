@@ -3,11 +3,11 @@ use sqlx::PgPool;
 
 pub async fn query_facilities(
     pool: &PgPool,
-    by: FacilityBy,
+    facility_by: FacilityBy,
     limit: i64,
     offset: i64,
 ) -> Result<Vec<Facility>, sqlx::Error> {
-    let facilities = match by {
+    let facilities = match facility_by {
         FacilityBy::Name(name) => {
             sqlx::query_as!(
                 Facility,

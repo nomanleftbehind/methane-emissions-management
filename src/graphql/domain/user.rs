@@ -1,13 +1,15 @@
-use super::{Controller, ControllerFunction};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        CreatedControllerFunctionsLoader, CreatedControllersLoader,
-        UpdatedControllerFunctionsLoader, UpdatedControllersLoader,
+        CreatedControllerFunctionsLoader, CreatedControllersLoader, CreatedFacilitiesLoader,
+        UpdatedControllerFunctionsLoader, UpdatedControllersLoader, UpdatedFacilitiesLoader,
     },
+    domain::{Controller, ControllerFunction, Facility},
 };
-use async_graphql::dataloader::DataLoader;
-use async_graphql::*;
+use async_graphql::{
+    dataloader::DataLoader, ComplexObject, Context, Enum, Error, InputObject, OneofObject,
+    SimpleObject,
+};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -42,7 +44,7 @@ pub struct User {
 
 #[ComplexObject]
 impl User {
-    async fn created_controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>> {
+    async fn created_controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllersLoader>>();
         let controllers = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no written controllers
@@ -51,7 +53,7 @@ impl User {
         Ok(result)
     }
 
-    async fn updated_controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>> {
+    async fn updated_controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllersLoader>>();
         let controllers = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no updated controllers
@@ -63,7 +65,7 @@ impl User {
     async fn created_controller_functions(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerFunction>> {
+    ) -> Result<Vec<ControllerFunction>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllerFunctionsLoader>>();
         let controller_functions = loader.load_one(self.id).await?;
         let result = controller_functions.unwrap_or(vec![]);
@@ -74,10 +76,26 @@ impl User {
     async fn updated_controller_functions(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerFunction>> {
+    ) -> Result<Vec<ControllerFunction>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerFunctionsLoader>>();
         let controller_functions = loader.load_one(self.id).await?;
         let result = controller_functions.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_facilities(&self, ctx: &Context<'_>) -> Result<Vec<Facility>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedFacilitiesLoader>>();
+        let facilities = loader.load_one(self.id).await?;
+        let result = facilities.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_facilities(&self, ctx: &Context<'_>) -> Result<Vec<Facility>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedFacilitiesLoader>>();
+        let facilities = loader.load_one(self.id).await?;
+        let result = facilities.unwrap_or(vec![]);
 
         Ok(result)
     }
