@@ -1,6 +1,6 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{ControllerFunctionControllersLoader, UserLoader},
+    dataloaders::{ControllerManufacturerControllersLoader, UserLoader},
     domain::{Controller, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
@@ -9,9 +9,9 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Debug, Clone, FromRow, PartialEq)]
 #[graphql(complex)]
-pub struct ControllerFunction {
+pub struct ControllerManufacturer {
     pub id: Uuid,
-    pub function: String,
+    pub manufacturer: String,
     pub created_by_id: Uuid,
     pub created_at: PrimitiveDateTime,
     pub updated_by_id: Uuid,
@@ -19,7 +19,7 @@ pub struct ControllerFunction {
 }
 
 #[ComplexObject]
-impl ControllerFunction {
+impl ControllerManufacturer {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -35,7 +35,7 @@ impl ControllerFunction {
     }
 
     async fn controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerFunctionControllersLoader>>();
+        let loader = ctx.get_loader::<DataLoader<ControllerManufacturerControllersLoader>>();
         let controllers = loader.load_one(self.id).await?;
         let result = controllers.unwrap_or(vec![]);
 

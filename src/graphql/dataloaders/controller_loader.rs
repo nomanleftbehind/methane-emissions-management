@@ -151,3 +151,39 @@ impl Loader<Uuid> for ControllerFunctionControllersLoader {
         Ok(controller_function_controllers)
     }
 }
+
+pub struct ControllerManufacturerControllersLoader {
+    pool: Data<PgPool>,
+}
+
+impl ControllerManufacturerControllersLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for ControllerManufacturerControllersLoader {
+    type Value = Vec<Controller>;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let mut controllers = sqlx::query_as!(
+            Controller,
+            "SELECT * FROM controllers WHERE manufacturer_id = ANY($1)",
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?;
+        controllers.sort_by_key(|controller| controller.manufacturer_id);
+
+        let controller_manufacturer_controllers = controllers
+            .into_iter()
+            .group_by(|controller| controller.manufacturer_id)
+            .into_iter()
+            .map(|(manufacturer_id, group)| (manufacturer_id, group.collect()))
+            .collect();
+
+        Ok(controller_manufacturer_controllers)
+    }
+}

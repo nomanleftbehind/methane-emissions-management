@@ -1,7 +1,8 @@
 use super::{
-    ControllerFunctionControllersLoader, ControllerFunctionLoader,
-    CreatedControllerFunctionsLoader, CreatedControllersLoader, CreatedFacilitiesLoader,
-    FacilityControllersLoader, FacilityLoader, UpdatedControllerFunctionsLoader,
+    ControllerFunctionControllersLoader, ControllerFunctionLoader, ControllerManufacturerLoader,
+    CreatedControllerFunctionsLoader, CreatedControllerManufacturersLoader,
+    CreatedControllersLoader, CreatedFacilitiesLoader, FacilityControllersLoader, FacilityLoader,
+    UpdatedControllerFunctionsLoader, UpdatedControllerManufacturersLoader,
     UpdatedControllersLoader, UpdatedFacilitiesLoader, UserLoader,
 };
 use actix_web::web::Data;
@@ -55,6 +56,19 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let controller_function_by_id_loader =
         DataLoader::new(ControllerFunctionLoader::new(pool.clone()), tokio::spawn);
 
+    let controller_manufacturers_by_creator_id_loader = DataLoader::new(
+        CreatedControllerManufacturersLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_manufacturers_by_updater_id_loader = DataLoader::new(
+        UpdatedControllerManufacturersLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_manufacturer_by_id_loader = DataLoader::new(
+        ControllerManufacturerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     let facility_by_id_loader = DataLoader::new(FacilityLoader::new(pool.clone()), tokio::spawn);
     let facilities_by_creator_id_loader =
         DataLoader::new(CreatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
@@ -71,6 +85,10 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(controller_function_by_id_loader);
     loaders.insert(controller_functions_by_creator_id_loader);
     loaders.insert(controller_functions_by_updater_id_loader);
+
+    loaders.insert(controller_manufacturer_by_id_loader);
+    loaders.insert(controller_manufacturers_by_creator_id_loader);
+    loaders.insert(controller_manufacturers_by_updater_id_loader);
 
     loaders.insert(facility_by_id_loader);
     loaders.insert(facilities_by_creator_id_loader);

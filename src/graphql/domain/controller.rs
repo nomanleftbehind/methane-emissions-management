@@ -1,7 +1,9 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{ControllerFunctionLoader, FacilityLoader, UserLoader},
-    domain::{ControllerFunction, Facility, User},
+    dataloaders::{
+        ControllerFunctionLoader, ControllerManufacturerLoader, FacilityLoader, UserLoader,
+    },
+    domain::{ControllerFunction, ControllerManufacturer, Facility, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use sqlx::{types::time::PrimitiveDateTime, FromRow};
@@ -55,5 +57,15 @@ impl Controller {
         };
 
         function
+    }
+
+    async fn manufacturer(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Option<ControllerManufacturer>, Error> {
+        let loader = ctx.get_loader::<DataLoader<ControllerManufacturerLoader>>();
+        let manufacturer = loader.load_one(self.manufacturer_id).await;
+
+        manufacturer
     }
 }
