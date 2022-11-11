@@ -1,0 +1,10 @@
+query Facilities($by: FacilityBy!) {
+  facilitiesBy(by: $by) {
+    id
+    idpa
+    name
+    type
+    createdAt
+    updatedAt
+  }
+}

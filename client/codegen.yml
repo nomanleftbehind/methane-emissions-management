@@ -1,0 +1,14 @@
+schema: "http://127.0.0.1:8081/graphql"
+overwrite: true
+documents: "./graphql/*.gql"
+generates:
+  src/codegen.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - graphql-codegen-svelte-apollo
+    config:
+      clientPath: './apollo-client'
+      scalars:
+        LocalDateTime: string
+        UUID: string
