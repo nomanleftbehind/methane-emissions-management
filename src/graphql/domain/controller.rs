@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{FacilityLoader, UserLoader},
-    domain::{Facility, User},
+    dataloaders::{ControllerFunctionLoader, FacilityLoader, UserLoader},
+    domain::{ControllerFunction, Facility, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use sqlx::{types::time::PrimitiveDateTime, FromRow};
@@ -44,5 +44,16 @@ impl Controller {
         let facility = loader.load_one(self.facility_id).await;
 
         facility
+    }
+
+    async fn function(&self, ctx: &Context<'_>) -> Result<Option<ControllerFunction>, Error> {
+        let loader = ctx.get_loader::<DataLoader<ControllerFunctionLoader>>();
+        let function = if let Some(id) = self.function_id {
+            loader.load_one(id).await
+        } else {
+            Ok(None)
+        };
+
+        function
     }
 }

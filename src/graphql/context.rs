@@ -1,5 +1,5 @@
-use crate::graphql::dataloaders::LoaderRegistry;
 use crate::authentication::{cookie::SessionCookie, SessionManager};
+use crate::graphql::dataloaders::LoaderRegistry;
 use actix_web::web::Data;
 use async_graphql::{Context, Error};
 use async_redis_session::RedisSessionStore;

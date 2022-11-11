@@ -5,10 +5,11 @@ mod loader_registry;
 mod user_loader;
 
 pub use controller_function_loader::{
-    CreatedControllerFunctionsLoader, UpdatedControllerFunctionsLoader,
+    ControllerFunctionLoader, CreatedControllerFunctionsLoader, UpdatedControllerFunctionsLoader,
 };
 pub use controller_loader::{
-    CreatedControllersLoader, FacilityControllersLoader, UpdatedControllersLoader,
+    ControllerFunctionControllersLoader, CreatedControllersLoader, FacilityControllersLoader,
+    UpdatedControllersLoader,
 };
 pub use facility_loader::{CreatedFacilitiesLoader, FacilityLoader, UpdatedFacilitiesLoader};
 pub use loader_registry::{get_loaders, LoaderRegistry};

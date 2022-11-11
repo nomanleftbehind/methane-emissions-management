@@ -113,3 +113,41 @@ impl Loader<Uuid> for FacilityControllersLoader {
         Ok(facility_controllers)
     }
 }
+
+pub struct ControllerFunctionControllersLoader {
+    pool: Data<PgPool>,
+}
+
+impl ControllerFunctionControllersLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for ControllerFunctionControllersLoader {
+    type Value = Vec<Controller>;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let mut controllers = sqlx::query_as!(
+            Controller,
+            "SELECT * FROM controllers WHERE function_id = ANY($1)",
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?;
+        controllers.sort_by_key(|controller| controller.function_id);
+
+        let controller_function_controllers = controllers
+            .into_iter()
+            // This query will never return None variant of function_id because SQL is returning only Controllers with non-null function_ids
+            // It is safe to unwrap it.
+            .group_by(|controller| controller.function_id.unwrap())
+            .into_iter()
+            .map(|(function_id, group)| (function_id, group.collect()))
+            .collect();
+
+        Ok(controller_function_controllers)
+    }
+}

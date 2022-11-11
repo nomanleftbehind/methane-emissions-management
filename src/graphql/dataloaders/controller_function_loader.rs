@@ -79,3 +79,34 @@ impl Loader<Uuid> for UpdatedControllerFunctionsLoader {
         Ok(updated_controller_functions)
     }
 }
+
+pub struct ControllerFunctionLoader {
+    pool: Data<PgPool>,
+}
+
+impl ControllerFunctionLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for ControllerFunctionLoader {
+    type Value = ControllerFunction;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let controller_functions = sqlx::query_as!(
+            ControllerFunction,
+            "SELECT * FROM controller_functions WHERE id = ANY($1)",
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?
+        .into_iter()
+        .map(|controller_function| (controller_function.id, controller_function))
+        .collect();
+
+        Ok(controller_functions)
+    }
+}

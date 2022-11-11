@@ -1,4 +1,5 @@
 use super::{
+    ControllerFunctionControllersLoader, ControllerFunctionLoader,
     CreatedControllerFunctionsLoader, CreatedControllersLoader, CreatedFacilitiesLoader,
     FacilityControllersLoader, FacilityLoader, UpdatedControllerFunctionsLoader,
     UpdatedControllersLoader, UpdatedFacilitiesLoader, UserLoader,
@@ -38,10 +39,21 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let controllers_by_facility_id_loader =
         DataLoader::new(FacilityControllersLoader::new(pool.clone()), tokio::spawn);
 
+    let controllers_by_function_id_loader = DataLoader::new(
+        ControllerFunctionControllersLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     let controller_functions_by_creator_id_loader = DataLoader::new(
         CreatedControllerFunctionsLoader::new(pool.clone()),
         tokio::spawn,
     );
+    let controller_functions_by_updater_id_loader = DataLoader::new(
+        UpdatedControllerFunctionsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_function_by_id_loader =
+        DataLoader::new(ControllerFunctionLoader::new(pool.clone()), tokio::spawn);
 
     let facility_by_id_loader = DataLoader::new(FacilityLoader::new(pool.clone()), tokio::spawn);
     let facilities_by_creator_id_loader =
@@ -49,17 +61,14 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let facilities_by_updater_id_loader =
         DataLoader::new(UpdatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
 
-    let controller_functions_by_updater_id_loader = DataLoader::new(
-        UpdatedControllerFunctionsLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-
     loaders.insert(user_by_id_loader);
 
     loaders.insert(controllers_by_creator_id_loader);
     loaders.insert(controllers_by_updater_id_loader);
     loaders.insert(controllers_by_facility_id_loader);
+    loaders.insert(controllers_by_function_id_loader);
 
+    loaders.insert(controller_function_by_id_loader);
     loaders.insert(controller_functions_by_creator_id_loader);
     loaders.insert(controller_functions_by_updater_id_loader);
 

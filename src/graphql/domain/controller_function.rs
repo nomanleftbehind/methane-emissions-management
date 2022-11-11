@@ -1,4 +1,8 @@
-use crate::graphql::{context::ContextExt, dataloaders::UserLoader, domain::User};
+use crate::graphql::{
+    context::ContextExt,
+    dataloaders::{ControllerFunctionControllersLoader, UserLoader},
+    domain::{Controller, User},
+};
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use sqlx::{types::time::PrimitiveDateTime, FromRow};
 use uuid::Uuid;
@@ -28,5 +32,14 @@ impl ControllerFunction {
         let updated_by = loader.load_one(self.updated_by_id).await;
 
         updated_by
+    }
+
+    async fn controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
+        let loader = ctx.get_loader::<DataLoader<ControllerFunctionControllersLoader>>();
+        let controllers = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no written controllers
+        let result = controllers.unwrap_or(vec![]);
+
+        Ok(result)
     }
 }
