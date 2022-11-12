@@ -1,13 +1,19 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
+        controller_change_loader::{
+            CreatedControllerChangesLoader, UpdatedControllerChangesLoader,
+        },
         controller_function_loader::{
             CreatedControllerFunctionsLoader, UpdatedControllerFunctionsLoader,
         },
         controller_loader::{CreatedControllersLoader, UpdatedControllersLoader},
+        controller_manufacturer_loader::{
+            CreatedControllerManufacturersLoader, UpdatedControllerManufacturersLoader,
+        },
         facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
     },
-    domain::{Controller, ControllerFunction, Facility},
+    domain::{Controller, ControllerChange, ControllerFunction, ControllerManufacturer, Facility},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Enum, Error, InputObject, OneofObject,
@@ -47,6 +53,22 @@ pub struct User {
 
 #[ComplexObject]
 impl User {
+    async fn created_facilities(&self, ctx: &Context<'_>) -> Result<Vec<Facility>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedFacilitiesLoader>>();
+        let facilities = loader.load_one(self.id).await?;
+        let result = facilities.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_facilities(&self, ctx: &Context<'_>) -> Result<Vec<Facility>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedFacilitiesLoader>>();
+        let facilities = loader.load_one(self.id).await?;
+        let result = facilities.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
     async fn created_controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllersLoader>>();
         let controllers = loader.load_one(self.id).await?;
@@ -87,18 +109,46 @@ impl User {
         Ok(result)
     }
 
-    async fn created_facilities(&self, ctx: &Context<'_>) -> Result<Vec<Facility>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedFacilitiesLoader>>();
-        let facilities = loader.load_one(self.id).await?;
-        let result = facilities.unwrap_or(vec![]);
+    async fn created_controller_manufacturers(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerManufacturer>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedControllerManufacturersLoader>>();
+        let controller_manufacturers = loader.load_one(self.id).await?;
+        let result = controller_manufacturers.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_facilities(&self, ctx: &Context<'_>) -> Result<Vec<Facility>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedFacilitiesLoader>>();
-        let facilities = loader.load_one(self.id).await?;
-        let result = facilities.unwrap_or(vec![]);
+    async fn updated_controller_manufacturers(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerManufacturer>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedControllerManufacturersLoader>>();
+        let controller_manufacturers = loader.load_one(self.id).await?;
+        let result = controller_manufacturers.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_controller_changes(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedControllerChangesLoader>>();
+        let controller_changes = loader.load_one(self.id).await?;
+        let result = controller_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_controller_changes(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedControllerChangesLoader>>();
+        let controller_changes = loader.load_one(self.id).await?;
+        let result = controller_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
