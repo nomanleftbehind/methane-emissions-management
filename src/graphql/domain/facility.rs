@@ -1,12 +1,13 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{FacilityControllersLoader, UserLoader},
+    dataloaders::{controller_loader::FacilityControllersLoader, user_loader::UserLoader},
     domain::{Controller, User},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Enum, Error, OneofObject, SimpleObject,
 };
-use sqlx::{types::time::PrimitiveDateTime, FromRow};
+use chrono::NaiveDateTime;
+use sqlx::FromRow;
 use uuid::Uuid;
 
 #[derive(Debug, OneofObject)]
@@ -40,9 +41,9 @@ pub struct Facility {
     pub name: String,
     pub r#type: FacilityType,
     pub created_by_id: Uuid,
-    pub created_at: PrimitiveDateTime,
+    pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
-    pub updated_at: PrimitiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 #[ComplexObject]

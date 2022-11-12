@@ -1,8 +1,11 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        CreatedControllerFunctionsLoader, CreatedControllersLoader, CreatedFacilitiesLoader,
-        UpdatedControllerFunctionsLoader, UpdatedControllersLoader, UpdatedFacilitiesLoader,
+        controller_function_loader::{
+            CreatedControllerFunctionsLoader, UpdatedControllerFunctionsLoader,
+        },
+        controller_loader::{CreatedControllersLoader, UpdatedControllersLoader},
+        facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
     },
     domain::{Controller, ControllerFunction, Facility},
 };

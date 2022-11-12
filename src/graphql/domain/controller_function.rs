@@ -1,10 +1,13 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{ControllerFunctionControllersLoader, UserLoader},
+    dataloaders::{
+        controller_loader::ControllersByFunctionLoader, user_loader::UserLoader,
+    },
     domain::{Controller, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
-use sqlx::{types::time::PrimitiveDateTime, FromRow};
+use chrono::NaiveDateTime;
+use sqlx::FromRow;
 use uuid::Uuid;
 
 #[derive(SimpleObject, Debug, Clone, FromRow, PartialEq)]
@@ -13,9 +16,9 @@ pub struct ControllerFunction {
     pub id: Uuid,
     pub function: String,
     pub created_by_id: Uuid,
-    pub created_at: PrimitiveDateTime,
+    pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
-    pub updated_at: PrimitiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 #[ComplexObject]
@@ -35,7 +38,7 @@ impl ControllerFunction {
     }
 
     async fn controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerFunctionControllersLoader>>();
+        let loader = ctx.get_loader::<DataLoader<ControllersByFunctionLoader>>();
         let controllers = loader.load_one(self.id).await?;
         let result = controllers.unwrap_or(vec![]);
 

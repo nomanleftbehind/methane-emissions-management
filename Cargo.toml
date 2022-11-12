@@ -22,6 +22,7 @@ async-graphql = { version = "4", features = [
     "time",
     "tracing",
     "uuid",
+    "chrono",
 ] }
 async-graphql-actix-web = "4"
 
@@ -41,6 +42,7 @@ sqlx = { version = "0.6", default-features = false, features = [
     "macros",
     "postgres",
     "time",
+    "chrono",
     "uuid",
 ] }
 tokio = "1.21.0"
@@ -61,3 +63,4 @@ async-redis-session = "0.2.2"
 async-trait = "0.1.51"
 futures-util = "0.3"
 http = "0.2.4"
+chrono = "0.4.22"

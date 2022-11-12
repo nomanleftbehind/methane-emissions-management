@@ -6,6 +6,37 @@ use sqlx::PgPool;
 use std::collections::HashMap;
 use uuid::Uuid;
 
+pub struct ControllerLoader {
+    pool: Data<PgPool>,
+}
+
+impl ControllerLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for ControllerLoader {
+    type Value = Controller;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let controllers = sqlx::query_as!(
+            Controller,
+            "SELECT * FROM controllers WHERE id = ANY($1)",
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?
+        .into_iter()
+        .map(|controller| (controller.id, controller))
+        .collect();
+
+        Ok(controllers)
+    }
+}
+
 pub struct CreatedControllersLoader {
     pool: Data<PgPool>,
 }
@@ -114,18 +145,18 @@ impl Loader<Uuid> for FacilityControllersLoader {
     }
 }
 
-pub struct ControllerFunctionControllersLoader {
+pub struct ControllersByFunctionLoader {
     pool: Data<PgPool>,
 }
 
-impl ControllerFunctionControllersLoader {
+impl ControllersByFunctionLoader {
     pub fn new(pool: Data<PgPool>) -> Self {
         Self { pool }
     }
 }
 
 #[async_trait::async_trait]
-impl Loader<Uuid> for ControllerFunctionControllersLoader {
+impl Loader<Uuid> for ControllersByFunctionLoader {
     type Value = Vec<Controller>;
     type Error = async_graphql::Error;
 
@@ -152,18 +183,18 @@ impl Loader<Uuid> for ControllerFunctionControllersLoader {
     }
 }
 
-pub struct ControllerManufacturerControllersLoader {
+pub struct ControllersByManufacturerLoader {
     pool: Data<PgPool>,
 }
 
-impl ControllerManufacturerControllersLoader {
+impl ControllersByManufacturerLoader {
     pub fn new(pool: Data<PgPool>) -> Self {
         Self { pool }
     }
 }
 
 #[async_trait::async_trait]
-impl Loader<Uuid> for ControllerManufacturerControllersLoader {
+impl Loader<Uuid> for ControllersByManufacturerLoader {
     type Value = Vec<Controller>;
     type Error = async_graphql::Error;
 

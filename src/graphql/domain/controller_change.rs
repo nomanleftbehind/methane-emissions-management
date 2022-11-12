@@ -1,20 +1,20 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{
-        controller_loader::ControllersByManufacturerLoader, user_loader::UserLoader,
-    },
+    dataloaders::{controller_loader::ControllerLoader, user_loader::UserLoader},
     domain::{Controller, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
-use chrono::NaiveDateTime;
+use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
 use uuid::Uuid;
 
-#[derive(SimpleObject, Debug, Clone, FromRow, PartialEq)]
+#[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct ControllerManufacturer {
+pub struct ControllerChange {
     pub id: Uuid,
-    pub manufacturer: String,
+    pub date: NaiveDate,
+    pub rate: f64,
+    pub controller_id: Uuid,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -22,7 +22,7 @@ pub struct ControllerManufacturer {
 }
 
 #[ComplexObject]
-impl ControllerManufacturer {
+impl ControllerChange {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -37,11 +37,10 @@ impl ControllerManufacturer {
         updated_by
     }
 
-    async fn controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllersByManufacturerLoader>>();
-        let controllers = loader.load_one(self.id).await?;
-        let result = controllers.unwrap_or(vec![]);
+    async fn controller(&self, ctx: &Context<'_>) -> Result<Option<Controller>, Error> {
+        let loader = ctx.get_loader::<DataLoader<ControllerLoader>>();
+        let controller = loader.load_one(self.controller_id).await;
 
-        Ok(result)
+        controller
     }
 }
