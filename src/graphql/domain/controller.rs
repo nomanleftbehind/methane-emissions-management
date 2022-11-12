@@ -8,7 +8,9 @@ use crate::graphql::{
     },
     domain::{ControllerChange, ControllerFunction, ControllerManufacturer, Facility, User},
 };
-use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
+use async_graphql::{
+    dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,
+};
 use chrono::NaiveDateTime;
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -80,4 +82,11 @@ impl Controller {
 
         Ok(result)
     }
+}
+
+#[derive(Debug, OneofObject)]
+pub enum ControllersBy {
+    FacilityId(Uuid),
+    CreatedById(Uuid),
+    UpdatedById(Uuid),
 }

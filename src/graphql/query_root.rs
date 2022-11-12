@@ -1,11 +1,11 @@
 use super::{
-    domain::{ControllerFunction, Facility, FacilityBy, User, UserBy},
+    domain::{ControllerFunction, ControllersBy, Facility, FacilityBy, User, UserBy},
     sql::{query_all_controller_functions, query_facilities, query_user},
 };
 use crate::graphql::{
     context::ContextExt,
     domain::Controller,
-    sql::{query_all_users, query_user_by_id, query_user_posts},
+    sql::{query_all_users, query_controllers, query_user_by_id, query_user_posts},
 };
 use async_graphql::*;
 
@@ -50,6 +50,17 @@ impl QueryRoot {
             .map_err(Error::from);
 
         posts
+    }
+
+    async fn controllers_by(
+        &self,
+        ctx: &Context<'_>,
+        by: ControllersBy,
+    ) -> Result<Vec<Controller>> {
+        let pool = ctx.db_pool();
+        let controllers = query_controllers(pool, by).await.map_err(Error::from);
+
+        controllers
     }
 
     async fn facilities_by(

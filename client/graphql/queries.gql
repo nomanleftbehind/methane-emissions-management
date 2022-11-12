@@ -8,3 +8,17 @@ query Facilities($by: FacilityBy!) {
     updatedAt
   }
 }
+
+query Controllers($by: ControllersBy!) {
+  controllersBy(by: $by) {
+    id
+    manufacturer {
+      manufacturer
+    }
+    function {
+      function
+    }
+    model
+    serialNumber
+  }
+}
