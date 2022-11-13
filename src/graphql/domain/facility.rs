@@ -4,7 +4,8 @@ use crate::graphql::{
     domain::{Controller, User},
 };
 use async_graphql::{
-    dataloader::DataLoader, ComplexObject, Context, Enum, Error, OneofObject, SimpleObject,
+    dataloader::DataLoader, ComplexObject, Context, Enum, Error, InputObject, OneofObject,
+    SimpleObject,
 };
 use chrono::NaiveDateTime;
 use sqlx::FromRow;
@@ -70,4 +71,10 @@ impl Facility {
 
         Ok(result)
     }
+}
+
+#[derive(InputObject, Debug)]
+pub struct LimitOffsetInput {
+    pub limit: i64,
+    pub offset: i64,
 }

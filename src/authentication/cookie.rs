@@ -43,7 +43,7 @@ impl SessionCookie {
     pub async fn set_cookie(&self, ctx: &Context<'_>) -> Result<(), Error> {
         ctx.append_http_header(
             SET_COOKIE,
-            format!("{}={}; SameSite=None; Secure", AUTH_COOKIE_NAME, self.value),
+            format!("{}={}; SameSite=None; Secure; Max-Age=3600; Path=/", AUTH_COOKIE_NAME, self.value),
         );
 
         Ok(())

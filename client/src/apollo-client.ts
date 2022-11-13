@@ -17,7 +17,7 @@ const wsLink = typeof window !== 'undefined' ? new GraphQLWsLink(createClient({
 
 const httpLink = new HttpLink({
 	uri: 'http://127.0.0.1:8081/graphql',
-	credentials: 'same-origin',
+	credentials: 'include',
 });
 
 const splitLink = typeof window !== 'undefined' ? split(

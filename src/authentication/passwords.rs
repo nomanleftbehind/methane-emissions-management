@@ -1,4 +1,4 @@
-use crate::graphql::domain::{RegisterUserInput, Role, User};
+use crate::graphql::domain::{AuthPayload, RegisterUserInput, Role, User};
 use crate::telemetry::spawn_blocking_with_tracing;
 use anyhow::Context;
 use argon2::{
@@ -27,7 +27,7 @@ pub struct Credentials {
 async fn get_stored_credentials(
     email: String,
     pool: &PgPool,
-) -> Result<Option<(uuid::Uuid, Secret<String>)>, anyhow::Error> {
+) -> Result<Option<(Uuid, Secret<String>, String)>, anyhow::Error> {
     let row = sqlx::query_as!(
         User,
         r#"SELECT id, email, password, first_name, last_name, role as "role: _" FROM "users" WHERE email = $1"#,
@@ -36,7 +36,7 @@ async fn get_stored_credentials(
     .fetch_optional(pool)
     .await?
     // .context("Failed to perform a query to retrieve stored credentials.")?
-    .map(|row| (row.id, Secret::new(row.password)));
+    .map(|row| (row.id, Secret::new(row.password), row.email));
     Ok(row)
 }
 
@@ -44,7 +44,7 @@ async fn get_stored_credentials(
 pub async fn validate_credentials(
     credentials: Credentials,
     pool: &PgPool,
-) -> Result<uuid::Uuid, AuthError> {
+) -> Result<AuthPayload, AuthError> {
     let mut user_id = None;
     let mut expected_password_hash = Secret::new(
         "$argon2id$v=19$m=15000,t=2,p=1$\
@@ -53,10 +53,13 @@ pub async fn validate_credentials(
             .to_string(),
     );
 
-    if let Some((stored_user_id, stored_password_hash)) =
+    if let Some((stored_user_id, stored_password_hash, stored_user_email)) =
         get_stored_credentials(credentials.email, pool).await?
     {
-        user_id = Some(stored_user_id);
+        user_id = Some(AuthPayload {
+            id: stored_user_id,
+            email: stored_user_email,
+        });
         expected_password_hash = stored_password_hash;
     }
 

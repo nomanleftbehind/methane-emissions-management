@@ -1,12 +1,11 @@
 use crate::authentication::{register, validate_credentials, Credentials, AUTH_COOKIE_NAME};
 use crate::graphql::{
     context::ContextExt,
-    domain::{LoginUserInput, RegisterUserInput, User},
+    domain::{AuthPayload, LoginUserInput, RegisterUserInput, User},
 };
 use ::http::header::SET_COOKIE;
 use async_graphql::*;
 use secrecy::Secret;
-use uuid::Uuid;
 
 fn logged_in_err() -> Error {
     Error::new("Already logged in")
@@ -31,7 +30,7 @@ impl MutationRoot {
         &self,
         ctx: &Context<'_>,
         login_user_input: LoginUserInput,
-    ) -> Result<Uuid, Error> {
+    ) -> Result<AuthPayload, Error> {
         let pool = ctx.db_pool();
 
         if ctx.get_cookie().is_ok() {
@@ -40,22 +39,24 @@ impl MutationRoot {
 
         let LoginUserInput { email, password } = login_user_input;
 
+        println!("email: {}, password: {}", email, password);
+
         let credentials = Credentials {
             email,
             password: Secret::new(password),
         };
 
-        let user_id = validate_credentials(credentials, pool).await?;
+        let auth_payload = validate_credentials(credentials, pool).await?;
 
         let session_manager = ctx.get_session_manager()?;
 
         session_manager
-            .create_session(user_id)
+            .create_session(auth_payload.id)
             .await?
             .set_cookie(ctx)
             .await?;
 
-        Ok(user_id)
+        Ok(auth_payload)
     }
 
     async fn logout(&self, ctx: &Context<'_>) -> Result<bool, Error> {

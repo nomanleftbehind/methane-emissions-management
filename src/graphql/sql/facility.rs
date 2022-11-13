@@ -1,5 +1,5 @@
-use crate::graphql::domain::{Facility, FacilityBy, FacilityType};
-use sqlx::PgPool;
+use crate::graphql::domain::{Facility, FacilityBy, FacilityType, LimitOffsetInput};
+use sqlx::{PgExecutor, PgPool};
 
 pub async fn query_facilities(
     pool: &PgPool,
@@ -44,4 +44,37 @@ pub async fn query_facilities(
     };
 
     facilities
+}
+
+pub async fn query_all_facilities<'e, E: PgExecutor<'e>>(
+    executor: E,
+    limit_offset_input: Option<LimitOffsetInput>,
+) -> Result<Vec<Facility>, sqlx::Error> {
+    if let Some(LimitOffsetInput { limit, offset }) = limit_offset_input {
+        sqlx::query_as!(
+            Facility,
+            r#"
+            SELECT
+            id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
+            FROM facilities
+            LIMIT $1
+            OFFSET $2
+            "#,
+            limit,
+            offset
+        )
+        .fetch_all(executor)
+        .await
+    } else {
+        sqlx::query_as!(
+            Facility,
+            r#"
+            SELECT
+            id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
+            FROM facilities
+            "#,
+        )
+        .fetch_all(executor)
+        .await
+    }
 }

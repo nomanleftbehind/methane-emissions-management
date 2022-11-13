@@ -4,6 +4,7 @@
 
 	$: facilities = Facilities({variables: {by: {type: FacilityType.Gp}}});
 
+
 </script>
 
 <style>
@@ -37,8 +38,8 @@
 	}
 </style>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1>Welcome to Emissions App</h1>
+
 
 <aside transition:fade>
 	{#if $facilities.loading}
@@ -71,5 +72,3 @@
       </div>
   {/each}
 </aside>
-
-
