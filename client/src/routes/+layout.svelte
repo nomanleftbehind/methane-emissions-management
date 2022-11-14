@@ -1,22 +1,43 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { userData, user } from './stores';
+	import { Me, Logout } from '../codegen';
+	import { ApolloError } from '@apollo/client/core';
 
-	import { user } from './stores';
-	import { Me } from '../codegen';
+	onMount(async () => {
+		Me({}).subscribe(({ data: { me } }) => userData.set(me));
+	});
 
-	$: me = Me({});
-	$: newUser = $me.data.me && {id: $me.data.me.id, email: $me.data.me.email} || null;
-	$: user.set(newUser);
+	const logout = () => {
+		Logout({})
+			.then(({ data }) => {
+				if (data) {
+					userData.set(null);
+				}
+			})
+			.catch((e) => {
+				if (e instanceof ApolloError) {
+					console.log('e message', e.message);
+				}
+			});
+	};
 </script>
-
 
 <nav>
 	<a href="/">Home</a>
 	<a href="/about">About</a>
 	<a href="/controllers/hello-world">Controllers</a>
 	<a href="/settings">Settings</a>
-	<a href="/login">Login</a>
-	<div>{$user?.email || ''}</div>
+	{#if !$user}
+		<a href="/login">Login</a>
+	{:else}
+		<button on:click={logout}>
+			{$user.email}
+		</button>
+	{/if}
 </nav>
+
+<slot />
 
 <style>
 	nav {
@@ -28,5 +49,3 @@
 		margin: 4px;
 	}
 </style>
-  
-<slot></slot>

@@ -1,7 +1,7 @@
 use crate::authentication::{register, validate_credentials, Credentials, AUTH_COOKIE_NAME};
 use crate::graphql::{
     context::ContextExt,
-    domain::{AuthPayload, LoginUserInput, RegisterUserInput, User},
+    domain::{LoginUserInput, RegisterUserInput, User},
 };
 use ::http::header::SET_COOKIE;
 use async_graphql::*;
@@ -30,40 +30,44 @@ impl MutationRoot {
         &self,
         ctx: &Context<'_>,
         login_user_input: LoginUserInput,
-    ) -> Result<AuthPayload, Error> {
+    ) -> Result<User, Error> {
         let pool = ctx.db_pool();
 
-        if ctx.get_cookie().is_ok() {
-            return Err(logged_in_err());
+        if let Ok(_cookie) = ctx.get_cookie() {
+            Err(logged_in_err())
+        } else {
+            let LoginUserInput { email, password } = login_user_input;
+
+            println!("email: {}, password: {}", email, password);
+
+            let credentials = Credentials {
+                email,
+                password: Secret::new(password),
+            };
+
+            let user = validate_credentials(credentials, pool).await?;
+
+            let session_manager = ctx.get_session_manager()?;
+
+            session_manager
+                .create_session(user.id)
+                .await?
+                .set_cookie(ctx)
+                .await?;
+
+            Ok(user)
         }
-
-        let LoginUserInput { email, password } = login_user_input;
-
-        println!("email: {}, password: {}", email, password);
-
-        let credentials = Credentials {
-            email,
-            password: Secret::new(password),
-        };
-
-        let auth_payload = validate_credentials(credentials, pool).await?;
-
-        let session_manager = ctx.get_session_manager()?;
-
-        session_manager
-            .create_session(auth_payload.id)
-            .await?
-            .set_cookie(ctx)
-            .await?;
-
-        Ok(auth_payload)
     }
 
     async fn logout(&self, ctx: &Context<'_>) -> Result<bool, Error> {
         ctx.insert_http_header(
             SET_COOKIE,
-            format!("{}=deleted; Max-Age=-1", AUTH_COOKIE_NAME),
+            format!(
+                "{}=deleted; Max-Age=-1; SameSite=None; Secure; Path=/",
+                AUTH_COOKIE_NAME
+            ),
         );
+        println!("Logging out cookie {}", AUTH_COOKIE_NAME);
         Ok(true)
     }
 }

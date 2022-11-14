@@ -168,9 +168,3 @@ pub struct LoginUserInput {
     pub email: String,
     pub password: String,
 }
-
-#[derive(SimpleObject, Debug, Clone)]
-pub struct AuthPayload {
-    pub id: Uuid,
-    pub email: String,
-}

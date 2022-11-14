@@ -1,40 +1,42 @@
 query AllFacilities($limitOffsetInput: LimitOffsetInput) {
-  allFacilities(limitOffsetInput: $limitOffsetInput) {
-    id
-    idpa
-    name
-    type
-  }
+	allFacilities(limitOffsetInput: $limitOffsetInput) {
+		id
+		idpa
+		name
+		type
+		createdAt
+		updatedAt
+	}
 }
 
 query Facilities($by: FacilityBy!) {
-  facilitiesBy(by: $by) {
-    id
-    idpa
-    name
-    type
-    createdAt
-    updatedAt
-  }
+	facilitiesBy(by: $by) {
+		id
+		idpa
+		name
+		type
+		createdAt
+		updatedAt
+	}
 }
 
 query Controllers($by: ControllersBy!) {
-  controllersBy(by: $by) {
-    id
-    manufacturer {
-      manufacturer
-    }
-    function {
-      function
-    }
-    model
-    serialNumber
-  }
+	controllersBy(by: $by) {
+		id
+		manufacturer {
+			manufacturer
+		}
+		function {
+			function
+		}
+		model
+		serialNumber
+	}
 }
 
 query Me {
-  me {
-    email
-    id
-  }
+	me {
+		email
+		id
+	}
 }

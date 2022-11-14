@@ -1,6 +1,6 @@
-schema: "http://127.0.0.1:8081/graphql"
+schema: 'http://127.0.0.1:8081/graphql'
 overwrite: true
-documents: "./graphql/*.gql"
+documents: './graphql/*.gql'
 generates:
   src/codegen.ts:
     plugins:

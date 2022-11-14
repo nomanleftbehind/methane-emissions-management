@@ -1,6 +1,10 @@
 mutation Login($loginUserInput: LoginUserInput!) {
-  login(loginUserInput: $loginUserInput) {
-    id
-    email
-  }
+	login(loginUserInput: $loginUserInput) {
+		id
+		email
+	}
+}
+
+mutation Logout {
+	logout
 }

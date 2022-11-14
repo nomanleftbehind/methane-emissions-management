@@ -1,6 +1,13 @@
-import { writable } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 import type { MeQuery } from '../codegen';
 
-export type IUser = Omit<NonNullable<MeQuery['me']>, '__typename'>;
+export type IUser = MeQuery['me'];
 
-export const user = writable<IUser | null>(null);
+export const userData = writable<IUser>(null);
+
+export const user = derived(userData, ($userData) => {
+	if ($userData) {
+		return { id: $userData.id, email: $userData.email };
+	}
+	return null;
+});

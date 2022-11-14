@@ -1,25 +1,44 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { userData, user } from '../stores';
+	import { Login, MeDoc } from '../../codegen';
+	import { browser } from '$app/environment';
+	import { ApolloError } from '@apollo/client/core';
 
-	import { user } from '../stores';
-	import {
-		Login,
-		MeDoc
-	} from "../../codegen";
+	$: if ($user) {
+		if (browser) {
+			goto('/');
+		}
+	}
+
+	let error;
 
 	const login = () => {
-		Login({ variables: { loginUserInput: {email, password} }, refetchQueries: [{ query: MeDoc }]})
-		.then(({ data }) => {
-			const newUser = data?.login && {id: data.login.id, email: data.login.email} || null;
-			user.set(newUser);
+		Login({
+			variables: { loginUserInput: { email, password } },
+			refetchQueries: [{ query: MeDoc }]
 		})
-		.catch((a) => console.log('catch', a));
+			.then(({ data }) => {
+				userData.set(data?.login);
+			})
+			.catch((e) => {
+				if (e instanceof ApolloError) {
+					console.log('e message', e.message);
+				}
+			});
 		email = '';
 		password = '';
-	}
+	};
 
 	$: email = 'dsucic@bonterraenergy.com';
 	$: password = 'everythinghastostartsomewhere';
 </script>
+
+<form method="POST">
+	<input name="email" type="email" bind:value={email} />
+	<input name="password" type="password" bind:value={password} />
+	<button disabled={email.length === 0} on:click={login}>Log in</button>
+</form>
 
 <style>
 	form {
@@ -40,29 +59,3 @@
 		justify-content: center;
 	}
 </style>
-
-<form method="POST">
-  <input name="email" type="email" bind:value={email}>
-  <input name="password" type="password" bind:value={password}>
-  <button
-	disabled={email.length === 0}
-	on:click={login}>Log in</button>
-</form>
-
-<!-- <br />
-<main class="cards">
-	<div class="card">
-		<h2>Login User</h2>
-		<input placeholder="Email..." bind:value={email} />
-		<input type='password' placeholder="Password..." bind:value={password} />
-		<button
-			disabled={email.length === 0}
-			on:click={() => {
-				Login({ variables: { loginUserInput: {email, password} } });
-				// you can "auto refresh queries" adding the code bellow to AddCodegenUser (but here we want to demo the manual refresh button)
-				// refetchQueries: [{ query: GetCodegenUsersDoc }],
-				email = '';
-				password = '';
-			}}>Login</button>
-	</div>
-</main> -->
