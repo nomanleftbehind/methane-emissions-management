@@ -1,26 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { userData, user } from './stores';
-	import { Me, Logout } from '../codegen';
-	import { ApolloError } from '@apollo/client/core';
+	import { Me } from '../codegen';
+	import Dropdown from '../lib/components/Dropdown.svelte';
 
 	onMount(async () => {
 		Me({}).subscribe(({ data: { me } }) => userData.set(me));
 	});
-
-	const logout = () => {
-		Logout({})
-			.then(({ data }) => {
-				if (data) {
-					userData.set(null);
-				}
-			})
-			.catch((e) => {
-				if (e instanceof ApolloError) {
-					console.log('e message', e.message);
-				}
-			});
-	};
 </script>
 
 <nav>
@@ -31,9 +17,7 @@
 	{#if !$user}
 		<a href="/login">Login</a>
 	{:else}
-		<button on:click={logout}>
-			{$user.email}
-		</button>
+		<Dropdown user={$user} />
 	{/if}
 </nav>
 
@@ -43,7 +27,10 @@
 	nav {
 		background-color: rgb(226, 223, 43);
 		padding: 10px;
-		/* margin: -10px; */
+		display: flex;
+		position: sticky;
+		top: 0;
+		margin: -8px -8px 0px -8px;
 	}
 	a {
 		margin: 4px;

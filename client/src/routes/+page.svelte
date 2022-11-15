@@ -2,17 +2,15 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
-	import { Facilities, FacilityType, AllFacilities } from '../codegen';
+	import { AllFacilities } from '../codegen';
 	import { user } from './stores';
-
-	$: facilities = AllFacilities({});
-	// $: facilities = Facilities({ variables: { by: { type: FacilityType.Gp } } });
 
 	$: if (!$user) {
 		if (browser) {
 			goto('/login');
 		}
 	}
+	$: facilities = AllFacilities({});
 </script>
 
 <h1>Welcome to Emissions App</h1>
