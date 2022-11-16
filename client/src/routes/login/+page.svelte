@@ -11,8 +11,6 @@
 		}
 	}
 
-	let error;
-
 	const login = () => {
 		Login({
 			variables: { loginUserInput: { email, password } },

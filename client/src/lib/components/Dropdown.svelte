@@ -3,6 +3,7 @@
 	import { userData } from '../../routes/stores';
 	import { Logout } from '../../codegen';
 	import { ApolloError } from '@apollo/client/core';
+	import { slide } from 'svelte/transition';
 
 	type IUser = Omit<NonNullable<MeQuery['me']>, '__typename'>;
 	let isDropdownOpen = false; // default state (dropdown close)
@@ -45,7 +46,10 @@
 			{user.email}
 		</button>
 		{#if isDropdownOpen}
-			<ul class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+			<ul
+				class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+				transition:slide={{ duration: 300 }}
+			>
 				<li><button class="btn text-slate-300" on:click={logout}>Logout</button></li>
 			</ul>
 		{/if}

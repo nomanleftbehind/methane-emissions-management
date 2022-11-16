@@ -11,3 +11,5 @@ export const user = derived(userData, ($userData) => {
 	}
 	return null;
 });
+
+export const pageMargin = writable(0);

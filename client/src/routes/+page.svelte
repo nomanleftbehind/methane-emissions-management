@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import { AllFacilities } from '../codegen';
-	import { user } from './stores';
+	import { user, pageMargin } from './stores';
 
 	$: if (!$user) {
 		if (browser) {
@@ -13,11 +13,9 @@
 	$: facilities = AllFacilities({});
 </script>
 
-<h1>Welcome to Emissions App</h1>
-
-<aside transition:fade>
+<article transition:fade style="margin-left: {$pageMargin}px;">
 	{#if $facilities.loading}
-		<div>Loading</div>
+		<div style="grid-column: 1/3;">Loading</div>
 	{/if}
 	<h2 class="c1" style="grid-row: 1;">Row</h2>
 	<h2 class="c2" style="grid-row: 1;">ID</h2>
@@ -45,10 +43,10 @@
 			{createdAt.split('T')[0]}
 		</div>
 	{/each}
-</aside>
+</article>
 
 <style>
-	aside {
+	article {
 		display: grid;
 		grid-template-columns: 30px 300px 100px max-content 40px 100px;
 		font-family: 'Comic Sans MS', cursive;
