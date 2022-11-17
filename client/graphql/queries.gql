@@ -40,3 +40,18 @@ query Me {
 		id
 	}
 }
+
+query ControllersBy($by: ControllersBy!) {
+	controllersBy(by: $by) {
+		id
+		fdcRecId
+		model
+		serialNumber
+		function {
+			function
+		}
+		manufacturer {
+			manufacturer
+		}
+	}
+}

@@ -72,6 +72,7 @@ pub async fn query_all_facilities<'e, E: PgExecutor<'e>>(
             SELECT
             id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
             FROM facilities
+            WHERE id IN (SELECT facility_id FROM controllers)
             "#,
         )
         .fetch_all(executor)

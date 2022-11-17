@@ -13,3 +13,4 @@ export const user = derived(userData, ($userData) => {
 });
 
 export const pageMargin = writable(0);
+export const facilityId = writable<string>('00000000000000000000000000000000');
