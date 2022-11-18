@@ -2,7 +2,8 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { fly } from 'svelte/transition';
-	import { ControllersBy } from '../../codegen';
+	import Controller from '../../lib/components/Controller.svelte';
+	import { AsyncControllersBy } from '../../codegen';
 	import { user, pageMargin, facilityId } from '../stores';
 
 	$: if (!$user) {
@@ -10,18 +11,26 @@
 			goto('/login');
 		}
 	}
-	$: controllers = ControllersBy({
-		variables: { by: { facilityId: $facilityId } }
-	});
 </script>
 
 <article transition:fly style="margin-left: {$pageMargin}px;">
-	<ul>
-		{#each $controllers?.data?.controllersBy || [] as controller, i}
-			<li>
-				{controller.manufacturer?.manufacturer} - {controller.function
-					?.function} {i}
-			</li>
-		{/each}
-	</ul>
+		{#await AsyncControllersBy({ variables: { by: { facilityId: $facilityId } } })}
+			Loading...
+		{:then { data: { controllersBy } }}
+			<table>
+				<thead>
+					<tr>
+						<th>Model</th>
+						<th>FDC ID</th>
+						<th>Manufacturer</th>
+						<th>Application</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each controllersBy || [] as controller}
+						<Controller {controller} />
+					{/each}
+				</tbody>
+			</table>
+		{/await}
 </article>

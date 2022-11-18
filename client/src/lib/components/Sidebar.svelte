@@ -5,10 +5,7 @@
 
 	export let show = false;
 
-
-	const handleFacilityClick = () => {
-
-	}
+	const handleFacilityClick = () => {};
 
 	$: facilities = AllFacilities({});
 </script>
@@ -18,9 +15,9 @@
 		<ul>
 			{#each $facilities.data?.allFacilities || [] as { id, idpa, name, type, createdAt, updatedAt }, i}
 				<li>
-					<button class="btn text-slate-300"
-					on:click={() => facilityId.set(id)}
-					>{idpa} - {name}</button>
+					<button class="btn text-slate-300" on:click={() => facilityId.set(id)}
+						>{idpa} - {name}</button
+					>
 				</li>
 			{/each}
 		</ul>

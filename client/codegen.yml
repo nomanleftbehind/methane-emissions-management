@@ -9,6 +9,7 @@ generates:
       - graphql-codegen-svelte-apollo
     config:
       clientPath: './apollo-client'
+      asyncQuery: true
       scalars:
         NaiveDateTime: string
         NaiveDate: string
