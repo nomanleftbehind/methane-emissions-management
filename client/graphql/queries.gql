@@ -26,8 +26,8 @@ query Controllers($by: ControllersBy!) {
 		manufacturer {
 			manufacturer
 		}
-		function {
-			function
+		application {
+			application
 		}
 		model
 		serialNumber
@@ -47,8 +47,8 @@ query ControllersBy($by: ControllersBy!) {
 		fdcRecId
 		model
 		serialNumber
-		function {
-			function
+		application {
+			application
 		}
 		manufacturer {
 			manufacturer

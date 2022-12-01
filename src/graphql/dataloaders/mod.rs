@@ -1,5 +1,5 @@
+pub mod controller_application_loader;
 pub mod controller_change_loader;
-pub mod controller_function_loader;
 pub mod controller_loader;
 pub mod controller_manufacturer_loader;
 pub mod facility_loader;

@@ -1,8 +1,8 @@
 use super::{
     domain::{
-        ControllerFunction, ControllersBy, Facility, FacilityBy, LimitOffsetInput, User, UserBy,
+        ControllerApplication, ControllersBy, Facility, FacilityBy, LimitOffsetInput, User, UserBy,
     },
-    sql::{query_all_controller_functions, query_all_facilities, query_facilities, query_user},
+    sql::{query_all_controller_applications, query_all_facilities, query_facilities, query_user},
 };
 use crate::graphql::{
     context::ContextExt,
@@ -103,12 +103,15 @@ impl QueryRoot {
         users
     }
 
-    async fn all_controller_functions(&self, ctx: &Context<'_>) -> Result<Vec<ControllerFunction>> {
+    async fn all_controller_applications(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerApplication>> {
         let pool = ctx.db_pool();
-        let controller_functions = query_all_controller_functions(pool)
+        let controller_applications = query_all_controller_applications(pool)
             .await
             .map_err(Error::from);
 
-        controller_functions
+        controller_applications
     }
 }

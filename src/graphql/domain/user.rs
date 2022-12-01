@@ -1,11 +1,11 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
+        controller_application_loader::{
+            CreatedControllerApplicationsLoader, UpdatedControllerApplicationsLoader,
+        },
         controller_change_loader::{
             CreatedControllerChangesLoader, UpdatedControllerChangesLoader,
-        },
-        controller_function_loader::{
-            CreatedControllerFunctionsLoader, UpdatedControllerFunctionsLoader,
         },
         controller_loader::{CreatedControllersLoader, UpdatedControllersLoader},
         controller_manufacturer_loader::{
@@ -13,7 +13,9 @@ use crate::graphql::{
         },
         facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
     },
-    domain::{Controller, ControllerChange, ControllerFunction, ControllerManufacturer, Facility},
+    domain::{
+        Controller, ControllerApplication, ControllerChange, ControllerManufacturer, Facility,
+    },
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Enum, Error, InputObject, OneofObject,
@@ -87,24 +89,24 @@ impl User {
         Ok(result)
     }
 
-    async fn created_controller_functions(
+    async fn created_controller_applications(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerFunction>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedControllerFunctionsLoader>>();
-        let controller_functions = loader.load_one(self.id).await?;
-        let result = controller_functions.unwrap_or(vec![]);
+    ) -> Result<Vec<ControllerApplication>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedControllerApplicationsLoader>>();
+        let controller_applications = loader.load_one(self.id).await?;
+        let result = controller_applications.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_controller_functions(
+    async fn updated_controller_applications(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerFunction>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedControllerFunctionsLoader>>();
-        let controller_functions = loader.load_one(self.id).await?;
-        let result = controller_functions.unwrap_or(vec![]);
+    ) -> Result<Vec<ControllerApplication>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedControllerApplicationsLoader>>();
+        let controller_applications = loader.load_one(self.id).await?;
+        let result = controller_applications.unwrap_or(vec![]);
 
         Ok(result)
     }

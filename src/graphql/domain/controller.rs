@@ -2,11 +2,11 @@ use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         controller_change_loader::ControllerChangesByControllerLoader,
-        controller_function_loader::ControllerFunctionLoader,
+        controller_application_loader::ControllerApplicationLoader,
         controller_manufacturer_loader::ControllerManufacturerLoader,
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
-    domain::{ControllerChange, ControllerFunction, ControllerManufacturer, Facility, User},
+    domain::{ControllerChange, ControllerApplication, ControllerManufacturer, Facility, User},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,
@@ -23,7 +23,7 @@ pub struct Controller {
     pub manufacturer_id: Uuid,
     pub model: Option<String>,
     pub serial_number: Option<String>,
-    pub function_id: Option<Uuid>,
+    pub application_id: Option<Uuid>,
     pub facility_id: Uuid,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
@@ -54,15 +54,15 @@ impl Controller {
         facility
     }
 
-    async fn function(&self, ctx: &Context<'_>) -> Result<Option<ControllerFunction>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerFunctionLoader>>();
-        let function = if let Some(id) = self.function_id {
+    async fn application(&self, ctx: &Context<'_>) -> Result<Option<ControllerApplication>, Error> {
+        let loader = ctx.get_loader::<DataLoader<ControllerApplicationLoader>>();
+        let application = if let Some(id) = self.application_id {
             loader.load_one(id).await
         } else {
             Ok(None)
         };
 
-        function
+        application
     }
 
     async fn manufacturer(

@@ -1,16 +1,15 @@
 use super::{
+    controller_application_loader::{
+        ControllerApplicationLoader, CreatedControllerApplicationsLoader,
+        UpdatedControllerApplicationsLoader,
+    },
     controller_change_loader::{
         ControllerChangeLoader, ControllerChangesByControllerLoader,
         CreatedControllerChangesLoader, UpdatedControllerChangesLoader,
     },
-    controller_function_loader::{
-        ControllerFunctionLoader, CreatedControllerFunctionsLoader,
-        UpdatedControllerFunctionsLoader,
-    },
     controller_loader::{
-        ControllersByFunctionLoader, ControllerLoader,
-        ControllersByManufacturerLoader, CreatedControllersLoader,
-        FacilityControllersLoader, UpdatedControllersLoader,
+        ControllerLoader, ControllersByApplicationLoader, ControllersByManufacturerLoader,
+        CreatedControllersLoader, FacilityControllersLoader, UpdatedControllersLoader,
     },
     controller_manufacturer_loader::{
         ControllerManufacturerLoader, CreatedControllerManufacturersLoader,
@@ -53,8 +52,8 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         DataLoader::new(UpdatedControllersLoader::new(pool.clone()), tokio::spawn);
     let controllers_by_facility_id_loader =
         DataLoader::new(FacilityControllersLoader::new(pool.clone()), tokio::spawn);
-    let controllers_by_function_id_loader = DataLoader::new(
-        ControllersByFunctionLoader::new(pool.clone()),
+    let controllers_by_application_id_loader = DataLoader::new(
+        ControllersByApplicationLoader::new(pool.clone()),
         tokio::spawn,
     );
     let controllers_by_manufacturer_id_loader = DataLoader::new(
@@ -62,16 +61,16 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    let controller_functions_by_creator_id_loader = DataLoader::new(
-        CreatedControllerFunctionsLoader::new(pool.clone()),
+    let controller_applications_by_creator_id_loader = DataLoader::new(
+        CreatedControllerApplicationsLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_functions_by_updater_id_loader = DataLoader::new(
-        UpdatedControllerFunctionsLoader::new(pool.clone()),
+    let controller_applications_by_updater_id_loader = DataLoader::new(
+        UpdatedControllerApplicationsLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_function_by_id_loader =
-        DataLoader::new(ControllerFunctionLoader::new(pool.clone()), tokio::spawn);
+    let controller_application_by_id_loader =
+        DataLoader::new(ControllerApplicationLoader::new(pool.clone()), tokio::spawn);
 
     let controller_manufacturers_by_creator_id_loader = DataLoader::new(
         CreatedControllerManufacturersLoader::new(pool.clone()),
@@ -113,12 +112,12 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(controllers_by_creator_id_loader);
     loaders.insert(controllers_by_updater_id_loader);
     loaders.insert(controllers_by_facility_id_loader);
-    loaders.insert(controllers_by_function_id_loader);
+    loaders.insert(controllers_by_application_id_loader);
     loaders.insert(controllers_by_manufacturer_id_loader);
 
-    loaders.insert(controller_function_by_id_loader);
-    loaders.insert(controller_functions_by_creator_id_loader);
-    loaders.insert(controller_functions_by_updater_id_loader);
+    loaders.insert(controller_application_by_id_loader);
+    loaders.insert(controller_applications_by_creator_id_loader);
+    loaders.insert(controller_applications_by_updater_id_loader);
 
     loaders.insert(controller_manufacturer_by_id_loader);
     loaders.insert(controller_manufacturers_by_creator_id_loader);

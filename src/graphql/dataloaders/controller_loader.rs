@@ -145,41 +145,41 @@ impl Loader<Uuid> for FacilityControllersLoader {
     }
 }
 
-pub struct ControllersByFunctionLoader {
+pub struct ControllersByApplicationLoader {
     pool: Data<PgPool>,
 }
 
-impl ControllersByFunctionLoader {
+impl ControllersByApplicationLoader {
     pub fn new(pool: Data<PgPool>) -> Self {
         Self { pool }
     }
 }
 
 #[async_trait::async_trait]
-impl Loader<Uuid> for ControllersByFunctionLoader {
+impl Loader<Uuid> for ControllersByApplicationLoader {
     type Value = Vec<Controller>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut controllers = sqlx::query_as!(
             Controller,
-            "SELECT * FROM controllers WHERE function_id = ANY($1)",
+            "SELECT * FROM controllers WHERE application_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
         .await?;
-        controllers.sort_by_key(|controller| controller.function_id);
+        controllers.sort_by_key(|controller| controller.application_id);
 
-        let controller_function_controllers = controllers
+        let controller_application_controllers = controllers
             .into_iter()
-            // This query will never return None variant of function_id because SQL is returning only Controllers with non-null function_ids
+            // This query will never return None variant of application_id because SQL is returning only Controllers with non-null application_ids
             // It is safe to unwrap it.
-            .group_by(|controller| controller.function_id.unwrap())
+            .group_by(|controller| controller.application_id.unwrap())
             .into_iter()
-            .map(|(function_id, group)| (function_id, group.collect()))
+            .map(|(application_id, group)| (application_id, group.collect()))
             .collect();
 
-        Ok(controller_function_controllers)
+        Ok(controller_application_controllers)
     }
 }
 
