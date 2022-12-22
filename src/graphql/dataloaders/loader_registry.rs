@@ -1,4 +1,12 @@
 use super::{
+    compressor_change_loader::{
+        CompressorChangeLoader, CompressorChangesByCompressorLoader,
+        CreatedCompressorChangesLoader, UpdatedCompressorChangesLoader,
+    },
+    compressor_loader::{
+        CompressorLoader, CreatedCompressorsLoader, FacilityCompressorsLoader,
+        UpdatedCompressorsLoader,
+    },
     controller_application_loader::{
         ControllerApplicationLoader, CreatedControllerApplicationsLoader,
         UpdatedControllerApplicationsLoader,
@@ -106,6 +114,30 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    let compressor_by_id_loader =
+        DataLoader::new(CompressorLoader::new(pool.clone()), tokio::spawn);
+    let compressors_by_creator_id_loader =
+        DataLoader::new(CreatedCompressorsLoader::new(pool.clone()), tokio::spawn);
+    let compressors_by_updater_id_loader =
+        DataLoader::new(UpdatedCompressorsLoader::new(pool.clone()), tokio::spawn);
+    let compressors_by_facility_id_loader =
+        DataLoader::new(FacilityCompressorsLoader::new(pool.clone()), tokio::spawn);
+
+    let compressor_change_by_id_loader =
+        DataLoader::new(CompressorChangeLoader::new(pool.clone()), tokio::spawn);
+    let compressor_changes_by_compressor_id_loader = DataLoader::new(
+        CompressorChangesByCompressorLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_changes_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_changes_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     loaders.insert(user_by_id_loader);
 
     loaders.insert(controller_by_id_loader);
@@ -131,6 +163,16 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(facility_by_id_loader);
     loaders.insert(facilities_by_creator_id_loader);
     loaders.insert(facilities_by_updater_id_loader);
+
+    loaders.insert(compressor_by_id_loader);
+    loaders.insert(compressors_by_creator_id_loader);
+    loaders.insert(compressors_by_updater_id_loader);
+    loaders.insert(compressors_by_facility_id_loader);
+
+    loaders.insert(compressor_change_by_id_loader);
+    loaders.insert(compressor_changes_by_compressor_id_loader);
+    loaders.insert(compressor_changes_by_creator_id_loader);
+    loaders.insert(compressor_changes_by_updater_id_loader);
 
     loaders
 }

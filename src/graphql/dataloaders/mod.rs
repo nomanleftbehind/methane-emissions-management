@@ -1,3 +1,5 @@
+pub mod compressor_change_loader;
+pub mod compressor_loader;
 pub mod controller_application_loader;
 pub mod controller_change_loader;
 pub mod controller_loader;
