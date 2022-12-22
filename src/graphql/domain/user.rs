@@ -1,6 +1,10 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
+        compressor_change_loader::{
+            CreatedCompressorChangesLoader, UpdatedCompressorChangesLoader,
+        },
+        compressor_loader::{CreatedCompressorsLoader, UpdatedCompressorsLoader},
         controller_application_loader::{
             CreatedControllerApplicationsLoader, UpdatedControllerApplicationsLoader,
         },
@@ -14,7 +18,8 @@ use crate::graphql::{
         facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
     },
     domain::{
-        Controller, ControllerApplication, ControllerChange, ControllerManufacturer, Facility,
+        Compressor, CompressorChange, Controller, ControllerApplication, ControllerChange,
+        ControllerManufacturer, Facility,
     },
 };
 use async_graphql::{
@@ -151,6 +156,46 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerChangesLoader>>();
         let controller_changes = loader.load_one(self.id).await?;
         let result = controller_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_compressors(&self, ctx: &Context<'_>) -> Result<Vec<Compressor>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedCompressorsLoader>>();
+        let compressors = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no created compressors
+        let result = compressors.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_compressors(&self, ctx: &Context<'_>) -> Result<Vec<Compressor>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorsLoader>>();
+        let compressors = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no updated compressors
+        let result = compressors.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_compressor_changes(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedCompressorChangesLoader>>();
+        let compressor_changes = loader.load_one(self.id).await?;
+        let result = compressor_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_compressor_changes(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorChangesLoader>>();
+        let compressor_changes = loader.load_one(self.id).await?;
+        let result = compressor_changes.unwrap_or(vec![]);
 
         Ok(result)
     }

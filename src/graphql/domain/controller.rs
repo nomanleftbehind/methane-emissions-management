@@ -77,8 +77,8 @@ impl Controller {
 
     async fn controller_changes(&self, ctx: &Context<'_>) -> Result<Vec<ControllerChange>, Error> {
         let loader = ctx.get_loader::<DataLoader<ControllerChangesByControllerLoader>>();
-        let controllers = loader.load_one(self.id).await?;
-        let result = controllers.unwrap_or(vec![]);
+        let controller_changes = loader.load_one(self.id).await?;
+        let result = controller_changes.unwrap_or(vec![]);
 
         Ok(result)
     }

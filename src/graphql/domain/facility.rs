@@ -1,7 +1,10 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{controller_loader::FacilityControllersLoader, user_loader::UserLoader},
-    domain::{Controller, User},
+    dataloaders::{
+        compressor_loader::FacilityCompressorsLoader, controller_loader::FacilityControllersLoader,
+        user_loader::UserLoader,
+    },
+    domain::{Compressor, Controller, User},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Enum, Error, InputObject, OneofObject,
@@ -68,6 +71,15 @@ impl Facility {
         let controllers = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no written controllers
         let result = controllers.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn compressors(&self, ctx: &Context<'_>) -> Result<Vec<Compressor>, Error> {
+        let loader = ctx.get_loader::<DataLoader<FacilityCompressorsLoader>>();
+        let compressors = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no written compressors
+        let result = compressors.unwrap_or(vec![]);
 
         Ok(result)
     }

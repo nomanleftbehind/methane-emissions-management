@@ -1,4 +1,9 @@
-use async_graphql::{Enum, SimpleObject};
+use crate::graphql::{
+    context::ContextExt,
+    dataloaders::{compressor_loader::CompressorLoader, user_loader::UserLoader},
+    domain::{Compressor, User},
+};
+use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Enum, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
@@ -12,6 +17,7 @@ pub enum CalculationMethod {
 }
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
+#[graphql(complex)]
 pub struct CompressorChange {
     pub id: Uuid,
     pub compressor_id: Uuid,
@@ -23,4 +29,28 @@ pub struct CompressorChange {
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
     pub updated_at: NaiveDateTime,
+}
+
+#[ComplexObject]
+impl CompressorChange {
+    async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UserLoader>>();
+        let created_by = loader.load_one(self.created_by_id).await;
+
+        created_by
+    }
+
+    async fn updated_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UserLoader>>();
+        let updated_by = loader.load_one(self.updated_by_id).await;
+
+        updated_by
+    }
+
+    async fn controller(&self, ctx: &Context<'_>) -> Result<Option<Compressor>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorLoader>>();
+        let controller = loader.load_one(self.compressor_id).await;
+
+        controller
+    }
 }
