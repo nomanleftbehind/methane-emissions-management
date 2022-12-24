@@ -1,25 +1,28 @@
-use crate::authentication::{register, validate_credentials, Credentials, AUTH_COOKIE_NAME};
-use crate::graphql::{
-    context::ContextExt,
-    domain::{LoginUserInput, RegisterUserInput, User},
+use crate::{
+    authentication::{register, validate_credentials, Credentials, AUTH_COOKIE_NAME},
+    graphql::{
+        context::ContextExt,
+        domain::{LoginUserInput, RegisterUserInput, User},
+    },
 };
-use ::http::header::SET_COOKIE;
-use async_graphql::*;
+use async_graphql::{Context, Error, Object};
+use http::header::SET_COOKIE;
 use secrecy::Secret;
 
 fn logged_in_err() -> Error {
     Error::new("Already logged in")
 }
 
-pub struct MutationRoot;
+#[derive(Default, Clone)]
+pub struct UserMutations;
 
 #[Object]
-impl MutationRoot {
+impl UserMutations {
     async fn register(
         &self,
         ctx: &Context<'_>,
         register_user_input: RegisterUserInput,
-    ) -> Result<User> {
+    ) -> Result<User, Error> {
         let pool = ctx.db_pool();
 
         let result = register(pool, register_user_input).await?;

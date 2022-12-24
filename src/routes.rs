@@ -1,5 +1,5 @@
 use crate::authentication::cookie::SessionCookie;
-use crate::graphql::SchemaRoot;
+use crate::graphql::Schema;
 use actix_web::{get, route, web::Data, Responder};
 use actix_web_lab::respond::Html;
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
@@ -16,7 +16,7 @@ async fn graphql_playground() -> impl Responder {
 /// GraphQL endpoint
 #[route("/graphql", method = "GET", method = "POST")]
 async fn graphql(
-    schema: Data<SchemaRoot>,
+    schema: Data<Schema>,
     req: GraphQLRequest,
     auth_cookies: Option<SessionCookie>,
 ) -> GraphQLResponse {

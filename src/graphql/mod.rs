@@ -1,14 +1,14 @@
-use async_graphql::{EmptySubscription, Schema};
+use async_graphql::EmptySubscription;
 
-pub mod mutation_root;
-pub mod query_root;
+pub mod mutations;
+pub mod queries;
 
 pub mod context;
 pub mod dataloaders;
-pub mod sql;
 pub mod domain;
+pub mod sql;
 
-pub use mutation_root::MutationRoot;
-pub use query_root::QueryRoot;
+pub use mutations::FullMutation;
+pub use queries::FullQuery;
 
-pub type SchemaRoot = Schema<QueryRoot, MutationRoot, EmptySubscription>;
+pub type Schema = async_graphql::Schema<FullQuery, FullMutation, EmptySubscription>;

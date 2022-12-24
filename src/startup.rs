@@ -1,9 +1,12 @@
-use crate::configuration::{DatabaseSettings, Settings};
-use crate::graphql::{
-    dataloaders::{get_loaders, LoaderRegistry},
-    MutationRoot, QueryRoot,
+use crate::{
+    configuration::{DatabaseSettings, Settings},
+    graphql::{
+        dataloaders::{get_loaders, LoaderRegistry},
+        mutations::full_mutation,
+        queries::full_query,
+    },
+    routes::{graphql, graphql_playground},
 };
-use crate::routes::{graphql, graphql_playground};
 use actix_cors::Cors;
 use actix_web::{
     cookie::Key,
@@ -16,8 +19,7 @@ use actix_web_flash_messages::{storage::CookieMessageStore, FlashMessagesFramewo
 use async_graphql::{EmptySubscription, Schema};
 use async_redis_session::RedisSessionStore;
 use secrecy::{ExposeSecret, Secret};
-use sqlx::postgres::PgPoolOptions;
-use sqlx::PgPool;
+use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::net::TcpListener;
 // use tracing::log::LevelFilter;
 
@@ -88,7 +90,7 @@ pub async fn run(
     let redis_store = RedisSessionStore::new(redis_uri.expose_secret().as_str())
         .expect("Failed to connect to Redis");
 
-    let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription)
+    let schema = Schema::build(full_query(), full_mutation(), EmptySubscription)
         .extension(async_graphql::extensions::Tracing)
         .limit_complexity(1024)
         .data(loader_registry_data)
