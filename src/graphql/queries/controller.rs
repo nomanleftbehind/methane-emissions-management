@@ -3,7 +3,7 @@ use async_graphql::{Context, Error, Object};
 use crate::graphql::{
     context::ContextExt,
     domain::{Controller, ControllerApplication, ControllersBy},
-    sql::{query_all_controller_applications, query_controllers, query_user_posts},
+    sql::{query_all_controller_applications, query_controllers, query_user_controllers},
 };
 
 #[derive(Default, Clone)]
@@ -22,11 +22,11 @@ impl ControllerQueries {
         let cookie = ctx.get_cookie()?;
         let user_id = ctx.get_session_manager()?.user_id(cookie).await?;
 
-        let posts = query_user_posts(pool, user_id, limit, offset)
+        let controllers = query_user_controllers(pool, user_id, limit, offset)
             .await
             .map_err(Error::from);
 
-        posts
+        controllers
     }
 
     async fn controllers_by(

@@ -30,7 +30,7 @@ impl Loader<Uuid> for CreatedControllerChangesLoader {
         .fetch_all(&**self.pool)
         .await?;
 
-        controller_changes.sort_by_key(|cf| cf.created_by_id);
+        controller_changes.sort_by_key(|controller_change| controller_change.created_by_id);
 
         let created_controller_changes = controller_changes
             .into_iter()
@@ -67,11 +67,11 @@ impl Loader<Uuid> for UpdatedControllerChangesLoader {
         .fetch_all(&**self.pool)
         .await?;
 
-        controller_changes.sort_by_key(|cf| cf.updated_by_id);
+        controller_changes.sort_by_key(|controller_change| controller_change.updated_by_id);
 
         let updated_controller_changes = controller_changes
             .into_iter()
-            .group_by(|cf| cf.updated_by_id)
+            .group_by(|controller_change| controller_change.updated_by_id)
             .into_iter()
             .map(|(updated_by_id, group)| (updated_by_id, group.collect()))
             .collect();

@@ -28,13 +28,13 @@ pub async fn query_user<'e, E: PgExecutor<'e>>(
     user
 }
 
-pub async fn query_user_posts<'e, E: PgExecutor<'e>>(
+pub async fn query_user_controllers<'e, E: PgExecutor<'e>>(
     executor: E,
     user_id: Uuid,
     limit: i64,
     offset: i64,
 ) -> Result<Vec<Controller>, sqlx::Error> {
-    let posts = sqlx::query_as!(
+    let controllers = sqlx::query_as!(
         Controller,
         r#"SELECT p.* FROM "controllers" p WHERE p."created_by_id" = $1 LIMIT $2 OFFSET $3"#,
         user_id,
@@ -44,8 +44,7 @@ pub async fn query_user_posts<'e, E: PgExecutor<'e>>(
     .fetch_all(executor)
     .await;
 
-    posts
-    // posts
+    controllers
 }
 
 pub async fn query_user_by_id<'e, E: PgExecutor<'e>>(
@@ -82,14 +81,14 @@ pub async fn query_all_users<'e, E: PgExecutor<'e>>(executor: E) -> Result<Vec<U
     users
 }
 
-// pub async fn query_user_post_ids<'e, E: PgExecutor<'e>>(
+// pub async fn query_user_controller_ids<'e, E: PgExecutor<'e>>(
 //     executor: E,
 //     // cred: &UserCredential,
 //     user_id: Uuid,
 //     limit: i64,
 //     offset: i64,
 // ) -> Result<Vec<i64>, sqlx::Error> {
-//     query(include_str!("user_posts.sql"))
+//     query(include_str!("user_controllers.sql"))
 //         // .bind(cred.user_id())
 //         .bind(user_id)
 //         .bind(limit)
@@ -99,11 +98,11 @@ pub async fn query_all_users<'e, E: PgExecutor<'e>>(executor: E) -> Result<Vec<U
 //         .await
 // }
 
-// pub async fn query_posts_by_user_id(
+// pub async fn query_controllers_by_user_id(
 //     pool: &PgPool,
 //     user_id: Uuid,
 // ) -> Result<Vec<Post>, sqlx::Error> {
-//     let posts = sqlx::query_as!(
+//     let controllers = sqlx::query_as!(
 //         Post,
 //         r#"
 //         SELECT * FROM controller
@@ -114,7 +113,7 @@ pub async fn query_all_users<'e, E: PgExecutor<'e>>(executor: E) -> Result<Vec<U
 //     )
 //     .fetch_all(pool)
 //     .await?;
-//     Ok(posts)
+//     Ok(controllers)
 // }
 
 // pub async fn query_role<'e, E: PgExecutor<'e>>(

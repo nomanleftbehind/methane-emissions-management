@@ -23,6 +23,10 @@ use super::{
         ControllerManufacturerLoader, CreatedControllerManufacturersLoader,
         UpdatedControllerManufacturersLoader,
     },
+    controller_month_hours_loader::{
+        ControllerMonthHoursByControllerLoader, ControllerMonthHoursLoader,
+        CreatedControllerMonthHoursLoader, UpdatedControllerMonthHoursLoader,
+    },
     facility_loader::{CreatedFacilitiesLoader, FacilityLoader, UpdatedFacilitiesLoader},
     user_loader::UserLoader,
 };
@@ -114,6 +118,21 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    let controller_month_hours_by_id_loader =
+        DataLoader::new(ControllerMonthHoursLoader::new(pool.clone()), tokio::spawn);
+    let controller_month_hours_by_controller_id_loader = DataLoader::new(
+        ControllerMonthHoursByControllerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_month_hours_by_creator_id_loader = DataLoader::new(
+        CreatedControllerMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_month_hours_by_updater_id_loader = DataLoader::new(
+        UpdatedControllerMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     let compressor_by_id_loader =
         DataLoader::new(CompressorLoader::new(pool.clone()), tokio::spawn);
     let compressors_by_creator_id_loader =
@@ -159,6 +178,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(controller_changes_by_controller_id_loader);
     loaders.insert(controller_changes_by_creator_id_loader);
     loaders.insert(controller_changes_by_updater_id_loader);
+
+    loaders.insert(controller_month_hours_by_id_loader);
+    loaders.insert(controller_month_hours_by_controller_id_loader);
+    loaders.insert(controller_month_hours_by_creator_id_loader);
+    loaders.insert(controller_month_hours_by_updater_id_loader);
 
     loaders.insert(facility_by_id_loader);
     loaders.insert(facilities_by_creator_id_loader);

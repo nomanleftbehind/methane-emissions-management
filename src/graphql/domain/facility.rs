@@ -69,7 +69,7 @@ impl Facility {
     async fn controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
         let loader = ctx.get_loader::<DataLoader<FacilityControllersLoader>>();
         let controllers = loader.load_one(self.id).await?;
-        // Need to return empty vector if user has no written controllers
+        // Need to return empty vector if facility has no associated controllers
         let result = controllers.unwrap_or(vec![]);
 
         Ok(result)
@@ -78,7 +78,7 @@ impl Facility {
     async fn compressors(&self, ctx: &Context<'_>) -> Result<Vec<Compressor>, Error> {
         let loader = ctx.get_loader::<DataLoader<FacilityCompressorsLoader>>();
         let compressors = loader.load_one(self.id).await?;
-        // Need to return empty vector if user has no written compressors
+        // Need to return empty vector if facility has no associated compressors
         let result = compressors.unwrap_or(vec![]);
 
         Ok(result)
