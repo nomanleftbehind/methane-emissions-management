@@ -6,6 +6,37 @@ use sqlx::PgPool;
 use std::collections::HashMap;
 use uuid::Uuid;
 
+pub struct ControllerChangeLoader {
+    pool: Data<PgPool>,
+}
+
+impl ControllerChangeLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for ControllerChangeLoader {
+    type Value = ControllerChange;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let controller_changes = sqlx::query_as!(
+            ControllerChange,
+            "SELECT * FROM controller_changes WHERE id = ANY($1)",
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?
+        .into_iter()
+        .map(|controller_change| (controller_change.id, controller_change))
+        .collect();
+
+        Ok(controller_changes)
+    }
+}
+
 pub struct CreatedControllerChangesLoader {
     pool: Data<PgPool>,
 }
@@ -34,7 +65,7 @@ impl Loader<Uuid> for CreatedControllerChangesLoader {
 
         let created_controller_changes = controller_changes
             .into_iter()
-            .group_by(|cf| cf.created_by_id)
+            .group_by(|controller_change| controller_change.created_by_id)
             .into_iter()
             .map(|(created_by_id, group)| (created_by_id, group.collect()))
             .collect();
@@ -77,37 +108,6 @@ impl Loader<Uuid> for UpdatedControllerChangesLoader {
             .collect();
 
         Ok(updated_controller_changes)
-    }
-}
-
-pub struct ControllerChangeLoader {
-    pool: Data<PgPool>,
-}
-
-impl ControllerChangeLoader {
-    pub fn new(pool: Data<PgPool>) -> Self {
-        Self { pool }
-    }
-}
-
-#[async_trait::async_trait]
-impl Loader<Uuid> for ControllerChangeLoader {
-    type Value = ControllerChange;
-    type Error = async_graphql::Error;
-
-    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let controller_changes = sqlx::query_as!(
-            ControllerChange,
-            "SELECT * FROM controller_changes WHERE id = ANY($1)",
-            keys
-        )
-        .fetch_all(&**self.pool)
-        .await?
-        .into_iter()
-        .map(|controller_change| (controller_change.id, controller_change))
-        .collect();
-
-        Ok(controller_changes)
     }
 }
 

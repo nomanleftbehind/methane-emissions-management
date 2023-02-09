@@ -27,6 +27,10 @@ use super::{
         ControllerMonthHoursByControllerLoader, ControllerMonthHoursLoader,
         CreatedControllerMonthHoursLoader, UpdatedControllerMonthHoursLoader,
     },
+    controller_month_vent_loader::{
+        ControllerMonthVentLoader, ControllerMonthVentsByControllerLoader,
+        CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
+    },
     facility_loader::{CreatedFacilitiesLoader, FacilityLoader, UpdatedFacilitiesLoader},
     user_loader::UserLoader,
 };
@@ -54,8 +58,10 @@ impl LoaderRegistry {
 pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let mut loaders: LoaderMap = LoaderMap::new();
 
+    // User
     let user_by_id_loader = DataLoader::new(UserLoader::new(pool.clone()), tokio::spawn);
 
+    // Controllers
     let controller_by_id_loader =
         DataLoader::new(ControllerLoader::new(pool.clone()), tokio::spawn);
     let controllers_by_creator_id_loader =
@@ -73,6 +79,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Controller Applications
     let controller_applications_by_creator_id_loader = DataLoader::new(
         CreatedControllerApplicationsLoader::new(pool.clone()),
         tokio::spawn,
@@ -84,6 +91,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let controller_application_by_id_loader =
         DataLoader::new(ControllerApplicationLoader::new(pool.clone()), tokio::spawn);
 
+    // Controller Manufacturers
+    let controller_manufacturer_by_id_loader = DataLoader::new(
+        ControllerManufacturerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
     let controller_manufacturers_by_creator_id_loader = DataLoader::new(
         CreatedControllerManufacturersLoader::new(pool.clone()),
         tokio::spawn,
@@ -92,17 +104,15 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         UpdatedControllerManufacturersLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_manufacturer_by_id_loader = DataLoader::new(
-        ControllerManufacturerLoader::new(pool.clone()),
-        tokio::spawn,
-    );
 
+    // Facility
     let facility_by_id_loader = DataLoader::new(FacilityLoader::new(pool.clone()), tokio::spawn);
     let facilities_by_creator_id_loader =
         DataLoader::new(CreatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
     let facilities_by_updater_id_loader =
         DataLoader::new(UpdatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
 
+    // Controller Change
     let controller_change_by_id_loader =
         DataLoader::new(ControllerChangeLoader::new(pool.clone()), tokio::spawn);
     let controller_changes_by_controller_id_loader = DataLoader::new(
@@ -118,6 +128,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Controller Month Hours
     let controller_month_hours_by_id_loader =
         DataLoader::new(ControllerMonthHoursLoader::new(pool.clone()), tokio::spawn);
     let controller_month_hours_by_controller_id_loader = DataLoader::new(
@@ -133,6 +144,23 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Controller Month Vent
+    let controller_month_vent_by_id_loader =
+        DataLoader::new(ControllerMonthVentLoader::new(pool.clone()), tokio::spawn);
+    let controller_month_vents_by_controller_id_loader = DataLoader::new(
+        ControllerMonthVentsByControllerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_month_vents_by_creator_id_loader = DataLoader::new(
+        CreatedControllerMonthVentsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_month_vents_by_updater_id_loader = DataLoader::new(
+        UpdatedControllerMonthVentsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Compressor
     let compressor_by_id_loader =
         DataLoader::new(CompressorLoader::new(pool.clone()), tokio::spawn);
     let compressors_by_creator_id_loader =
@@ -142,6 +170,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let compressors_by_facility_id_loader =
         DataLoader::new(FacilityCompressorsLoader::new(pool.clone()), tokio::spawn);
 
+    // Compressor Change
     let compressor_change_by_id_loader =
         DataLoader::new(CompressorChangeLoader::new(pool.clone()), tokio::spawn);
     let compressor_changes_by_compressor_id_loader = DataLoader::new(
@@ -183,6 +212,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(controller_month_hours_by_controller_id_loader);
     loaders.insert(controller_month_hours_by_creator_id_loader);
     loaders.insert(controller_month_hours_by_updater_id_loader);
+
+    loaders.insert(controller_month_vent_by_id_loader);
+    loaders.insert(controller_month_vents_by_controller_id_loader);
+    loaders.insert(controller_month_vents_by_creator_id_loader);
+    loaders.insert(controller_month_vents_by_updater_id_loader);
 
     loaders.insert(facility_by_id_loader);
     loaders.insert(facilities_by_creator_id_loader);

@@ -5,9 +5,13 @@ use crate::graphql::{
         controller_change_loader::ControllerChangesByControllerLoader,
         controller_manufacturer_loader::ControllerManufacturerLoader,
         controller_month_hours_loader::ControllerMonthHoursByControllerLoader,
+        controller_month_vent_loader::ControllerMonthVentsByControllerLoader,
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
-    domain::{ControllerApplication, ControllerChange, ControllerManufacturer, Facility, User},
+    domain::{
+        ControllerApplication, ControllerChange, ControllerManufacturer, ControllerMonthVent,
+        Facility, User,
+    },
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,
@@ -93,6 +97,17 @@ impl Controller {
         let loader = ctx.get_loader::<DataLoader<ControllerMonthHoursByControllerLoader>>();
         let controller_month_hours = loader.load_one(self.id).await?;
         let result = controller_month_hours.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn controller_month_vents(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerMonthVent>, Error> {
+        let loader = ctx.get_loader::<DataLoader<ControllerMonthVentsByControllerLoader>>();
+        let controller_month_vents = loader.load_one(self.id).await?;
+        let result = controller_month_vents.unwrap_or(vec![]);
 
         Ok(result)
     }

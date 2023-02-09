@@ -18,11 +18,14 @@ use crate::graphql::{
         controller_month_hours_loader::{
             CreatedControllerMonthHoursLoader, UpdatedControllerMonthHoursLoader,
         },
+        controller_month_vent_loader::{
+            CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
+        },
         facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
     },
     domain::{
         Compressor, CompressorChange, Controller, ControllerApplication, ControllerChange,
-        ControllerManufacturer, ControllerMonthHours, Facility,
+        ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility,
     },
 };
 use async_graphql::{
@@ -181,6 +184,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerMonthHoursLoader>>();
         let controller_month_hours = loader.load_one(self.id).await?;
         let result = controller_month_hours.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_controller_month_vents(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerMonthVent>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedControllerMonthVentsLoader>>();
+        let controller_month_vents = loader.load_one(self.id).await?;
+        let result = controller_month_vents.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_controller_month_vents(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerMonthVent>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedControllerMonthVentsLoader>>();
+        let controller_month_vents = loader.load_one(self.id).await?;
+        let result = controller_month_vents.unwrap_or(vec![]);
 
         Ok(result)
     }
