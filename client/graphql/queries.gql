@@ -38,6 +38,7 @@ query Me {
 	me {
 		email
 		id
+		role
 	}
 }
 

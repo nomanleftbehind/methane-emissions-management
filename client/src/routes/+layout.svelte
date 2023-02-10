@@ -34,10 +34,10 @@
 	<a href="/">Home</a>
 	<a href="/about">About</a>
 	<a href="/controllers">Controllers</a>
-	<a href="/settings">Settings</a>
-	{#if !$user}
-		<a href="/login">Login</a>
-	{:else}
+	{#if !$user || $user.role === 'ADMIN' || $user.role === 'ENGINEER'}
+		<a href="/register">{$user ? 'Register' : 'Login'}</a>
+	{/if}
+	{#if $user}
 		<Dropdown user={$user} />
 	{/if}
 </nav>

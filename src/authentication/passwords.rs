@@ -182,6 +182,10 @@ pub async fn register(
         role,
     }: RegisterUserInput,
 ) -> Result<User, sqlx::Error> {
+    println!(
+        "register input: {}, {}, {}, {}, {:?}",
+        email, password, first_name, last_name, role
+    );
     let salt = SaltString::generate(&mut rand::thread_rng());
     // Match production parameters
     let password = Argon2::new(

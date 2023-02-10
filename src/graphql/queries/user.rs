@@ -31,9 +31,7 @@ impl UserQueries {
         query_user(pool, by).await.map_err(Error::from)
     }
 
-    async fn all_users(&self, ctx: &Context<'_>, test_str: String) -> Result<Vec<User>, Error> {
-        println!("test string: {}", test_str);
-
+    async fn all_users(&self, ctx: &Context<'_>) -> Result<Vec<User>, Error> {
         let pool = ctx.db_pool();
 
         let users = query_all_users(pool).await.map_err(Error::from);

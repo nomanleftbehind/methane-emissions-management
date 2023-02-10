@@ -7,7 +7,7 @@ export const userData = writable<IUser>(null);
 
 export const user = derived(userData, ($userData) => {
 	if ($userData) {
-		return { id: $userData.id, email: $userData.email };
+		return { id: $userData.id, email: $userData.email, role: $userData.role };
 	}
 	return null;
 });

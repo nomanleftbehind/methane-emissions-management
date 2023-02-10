@@ -5,7 +5,7 @@
 
 	$: if (!$user) {
 		if (browser) {
-			goto('/login');
+			goto('/register');
 		}
 	}
 </script>
