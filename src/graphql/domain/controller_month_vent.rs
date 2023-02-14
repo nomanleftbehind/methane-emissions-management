@@ -44,3 +44,25 @@ impl ControllerMonthVent {
         controller
     }
 }
+
+#[derive(SimpleObject, Clone, FromRow, Debug)]
+pub struct ControllerMonthVentCalculated {
+    pub month: NaiveDate,
+    pub volume: f64,
+    pub controller_id: Uuid,
+}
+
+impl From<(ControllerMonthVentCalculated, Uuid)> for ControllerMonthVent {
+    fn from((cmvc, user_id): (ControllerMonthVentCalculated, Uuid)) -> Self {
+        ControllerMonthVent {
+            id: Uuid::new_v4(),
+            month: cmvc.month,
+            volume: cmvc.volume,
+            controller_id: cmvc.controller_id,
+            created_at: chrono::Utc::now().naive_utc(),
+            updated_at: chrono::Utc::now().naive_utc(),
+            created_by_id: user_id,
+            updated_by_id: user_id,
+        }
+    }
+}
