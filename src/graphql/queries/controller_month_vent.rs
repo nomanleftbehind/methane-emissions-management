@@ -1,7 +1,9 @@
 use crate::graphql::{
-    context::ContextExt, domain::ControllerMonthVent, sql::query_all_controller_month_vents,
+    context::ContextExt, domain::ControllerMonthVentInsertValuesRow,
+    sql::query_controller_month_vents_calculated,
 };
 use async_graphql::{Context, Error, Object};
+use itertools::Itertools;
 
 #[derive(Default, Clone)]
 pub struct ControllerMonthVentQueries;
@@ -16,23 +18,23 @@ impl ControllerMonthVentQueries {
         let cookie = ctx.get_cookie()?;
         let user_id = ctx.get_session_manager()?.user_id(cookie).await?;
 
-        let calculated_controller_month_vents = query_all_controller_month_vents(pool)
+        let controller_month_vents_calculated = query_controller_month_vents_calculated(pool)
             .await
             .map_err(Error::from)?;
 
-        let stc = calculated_controller_month_vents
+        let insert_rows_string = controller_month_vents_calculated
             .into_iter()
-            .map(|calculated_controller_month_vent| {
-                (calculated_controller_month_vent, user_id).into()
+            .map(|controller_month_vent_calculated| {
+                let insert_row = ControllerMonthVentInsertValuesRow::new(
+                    user_id,
+                    controller_month_vent_calculated,
+                );
+                let insert_row_string: String = insert_row.into();
+                insert_row_string
             })
-            .collect::<Vec<_>>();
+            .join(",");
 
-        let y: String = stc.into_iter().map(|c: ControllerMonthVent| {
-            
-            format!("({}, {}, {}, {}),", c.id, c.controller_id, c.created_by_id, c.month)
-        }).collect();
-
-        // Ok(stc)
-        Ok(y)
+        let insert_statement = format!("INSERT INTO controller_month_vent (id, month, volume, controller_id, created_by_id, created_at, updated_by_id, updated_at) VALUES {};", insert_rows_string);
+        Ok(insert_statement)
     }
 }

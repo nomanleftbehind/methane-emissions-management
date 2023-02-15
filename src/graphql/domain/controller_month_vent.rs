@@ -52,17 +52,46 @@ pub struct ControllerMonthVentCalculated {
     pub controller_id: Uuid,
 }
 
-impl From<(ControllerMonthVentCalculated, Uuid)> for ControllerMonthVent {
-    fn from((cmvc, user_id): (ControllerMonthVentCalculated, Uuid)) -> Self {
-        ControllerMonthVent {
-            id: Uuid::new_v4(),
-            month: cmvc.month,
-            volume: cmvc.volume,
-            controller_id: cmvc.controller_id,
-            created_at: chrono::Utc::now().naive_utc(),
-            updated_at: chrono::Utc::now().naive_utc(),
-            created_by_id: user_id,
-            updated_by_id: user_id,
+#[derive(Debug)]
+pub struct ControllerMonthVentInsertValuesRow {
+    pub user_id: Uuid,
+    pub controller_month_vent_calculated: ControllerMonthVentCalculated,
+}
+
+impl ControllerMonthVentInsertValuesRow {
+    pub fn new(
+        user_id: Uuid,
+        controller_month_vent_calculated: ControllerMonthVentCalculated,
+    ) -> Self {
+        Self {
+            user_id,
+            controller_month_vent_calculated,
         }
+    }
+}
+
+impl From<ControllerMonthVentInsertValuesRow> for String {
+    fn from(
+        ControllerMonthVentInsertValuesRow {
+            user_id,
+            controller_month_vent_calculated:
+                ControllerMonthVentCalculated {
+                    controller_id,
+                    month,
+                    volume,
+                },
+        }: ControllerMonthVentInsertValuesRow,
+    ) -> Self {
+        format!(
+            "('{}', '{}', {}, '{}', '{}', '{}', '{}', '{}')",
+            Uuid::new_v4(),
+            month,
+            volume,
+            controller_id,
+            user_id,
+            chrono::Utc::now().naive_utc(),
+            user_id,
+            chrono::Utc::now().naive_utc()
+        )
     }
 }

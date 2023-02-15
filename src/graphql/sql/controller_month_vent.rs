@@ -1,10 +1,13 @@
-use crate::graphql::domain::ControllerMonthVentCalculated;
-use sqlx::PgExecutor;
+use crate::graphql::domain::{ControllerMonthVentCalculated, ControllerMonthVentInsertValuesRow};
+use itertools::Itertools;
+use sqlx::PgPool;
+use uuid::Uuid;
 
-pub async fn query_all_controller_month_vents<'e, E: PgExecutor<'e>>(
-    executor: E,
-) -> Result<Vec<ControllerMonthVentCalculated>, sqlx::Error> {
-    sqlx::query_as!(ControllerMonthVentCalculated,
+pub async fn insert_controller_month_vents(
+    pool: &PgPool,
+    user_id: Uuid,
+) -> Result<u64, sqlx::Error> {
+    let controller_month_vents_calculated = sqlx::query_as!(ControllerMonthVentCalculated,
       r#"SELECT
 
       cmv.controller_id,
@@ -52,6 +55,25 @@ pub async fn query_all_controller_month_vents<'e, E: PgExecutor<'e>>(
       GROUP BY
       cmv.controller_id,
       cmv.month"#)
-        .fetch_all(executor)
-        .await
+        .fetch_all(pool)
+        .await?;
+
+    let insert_rows_string = controller_month_vents_calculated
+        .into_iter()
+        .map(|controller_month_vent_calculated| {
+            let insert_row =
+                ControllerMonthVentInsertValuesRow::new(user_id, controller_month_vent_calculated);
+            let insert_row_string: String = insert_row.into();
+            insert_row_string
+        })
+        .join(",");
+
+    let insert_statement = format!("INSERT INTO controller_month_vent (id, month, volume, controller_id, created_by_id, created_at, updated_by_id, updated_at) VALUES {};", insert_rows_string);
+
+    let rows_inserted = sqlx::query(&insert_statement)
+        .execute(pool)
+        .await?
+        .rows_affected();
+
+    Ok(rows_inserted)
 }
