@@ -1,4 +1,5 @@
-use crate::graphql::domain::{ControllerMonthVentCalculated, ControllerMonthVentInsertValuesRow};
+use crate::graphql::domain::{ControllerMonthVentCalculated, ControllerMonthVentInsertRow};
+use chrono::NaiveDate;
 use itertools::Itertools;
 use sqlx::PgPool;
 use uuid::Uuid;
@@ -6,8 +7,9 @@ use uuid::Uuid;
 pub async fn insert_controller_month_vents(
     pool: &PgPool,
     user_id: Uuid,
+    month: NaiveDate,
 ) -> Result<u64, sqlx::Error> {
-    let controller_month_vents_calculated = sqlx::query_as!(ControllerMonthVentCalculated,
+    let controller_month_vents_calculated: Vec<_> = sqlx::query_as!(ControllerMonthVentCalculated,
       r#"SELECT
 
       cmv.controller_id,
@@ -35,6 +37,7 @@ pub async fn insert_controller_month_vents(
       
       
                         FROM controller_month_hours
+						WHERE month = $1
                       ) cmh
       LEFT OUTER JOIN (
                         SELECT
@@ -48,32 +51,45 @@ pub async fn insert_controller_month_vents(
       
                         FROM controller_changes
                       ) cc ON cc.controller_id = cmh.controller_id AND cmh.month BETWEEN cc.month_join_beginning AND cc.month_join_end
-      
-      --WHERE cmh.controller_id IN ('45c84ed1-5fc5-4b56-801a-9a96c86f947e','292d0c53-536d-43d4-b627-acddd0f585aa')
-      ) cmv
+      		) cmv
       
       GROUP BY
       cmv.controller_id,
-      cmv.month"#)
+      cmv.month"#,
+	  month)
         .fetch_all(pool)
         .await?;
 
-    let insert_rows_string = controller_month_vents_calculated
-        .into_iter()
-        .map(|controller_month_vent_calculated| {
-            let insert_row =
-                ControllerMonthVentInsertValuesRow::new(user_id, controller_month_vent_calculated);
-            let insert_row_string: String = insert_row.into();
-            insert_row_string
-        })
-        .join(",");
+    if !controller_month_vents_calculated.is_empty() {
+        let insert_rows_string = controller_month_vents_calculated
+            .into_iter()
+            .map(|controller_month_vent_calculated| {
+                let insert_row =
+                    ControllerMonthVentInsertRow::new(user_id, controller_month_vent_calculated);
+                let insert_row_string: String = insert_row.into();
+                insert_row_string
+            })
+            .join(",");
 
-    let insert_statement = format!("INSERT INTO controller_month_vent (id, month, volume, controller_id, created_by_id, created_at, updated_by_id, updated_at) VALUES {};", insert_rows_string);
+        let insert_statement = format!("
+			INSERT INTO controller_month_vent (id, month, volume, controller_id, created_by_id, created_at, updated_by_id, updated_at)
+			VALUES {}
+			ON CONFLICT (controller_id, month)
+			DO
+				UPDATE 
+				SET volume = EXCLUDED.volume,
+					updated_by_id = EXCLUDED.updated_by_id,
+					updated_at = EXCLUDED.updated_at;
+			",
+		insert_rows_string);
 
-    let rows_inserted = sqlx::query(&insert_statement)
-        .execute(pool)
-        .await?
-        .rows_affected();
+        let rows_inserted = sqlx::query(&insert_statement)
+            .execute(pool)
+            .await?
+            .rows_affected();
 
-    Ok(rows_inserted)
+        Ok(rows_inserted)
+    } else {
+        Ok(0)
+    }
 }

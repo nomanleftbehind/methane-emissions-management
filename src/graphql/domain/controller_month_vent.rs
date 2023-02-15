@@ -53,12 +53,12 @@ pub struct ControllerMonthVentCalculated {
 }
 
 #[derive(Debug)]
-pub struct ControllerMonthVentInsertValuesRow {
+pub struct ControllerMonthVentInsertRow {
     pub user_id: Uuid,
     pub controller_month_vent_calculated: ControllerMonthVentCalculated,
 }
 
-impl ControllerMonthVentInsertValuesRow {
+impl ControllerMonthVentInsertRow {
     pub fn new(
         user_id: Uuid,
         controller_month_vent_calculated: ControllerMonthVentCalculated,
@@ -70,9 +70,9 @@ impl ControllerMonthVentInsertValuesRow {
     }
 }
 
-impl From<ControllerMonthVentInsertValuesRow> for String {
+impl From<ControllerMonthVentInsertRow> for String {
     fn from(
-        ControllerMonthVentInsertValuesRow {
+        ControllerMonthVentInsertRow {
             user_id,
             controller_month_vent_calculated:
                 ControllerMonthVentCalculated {
@@ -80,7 +80,7 @@ impl From<ControllerMonthVentInsertValuesRow> for String {
                     month,
                     volume,
                 },
-        }: ControllerMonthVentInsertValuesRow,
+        }: ControllerMonthVentInsertRow,
     ) -> Self {
         format!(
             "('{}', '{}', {}, '{}', '{}', '{}', '{}', '{}')",
