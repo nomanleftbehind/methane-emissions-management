@@ -1,4 +1,4 @@
-use crate::graphql::domain::{
+use crate::graphql::models::{
     Compressor,
     CompressorsBy::{self, CreatedById, FacilityId, UpdatedById},
 };

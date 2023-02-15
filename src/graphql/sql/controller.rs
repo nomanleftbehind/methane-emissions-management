@@ -1,4 +1,4 @@
-use crate::graphql::domain::{
+use crate::graphql::models::{
     Controller,
     ControllersBy::{self, CreatedById, FacilityId, UpdatedById},
 };

@@ -1,4 +1,4 @@
-use crate::graphql::domain::{Facility, FacilityBy, FacilityType, LimitOffsetInput};
+use crate::graphql::models::{Facility, FacilityBy, FacilityType, LimitOffsetInput};
 use sqlx::{PgExecutor, PgPool};
 
 pub async fn query_facilities(

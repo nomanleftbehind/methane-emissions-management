@@ -8,7 +8,7 @@ use crate::graphql::{
         controller_month_vent_loader::ControllerMonthVentsByControllerLoader,
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
-    domain::{
+    models::{
         ControllerApplication, ControllerChange, ControllerManufacturer, ControllerMonthVent,
         Facility, User,
     },

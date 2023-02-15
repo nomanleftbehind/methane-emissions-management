@@ -4,7 +4,7 @@ use crate::graphql::{
         compressor_change_loader::CompressorChangesByCompressorLoader,
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
-    domain::{CompressorChange, Facility, User},
+    models::{CompressorChange, Facility, User},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,

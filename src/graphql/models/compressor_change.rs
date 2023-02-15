@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{compressor_loader::CompressorLoader, user_loader::UserLoader},
-    domain::{Compressor, User},
+    models::{Compressor, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Enum, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};

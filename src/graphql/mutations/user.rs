@@ -2,7 +2,7 @@ use crate::{
     authentication::{register, validate_credentials, Credentials, AUTH_COOKIE_NAME},
     graphql::{
         context::ContextExt,
-        domain::{LoginUserInput, RegisterUserInput, User},
+        models::{LoginUserInput, RegisterUserInput, User},
     },
 };
 use async_graphql::{Context, Error, Object};

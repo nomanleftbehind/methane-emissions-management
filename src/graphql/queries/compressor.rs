@@ -2,7 +2,7 @@ use async_graphql::{Context, Error, Object};
 
 use crate::graphql::{
     context::ContextExt,
-    domain::{Compressor, CompressorsBy},
+    models::{Compressor, CompressorsBy},
     sql::query_compressors,
 };
 

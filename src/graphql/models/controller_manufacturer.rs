@@ -3,7 +3,7 @@ use crate::graphql::{
     dataloaders::{
         controller_loader::ControllersByManufacturerLoader, user_loader::UserLoader,
     },
-    domain::{Controller, User},
+    models::{Controller, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;

@@ -23,7 +23,7 @@ use crate::graphql::{
         },
         facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
     },
-    domain::{
+    models::{
         Compressor, CompressorChange, Controller, ControllerApplication, ControllerChange,
         ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility,
     },

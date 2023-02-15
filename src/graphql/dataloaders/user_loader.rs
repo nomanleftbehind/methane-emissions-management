@@ -1,4 +1,4 @@
-use crate::graphql::domain::User;
+use crate::graphql::models::User;
 use actix_web::web::Data;
 use async_graphql::{dataloader::*, *};
 use sqlx::PgPool;

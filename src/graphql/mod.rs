@@ -5,7 +5,7 @@ pub mod queries;
 
 pub mod context;
 pub mod dataloaders;
-pub mod domain;
+pub mod models;
 pub mod sql;
 
 pub use mutations::FullMutation;

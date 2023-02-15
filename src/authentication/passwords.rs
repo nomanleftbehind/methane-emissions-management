@@ -1,4 +1,4 @@
-use crate::graphql::domain::{RegisterUserInput, Role, User};
+use crate::graphql::models::{RegisterUserInput, Role, User};
 use crate::telemetry::spawn_blocking_with_tracing;
 use anyhow::Context;
 use argon2::{

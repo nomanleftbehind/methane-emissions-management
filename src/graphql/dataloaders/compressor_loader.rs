@@ -1,4 +1,4 @@
-use crate::graphql::domain::Compressor;
+use crate::graphql::models::Compressor;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;

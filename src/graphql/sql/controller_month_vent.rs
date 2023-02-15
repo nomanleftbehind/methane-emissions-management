@@ -1,4 +1,4 @@
-use crate::graphql::domain::{ControllerMonthVentCalculated, ControllerMonthVentInsertRow};
+use crate::graphql::models::{ControllerMonthVentCalculated, ControllerMonthVentInsertRow};
 use chrono::NaiveDate;
 use itertools::Itertools;
 use sqlx::PgPool;

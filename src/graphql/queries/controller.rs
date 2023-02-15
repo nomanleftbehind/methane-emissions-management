@@ -2,7 +2,7 @@ use async_graphql::{Context, Error, Object};
 
 use crate::graphql::{
     context::ContextExt,
-    domain::{Controller, ControllerApplication, ControllersBy},
+    models::{Controller, ControllerApplication, ControllersBy},
     sql::{query_all_controller_applications, query_controllers, query_user_controllers},
 };
 

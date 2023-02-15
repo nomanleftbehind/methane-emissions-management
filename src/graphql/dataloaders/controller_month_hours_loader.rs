@@ -1,4 +1,4 @@
-use crate::graphql::domain::ControllerMonthHours;
+use crate::graphql::models::ControllerMonthHours;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;

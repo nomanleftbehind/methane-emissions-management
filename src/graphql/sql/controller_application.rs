@@ -1,4 +1,4 @@
-use crate::graphql::domain::ControllerApplication;
+use crate::graphql::models::ControllerApplication;
 use sqlx::PgPool;
 
 pub async fn query_all_controller_applications(
