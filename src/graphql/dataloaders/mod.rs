@@ -7,6 +7,7 @@ pub mod controller_manufacturer_loader;
 pub mod controller_month_hours_loader;
 pub mod controller_month_vent_loader;
 pub mod facility_loader;
+pub mod gas_analysis_loader;
 mod loader_registry;
 pub mod user_loader;
 

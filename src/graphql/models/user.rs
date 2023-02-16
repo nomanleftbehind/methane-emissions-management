@@ -22,10 +22,11 @@ use crate::graphql::{
             CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
         },
         facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
+        gas_analysis_loader::{CreatedGasAnalysesLoader, UpdatedGasAnalysesLoader},
     },
     models::{
         Compressor, CompressorChange, Controller, ControllerApplication, ControllerChange,
-        ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility,
+        ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
     },
 };
 use async_graphql::{
@@ -246,6 +247,22 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedCompressorChangesLoader>>();
         let compressor_changes = loader.load_one(self.id).await?;
         let result = compressor_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_gas_analyses(&self, ctx: &Context<'_>) -> Result<Vec<GasAnalysis>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedGasAnalysesLoader>>();
+        let gas_analyses = loader.load_one(self.id).await?;
+        let result = gas_analyses.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_gas_analyses(&self, ctx: &Context<'_>) -> Result<Vec<GasAnalysis>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedGasAnalysesLoader>>();
+        let gas_analyses = loader.load_one(self.id).await?;
+        let result = gas_analyses.unwrap_or(vec![]);
 
         Ok(result)
     }

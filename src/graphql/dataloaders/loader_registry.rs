@@ -32,6 +32,10 @@ use super::{
         CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
     },
     facility_loader::{CreatedFacilitiesLoader, FacilityLoader, UpdatedFacilitiesLoader},
+    gas_analysis_loader::{
+        CreatedGasAnalysesLoader, GasAnalysesByFacilityLoader, GasAnalysisLoader,
+        UpdatedGasAnalysesLoader,
+    },
     user_loader::UserLoader,
 };
 use actix_web::web::Data;
@@ -186,6 +190,16 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Gas Analysis
+    let gas_analysis_by_id_loader =
+        DataLoader::new(GasAnalysisLoader::new(pool.clone()), tokio::spawn);
+    let gas_analyses_by_facility_id_loader =
+        DataLoader::new(GasAnalysesByFacilityLoader::new(pool.clone()), tokio::spawn);
+    let gas_analyses_by_creator_id_loader =
+        DataLoader::new(CreatedGasAnalysesLoader::new(pool.clone()), tokio::spawn);
+    let gas_analyses_by_updater_id_loader =
+        DataLoader::new(UpdatedGasAnalysesLoader::new(pool.clone()), tokio::spawn);
+
     loaders.insert(user_by_id_loader);
 
     loaders.insert(controller_by_id_loader);
@@ -231,6 +245,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_changes_by_compressor_id_loader);
     loaders.insert(compressor_changes_by_creator_id_loader);
     loaders.insert(compressor_changes_by_updater_id_loader);
+
+    loaders.insert(gas_analysis_by_id_loader);
+    loaders.insert(gas_analyses_by_facility_id_loader);
+    loaders.insert(gas_analyses_by_creator_id_loader);
+    loaders.insert(gas_analyses_by_updater_id_loader);
 
     loaders
 }

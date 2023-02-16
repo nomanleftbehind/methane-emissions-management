@@ -2,9 +2,9 @@ use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         compressor_loader::FacilityCompressorsLoader, controller_loader::FacilityControllersLoader,
-        user_loader::UserLoader,
+        gas_analysis_loader::GasAnalysesByFacilityLoader, user_loader::UserLoader,
     },
-    models::{Compressor, Controller, User},
+    models::{Compressor, Controller, GasAnalysis, User},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Enum, Error, InputObject, OneofObject,
@@ -80,6 +80,15 @@ impl Facility {
         let compressors = loader.load_one(self.id).await?;
         // Need to return empty vector if facility has no associated compressors
         let result = compressors.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn gas_analyses(&self, ctx: &Context<'_>) -> Result<Vec<GasAnalysis>, Error> {
+        let loader = ctx.get_loader::<DataLoader<GasAnalysesByFacilityLoader>>();
+        let gas_analyses = loader.load_one(self.id).await?;
+        // Need to return empty vector if facility has no associated gas analyses
+        let result = gas_analyses.unwrap_or(vec![]);
 
         Ok(result)
     }
