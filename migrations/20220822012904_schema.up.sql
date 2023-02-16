@@ -106,7 +106,9 @@ CREATE TABLE "controller_month_hours" (
 CREATE TABLE "controller_month_vent" (
     "id" UUID NOT NULL,
     "month" DATE NOT NULL,
-    "volume" DOUBLE PRECISION NOT NULL,
+    "gas_volume" DOUBLE PRECISION NOT NULL,
+    "c1_volume" DOUBLE PRECISION NOT NULL,
+    "co2_volume" DOUBLE PRECISION NOT NULL,
     "controller_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -167,7 +169,9 @@ CREATE TABLE "compressor_month_hours" (
 CREATE TABLE "compressor_month_vent" (
     "id" UUID NOT NULL,
     "month" DATE NOT NULL,
-    "volume" DOUBLE PRECISION NOT NULL,
+    "gas_volume" DOUBLE PRECISION NOT NULL,
+    "c1_volume" DOUBLE PRECISION NOT NULL,
+    "co2_volume" DOUBLE PRECISION NOT NULL,
     "compressor_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -227,7 +231,9 @@ CREATE TABLE "tank_farm_month_vent_factors" (
 CREATE TABLE "tank_farm_month_vent" (
     "id" UUID NOT NULL,
     "month" DATE NOT NULL,
-    "volume" DOUBLE PRECISION NOT NULL,
+    "gas_volume" DOUBLE PRECISION NOT NULL,
+    "c1_volume" DOUBLE PRECISION NOT NULL,
+    "co2_volume" DOUBLE PRECISION NOT NULL,
     "tank_farm_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -235,6 +241,33 @@ CREATE TABLE "tank_farm_month_vent" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "tank_farm_month_vent_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "gas_analysis" (
+    "id" UUID NOT NULL,
+    "facility_id" UUID NOT NULL,
+    "date" DATE NOT NULL,
+    "h2" DOUBLE PRECISION NOT NULL,
+    "he" DOUBLE PRECISION NOT NULL,
+    "n2" DOUBLE PRECISION NOT NULL,
+    "co2" DOUBLE PRECISION NOT NULL,
+    "h2s" DOUBLE PRECISION NOT NULL,
+    "c1" DOUBLE PRECISION NOT NULL,
+    "c2" DOUBLE PRECISION NOT NULL,
+    "c3" DOUBLE PRECISION NOT NULL,
+    "c4_i" DOUBLE PRECISION NOT NULL,
+    "c4_n" DOUBLE PRECISION NOT NULL,
+    "c5_i" DOUBLE PRECISION NOT NULL,
+    "c5_n" DOUBLE PRECISION NOT NULL,
+    "c6" DOUBLE PRECISION NOT NULL,
+    "c7_plus" DOUBLE PRECISION NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "gas_analysis_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -281,6 +314,9 @@ CREATE UNIQUE INDEX "tank_farm_month_vent_factors_tank_farm_id_month_key" ON "ta
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tank_farm_month_vent_tank_farm_id_month_key" ON "tank_farm_month_vent"("tank_farm_id", "month");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "gas_analysis_facility_id_date_key" ON "gas_analysis"("facility_id", "date");
 
 -- AddForeignKey
 ALTER TABLE "facilities" ADD CONSTRAINT "facilities_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -413,3 +449,12 @@ ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_created_
 
 -- AddForeignKey
 ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "gas_analysis" ADD CONSTRAINT "gas_analysis_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "gas_analysis" ADD CONSTRAINT "gas_analysis_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "gas_analysis" ADD CONSTRAINT "gas_analysis_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

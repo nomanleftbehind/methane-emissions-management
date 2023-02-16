@@ -13,7 +13,9 @@ use uuid::Uuid;
 pub struct ControllerMonthVent {
     pub id: Uuid,
     pub month: NaiveDate,
-    pub volume: f64,
+    pub gas_volume: f64,
+    pub c1_volume: f64,
+    pub co2_volume: f64,
     pub controller_id: Uuid,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
@@ -48,7 +50,9 @@ impl ControllerMonthVent {
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 pub struct ControllerMonthVentCalculated {
     pub month: NaiveDate,
-    pub volume: f64,
+    pub gas_volume: f64,
+    pub c1_volume: f64,
+    pub co2_volume: f64,
     pub controller_id: Uuid,
 }
 
@@ -78,15 +82,19 @@ impl From<ControllerMonthVentInsertRow> for String {
                 ControllerMonthVentCalculated {
                     controller_id,
                     month,
-                    volume,
+                    gas_volume,
+                    c1_volume,
+                    co2_volume,
                 },
         }: ControllerMonthVentInsertRow,
     ) -> Self {
         format!(
-            "('{}', '{}', {}, '{}', '{}', '{}', '{}', '{}')",
+            "('{}', '{}', {}, {}, {}, '{}', '{}', '{}', '{}', '{}')",
             Uuid::new_v4(),
             month,
-            volume,
+            gas_volume,
+            c1_volume,
+            co2_volume,
             controller_id,
             user_id,
             chrono::Utc::now().naive_utc(),

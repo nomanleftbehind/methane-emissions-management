@@ -9,56 +9,61 @@ pub async fn insert_controller_month_vents(
     user_id: Uuid,
     month: NaiveDate,
 ) -> Result<u64, sqlx::Error> {
-    let controller_month_vents_calculated = sqlx::query_as!(ControllerMonthVentCalculated,
-      r#"SELECT
+    let controller_month_vents_calculated = sqlx::query_as!(
+        ControllerMonthVentCalculated,
+        r#"SELECT
 
-      cmv.controller_id,
-      cmv.month::date as "month!",
-      SUM(cmv.hours_on * cmv.rate * cmv.percent) as "volume!"
-      
-      FROM (
-      
-      SELECT
-      
-      cmh.controller_id,
-      cmh.month_beginning_guarantee as month,
-      cmh.hours_on,
-      cc.rate,
-      EXTRACT(DAY FROM (LEAST(cc.date_end, cmh.month_end_guarantee) + INTERVAL '1 day' - GREATEST(cc.date, cmh.month_beginning_guarantee))) / DATE_PART('days', cmh.month_end_guarantee) percent
-      
-      FROM            (
-                        SELECT
-                        
-                        controller_id,
-                        month,
-                        DATE_TRUNC('month', month) month_beginning_guarantee,
-                        DATE_TRUNC('month', month) + INTERVAL '1 month - 1 day' month_end_guarantee,
-                        hours_on
-      
-      
-                        FROM controller_month_hours
-						WHERE month = $1
-                      ) cmh
-      LEFT OUTER JOIN (
-                        SELECT
-      
-                        controller_id,
-                        DATE_TRUNC('month', date) month_join_beginning,
-                        DATE_TRUNC('month', COALESCE(LEAD(date) OVER (PARTITION BY controller_id ORDER BY date) - INTERVAL '1 day', CURRENT_DATE)) + INTERVAL '1 month - 1 day' month_join_end,
-                        date,
-                        COALESCE(LEAD(date) OVER (PARTITION BY controller_id ORDER BY date) - INTERVAL '1 day', CURRENT_DATE) date_end,
-                        rate
-      
-                        FROM controller_changes
-                      ) cc ON cc.controller_id = cmh.controller_id AND cmh.month BETWEEN cc.month_join_beginning AND cc.month_join_end
-      		) cmv
-      
-      GROUP BY
-      cmv.controller_id,
-      cmv.month"#,
-	  month)
-        .fetch_all(pool)
-        .await?;
+        cmv.controller_id,
+        cmv.month::date as "month!",
+        SUM(cmv.hours_on * cmv.rate * cmv.percent) as "gas_volume!",
+        0::double precision as "c1_volume!",
+        0::double precision as "co2_volume!"
+        
+        FROM (
+        
+        SELECT
+        
+        cmh.controller_id,
+        cmh.month_beginning_guarantee as month,
+        cmh.hours_on,
+        cc.rate,
+        EXTRACT(DAY FROM (LEAST(cc.date_end, cmh.month_end_guarantee) + INTERVAL '1 day' - GREATEST(cc.date, cmh.month_beginning_guarantee))) / DATE_PART('days', cmh.month_end_guarantee) percent
+        
+        FROM            (
+                          SELECT
+                          
+                          controller_id,
+                          month,
+                          DATE_TRUNC('month', month) month_beginning_guarantee,
+                          DATE_TRUNC('month', month) + INTERVAL '1 month - 1 day' month_end_guarantee,
+                          hours_on
+        
+        
+                          FROM controller_month_hours
+              WHERE month = $1
+                        ) cmh
+        LEFT OUTER JOIN (
+                          SELECT
+        
+                          controller_id,
+                          DATE_TRUNC('month', date) month_join_beginning,
+                          DATE_TRUNC('month', COALESCE(LEAD(date) OVER (PARTITION BY controller_id ORDER BY date) - INTERVAL '1 day', CURRENT_DATE)) + INTERVAL '1 month - 1 day' month_join_end,
+                          date,
+                          COALESCE(LEAD(date) OVER (PARTITION BY controller_id ORDER BY date) - INTERVAL '1 day', CURRENT_DATE) date_end,
+                          rate
+        
+                          FROM controller_changes
+                        ) cc ON cc.controller_id = cmh.controller_id AND cmh.month BETWEEN cc.month_join_beginning AND cc.month_join_end
+            ) cmv
+        
+        GROUP BY
+        cmv.controller_id,
+        cmv.month"#,
+        // "src/graphql/sql/statements/controller_month_vent_calculated.sql",
+        month
+    )
+    .fetch_all(pool)
+    .await?;
 
     if !controller_month_vents_calculated.is_empty() {
         let insert_rows_string = controller_month_vents_calculated
@@ -72,12 +77,14 @@ pub async fn insert_controller_month_vents(
             .join(",");
 
         let insert_statement = format!("
-			INSERT INTO controller_month_vent (id, month, volume, controller_id, created_by_id, created_at, updated_by_id, updated_at)
+			INSERT INTO controller_month_vent (id, month, gas_volume, c1_volume, co2_volume, controller_id, created_by_id, created_at, updated_by_id, updated_at)
 			VALUES {}
 			ON CONFLICT (controller_id, month)
 			DO
 				UPDATE 
-				SET volume = EXCLUDED.volume,
+				SET gas_volume = EXCLUDED.gas_volume,
+                    c1_volume = EXCLUDED.c1_volume,
+                    co2_volume = EXCLUDED.co2_volume,
 					updated_by_id = EXCLUDED.updated_by_id,
 					updated_at = EXCLUDED.updated_at;
 			",
