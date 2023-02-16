@@ -1,0 +1,19 @@
+use crate::graphql::models::{Compressor, Controller, Facility, User};
+use async_graphql::Interface;
+use chrono::NaiveDateTime;
+use uuid::Uuid;
+
+#[derive(Interface)]
+#[graphql(
+    field(name = "id", type = "&Uuid"),
+    field(name = "fdc_rec_id", type = "String"),
+    field(name = "facility", type = "Result<Option<Facility>, Error>"),
+    field(name = "created_by", type = "Result<Option<User>, Error>"),
+    field(name = "created_at", type = "&NaiveDateTime"),
+    field(name = "updated_by", type = "Result<Option<User>, Error>"),
+    field(name = "updated_at", type = "&NaiveDateTime")
+)]
+pub enum Emitter {
+    Controller(Controller),
+    Compressor(Compressor),
+}

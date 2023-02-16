@@ -254,6 +254,7 @@ impl User {
 #[derive(InputObject, Debug)]
 pub struct RegisterUserInput {
     pub email: String,
+    #[graphql(secret)]
     pub password: String,
     pub first_name: String,
     pub last_name: String,
@@ -263,5 +264,6 @@ pub struct RegisterUserInput {
 #[derive(InputObject, Debug)]
 pub struct LoginUserInput {
     pub email: String,
+    #[graphql(secret)]
     pub password: String,
 }

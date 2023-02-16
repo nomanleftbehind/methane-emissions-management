@@ -2,6 +2,7 @@ use crate::{
     configuration::{DatabaseSettings, Settings},
     graphql::{
         dataloaders::{get_loaders, LoaderRegistry},
+        interfaces::Emitter,
         mutations::full_mutation,
         queries::full_query,
     },
@@ -91,6 +92,7 @@ pub async fn run(
         .expect("Failed to connect to Redis");
 
     let schema = Schema::build(full_query(), full_mutation(), EmptySubscription)
+        .register_output_type::<Emitter>()
         .extension(async_graphql::extensions::Tracing)
         .limit_complexity(1024)
         .data(loader_registry_data)
