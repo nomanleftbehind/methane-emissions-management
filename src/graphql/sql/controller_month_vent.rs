@@ -9,7 +9,7 @@ pub async fn insert_controller_month_vents(
     user_id: Uuid,
     month: NaiveDate,
 ) -> Result<u64, sqlx::Error> {
-    let controller_month_vents_calculated: Vec<_> = sqlx::query_as!(ControllerMonthVentCalculated,
+    let controller_month_vents_calculated = sqlx::query_as!(ControllerMonthVentCalculated,
       r#"SELECT
 
       cmv.controller_id,

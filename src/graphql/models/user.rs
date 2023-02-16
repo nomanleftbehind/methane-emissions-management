@@ -85,7 +85,7 @@ impl User {
     async fn created_controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllersLoader>>();
         let controllers = loader.load_one(self.id).await?;
-        // Need to return empty vector if user has no written controllers
+        // Need to return empty vector if user has no created controllers
         let result = controllers.unwrap_or(vec![]);
 
         Ok(result)
@@ -253,8 +253,9 @@ impl User {
 
 #[derive(InputObject, Debug)]
 pub struct RegisterUserInput {
+    #[graphql(validator(email))]
     pub email: String,
-    #[graphql(secret)]
+    #[graphql(secret, validator(min_length = 8))]
     pub password: String,
     pub first_name: String,
     pub last_name: String,
@@ -263,6 +264,7 @@ pub struct RegisterUserInput {
 
 #[derive(InputObject, Debug)]
 pub struct LoginUserInput {
+    #[graphql(validator(email))]
     pub email: String,
     #[graphql(secret)]
     pub password: String,

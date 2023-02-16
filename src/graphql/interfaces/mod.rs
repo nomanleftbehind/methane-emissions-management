@@ -13,7 +13,7 @@ use uuid::Uuid;
     field(name = "updated_by", type = "Result<Option<User>, Error>"),
     field(name = "updated_at", type = "&NaiveDateTime")
 )]
-pub enum Emitter {
+pub enum EmitterInterface {
     Controller(Controller),
     Compressor(Compressor),
 }
