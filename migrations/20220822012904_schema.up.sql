@@ -244,7 +244,7 @@ CREATE TABLE "tank_farm_month_vent" (
 );
 
 -- CreateTable
-CREATE TABLE "gas_analysis" (
+CREATE TABLE "gas_analyses" (
     "id" UUID NOT NULL,
     "facility_id" UUID NOT NULL,
     "date" DATE NOT NULL,
@@ -267,7 +267,7 @@ CREATE TABLE "gas_analysis" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "gas_analysis_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "gas_analyses_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -316,7 +316,7 @@ CREATE UNIQUE INDEX "tank_farm_month_vent_factors_tank_farm_id_month_key" ON "ta
 CREATE UNIQUE INDEX "tank_farm_month_vent_tank_farm_id_month_key" ON "tank_farm_month_vent"("tank_farm_id", "month");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "gas_analysis_facility_id_date_key" ON "gas_analysis"("facility_id", "date");
+CREATE UNIQUE INDEX "gas_analyses_facility_id_date_key" ON "gas_analyses"("facility_id", "date");
 
 -- AddForeignKey
 ALTER TABLE "facilities" ADD CONSTRAINT "facilities_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -451,10 +451,10 @@ ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_created_
 ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "gas_analysis" ADD CONSTRAINT "gas_analysis_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "gas_analyses" ADD CONSTRAINT "gas_analyses_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "gas_analysis" ADD CONSTRAINT "gas_analysis_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "gas_analyses" ADD CONSTRAINT "gas_analyses_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "gas_analysis" ADD CONSTRAINT "gas_analysis_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "gas_analyses" ADD CONSTRAINT "gas_analyses_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
