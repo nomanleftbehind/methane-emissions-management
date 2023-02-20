@@ -8,7 +8,16 @@ use std::convert::{TryFrom, TryInto};
 pub struct Settings {
     pub database: DatabaseSettings,
     pub application: ApplicationSettings,
+    pub default_mole_fractions: DefaultMoleFractions,
     pub redis_uri: Secret<String>,
+}
+
+#[derive(serde::Deserialize, Clone)]
+pub struct DefaultMoleFractions {
+    #[serde(deserialize_with = "deserialize_number_from_string")]
+    pub c1: f64,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
+    pub co2: f64,
 }
 
 #[derive(serde::Deserialize, Clone)]

@@ -109,24 +109,12 @@ FROM
                       controller_changes
                   ) cc ON cc.controller_id = ctr.id
                   AND ctr.month_beginning BETWEEN cc.month_join_beginning
-                  AND cc.month_join_end --WHERE ctr.serial_number = 'S125864'
+                  AND cc.month_join_end
               ) cmv
           ) cmv
           LEFT OUTER JOIN (
             SELECT
               facility_id,
-              DATE_TRUNC('month', date) month_join_beginning,
-              DATE_TRUNC(
-                'month',
-                COALESCE(
-                  LEAD(date) OVER (
-                    PARTITION BY facility_id
-                    ORDER BY
-                      date
-                  ) - INTERVAL '1 day',
-                  CURRENT_DATE
-                )
-              ) + INTERVAL '1 month - 1 day' month_join_end,
               date,
               COALESCE(
                 LEAD(date) OVER (

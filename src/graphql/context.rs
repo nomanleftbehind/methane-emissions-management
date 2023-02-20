@@ -1,4 +1,5 @@
 use crate::authentication::{cookie::SessionCookie, SessionManager};
+use crate::configuration::DefaultMoleFractions;
 use crate::graphql::dataloaders::LoaderRegistry;
 use actix_web::web::Data;
 use async_graphql::{Context, Error};
@@ -11,6 +12,7 @@ pub trait ContextExt {
     fn db_pool(&self) -> &PgPool;
     fn get_cookie(&self) -> Result<&SessionCookie, Error>;
     fn get_session_manager(&self) -> Result<SessionManager, Error>;
+    fn get_default_mole_fractions(&self) -> &DefaultMoleFractions;
 }
 
 impl<'a> ContextExt for Context<'a> {
@@ -39,5 +41,9 @@ impl<'a> ContextExt for Context<'a> {
             .expect("Session store not found in Context");
         let authorizer = SessionManager::new(store);
         Ok(authorizer)
+    }
+
+    fn get_default_mole_fractions(&self) -> &DefaultMoleFractions {
+        self.data_unchecked::<Data<DefaultMoleFractions>>()
     }
 }

@@ -1,4 +1,7 @@
-use crate::graphql::models::{ControllerMonthVentCalculated, ControllerMonthVentInsertRow};
+use crate::{
+    configuration::DefaultMoleFractions,
+    graphql::models::{ControllerMonthVentCalculated, ControllerMonthVentInsertRow},
+};
 use chrono::NaiveDate;
 use itertools::Itertools;
 use sqlx::PgPool;
@@ -8,15 +11,14 @@ pub async fn insert_controller_month_vents(
     pool: &PgPool,
     user_id: Uuid,
     month: NaiveDate,
-    c1_default: f64,
-    co2_default: f64,
+    DefaultMoleFractions { c1, co2 }: &DefaultMoleFractions,
 ) -> Result<u64, sqlx::Error> {
     let controller_month_vents_calculated = sqlx::query_file_as!(
         ControllerMonthVentCalculated,
         "src/graphql/sql/statements/controller_month_vent_calculated.sql",
         month,
-        c1_default,
-        co2_default
+        c1,
+        co2
     )
     .fetch_all(pool)
     .await?;

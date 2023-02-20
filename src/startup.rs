@@ -1,5 +1,5 @@
 use crate::{
-    configuration::{DatabaseSettings, Settings},
+    configuration::{DatabaseSettings, DefaultMoleFractions, Settings},
     graphql::{
         dataloaders::{get_loaders, LoaderRegistry},
         interfaces::EmitterInterface,
@@ -46,6 +46,7 @@ impl Application {
             configuration.application.hmac_secret,
             configuration.application.session_cookie_name,
             configuration.redis_uri,
+            configuration.default_mole_fractions,
         )
         .await?;
 
@@ -68,6 +69,11 @@ pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
 }
 
 pub struct ApplicationBaseUrl(pub String);
+#[derive(Clone)]
+pub struct HmacSecret(pub Secret<String>);
+
+#[derive(Clone)]
+pub struct SessionCookieName(pub Secret<String>);
 
 pub async fn run(
     listener: TcpListener,
@@ -76,6 +82,7 @@ pub async fn run(
     hmac_secret: Secret<String>,
     session_cookie_name: Secret<String>,
     redis_uri: Secret<String>,
+    default_mole_fractions: DefaultMoleFractions,
 ) -> Result<Server, anyhow::Error> {
     // env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     env_logger::init();
@@ -98,6 +105,7 @@ pub async fn run(
         .data(loader_registry_data)
         .data(db_pool.clone())
         .data(base_url.clone())
+        .data(Data::new(default_mole_fractions.clone()))
         .data(Data::new(HmacSecret(hmac_secret.clone())))
         .data(Data::new(SessionCookieName(session_cookie_name.clone())))
         .data(redis_store)
@@ -121,9 +129,3 @@ pub async fn run(
     .run();
     Ok(server)
 }
-
-#[derive(Clone)]
-pub struct HmacSecret(pub Secret<String>);
-
-#[derive(Clone)]
-pub struct SessionCookieName(pub Secret<String>);

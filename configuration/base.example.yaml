@@ -10,6 +10,9 @@ database:
   password: "password"
   database_name: "emissions"
   require_ssl: false
+default_mole_fractions:
+  c1: 0.82
+  co2: 0.0067
 email_client:
   base_url: "localhost"
   sender_email: "test@gmail.com"
