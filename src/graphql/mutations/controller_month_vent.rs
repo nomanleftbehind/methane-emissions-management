@@ -16,7 +16,7 @@ impl ControllerMonthVentMutations {
         let cookie = ctx.get_cookie()?;
         let user_id = ctx.get_session_manager()?.user_id(cookie).await?;
 
-        let rows_inserted = insert_controller_month_vents(pool, user_id, month)
+        let rows_inserted = insert_controller_month_vents(pool, user_id, month, 0.82, 0.0067)
             .await
             .map_err(Error::from);
 
