@@ -2,9 +2,10 @@ use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         compressor_change_loader::CompressorChangesByCompressorLoader,
+        compressor_month_hours_loader::CompressorMonthHoursByCompressorLoader,
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
-    models::{CompressorChange, Facility, User},
+    models::{CompressorChange, CompressorMonthHours, Facility, User},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,
@@ -56,6 +57,17 @@ impl Compressor {
         let loader = ctx.get_loader::<DataLoader<CompressorChangesByCompressorLoader>>();
         let compressor_changes = loader.load_one(self.id).await?;
         let result = compressor_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn compressor_month_hours(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorMonthHours>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorMonthHoursByCompressorLoader>>();
+        let compressor_month_hours = loader.load_one(self.id).await?;
+        let result = compressor_month_hours.unwrap_or(vec![]);
 
         Ok(result)
     }

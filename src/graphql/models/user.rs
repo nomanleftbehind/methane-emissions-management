@@ -5,6 +5,9 @@ use crate::graphql::{
             CreatedCompressorChangesLoader, UpdatedCompressorChangesLoader,
         },
         compressor_loader::{CreatedCompressorsLoader, UpdatedCompressorsLoader},
+        compressor_month_hours_loader::{
+            CreatedCompressorMonthHoursLoader, UpdatedCompressorMonthHoursLoader,
+        },
         controller_application_loader::{
             CreatedControllerApplicationsLoader, UpdatedControllerApplicationsLoader,
         },
@@ -25,8 +28,9 @@ use crate::graphql::{
         gas_analysis_loader::{CreatedGasAnalysesLoader, UpdatedGasAnalysesLoader},
     },
     models::{
-        Compressor, CompressorChange, Controller, ControllerApplication, ControllerChange,
-        ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
+        Compressor, CompressorChange, CompressorMonthHours, Controller, ControllerApplication,
+        ControllerChange, ControllerManufacturer, ControllerMonthHours, ControllerMonthVent,
+        Facility, GasAnalysis,
     },
 };
 use async_graphql::{
@@ -247,6 +251,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedCompressorChangesLoader>>();
         let compressor_changes = loader.load_one(self.id).await?;
         let result = compressor_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_compressor_month_hours(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorMonthHours>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedCompressorMonthHoursLoader>>();
+        let compressor_month_hours = loader.load_one(self.id).await?;
+        let result = compressor_month_hours.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_compressor_month_hours(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorMonthHours>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorMonthHoursLoader>>();
+        let compressor_month_hours = loader.load_one(self.id).await?;
+        let result = compressor_month_hours.unwrap_or(vec![]);
 
         Ok(result)
     }

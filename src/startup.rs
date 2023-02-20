@@ -71,7 +71,6 @@ pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
 pub struct ApplicationBaseUrl(pub String);
 #[derive(Clone)]
 pub struct HmacSecret(pub Secret<String>);
-
 #[derive(Clone)]
 pub struct SessionCookieName(pub Secret<String>);
 

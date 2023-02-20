@@ -7,6 +7,10 @@ use super::{
         CompressorLoader, CreatedCompressorsLoader, FacilityCompressorsLoader,
         UpdatedCompressorsLoader,
     },
+    compressor_month_hours_loader::{
+        CompressorMonthHoursByCompressorLoader, CompressorMonthHoursLoader,
+        CreatedCompressorMonthHoursLoader, UpdatedCompressorMonthHoursLoader,
+    },
     controller_application_loader::{
         ControllerApplicationLoader, CreatedControllerApplicationsLoader,
         UpdatedControllerApplicationsLoader,
@@ -190,6 +194,22 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Compressor Month Hours
+    let compressor_month_hours_by_id_loader =
+        DataLoader::new(CompressorMonthHoursLoader::new(pool.clone()), tokio::spawn);
+    let compressor_month_hours_by_compressor_id_loader = DataLoader::new(
+        CompressorMonthHoursByCompressorLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_month_hours_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_month_hours_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Gas Analysis
     let gas_analysis_by_id_loader =
         DataLoader::new(GasAnalysisLoader::new(pool.clone()), tokio::spawn);
@@ -245,6 +265,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_changes_by_compressor_id_loader);
     loaders.insert(compressor_changes_by_creator_id_loader);
     loaders.insert(compressor_changes_by_updater_id_loader);
+
+    loaders.insert(compressor_month_hours_by_id_loader);
+    loaders.insert(compressor_month_hours_by_compressor_id_loader);
+    loaders.insert(compressor_month_hours_by_creator_id_loader);
+    loaders.insert(compressor_month_hours_by_updater_id_loader);
 
     loaders.insert(gas_analysis_by_id_loader);
     loaders.insert(gas_analyses_by_facility_id_loader);

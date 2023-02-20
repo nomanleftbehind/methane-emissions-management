@@ -1,5 +1,6 @@
 mod compressor;
 mod compressor_change;
+mod compressor_month_hours;
 mod controller;
 mod controller_application;
 mod controller_change;
@@ -12,6 +13,7 @@ mod user;
 
 pub use compressor::*;
 pub use compressor_change::*;
+pub use compressor_month_hours::*;
 pub use controller::*;
 pub use controller_application::*;
 pub use controller_change::*;
