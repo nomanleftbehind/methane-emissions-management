@@ -11,6 +11,10 @@ use super::{
         CompressorMonthHoursByCompressorLoader, CompressorMonthHoursLoader,
         CreatedCompressorMonthHoursLoader, UpdatedCompressorMonthHoursLoader,
     },
+    compressor_month_vent_loader::{
+        CompressorMonthVentLoader, CompressorMonthVentsByCompressorLoader,
+        CreatedCompressorMonthVentsLoader, UpdatedCompressorMonthVentsLoader,
+    },
     controller_application_loader::{
         ControllerApplicationLoader, CreatedControllerApplicationsLoader,
         UpdatedControllerApplicationsLoader,
@@ -210,6 +214,22 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Compressor Month Vent
+    let compressor_month_vent_by_id_loader =
+        DataLoader::new(CompressorMonthVentLoader::new(pool.clone()), tokio::spawn);
+    let compressor_month_vents_by_compressor_id_loader = DataLoader::new(
+        CompressorMonthVentsByCompressorLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_month_vents_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorMonthVentsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_month_vents_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorMonthVentsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Gas Analysis
     let gas_analysis_by_id_loader =
         DataLoader::new(GasAnalysisLoader::new(pool.clone()), tokio::spawn);
@@ -270,6 +290,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_month_hours_by_compressor_id_loader);
     loaders.insert(compressor_month_hours_by_creator_id_loader);
     loaders.insert(compressor_month_hours_by_updater_id_loader);
+
+    loaders.insert(compressor_month_vent_by_id_loader);
+    loaders.insert(compressor_month_vents_by_compressor_id_loader);
+    loaders.insert(compressor_month_vents_by_creator_id_loader);
+    loaders.insert(compressor_month_vents_by_updater_id_loader);
 
     loaders.insert(gas_analysis_by_id_loader);
     loaders.insert(gas_analyses_by_facility_id_loader);
