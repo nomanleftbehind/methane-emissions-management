@@ -5,6 +5,7 @@ use crate::graphql::{
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
+use itertools::MultiUnzip;
 use sqlx::FromRow;
 use uuid::Uuid;
 
@@ -57,49 +58,83 @@ pub struct ControllerMonthVentCalculated {
 }
 
 #[derive(Debug)]
-pub struct ControllerMonthVentInsertRow {
+pub struct ControllerMonthVentUnnestedRows {
     pub user_id: Uuid,
-    pub controller_month_vent_calculated: ControllerMonthVentCalculated,
+    pub controller_month_vents_calculated: Vec<ControllerMonthVentCalculated>,
 }
 
-impl ControllerMonthVentInsertRow {
-    pub fn new(
-        user_id: Uuid,
-        controller_month_vent_calculated: ControllerMonthVentCalculated,
-    ) -> Self {
-        Self {
-            user_id,
-            controller_month_vent_calculated,
-        }
-    }
+#[derive(Debug)]
+pub struct ControllerMonthVentNestedRows {
+    pub id: Vec<Uuid>,
+    pub month: Vec<NaiveDate>,
+    pub gas_volume: Vec<f64>,
+    pub c1_volume: Vec<f64>,
+    pub co2_volume: Vec<f64>,
+    pub controller_id: Vec<Uuid>,
+    pub created_by_id: Vec<Uuid>,
+    pub created_at: Vec<NaiveDateTime>,
+    pub updated_by_id: Vec<Uuid>,
+    pub updated_at: Vec<NaiveDateTime>,
 }
 
-impl From<ControllerMonthVentInsertRow> for String {
+impl From<ControllerMonthVentUnnestedRows> for ControllerMonthVentNestedRows {
     fn from(
-        ControllerMonthVentInsertRow {
+        ControllerMonthVentUnnestedRows {
             user_id,
-            controller_month_vent_calculated:
-                ControllerMonthVentCalculated {
-                    controller_id,
-                    month,
-                    gas_volume,
-                    c1_volume,
-                    co2_volume,
-                },
-        }: ControllerMonthVentInsertRow,
+            controller_month_vents_calculated,
+        }: ControllerMonthVentUnnestedRows,
     ) -> Self {
-        format!(
-            "('{}', '{}', {}, {}, {}, '{}', '{}', '{}', '{}', '{}')",
-            Uuid::new_v4(),
+        let (
+            id,
             month,
             gas_volume,
             c1_volume,
             co2_volume,
             controller_id,
-            user_id,
-            chrono::Utc::now().naive_utc(),
-            user_id,
-            chrono::Utc::now().naive_utc()
-        )
+            created_by_id,
+            created_at,
+            updated_by_id,
+            updated_at,
+        ): (
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+        ) = controller_month_vents_calculated
+            .into_iter()
+            .map(|cmvc| {
+                (
+                    Uuid::new_v4(),
+                    cmvc.month,
+                    cmvc.gas_volume,
+                    cmvc.c1_volume,
+                    cmvc.co2_volume,
+                    cmvc.controller_id,
+                    user_id.clone(),
+                    chrono::Utc::now().naive_utc(),
+                    user_id.clone(),
+                    chrono::Utc::now().naive_utc(),
+                )
+            })
+            .multiunzip();
+
+        ControllerMonthVentNestedRows {
+            id,
+            month,
+            gas_volume,
+            c1_volume,
+            co2_volume,
+            controller_id,
+            created_by_id,
+            created_at,
+            updated_by_id,
+            updated_at,
+        }
     }
 }
