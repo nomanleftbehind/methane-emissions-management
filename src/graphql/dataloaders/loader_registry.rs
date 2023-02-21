@@ -1,4 +1,8 @@
 use super::{
+    compressor_blowdown_loader::{
+        CompressorBlowdownLoader, CompressorBlowdownsByCompressorLoader,
+        CreatedCompressorBlowdownsLoader, UpdatedCompressorBlowdownsLoader,
+    },
     compressor_change_loader::{
         CompressorChangeLoader, CompressorChangesByCompressorLoader,
         CreatedCompressorChangesLoader, UpdatedCompressorChangesLoader,
@@ -214,6 +218,22 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Compressor Blowdown
+    let compressor_blowdown_by_id_loader =
+        DataLoader::new(CompressorBlowdownLoader::new(pool.clone()), tokio::spawn);
+    let compressor_blowdowns_by_compressor_id_loader = DataLoader::new(
+        CompressorBlowdownsByCompressorLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_blowdowns_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorBlowdownsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_blowdowns_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorBlowdownsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Compressor Month Vent
     let compressor_month_vent_by_id_loader =
         DataLoader::new(CompressorMonthVentLoader::new(pool.clone()), tokio::spawn);
@@ -290,6 +310,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_month_hours_by_compressor_id_loader);
     loaders.insert(compressor_month_hours_by_creator_id_loader);
     loaders.insert(compressor_month_hours_by_updater_id_loader);
+
+    loaders.insert(compressor_blowdown_by_id_loader);
+    loaders.insert(compressor_blowdowns_by_compressor_id_loader);
+    loaders.insert(compressor_blowdowns_by_creator_id_loader);
+    loaders.insert(compressor_blowdowns_by_updater_id_loader);
 
     loaders.insert(compressor_month_vent_by_id_loader);
     loaders.insert(compressor_month_vents_by_compressor_id_loader);

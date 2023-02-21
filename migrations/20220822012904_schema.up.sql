@@ -166,6 +166,20 @@ CREATE TABLE "compressor_month_hours" (
 );
 
 -- CreateTable
+CREATE TABLE "compressor_blowdown" (
+    "id" UUID NOT NULL,
+    "date" DATE NOT NULL,
+    "gas_volume" DOUBLE PRECISION NOT NULL,
+    "compressor_id" UUID NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "compressor_blowdown_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "compressor_month_vent" (
     "id" UUID NOT NULL,
     "month" DATE NOT NULL,
@@ -301,6 +315,9 @@ CREATE UNIQUE INDEX "compressor_changes_compressor_id_date_key" ON "compressor_c
 CREATE UNIQUE INDEX "compressor_month_hours_compressor_id_month_key" ON "compressor_month_hours"("compressor_id", "month");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "compressor_blowdown_compressor_id_date_key" ON "compressor_blowdown"("compressor_id", "date");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "compressor_month_vent_compressor_id_month_key" ON "compressor_month_vent"("compressor_id", "month");
 
 -- CreateIndex
@@ -404,6 +421,15 @@ ALTER TABLE "compressor_month_hours" ADD CONSTRAINT "compressor_month_hours_crea
 
 -- AddForeignKey
 ALTER TABLE "compressor_month_hours" ADD CONSTRAINT "compressor_month_hours_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "compressor_month_vent" ADD CONSTRAINT "compressor_month_vent_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

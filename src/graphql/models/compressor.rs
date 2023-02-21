@@ -1,12 +1,16 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
+        compressor_blowdown_loader::CompressorBlowdownsByCompressorLoader,
         compressor_change_loader::CompressorChangesByCompressorLoader,
         compressor_month_hours_loader::CompressorMonthHoursByCompressorLoader,
         compressor_month_vent_loader::CompressorMonthVentsByCompressorLoader,
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
-    models::{CompressorChange, CompressorMonthHours, CompressorMonthVent, Facility, User},
+    models::{
+        CompressorBlowdown, CompressorChange, CompressorMonthHours, CompressorMonthVent, Facility,
+        User,
+    },
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,
@@ -69,6 +73,17 @@ impl Compressor {
         let loader = ctx.get_loader::<DataLoader<CompressorMonthHoursByCompressorLoader>>();
         let compressor_month_hours = loader.load_one(self.id).await?;
         let result = compressor_month_hours.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn compressor_blowdowns(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorBlowdown>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorBlowdownsByCompressorLoader>>();
+        let compressor_blowdowns = loader.load_one(self.id).await?;
+        let result = compressor_blowdowns.unwrap_or(vec![]);
 
         Ok(result)
     }

@@ -1,6 +1,9 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
+        compressor_blowdown_loader::{
+            CreatedCompressorBlowdownsLoader, UpdatedCompressorBlowdownsLoader,
+        },
         compressor_change_loader::{
             CreatedCompressorChangesLoader, UpdatedCompressorChangesLoader,
         },
@@ -31,9 +34,9 @@ use crate::graphql::{
         gas_analysis_loader::{CreatedGasAnalysesLoader, UpdatedGasAnalysesLoader},
     },
     models::{
-        Compressor, CompressorChange, CompressorMonthHours, CompressorMonthVent, Controller,
-        ControllerApplication, ControllerChange, ControllerManufacturer, ControllerMonthHours,
-        ControllerMonthVent, Facility, GasAnalysis,
+        Compressor, CompressorBlowdown, CompressorChange, CompressorMonthHours,
+        CompressorMonthVent, Controller, ControllerApplication, ControllerChange,
+        ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
     },
 };
 use async_graphql::{
@@ -276,6 +279,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedCompressorMonthHoursLoader>>();
         let compressor_month_hours = loader.load_one(self.id).await?;
         let result = compressor_month_hours.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_compressor_blowdowns(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorBlowdown>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedCompressorBlowdownsLoader>>();
+        let compressor_blowdowns = loader.load_one(self.id).await?;
+        let result = compressor_blowdowns.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_compressor_blowdowns(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorBlowdown>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorBlowdownsLoader>>();
+        let compressor_blowdowns = loader.load_one(self.id).await?;
+        let result = compressor_blowdowns.unwrap_or(vec![]);
 
         Ok(result)
     }
