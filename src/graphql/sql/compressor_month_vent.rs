@@ -1,13 +1,41 @@
 use crate::{
     configuration::DefaultMoleFractions,
     graphql::models::{
+        CompressorMonthVent,
+        CompressorMonthVentBy::{self, CompressorId, Month},
         CompressorMonthVentCalculated, CompressorMonthVentNestedRows,
         CompressorMonthVentUnnestedRows,
     },
 };
 use chrono::NaiveDate;
-use sqlx::PgPool;
+use sqlx::{query_as, Error, PgPool};
 use uuid::Uuid;
+
+pub(in crate::graphql) async fn select_compressor_month_vents(
+    pool: &PgPool,
+    by: CompressorMonthVentBy,
+) -> Result<Vec<CompressorMonthVent>, Error> {
+    match by {
+        CompressorId(id) => {
+            query_as!(
+                CompressorMonthVent,
+                "SELECT * FROM compressor_month_vent WHERE compressor_id = $1",
+                id
+            )
+            .fetch_all(pool)
+            .await
+        }
+        Month(month) => {
+            query_as!(
+                CompressorMonthVent,
+                "SELECT * FROM compressor_month_vent WHERE month = $1",
+                month
+            )
+            .fetch_all(pool)
+            .await
+        }
+    }
+}
 
 pub async fn insert_compressor_month_vents(
     pool: &PgPool,

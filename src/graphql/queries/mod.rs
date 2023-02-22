@@ -1,10 +1,12 @@
 use self::{
-    compressor::CompressorQuery, controller::ControllerQuery,
-    controller_month_vent::ControllerMonthVentQuery, facility::FacilityQuery, user::UserQuery,
+    compressor::CompressorQuery, compressor_month_vent::CompressorMonthVentQuery,
+    controller::ControllerQuery, controller_month_vent::ControllerMonthVentQuery,
+    facility::FacilityQuery, user::UserQuery,
 };
 use async_graphql::MergedObject;
 
 mod compressor;
+mod compressor_month_vent;
 mod controller;
 mod controller_month_vent;
 mod facility;
@@ -17,6 +19,7 @@ pub struct FullQuery(
     CompressorQuery,
     FacilityQuery,
     ControllerMonthVentQuery,
+    CompressorMonthVentQuery,
 );
 
 pub(crate) fn full_query() -> FullQuery {
@@ -26,5 +29,6 @@ pub(crate) fn full_query() -> FullQuery {
         CompressorQuery,
         FacilityQuery,
         ControllerMonthVentQuery,
+        CompressorMonthVentQuery,
     )
 }
