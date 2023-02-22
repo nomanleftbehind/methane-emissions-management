@@ -77,9 +77,9 @@ CREATE TABLE "controller_manufacturers" (
 -- CreateTable
 CREATE TABLE "controller_changes" (
     "id" UUID NOT NULL,
+    "controller_id" UUID NOT NULL,
     "date" DATE NOT NULL,
     "rate" DOUBLE PRECISION NOT NULL,
-    "controller_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
