@@ -24,7 +24,7 @@ impl Loader<Uuid> for CreatedCompressorChangesLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressor_changes = sqlx::query_as!(
             CompressorChange,
-            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, vent_rate_per_hour, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE created_by_id = ANY($1)"#,
+            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, rate, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE created_by_id = ANY($1)"#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -61,7 +61,7 @@ impl Loader<Uuid> for UpdatedCompressorChangesLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressor_changes = sqlx::query_as!(
             CompressorChange,
-            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, vent_rate_per_hour, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE updated_by_id = ANY($1)"#,
+            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, rate, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE updated_by_id = ANY($1)"#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -98,7 +98,7 @@ impl Loader<Uuid> for CompressorChangeLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let compressor_changes = sqlx::query_as!(
             CompressorChange,
-            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, vent_rate_per_hour, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE id = ANY($1)"#,
+            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, rate, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE id = ANY($1)"#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -129,7 +129,7 @@ impl Loader<Uuid> for CompressorChangesByCompressorLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressor_changes = sqlx::query_as!(
             CompressorChange,
-            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, vent_rate_per_hour, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE compressor_id = ANY($1)"#,
+            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, rate, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE compressor_id = ANY($1)"#,
             keys
         )
         .fetch_all(&**self.pool)

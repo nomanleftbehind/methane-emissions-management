@@ -24,7 +24,7 @@ pub struct CompressorChange {
     pub date: NaiveDate,
     pub calculation_method: CalculationMethod,
     pub number_of_throws: i32,
-    pub vent_rate_per_hour: f64,
+    pub rate: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,

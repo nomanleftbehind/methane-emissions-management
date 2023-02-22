@@ -142,7 +142,7 @@ CREATE TABLE "compressor_changes" (
     "date" DATE NOT NULL,
     "calculation_method" "calculation_method" NOT NULL,
     "number_of_throws" INTEGER NOT NULL,
-    "vent_rate_per_hour" DOUBLE PRECISION NOT NULL,
+    "rate" DOUBLE PRECISION NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
