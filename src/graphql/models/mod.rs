@@ -11,6 +11,8 @@ mod controller_month_hours;
 mod controller_month_vent;
 mod facility;
 mod gas_analysis;
+mod tank_farm_change;
+mod tanks_farm;
 mod user;
 
 pub use compressor::*;
@@ -26,4 +28,6 @@ pub use controller_month_hours::*;
 pub use controller_month_vent::*;
 pub use facility::*;
 pub use gas_analysis::*;
+pub use tank_farm_change::*;
+pub use tanks_farm::*;
 pub use user::*;

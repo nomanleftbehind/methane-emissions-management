@@ -11,7 +11,7 @@ use chrono::NaiveDate;
 use sqlx::{query_as, Error, PgPool};
 use uuid::Uuid;
 
-pub(in crate::graphql) async fn select_controller_month_vents(
+pub async fn select_controller_month_vents(
     pool: &PgPool,
     by: ControllerMonthVentBy,
 ) -> Result<Vec<ControllerMonthVent>, Error> {

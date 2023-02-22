@@ -32,11 +32,14 @@ use crate::graphql::{
         },
         facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
         gas_analysis_loader::{CreatedGasAnalysesLoader, UpdatedGasAnalysesLoader},
+        tank_farm_change_loader::{CreatedTankFarmChangesLoader, UpdatedTankFarmChangesLoader},
+        tank_farm_loader::{CreatedTankFarmsLoader, UpdatedTankFarmsLoader},
     },
     models::{
         Compressor, CompressorBlowdown, CompressorChange, CompressorMonthHours,
         CompressorMonthVent, Controller, ControllerApplication, ControllerChange,
         ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
+        TankFarm, TankFarmChange,
     },
 };
 use async_graphql::{
@@ -323,6 +326,46 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedCompressorMonthVentsLoader>>();
         let compressor_month_vents = loader.load_one(self.id).await?;
         let result = compressor_month_vents.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_tank_farms(&self, ctx: &Context<'_>) -> Result<Vec<TankFarm>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmsLoader>>();
+        let tank_farms = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no created tank farms
+        let result = tank_farms.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_tank_farms(&self, ctx: &Context<'_>) -> Result<Vec<TankFarm>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmsLoader>>();
+        let tank_farms = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no updated tank farms
+        let result = tank_farms.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_tank_farm_changes(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmChangesLoader>>();
+        let tank_farm_changes = loader.load_one(self.id).await?;
+        let result = tank_farm_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_tank_farm_changes(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmChangesLoader>>();
+        let tank_farm_changes = loader.load_one(self.id).await?;
+        let result = tank_farm_changes.unwrap_or(vec![]);
 
         Ok(result)
     }

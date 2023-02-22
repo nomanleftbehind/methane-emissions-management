@@ -48,6 +48,13 @@ use super::{
         CreatedGasAnalysesLoader, GasAnalysesByFacilityLoader, GasAnalysisLoader,
         UpdatedGasAnalysesLoader,
     },
+    tank_farm_change_loader::{
+        CreatedTankFarmChangesLoader, TankFarmChangeLoader, TankFarmChangesByTankFarmLoader,
+        UpdatedTankFarmChangesLoader,
+    },
+    tank_farm_loader::{
+        CreatedTankFarmsLoader, FacilityTankFarmLoader, TankFarmLoader, UpdatedTankFarmsLoader,
+    },
     user_loader::UserLoader,
 };
 use actix_web::web::Data;
@@ -76,6 +83,13 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
 
     // User
     let user_by_id_loader = DataLoader::new(UserLoader::new(pool.clone()), tokio::spawn);
+
+    // Facility
+    let facility_by_id_loader = DataLoader::new(FacilityLoader::new(pool.clone()), tokio::spawn);
+    let facilities_by_creator_id_loader =
+        DataLoader::new(CreatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
+    let facilities_by_updater_id_loader =
+        DataLoader::new(UpdatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
 
     // Controllers
     let controller_by_id_loader =
@@ -120,13 +134,6 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         UpdatedControllerManufacturersLoader::new(pool.clone()),
         tokio::spawn,
     );
-
-    // Facility
-    let facility_by_id_loader = DataLoader::new(FacilityLoader::new(pool.clone()), tokio::spawn);
-    let facilities_by_creator_id_loader =
-        DataLoader::new(CreatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
-    let facilities_by_updater_id_loader =
-        DataLoader::new(UpdatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
 
     // Controller Change
     let controller_change_by_id_loader =
@@ -250,6 +257,31 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Tank Farm
+    let tank_farm_by_id_loader = DataLoader::new(TankFarmLoader::new(pool.clone()), tokio::spawn);
+    let tank_farms_by_creator_id_loader =
+        DataLoader::new(CreatedTankFarmsLoader::new(pool.clone()), tokio::spawn);
+    let tank_farms_by_updater_id_loader =
+        DataLoader::new(UpdatedTankFarmsLoader::new(pool.clone()), tokio::spawn);
+    let tank_farm_by_facility_id_loader =
+        DataLoader::new(FacilityTankFarmLoader::new(pool.clone()), tokio::spawn);
+
+    // Tank Farm Change
+    let tank_farm_change_by_id_loader =
+        DataLoader::new(TankFarmChangeLoader::new(pool.clone()), tokio::spawn);
+    let tank_farm_changes_by_tank_farm_id_loader = DataLoader::new(
+        TankFarmChangesByTankFarmLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_changes_by_creator_id_loader = DataLoader::new(
+        CreatedTankFarmChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_changes_by_updater_id_loader = DataLoader::new(
+        UpdatedTankFarmChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Gas Analysis
     let gas_analysis_by_id_loader =
         DataLoader::new(GasAnalysisLoader::new(pool.clone()), tokio::spawn);
@@ -261,6 +293,10 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         DataLoader::new(UpdatedGasAnalysesLoader::new(pool.clone()), tokio::spawn);
 
     loaders.insert(user_by_id_loader);
+
+    loaders.insert(facility_by_id_loader);
+    loaders.insert(facilities_by_creator_id_loader);
+    loaders.insert(facilities_by_updater_id_loader);
 
     loaders.insert(controller_by_id_loader);
     loaders.insert(controllers_by_creator_id_loader);
@@ -292,10 +328,6 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(controller_month_vents_by_creator_id_loader);
     loaders.insert(controller_month_vents_by_updater_id_loader);
 
-    loaders.insert(facility_by_id_loader);
-    loaders.insert(facilities_by_creator_id_loader);
-    loaders.insert(facilities_by_updater_id_loader);
-
     loaders.insert(compressor_by_id_loader);
     loaders.insert(compressors_by_creator_id_loader);
     loaders.insert(compressors_by_updater_id_loader);
@@ -320,6 +352,16 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_month_vents_by_compressor_id_loader);
     loaders.insert(compressor_month_vents_by_creator_id_loader);
     loaders.insert(compressor_month_vents_by_updater_id_loader);
+
+    loaders.insert(tank_farm_by_id_loader);
+    loaders.insert(tank_farms_by_creator_id_loader);
+    loaders.insert(tank_farms_by_updater_id_loader);
+    loaders.insert(tank_farm_by_facility_id_loader);
+
+    loaders.insert(tank_farm_change_by_id_loader);
+    loaders.insert(tank_farm_changes_by_tank_farm_id_loader);
+    loaders.insert(tank_farm_changes_by_creator_id_loader);
+    loaders.insert(tank_farm_changes_by_updater_id_loader);
 
     loaders.insert(gas_analysis_by_id_loader);
     loaders.insert(gas_analyses_by_facility_id_loader);

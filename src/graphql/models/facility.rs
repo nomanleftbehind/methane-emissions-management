@@ -2,9 +2,10 @@ use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         compressor_loader::FacilityCompressorsLoader, controller_loader::FacilityControllersLoader,
-        gas_analysis_loader::GasAnalysesByFacilityLoader, user_loader::UserLoader,
+        gas_analysis_loader::GasAnalysesByFacilityLoader, tank_farm_loader::FacilityTankFarmLoader,
+        user_loader::UserLoader,
     },
-    models::{Compressor, Controller, GasAnalysis, User},
+    models::{Compressor, Controller, GasAnalysis, TankFarm, User},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Enum, Error, InputObject, OneofObject,
@@ -82,6 +83,13 @@ impl Facility {
         let result = compressors.unwrap_or(vec![]);
 
         Ok(result)
+    }
+
+    async fn tank_farm(&self, ctx: &Context<'_>) -> Result<Option<TankFarm>, Error> {
+        let loader = ctx.get_loader::<DataLoader<FacilityTankFarmLoader>>();
+        let tank_farm = loader.load_one(self.id).await;
+
+        tank_farm
     }
 
     async fn gas_analyses(&self, ctx: &Context<'_>) -> Result<Vec<GasAnalysis>, Error> {

@@ -7,9 +7,9 @@ mod facility;
 mod user;
 
 pub use compressor::*;
-pub use compressor_month_vent::*;
+pub(in crate::graphql) use compressor_month_vent::*;
 pub use controller::*;
 pub use controller_application::*;
-pub use controller_month_vent::*;
+pub(in crate::graphql) use controller_month_vent::*;
 pub use facility::*;
 pub use user::*;
