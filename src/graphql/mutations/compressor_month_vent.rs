@@ -3,10 +3,10 @@ use async_graphql::{Context, Error, Object};
 use chrono::NaiveDate;
 
 #[derive(Default, Clone)]
-pub struct CompressorMonthVentMutations;
+pub(super) struct CompressorMonthVentMutation;
 
 #[Object]
-impl CompressorMonthVentMutations {
+impl CompressorMonthVentMutation {
     async fn insert_compressor_month_vents(
         &self,
         ctx: &Context<'_>,

@@ -7,10 +7,10 @@ use crate::graphql::{
 };
 
 #[derive(Default, Clone)]
-pub struct ControllerQueries;
+pub(super) struct ControllerQuery;
 
 #[Object]
-impl ControllerQueries {
+impl ControllerQuery {
     async fn user_controllers(
         &self,
         ctx: &Context<'_>,

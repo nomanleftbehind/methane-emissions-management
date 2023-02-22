@@ -3,7 +3,9 @@ use crate::graphql::{
     dataloaders::{controller_loader::ControllerLoader, user_loader::UserLoader},
     models::{Controller, User},
 };
-use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
+use async_graphql::{
+    dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,
+};
 use chrono::{NaiveDate, NaiveDateTime};
 use itertools::MultiUnzip;
 use sqlx::FromRow;
@@ -137,4 +139,10 @@ impl From<ControllerMonthVentUnnestedRows> for ControllerMonthVentNestedRows {
             updated_at,
         }
     }
+}
+
+#[derive(Debug, OneofObject)]
+pub enum ControllerMonthVentBy {
+    ControllerId(Uuid),
+    Month(NaiveDate),
 }

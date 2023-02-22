@@ -1,27 +1,30 @@
 use self::{
-    compressor::CompressorQueries, controller::ControllerQueries, facility::FacilityQueries,
-    user::UserQueries,
+    compressor::CompressorQuery, controller::ControllerQuery,
+    controller_month_vent::ControllerMonthVentQuery, facility::FacilityQuery, user::UserQuery,
 };
 use async_graphql::MergedObject;
 
-pub mod compressor;
-pub mod controller;
-pub mod facility;
-pub mod user;
+mod compressor;
+mod controller;
+mod controller_month_vent;
+mod facility;
+mod user;
 
 #[derive(MergedObject, Default, Clone)]
 pub struct FullQuery(
-    pub UserQueries,
-    pub ControllerQueries,
-    pub CompressorQueries,
-    pub FacilityQueries,
+    UserQuery,
+    ControllerQuery,
+    CompressorQuery,
+    FacilityQuery,
+    ControllerMonthVentQuery,
 );
 
-pub fn full_query() -> FullQuery {
+pub(crate) fn full_query() -> FullQuery {
     FullQuery(
-        UserQueries,
-        ControllerQueries,
-        CompressorQueries,
-        FacilityQueries,
+        UserQuery,
+        ControllerQuery,
+        CompressorQuery,
+        FacilityQuery,
+        ControllerMonthVentQuery,
     )
 }

@@ -7,10 +7,10 @@ use crate::graphql::{
 };
 
 #[derive(Default, Clone)]
-pub struct FacilityQueries;
+pub(super) struct FacilityQuery;
 
 #[Object]
-impl FacilityQueries {
+impl FacilityQuery {
     async fn facilities_by(
         &self,
         ctx: &Context<'_>,

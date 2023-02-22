@@ -6,10 +6,10 @@ use crate::graphql::{
 use async_graphql::{Context, Error, Object};
 
 #[derive(Default, Clone)]
-pub struct UserQueries;
+pub(super) struct UserQuery;
 
 #[Object]
-impl UserQueries {
+impl UserQuery {
     async fn me(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let cookie = ctx.get_cookie();
 

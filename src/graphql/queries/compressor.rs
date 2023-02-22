@@ -7,10 +7,10 @@ use crate::graphql::{
 };
 
 #[derive(Default, Clone)]
-pub struct CompressorQueries;
+pub(super) struct CompressorQuery;
 
 #[Object]
-impl CompressorQueries {
+impl CompressorQuery {
     async fn compressors_by(
         &self,
         ctx: &Context<'_>,

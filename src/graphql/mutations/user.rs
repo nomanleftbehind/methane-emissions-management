@@ -14,10 +14,10 @@ fn logged_in_err() -> Error {
 }
 
 #[derive(Default, Clone)]
-pub struct UserMutations;
+pub(super) struct UserMutation;
 
 #[Object]
-impl UserMutations {
+impl UserMutation {
     async fn register(
         &self,
         ctx: &Context<'_>,

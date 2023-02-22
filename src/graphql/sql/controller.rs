@@ -2,15 +2,15 @@ use crate::graphql::models::{
     Controller,
     ControllersBy::{self, CreatedById, FacilityId, UpdatedById},
 };
-use sqlx::PgExecutor;
+use sqlx::{query_as, Error, PgExecutor};
 
 pub async fn query_controllers<'e, E: PgExecutor<'e>>(
     executor: E,
     by: ControllersBy,
-) -> Result<Vec<Controller>, sqlx::Error> {
+) -> Result<Vec<Controller>, Error> {
     match by {
         FacilityId(facility_id) => {
-            sqlx::query_as!(
+            query_as!(
                 Controller,
                 "SELECT * FROM controllers WHERE facility_id = $1",
                 facility_id
@@ -19,7 +19,7 @@ pub async fn query_controllers<'e, E: PgExecutor<'e>>(
             .await
         }
         CreatedById(created_by_id) => {
-            sqlx::query_as!(
+            query_as!(
                 Controller,
                 "SELECT * FROM controllers WHERE created_by_id = $1",
                 created_by_id
@@ -28,7 +28,7 @@ pub async fn query_controllers<'e, E: PgExecutor<'e>>(
             .await
         }
         UpdatedById(updated_by_id) => {
-            sqlx::query_as!(
+            query_as!(
                 Controller,
                 "SELECT * FROM controllers WHERE updated_by_id = $1",
                 updated_by_id
