@@ -44,6 +44,10 @@ use super::{
         CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
     },
     facility_loader::{CreatedFacilitiesLoader, FacilityLoader, UpdatedFacilitiesLoader},
+    gas_analysis_calculated_param_loader::{
+        CreatedGasAnalysisCalculatedParamsLoader, GasAnalysisCalculatedParamLoader,
+        UpdatedGasAnalysisCalculatedParamsLoader,
+    },
     gas_analysis_loader::{
         CreatedGasAnalysesLoader, GasAnalysesByFacilityLoader, GasAnalysisLoader,
         UpdatedGasAnalysesLoader,
@@ -292,6 +296,20 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let gas_analyses_by_updater_id_loader =
         DataLoader::new(UpdatedGasAnalysesLoader::new(pool.clone()), tokio::spawn);
 
+    // Gas Analysis Calculated Param
+    let gas_analysis_calculated_param_by_id_loader = DataLoader::new(
+        GasAnalysisCalculatedParamLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let gas_analysis_calculated_params_by_creator_id_loader = DataLoader::new(
+        CreatedGasAnalysisCalculatedParamsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let gas_analysis_calculated_params_by_updater_id_loader = DataLoader::new(
+        UpdatedGasAnalysisCalculatedParamsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     loaders.insert(user_by_id_loader);
 
     loaders.insert(facility_by_id_loader);
@@ -367,6 +385,10 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(gas_analyses_by_facility_id_loader);
     loaders.insert(gas_analyses_by_creator_id_loader);
     loaders.insert(gas_analyses_by_updater_id_loader);
+
+    loaders.insert(gas_analysis_calculated_param_by_id_loader);
+    loaders.insert(gas_analysis_calculated_params_by_creator_id_loader);
+    loaders.insert(gas_analysis_calculated_params_by_updater_id_loader);
 
     loaders
 }

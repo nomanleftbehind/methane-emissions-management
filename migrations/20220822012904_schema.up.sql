@@ -227,18 +227,17 @@ CREATE TABLE "tank_farm_changes" (
 );
 
 -- CreateTable
-CREATE TABLE "tank_farm_month_vent_factors" (
+CREATE TABLE "tank_farm_vent_factors_calculated" (
     "id" UUID NOT NULL,
     "tank_farm_id" UUID NOT NULL,
-    "month" DATE NOT NULL,
-    "gas_gravity" DOUBLE PRECISION NOT NULL,
+    "date" DATE NOT NULL,
     "vent_factor" DOUBLE PRECISION NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "tank_farm_month_vent_factors_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "tank_farm_vent_factors_calculated_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -284,6 +283,20 @@ CREATE TABLE "gas_analyses" (
     CONSTRAINT "gas_analyses_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "gas_analysis_calculated_params" (
+    "id" UUID NOT NULL,
+    "gas_gravity" DOUBLE PRECISION NOT NULL,
+    "higher_heating_value" DOUBLE PRECISION NOT NULL,
+    "carbon_content" DOUBLE PRECISION NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "gas_analysis_calculated_params_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
@@ -327,7 +340,7 @@ CREATE UNIQUE INDEX "tank_farms_facility_id_key" ON "tank_farms"("facility_id");
 CREATE UNIQUE INDEX "tank_farm_changes_tank_farm_id_date_key" ON "tank_farm_changes"("tank_farm_id", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tank_farm_month_vent_factors_tank_farm_id_month_key" ON "tank_farm_month_vent_factors"("tank_farm_id", "month");
+CREATE UNIQUE INDEX "tank_farm_vent_factors_calculated_tank_farm_id_date_key" ON "tank_farm_vent_factors_calculated"("tank_farm_id", "date");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tank_farm_month_vent_tank_farm_id_month_key" ON "tank_farm_month_vent"("tank_farm_id", "month");
@@ -459,13 +472,13 @@ ALTER TABLE "tank_farm_changes" ADD CONSTRAINT "tank_farm_changes_created_by_id_
 ALTER TABLE "tank_farm_changes" ADD CONSTRAINT "tank_farm_changes_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_farm_month_vent_factors" ADD CONSTRAINT "tank_farm_month_vent_factors_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tank_farm_vent_factors_calculated" ADD CONSTRAINT "tank_farm_vent_factors_calculated_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_farm_month_vent_factors" ADD CONSTRAINT "tank_farm_month_vent_factors_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tank_farm_vent_factors_calculated" ADD CONSTRAINT "tank_farm_vent_factors_calculated_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_farm_month_vent_factors" ADD CONSTRAINT "tank_farm_month_vent_factors_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tank_farm_vent_factors_calculated" ADD CONSTRAINT "tank_farm_vent_factors_calculated_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -484,3 +497,12 @@ ALTER TABLE "gas_analyses" ADD CONSTRAINT "gas_analyses_created_by_id_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "gas_analyses" ADD CONSTRAINT "gas_analyses_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "gas_analysis_calculated_params" ADD CONSTRAINT "gas_analysis_calculated_params_id_fkey" FOREIGN KEY ("id") REFERENCES "gas_analyses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "gas_analysis_calculated_params" ADD CONSTRAINT "gas_analysis_calculated_params_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "gas_analysis_calculated_params" ADD CONSTRAINT "gas_analysis_calculated_params_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

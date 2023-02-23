@@ -1,7 +1,11 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{facility_loader::FacilityLoader, user_loader::UserLoader},
-    models::{Facility, User},
+    dataloaders::{
+        facility_loader::FacilityLoader,
+        gas_analysis_calculated_param_loader::GasAnalysisCalculatedParamLoader,
+        user_loader::UserLoader,
+    },
+    models::{Facility, GasAnalysisCalculatedParam, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -55,5 +59,15 @@ impl GasAnalysis {
         let facility = loader.load_one(self.facility_id).await;
 
         facility
+    }
+
+    pub async fn gas_analysis_calculated_param(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Option<GasAnalysisCalculatedParam>, Error> {
+        let loader = ctx.get_loader::<DataLoader<GasAnalysisCalculatedParamLoader>>();
+        let gas_analysis_calculated_param = loader.load_one(self.id).await;
+
+        gas_analysis_calculated_param
     }
 }

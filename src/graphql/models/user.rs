@@ -31,6 +31,9 @@ use crate::graphql::{
             CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
         },
         facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
+        gas_analysis_calculated_param_loader::{
+            CreatedGasAnalysisCalculatedParamsLoader, UpdatedGasAnalysisCalculatedParamsLoader,
+        },
         gas_analysis_loader::{CreatedGasAnalysesLoader, UpdatedGasAnalysesLoader},
         tank_farm_change_loader::{CreatedTankFarmChangesLoader, UpdatedTankFarmChangesLoader},
         tank_farm_loader::{CreatedTankFarmsLoader, UpdatedTankFarmsLoader},
@@ -39,7 +42,7 @@ use crate::graphql::{
         Compressor, CompressorBlowdown, CompressorChange, CompressorMonthHours,
         CompressorMonthVent, Controller, ControllerApplication, ControllerChange,
         ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
-        TankFarm, TankFarmChange,
+        GasAnalysisCalculatedParam, TankFarm, TankFarmChange,
     },
 };
 use async_graphql::{
@@ -382,6 +385,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedGasAnalysesLoader>>();
         let gas_analyses = loader.load_one(self.id).await?;
         let result = gas_analyses.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_gas_analysis_calculated_params(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<GasAnalysisCalculatedParam>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedGasAnalysisCalculatedParamsLoader>>();
+        let gas_analysis_calculated_params = loader.load_one(self.id).await?;
+        let result = gas_analysis_calculated_params.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_gas_analysis_calculated_params(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<GasAnalysisCalculatedParam>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedGasAnalysisCalculatedParamsLoader>>();
+        let gas_analysis_calculated_params = loader.load_one(self.id).await?;
+        let result = gas_analysis_calculated_params.unwrap_or(vec![]);
 
         Ok(result)
     }
