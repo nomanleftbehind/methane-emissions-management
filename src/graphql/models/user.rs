@@ -37,12 +37,15 @@ use crate::graphql::{
         gas_analysis_loader::{CreatedGasAnalysesLoader, UpdatedGasAnalysesLoader},
         tank_farm_change_loader::{CreatedTankFarmChangesLoader, UpdatedTankFarmChangesLoader},
         tank_farm_loader::{CreatedTankFarmsLoader, UpdatedTankFarmsLoader},
+        tank_farm_vent_factor_loader::{
+            CreatedTankFarmVentFactorsCalculatedLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
+        },
     },
     models::{
         Compressor, CompressorBlowdown, CompressorChange, CompressorMonthHours,
         CompressorMonthVent, Controller, ControllerApplication, ControllerChange,
         ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
-        GasAnalysisCalculatedParam, TankFarm, TankFarmChange,
+        GasAnalysisCalculatedParam, TankFarm, TankFarmChange, TankFarmVentFactorCalculated,
     },
 };
 use async_graphql::{
@@ -369,6 +372,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmChangesLoader>>();
         let tank_farm_changes = loader.load_one(self.id).await?;
         let result = tank_farm_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_tank_farm_vent_factors_calculated(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmVentFactorCalculated>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmVentFactorsCalculatedLoader>>();
+        let tank_farm_vent_factors_calculated = loader.load_one(self.id).await?;
+        let result = tank_farm_vent_factors_calculated.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_tank_farm_vent_factors_calculated(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmVentFactorCalculated>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmVentFactorsCalculatedLoader>>();
+        let tank_farm_vent_factors_calculated = loader.load_one(self.id).await?;
+        let result = tank_farm_vent_factors_calculated.unwrap_or(vec![]);
 
         Ok(result)
     }

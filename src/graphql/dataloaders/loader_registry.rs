@@ -59,6 +59,10 @@ use super::{
     tank_farm_loader::{
         CreatedTankFarmsLoader, FacilityTankFarmLoader, TankFarmLoader, UpdatedTankFarmsLoader,
     },
+    tank_farm_vent_factor_loader::{
+        CreatedTankFarmVentFactorsCalculatedLoader, TankFarmVentFactorCalculatedLoader,
+        TankFarmVentFactorsCalculatedByTankFarmLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
+    },
     user_loader::UserLoader,
 };
 use actix_web::web::Data;
@@ -286,6 +290,24 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Tank Farm Vent Factor Calculated
+    let tank_farm_vent_factor_calculated_by_id_loader = DataLoader::new(
+        TankFarmVentFactorCalculatedLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_vent_factors_calculated_by_tank_farm_id_loader = DataLoader::new(
+        TankFarmVentFactorsCalculatedByTankFarmLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_vent_factors_calculated_by_creator_id_loader = DataLoader::new(
+        CreatedTankFarmVentFactorsCalculatedLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_vent_factors_calculated_by_updater_id_loader = DataLoader::new(
+        UpdatedTankFarmVentFactorsCalculatedLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Gas Analysis
     let gas_analysis_by_id_loader =
         DataLoader::new(GasAnalysisLoader::new(pool.clone()), tokio::spawn);
@@ -380,6 +402,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(tank_farm_changes_by_tank_farm_id_loader);
     loaders.insert(tank_farm_changes_by_creator_id_loader);
     loaders.insert(tank_farm_changes_by_updater_id_loader);
+
+    loaders.insert(tank_farm_vent_factor_calculated_by_id_loader);
+    loaders.insert(tank_farm_vent_factors_calculated_by_tank_farm_id_loader);
+    loaders.insert(tank_farm_vent_factors_calculated_by_creator_id_loader);
+    loaders.insert(tank_farm_vent_factors_calculated_by_updater_id_loader);
 
     loaders.insert(gas_analysis_by_id_loader);
     loaders.insert(gas_analyses_by_facility_id_loader);

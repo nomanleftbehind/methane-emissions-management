@@ -15,6 +15,7 @@ pub mod gas_analysis_loader;
 mod loader_registry;
 pub mod tank_farm_change_loader;
 pub mod tank_farm_loader;
+pub mod tank_farm_vent_factor_loader;
 pub mod user_loader;
 
 pub use loader_registry::{get_loaders, LoaderRegistry};
