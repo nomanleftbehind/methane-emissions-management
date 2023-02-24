@@ -37,6 +37,9 @@ use crate::graphql::{
         gas_analysis_loader::{CreatedGasAnalysesLoader, UpdatedGasAnalysesLoader},
         tank_farm_change_loader::{CreatedTankFarmChangesLoader, UpdatedTankFarmChangesLoader},
         tank_farm_loader::{CreatedTankFarmsLoader, UpdatedTankFarmsLoader},
+        tank_farm_month_oil_flow_loader::{
+            CreatedTankFarmMonthOilFlowsLoader, UpdatedTankFarmMonthOilFlowsLoader,
+        },
         tank_farm_vent_factor_loader::{
             CreatedTankFarmVentFactorsCalculatedLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
         },
@@ -45,7 +48,8 @@ use crate::graphql::{
         Compressor, CompressorBlowdown, CompressorChange, CompressorMonthHours,
         CompressorMonthVent, Controller, ControllerApplication, ControllerChange,
         ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
-        GasAnalysisCalculatedParam, TankFarm, TankFarmChange, TankFarmVentFactorCalculated,
+        GasAnalysisCalculatedParam, TankFarm, TankFarmChange, TankFarmMonthOilFlow,
+        TankFarmVentFactorCalculated,
     },
 };
 use async_graphql::{
@@ -372,6 +376,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmChangesLoader>>();
         let tank_farm_changes = loader.load_one(self.id).await?;
         let result = tank_farm_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_tank_farm_month_oil_flows(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmMonthOilFlow>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmMonthOilFlowsLoader>>();
+        let tank_farm_month_oil_flows = loader.load_one(self.id).await?;
+        let result = tank_farm_month_oil_flows.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_tank_farm_month_oil_flows(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmMonthOilFlow>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmMonthOilFlowsLoader>>();
+        let tank_farm_month_oil_flows = loader.load_one(self.id).await?;
+        let result = tank_farm_month_oil_flows.unwrap_or(vec![]);
 
         Ok(result)
     }

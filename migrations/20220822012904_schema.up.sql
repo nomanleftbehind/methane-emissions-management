@@ -241,6 +241,20 @@ CREATE TABLE "tank_farm_vent_factors_calculated" (
 );
 
 -- CreateTable
+CREATE TABLE "tank_farm_month_oil_flow" (
+    "id" UUID NOT NULL,
+    "tank_farm_id" UUID NOT NULL,
+    "month" DATE NOT NULL,
+    "oil" DOUBLE PRECISION NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "tank_farm_month_oil_flow_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "tank_farm_month_vent" (
     "id" UUID NOT NULL,
     "month" DATE NOT NULL,
@@ -341,6 +355,9 @@ CREATE UNIQUE INDEX "tank_farm_changes_tank_farm_id_date_key" ON "tank_farm_chan
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tank_farm_vent_factors_calculated_tank_farm_id_date_key" ON "tank_farm_vent_factors_calculated"("tank_farm_id", "date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "tank_farm_month_oil_flow_tank_farm_id_month_key" ON "tank_farm_month_oil_flow"("tank_farm_id", "month");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tank_farm_month_vent_tank_farm_id_month_key" ON "tank_farm_month_vent"("tank_farm_id", "month");
@@ -479,6 +496,15 @@ ALTER TABLE "tank_farm_vent_factors_calculated" ADD CONSTRAINT "tank_farm_vent_f
 
 -- AddForeignKey
 ALTER TABLE "tank_farm_vent_factors_calculated" ADD CONSTRAINT "tank_farm_vent_factors_calculated_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "tank_farm_month_oil_flow" ADD CONSTRAINT "tank_farm_month_oil_flow_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "tank_farm_month_oil_flow" ADD CONSTRAINT "tank_farm_month_oil_flow_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "tank_farm_month_oil_flow" ADD CONSTRAINT "tank_farm_month_oil_flow_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -2,10 +2,11 @@ use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         facility_loader::FacilityLoader, tank_farm_change_loader::TankFarmChangesByTankFarmLoader,
+        tank_farm_month_oil_flow_loader::TankFarmMonthOilFlowsByTankFarmLoader,
         tank_farm_vent_factor_loader::TankFarmVentFactorsCalculatedByTankFarmLoader,
         user_loader::UserLoader,
     },
-    models::{Facility, TankFarmChange, TankFarmVentFactorCalculated, User},
+    models::{Facility, TankFarmChange, TankFarmMonthOilFlow, TankFarmVentFactorCalculated, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;
@@ -59,6 +60,17 @@ impl TankFarm {
         let loader = ctx.get_loader::<DataLoader<TankFarmChangesByTankFarmLoader>>();
         let tank_farm_changes = loader.load_one(self.id).await?;
         let result = tank_farm_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn tank_farm_month_oil_flows(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmMonthOilFlow>, Error> {
+        let loader = ctx.get_loader::<DataLoader<TankFarmMonthOilFlowsByTankFarmLoader>>();
+        let tank_farm_month_oil_flows = loader.load_one(self.id).await?;
+        let result = tank_farm_month_oil_flows.unwrap_or(vec![]);
 
         Ok(result)
     }

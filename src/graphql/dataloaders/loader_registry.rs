@@ -59,6 +59,10 @@ use super::{
     tank_farm_loader::{
         CreatedTankFarmsLoader, FacilityTankFarmLoader, TankFarmLoader, UpdatedTankFarmsLoader,
     },
+    tank_farm_month_oil_flow_loader::{
+        CreatedTankFarmMonthOilFlowsLoader, TankFarmMonthOilFlowLoader,
+        TankFarmMonthOilFlowsByTankFarmLoader, UpdatedTankFarmMonthOilFlowsLoader,
+    },
     tank_farm_vent_factor_loader::{
         CreatedTankFarmVentFactorsCalculatedLoader, TankFarmVentFactorCalculatedLoader,
         TankFarmVentFactorsCalculatedByTankFarmLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
@@ -290,6 +294,22 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Tank Farm Month Oil Flow
+    let tank_farm_month_oil_flow_by_id_loader =
+        DataLoader::new(TankFarmMonthOilFlowLoader::new(pool.clone()), tokio::spawn);
+    let tank_farm_month_oil_flows_by_tank_farm_id_loader = DataLoader::new(
+        TankFarmMonthOilFlowsByTankFarmLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_month_oil_flows_by_creator_id_loader = DataLoader::new(
+        CreatedTankFarmMonthOilFlowsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_month_oil_flows_by_updater_id_loader = DataLoader::new(
+        UpdatedTankFarmMonthOilFlowsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Tank Farm Vent Factor Calculated
     let tank_farm_vent_factor_calculated_by_id_loader = DataLoader::new(
         TankFarmVentFactorCalculatedLoader::new(pool.clone()),
@@ -402,6 +422,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(tank_farm_changes_by_tank_farm_id_loader);
     loaders.insert(tank_farm_changes_by_creator_id_loader);
     loaders.insert(tank_farm_changes_by_updater_id_loader);
+
+    loaders.insert(tank_farm_month_oil_flow_by_id_loader);
+    loaders.insert(tank_farm_month_oil_flows_by_tank_farm_id_loader);
+    loaders.insert(tank_farm_month_oil_flows_by_creator_id_loader);
+    loaders.insert(tank_farm_month_oil_flows_by_updater_id_loader);
 
     loaders.insert(tank_farm_vent_factor_calculated_by_id_loader);
     loaders.insert(tank_farm_vent_factors_calculated_by_tank_farm_id_loader);
