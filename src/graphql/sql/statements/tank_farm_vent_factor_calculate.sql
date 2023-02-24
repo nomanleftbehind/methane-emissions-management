@@ -1,6 +1,6 @@
 SELECT
-  tfvf.id as tank_farm_id,
-  tfvf.from_date as date,
+  tfvf.id as "tank_farm_id!",
+  tfvf.from_date as "date!",
   tfvf.coeff_apply * tfvf.coeff_1 * tfvf.gas_gravity * POWER(
     /*kPa to psi*/
     tfvf.pressure / 6.89475729316836,
@@ -13,7 +13,7 @@ SELECT
   ) *(
     /*scf/bbl to m3/m3*/
     6.2898 / 35.3147
-  ) as vent_factor
+  ) as "vent_factor!"
 FROM
   (
     SELECT
@@ -26,7 +26,7 @@ FROM
       tfc.pressure,
       tfc.ia,
       tfc.vru,
-      COALESCE(gacp.gas_gravity, 0.7) as gas_gravity,
+      COALESCE(gacp.gas_gravity, $1) as gas_gravity,
       CASE
         WHEN (
           f.type = 'GP'

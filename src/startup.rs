@@ -1,5 +1,5 @@
 use crate::{
-    configuration::{DatabaseSettings, DefaultMoleFractions, Settings},
+    configuration::{DatabaseSettings, DefaultGasParams, Settings},
     graphql::{
         dataloaders::{get_loaders, LoaderRegistry},
         interfaces::EmitterInterface,
@@ -46,7 +46,7 @@ impl Application {
             configuration.application.hmac_secret,
             configuration.application.session_cookie_name,
             configuration.redis_uri,
-            configuration.default_mole_fractions,
+            configuration.default_gas_params,
         )
         .await?;
 
@@ -81,7 +81,7 @@ pub async fn run(
     hmac_secret: Secret<String>,
     session_cookie_name: Secret<String>,
     redis_uri: Secret<String>,
-    default_mole_fractions: DefaultMoleFractions,
+    default_gas_params: DefaultGasParams,
 ) -> Result<Server, anyhow::Error> {
     // env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     env_logger::init();
@@ -104,7 +104,7 @@ pub async fn run(
         .data(loader_registry_data)
         .data(db_pool.clone())
         .data(base_url.clone())
-        .data(Data::new(default_mole_fractions.clone()))
+        .data(Data::new(default_gas_params.clone()))
         .data(Data::new(HmacSecret(hmac_secret.clone())))
         .data(Data::new(SessionCookieName(session_cookie_name.clone())))
         .data(redis_store)

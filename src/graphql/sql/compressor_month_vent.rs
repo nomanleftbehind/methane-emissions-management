@@ -1,14 +1,10 @@
-use crate::{
-    configuration::DefaultMoleFractions,
-    graphql::models::{
-        CompressorMonthVent,
-        CompressorMonthVentBy::{self, CompressorId, Month},
-        CompressorMonthVentCalculated, CompressorMonthVentNestedRows,
-        CompressorMonthVentUnnestedRows,
-    },
+use crate::graphql::models::{
+    CompressorMonthVent,
+    CompressorMonthVentBy::{self, CompressorId, Month},
+    CompressorMonthVentCalculated, CompressorMonthVentNestedRows, CompressorMonthVentUnnestedRows,
 };
 use chrono::NaiveDate;
-use sqlx::{query_as, Error, PgPool};
+use sqlx::{query_as, query_file, query_file_as, Error, PgPool};
 use uuid::Uuid;
 
 pub async fn select_compressor_month_vents(
@@ -41,11 +37,12 @@ pub async fn insert_compressor_month_vents(
     pool: &PgPool,
     user_id: Uuid,
     month: NaiveDate,
-    DefaultMoleFractions { c1, co2 }: &DefaultMoleFractions,
+    c1: &f64,
+    co2: &f64,
 ) -> Result<u64, sqlx::Error> {
-    let compressor_month_vents_calculated = sqlx::query_file_as!(
+    let compressor_month_vents_calculated = query_file_as!(
         CompressorMonthVentCalculated,
-        "src/graphql/sql/statements/compressor_month_vent_calculated.sql",
+        "src/graphql/sql/statements/compressor_month_vent_calculate.sql",
         month,
         c1,
         co2
@@ -70,7 +67,7 @@ pub async fn insert_compressor_month_vents(
     }
     .into();
 
-    let rows_inserted = sqlx::query_file!(
+    let rows_inserted = query_file!(
         "src/graphql/sql/statements/compressor_month_vent_insert.sql",
         &id,
         &month,
