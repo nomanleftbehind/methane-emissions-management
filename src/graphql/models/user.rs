@@ -40,6 +40,9 @@ use crate::graphql::{
         tank_farm_month_oil_flow_loader::{
             CreatedTankFarmMonthOilFlowsLoader, UpdatedTankFarmMonthOilFlowsLoader,
         },
+        tank_farm_month_vent_loader::{
+            CreatedTankFarmMonthVentsLoader, UpdatedTankFarmMonthVentsLoader,
+        },
         tank_farm_vent_factor_loader::{
             CreatedTankFarmVentFactorsCalculatedLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
         },
@@ -49,7 +52,7 @@ use crate::graphql::{
         CompressorMonthVent, Controller, ControllerApplication, ControllerChange,
         ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
         GasAnalysisCalculatedParam, TankFarm, TankFarmChange, TankFarmMonthOilFlow,
-        TankFarmVentFactorCalculated,
+        TankFarmMonthVent, TankFarmVentFactorCalculated,
     },
 };
 use async_graphql::{
@@ -420,6 +423,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmVentFactorsCalculatedLoader>>();
         let tank_farm_vent_factors_calculated = loader.load_one(self.id).await?;
         let result = tank_farm_vent_factors_calculated.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_tank_farm_month_vents(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmMonthVent>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmMonthVentsLoader>>();
+        let tank_farm_month_vents = loader.load_one(self.id).await?;
+        let result = tank_farm_month_vents.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_tank_farm_month_vents(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmMonthVent>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmMonthVentsLoader>>();
+        let tank_farm_month_vents = loader.load_one(self.id).await?;
+        let result = tank_farm_month_vents.unwrap_or(vec![]);
 
         Ok(result)
     }

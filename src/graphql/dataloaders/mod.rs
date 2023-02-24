@@ -16,6 +16,7 @@ mod loader_registry;
 pub mod tank_farm_change_loader;
 pub mod tank_farm_loader;
 pub mod tank_farm_month_oil_flow_loader;
+pub mod tank_farm_month_vent_loader;
 pub mod tank_farm_vent_factor_loader;
 pub mod user_loader;
 

@@ -63,6 +63,10 @@ use super::{
         CreatedTankFarmMonthOilFlowsLoader, TankFarmMonthOilFlowLoader,
         TankFarmMonthOilFlowsByTankFarmLoader, UpdatedTankFarmMonthOilFlowsLoader,
     },
+    tank_farm_month_vent_loader::{
+        CreatedTankFarmMonthVentsLoader, TankFarmMonthVentLoader,
+        TankFarmMonthVentsByTankFarmLoader, UpdatedTankFarmMonthVentsLoader,
+    },
     tank_farm_vent_factor_loader::{
         CreatedTankFarmVentFactorsCalculatedLoader, TankFarmVentFactorCalculatedLoader,
         TankFarmVentFactorsCalculatedByTankFarmLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
@@ -328,6 +332,22 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Tank Farm Month Vent
+    let tank_farm_month_vent_by_id_loader =
+        DataLoader::new(TankFarmMonthVentLoader::new(pool.clone()), tokio::spawn);
+    let tank_farm_month_vents_by_tank_farm_id_loader = DataLoader::new(
+        TankFarmMonthVentsByTankFarmLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_month_vents_by_creator_id_loader = DataLoader::new(
+        CreatedTankFarmMonthVentsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_month_vents_by_updater_id_loader = DataLoader::new(
+        UpdatedTankFarmMonthVentsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Gas Analysis
     let gas_analysis_by_id_loader =
         DataLoader::new(GasAnalysisLoader::new(pool.clone()), tokio::spawn);
@@ -432,6 +452,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(tank_farm_vent_factors_calculated_by_tank_farm_id_loader);
     loaders.insert(tank_farm_vent_factors_calculated_by_creator_id_loader);
     loaders.insert(tank_farm_vent_factors_calculated_by_updater_id_loader);
+
+    loaders.insert(tank_farm_month_vent_by_id_loader);
+    loaders.insert(tank_farm_month_vents_by_tank_farm_id_loader);
+    loaders.insert(tank_farm_month_vents_by_creator_id_loader);
+    loaders.insert(tank_farm_month_vents_by_updater_id_loader);
 
     loaders.insert(gas_analysis_by_id_loader);
     loaders.insert(gas_analyses_by_facility_id_loader);
