@@ -3,8 +3,11 @@ use crate::graphql::{
     dataloaders::{tank_farm_loader::TankFarmLoader, user_loader::UserLoader},
     models::{TankFarm, User},
 };
-use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
+use async_graphql::{
+    dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,
+};
 use chrono::{NaiveDate, NaiveDateTime};
+use itertools::MultiUnzip;
 use sqlx::FromRow;
 use uuid::Uuid;
 
@@ -45,4 +48,101 @@ impl TankFarmMonthVent {
 
         tank_farm
     }
+}
+
+#[derive(SimpleObject, Clone, FromRow, Debug)]
+pub struct TankFarmMonthVentInterim {
+    pub tank_farm_id: Uuid,
+    pub month: NaiveDate,
+    pub gas_volume: f64,
+    pub c1_volume: f64,
+    pub co2_volume: f64,
+}
+
+#[derive(Debug)]
+pub struct TankFarmMonthVentInterimUnnestedRows {
+    pub user_id: Uuid,
+    pub tank_farm_month_vents_interim: Vec<TankFarmMonthVentInterim>,
+}
+
+#[derive(Debug)]
+pub struct TankFarmMonthVentInterimNestedRows {
+    pub id: Vec<Uuid>,
+    pub tank_farm_id: Vec<Uuid>,
+    pub month: Vec<NaiveDate>,
+    pub gas_volume: Vec<f64>,
+    pub c1_volume: Vec<f64>,
+    pub co2_volume: Vec<f64>,
+    pub created_by_id: Vec<Uuid>,
+    pub created_at: Vec<NaiveDateTime>,
+    pub updated_by_id: Vec<Uuid>,
+    pub updated_at: Vec<NaiveDateTime>,
+}
+
+impl From<TankFarmMonthVentInterimUnnestedRows> for TankFarmMonthVentInterimNestedRows {
+    fn from(
+        TankFarmMonthVentInterimUnnestedRows {
+            user_id,
+            tank_farm_month_vents_interim,
+        }: TankFarmMonthVentInterimUnnestedRows,
+    ) -> Self {
+        let (
+            id,
+            tank_farm_id,
+            month,
+            gas_volume,
+            c1_volume,
+            co2_volume,
+            created_by_id,
+            created_at,
+            updated_by_id,
+            updated_at,
+        ): (
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+        ) = tank_farm_month_vents_interim
+            .into_iter()
+            .map(|tfmvi| {
+                (
+                    Uuid::new_v4(),
+                    tfmvi.tank_farm_id,
+                    tfmvi.month,
+                    tfmvi.gas_volume,
+                    tfmvi.c1_volume,
+                    tfmvi.co2_volume,
+                    user_id.clone(),
+                    chrono::Utc::now().naive_utc(),
+                    user_id.clone(),
+                    chrono::Utc::now().naive_utc(),
+                )
+            })
+            .multiunzip();
+
+        TankFarmMonthVentInterimNestedRows {
+            id,
+            tank_farm_id,
+            month,
+            gas_volume,
+            c1_volume,
+            co2_volume,
+            created_by_id,
+            created_at,
+            updated_by_id,
+            updated_at,
+        }
+    }
+}
+
+#[derive(Debug, OneofObject)]
+pub enum TankFarmMonthVentBy {
+    TankFarmId(Uuid),
+    Month(NaiveDate),
 }

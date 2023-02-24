@@ -5,6 +5,7 @@ mod controller_application;
 mod controller_month_vent;
 mod facility;
 mod gas_analysis_calculated_param;
+mod tank_farm_month_vent;
 mod tank_farm_vent_factor_calculated;
 mod user;
 
@@ -15,5 +16,6 @@ pub use controller_application::*;
 pub(in crate::graphql) use controller_month_vent::*;
 pub use facility::*;
 pub(in crate::graphql) use gas_analysis_calculated_param::*;
+pub(in crate::graphql) use tank_farm_month_vent::*;
 pub(in crate::graphql) use tank_farm_vent_factor_calculated::*;
 pub use user::*;
