@@ -79,6 +79,9 @@ pub enum Role {
     Operator,
 }
 
+/// User object is the root of every other object.
+///
+/// Every object was created and updated by a user so User object can load an array of created or updated objects
 #[derive(Serialize, Deserialize, SimpleObject, Debug, Clone, FromRow)]
 #[graphql(complex)]
 pub struct User {

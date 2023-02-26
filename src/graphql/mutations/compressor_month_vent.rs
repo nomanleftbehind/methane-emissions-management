@@ -1,6 +1,9 @@
 use crate::{
     configuration::DefaultGasParams,
-    graphql::{context::ContextExt, sql::insert_compressor_month_vents},
+    graphql::{
+        context::ContextExt, mutations::validators::MonthBeginningValidator,
+        sql::insert_compressor_month_vents,
+    },
 };
 use async_graphql::{Context, Error, Object};
 use chrono::NaiveDate;
@@ -13,7 +16,7 @@ impl CompressorMonthVentMutation {
     async fn insert_compressor_month_vents(
         &self,
         ctx: &Context<'_>,
-        month: NaiveDate,
+        #[graphql(validator(custom = "MonthBeginningValidator"))] month: NaiveDate,
     ) -> Result<u64, Error> {
         let pool = ctx.db_pool();
         let cookie = ctx.get_cookie()?;
