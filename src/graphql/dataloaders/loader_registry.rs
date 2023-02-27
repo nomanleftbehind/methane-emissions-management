@@ -67,6 +67,10 @@ use super::{
         CreatedTankFarmMonthVentsLoader, TankFarmMonthVentLoader,
         TankFarmMonthVentsByTankFarmLoader, UpdatedTankFarmMonthVentsLoader,
     },
+    tank_farm_month_vent_override_loader::{
+        CreatedTankFarmMonthVentOverridesLoader, TankFarmMonthVentOverrideLoader,
+        TankFarmMonthVentOverridesByTankFarmLoader, UpdatedTankFarmMonthVentOverridesLoader,
+    },
     tank_farm_vent_factor_loader::{
         CreatedTankFarmVentFactorsCalculatedLoader, TankFarmVentFactorCalculatedLoader,
         TankFarmVentFactorsCalculatedByTankFarmLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
@@ -332,6 +336,24 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Tank Farm Month Vent Override
+    let tank_farm_month_vent_override_by_id_loader = DataLoader::new(
+        TankFarmMonthVentOverrideLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_month_vent_overrides_by_tank_farm_id_loader = DataLoader::new(
+        TankFarmMonthVentOverridesByTankFarmLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_month_vent_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedTankFarmMonthVentOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_farm_month_vent_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedTankFarmMonthVentOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Tank Farm Month Vent
     let tank_farm_month_vent_by_id_loader =
         DataLoader::new(TankFarmMonthVentLoader::new(pool.clone()), tokio::spawn);
@@ -452,6 +474,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(tank_farm_vent_factors_calculated_by_tank_farm_id_loader);
     loaders.insert(tank_farm_vent_factors_calculated_by_creator_id_loader);
     loaders.insert(tank_farm_vent_factors_calculated_by_updater_id_loader);
+
+    loaders.insert(tank_farm_month_vent_override_by_id_loader);
+    loaders.insert(tank_farm_month_vent_overrides_by_tank_farm_id_loader);
+    loaders.insert(tank_farm_month_vent_overrides_by_creator_id_loader);
+    loaders.insert(tank_farm_month_vent_overrides_by_updater_id_loader);
 
     loaders.insert(tank_farm_month_vent_by_id_loader);
     loaders.insert(tank_farm_month_vents_by_tank_farm_id_loader);

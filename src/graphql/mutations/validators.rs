@@ -1,7 +1,7 @@
 use async_graphql::{CustomValidator, InputValueError};
 use chrono::{Datelike, NaiveDate};
 
-pub(super) struct MonthBeginningValidator;
+pub struct MonthBeginningValidator;
 
 impl CustomValidator<NaiveDate> for MonthBeginningValidator {
     /// Check if `value` day of month is 1

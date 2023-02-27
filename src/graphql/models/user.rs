@@ -43,6 +43,9 @@ use crate::graphql::{
         tank_farm_month_vent_loader::{
             CreatedTankFarmMonthVentsLoader, UpdatedTankFarmMonthVentsLoader,
         },
+        tank_farm_month_vent_override_loader::{
+            CreatedTankFarmMonthVentOverridesLoader, UpdatedTankFarmMonthVentOverridesLoader,
+        },
         tank_farm_vent_factor_loader::{
             CreatedTankFarmVentFactorsCalculatedLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
         },
@@ -52,7 +55,7 @@ use crate::graphql::{
         CompressorMonthVent, Controller, ControllerApplication, ControllerChange,
         ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
         GasAnalysisCalculatedParam, TankFarm, TankFarmChange, TankFarmMonthOilFlow,
-        TankFarmMonthVent, TankFarmVentFactorCalculated,
+        TankFarmMonthVent, TankFarmMonthVentOverride, TankFarmVentFactorCalculated,
     },
 };
 use async_graphql::{
@@ -79,9 +82,9 @@ pub enum Role {
     Operator,
 }
 
-/// User object is the root of every other object.
+/// `User` model is the root of every other model.
 ///
-/// Every object was created and updated by a user so User object can load an array of created or updated objects
+/// Every entry was created and updated by a `User` so the model can load an array of created or updated entries.
 #[derive(Serialize, Deserialize, SimpleObject, Debug, Clone, FromRow)]
 #[graphql(complex)]
 pub struct User {
@@ -426,6 +429,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmVentFactorsCalculatedLoader>>();
         let tank_farm_vent_factors_calculated = loader.load_one(self.id).await?;
         let result = tank_farm_vent_factors_calculated.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_tank_farm_month_vent_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmMonthVentOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmMonthVentOverridesLoader>>();
+        let tank_farm_month_vent_overrides = loader.load_one(self.id).await?;
+        let result = tank_farm_month_vent_overrides.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_tank_farm_month_vent_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<TankFarmMonthVentOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmMonthVentOverridesLoader>>();
+        let tank_farm_month_vent_overrides = loader.load_one(self.id).await?;
+        let result = tank_farm_month_vent_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

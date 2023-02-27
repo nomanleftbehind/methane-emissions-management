@@ -255,13 +255,27 @@ CREATE TABLE "tank_farm_month_oil_flow" (
 );
 
 -- CreateTable
+CREATE TABLE "tank_farm_month_vent_override" (
+    "id" UUID NOT NULL,
+    "tank_farm_id" UUID NOT NULL,
+    "month" DATE NOT NULL,
+    "gas_volume" DOUBLE PRECISION NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "tank_farm_month_vent_override_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "tank_farm_month_vent" (
     "id" UUID NOT NULL,
+    "tank_farm_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "gas_volume" DOUBLE PRECISION NOT NULL,
     "c1_volume" DOUBLE PRECISION NOT NULL,
     "co2_volume" DOUBLE PRECISION NOT NULL,
-    "tank_farm_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -358,6 +372,9 @@ CREATE UNIQUE INDEX "tank_farm_vent_factors_calculated_tank_farm_id_date_key" ON
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tank_farm_month_oil_flow_tank_farm_id_month_key" ON "tank_farm_month_oil_flow"("tank_farm_id", "month");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "tank_farm_month_vent_override_tank_farm_id_month_key" ON "tank_farm_month_vent_override"("tank_farm_id", "month");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tank_farm_month_vent_tank_farm_id_month_key" ON "tank_farm_month_vent"("tank_farm_id", "month");
@@ -505,6 +522,15 @@ ALTER TABLE "tank_farm_month_oil_flow" ADD CONSTRAINT "tank_farm_month_oil_flow_
 
 -- AddForeignKey
 ALTER TABLE "tank_farm_month_oil_flow" ADD CONSTRAINT "tank_farm_month_oil_flow_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "tank_farm_month_vent_override" ADD CONSTRAINT "tank_farm_month_vent_override_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "tank_farm_month_vent_override" ADD CONSTRAINT "tank_farm_month_vent_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "tank_farm_month_vent_override" ADD CONSTRAINT "tank_farm_month_vent_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

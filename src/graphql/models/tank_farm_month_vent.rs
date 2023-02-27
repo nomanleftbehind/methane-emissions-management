@@ -11,6 +11,13 @@ use itertools::MultiUnzip;
 use sqlx::FromRow;
 use uuid::Uuid;
 
+/// Model representing monthly vented volumes from tank farms.
+///
+/// No mutations are provided which would enable users to enter values directly, instead, all fields are calculated and writter to the database.
+///
+/// Field `month` has to be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::mutations::validators::MonthBeginningValidator).
+///
+/// All volumes are in m³.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
 pub struct TankFarmMonthVent {
