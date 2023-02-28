@@ -37,14 +37,14 @@ pub async fn select_tank_farm_month_vents(
 pub async fn insert_tank_farm_month_vents(
     pool: &PgPool,
     user_id: Uuid,
-    month: NaiveDate,
+    months: &[NaiveDate],
     c1: &f64,
     co2: &f64,
 ) -> Result<u64, Error> {
     let tank_farm_month_vents_interim = query_file_as!(
         TankFarmMonthVentInterim,
         "src/graphql/sql/statements/tank_farm_month_vent_calculate.sql",
-        month,
+        months,
         c1,
         co2
     )
