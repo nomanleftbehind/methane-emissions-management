@@ -19,6 +19,10 @@ use super::{
         CompressorMonthVentLoader, CompressorMonthVentsByCompressorLoader,
         CreatedCompressorMonthVentsLoader, UpdatedCompressorMonthVentsLoader,
     },
+    compressor_month_vent_override_loader::{
+        CompressorMonthVentOverrideLoader, CompressorMonthVentOverridesByCompressorLoader,
+        CreatedCompressorMonthVentOverridesLoader, UpdatedCompressorMonthVentOverridesLoader,
+    },
     controller_application_loader::{
         ControllerApplicationLoader, CreatedControllerApplicationsLoader,
         UpdatedControllerApplicationsLoader,
@@ -283,6 +287,24 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Compressor Month Vent Override
+    let compressor_month_vent_override_by_id_loader = DataLoader::new(
+        CompressorMonthVentOverrideLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_month_vent_overrides_by_compressor_id_loader = DataLoader::new(
+        CompressorMonthVentOverridesByCompressorLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_month_vent_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorMonthVentOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_month_vent_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorMonthVentOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Compressor Month Vent
     let compressor_month_vent_by_id_loader =
         DataLoader::new(CompressorMonthVentLoader::new(pool.clone()), tokio::spawn);
@@ -476,6 +498,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_blowdowns_by_compressor_id_loader);
     loaders.insert(compressor_blowdowns_by_creator_id_loader);
     loaders.insert(compressor_blowdowns_by_updater_id_loader);
+
+    loaders.insert(compressor_month_vent_override_by_id_loader);
+    loaders.insert(compressor_month_vent_overrides_by_compressor_id_loader);
+    loaders.insert(compressor_month_vent_overrides_by_creator_id_loader);
+    loaders.insert(compressor_month_vent_overrides_by_updater_id_loader);
 
     loaders.insert(compressor_month_vent_by_id_loader);
     loaders.insert(compressor_month_vents_by_compressor_id_loader);

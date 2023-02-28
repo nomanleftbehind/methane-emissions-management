@@ -14,6 +14,9 @@ use crate::graphql::{
         compressor_month_vent_loader::{
             CreatedCompressorMonthVentsLoader, UpdatedCompressorMonthVentsLoader,
         },
+        compressor_month_vent_override_loader::{
+            CreatedCompressorMonthVentOverridesLoader, UpdatedCompressorMonthVentOverridesLoader,
+        },
         controller_application_loader::{
             CreatedControllerApplicationsLoader, UpdatedControllerApplicationsLoader,
         },
@@ -55,8 +58,8 @@ use crate::graphql::{
     },
     models::{
         Compressor, CompressorBlowdown, CompressorChange, CompressorMonthHours,
-        CompressorMonthVent, Controller, ControllerApplication, ControllerChange,
-        ControllerManufacturer, ControllerMonthHours, ControllerMonthVent,
+        CompressorMonthVent, CompressorMonthVentOverride, Controller, ControllerApplication,
+        ControllerChange, ControllerManufacturer, ControllerMonthHours, ControllerMonthVent,
         ControllerMonthVentOverride, Facility, GasAnalysis, GasAnalysisCalculatedParam, TankFarm,
         TankFarmChange, TankFarmMonthOilFlow, TankFarmMonthVent, TankFarmMonthVentOverride,
         TankFarmVentFactorCalculated,
@@ -349,6 +352,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedCompressorBlowdownsLoader>>();
         let compressor_blowdowns = loader.load_one(self.id).await?;
         let result = compressor_blowdowns.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_compressor_month_vent_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorMonthVentOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedCompressorMonthVentOverridesLoader>>();
+        let compressor_month_vent_overrides = loader.load_one(self.id).await?;
+        let result = compressor_month_vent_overrides.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_compressor_month_vent_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorMonthVentOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorMonthVentOverridesLoader>>();
+        let compressor_month_vent_overrides = loader.load_one(self.id).await?;
+        let result = compressor_month_vent_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

@@ -91,9 +91,9 @@ CREATE TABLE "controller_changes" (
 -- CreateTable
 CREATE TABLE "controller_month_hours" (
     "id" UUID NOT NULL,
+    "controller_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "hours_on" DOUBLE PRECISION NOT NULL,
-    "controller_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -103,13 +103,28 @@ CREATE TABLE "controller_month_hours" (
 );
 
 -- CreateTable
+CREATE TABLE "controller_month_vent_override" (
+    "id" UUID NOT NULL,
+    "controller_id" UUID NOT NULL,
+    "month" DATE NOT NULL,
+    "gas_volume" DOUBLE PRECISION NOT NULL,
+    "comment" TEXT,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "controller_month_vent_override_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "controller_month_vent" (
     "id" UUID NOT NULL,
+    "controller_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "gas_volume" DOUBLE PRECISION NOT NULL,
     "c1_volume" DOUBLE PRECISION NOT NULL,
     "co2_volume" DOUBLE PRECISION NOT NULL,
-    "controller_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -154,9 +169,9 @@ CREATE TABLE "compressor_changes" (
 -- CreateTable
 CREATE TABLE "compressor_month_hours" (
     "id" UUID NOT NULL,
+    "compressor_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "pressurized_hours" DOUBLE PRECISION NOT NULL,
-    "compressor_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -168,9 +183,9 @@ CREATE TABLE "compressor_month_hours" (
 -- CreateTable
 CREATE TABLE "compressor_blowdown" (
     "id" UUID NOT NULL,
+    "compressor_id" UUID NOT NULL,
     "date" DATE NOT NULL,
     "gas_volume" DOUBLE PRECISION NOT NULL,
-    "compressor_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -180,13 +195,28 @@ CREATE TABLE "compressor_blowdown" (
 );
 
 -- CreateTable
+CREATE TABLE "compressor_month_vent_override" (
+    "id" UUID NOT NULL,
+    "compressor_id" UUID NOT NULL,
+    "month" DATE NOT NULL,
+    "gas_volume" DOUBLE PRECISION NOT NULL,
+    "comment" TEXT,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "compressor_month_vent_override_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "compressor_month_vent" (
     "id" UUID NOT NULL,
+    "compressor_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "gas_volume" DOUBLE PRECISION NOT NULL,
     "c1_volume" DOUBLE PRECISION NOT NULL,
     "co2_volume" DOUBLE PRECISION NOT NULL,
-    "compressor_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -260,6 +290,7 @@ CREATE TABLE "tank_farm_month_vent_override" (
     "tank_farm_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "gas_volume" DOUBLE PRECISION NOT NULL,
+    "comment" TEXT,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -344,6 +375,9 @@ CREATE UNIQUE INDEX "controller_changes_controller_id_date_key" ON "controller_c
 CREATE UNIQUE INDEX "controller_month_hours_controller_id_month_key" ON "controller_month_hours"("controller_id", "month");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "controller_month_vent_override_controller_id_month_key" ON "controller_month_vent_override"("controller_id", "month");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "controller_month_vent_controller_id_month_key" ON "controller_month_vent"("controller_id", "month");
 
 -- CreateIndex
@@ -357,6 +391,9 @@ CREATE UNIQUE INDEX "compressor_month_hours_compressor_id_month_key" ON "compres
 
 -- CreateIndex
 CREATE UNIQUE INDEX "compressor_blowdown_compressor_id_date_key" ON "compressor_blowdown"("compressor_id", "date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "compressor_month_vent_override_compressor_id_month_key" ON "compressor_month_vent_override"("compressor_id", "month");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "compressor_month_vent_compressor_id_month_key" ON "compressor_month_vent"("compressor_id", "month");
@@ -434,6 +471,15 @@ ALTER TABLE "controller_month_hours" ADD CONSTRAINT "controller_month_hours_crea
 ALTER TABLE "controller_month_hours" ADD CONSTRAINT "controller_month_hours_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "controller_month_vent_override" ADD CONSTRAINT "controller_month_vent_override_controller_id_fkey" FOREIGN KEY ("controller_id") REFERENCES "controllers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "controller_month_vent_override" ADD CONSTRAINT "controller_month_vent_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "controller_month_vent_override" ADD CONSTRAINT "controller_month_vent_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "controller_month_vent" ADD CONSTRAINT "controller_month_vent_controller_id_fkey" FOREIGN KEY ("controller_id") REFERENCES "controllers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -477,6 +523,15 @@ ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_created_by
 
 -- AddForeignKey
 ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_month_vent_override" ADD CONSTRAINT "compressor_month_vent_override_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_month_vent_override" ADD CONSTRAINT "compressor_month_vent_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_month_vent_override" ADD CONSTRAINT "compressor_month_vent_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "compressor_month_vent" ADD CONSTRAINT "compressor_month_vent_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

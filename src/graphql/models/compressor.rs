@@ -5,11 +5,12 @@ use crate::graphql::{
         compressor_change_loader::CompressorChangesByCompressorLoader,
         compressor_month_hours_loader::CompressorMonthHoursByCompressorLoader,
         compressor_month_vent_loader::CompressorMonthVentsByCompressorLoader,
+        compressor_month_vent_override_loader::CompressorMonthVentOverridesByCompressorLoader,
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
     models::{
-        CompressorBlowdown, CompressorChange, CompressorMonthHours, CompressorMonthVent, Facility,
-        User,
+        CompressorBlowdown, CompressorChange, CompressorMonthHours, CompressorMonthVent,
+        CompressorMonthVentOverride, Facility, User,
     },
 };
 use async_graphql::{
@@ -93,6 +94,17 @@ impl Compressor {
         let loader = ctx.get_loader::<DataLoader<CompressorBlowdownsByCompressorLoader>>();
         let compressor_blowdowns = loader.load_one(self.id).await?;
         let result = compressor_blowdowns.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn compressor_month_vent_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorMonthVentOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorMonthVentOverridesByCompressorLoader>>();
+        let compressor_month_vent_overrides = loader.load_one(self.id).await?;
+        let result = compressor_month_vent_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }
