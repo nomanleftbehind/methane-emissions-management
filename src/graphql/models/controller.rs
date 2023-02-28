@@ -6,11 +6,12 @@ use crate::graphql::{
         controller_manufacturer_loader::ControllerManufacturerLoader,
         controller_month_hours_loader::ControllerMonthHoursByControllerLoader,
         controller_month_vent_loader::ControllerMonthVentsByControllerLoader,
+        controller_month_vent_override_loader::ControllerMonthVentOverridesByControllerLoader,
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
     models::{
         ControllerApplication, ControllerChange, ControllerManufacturer, ControllerMonthHours,
-        ControllerMonthVent, Facility, User,
+        ControllerMonthVent, ControllerMonthVentOverride, Facility, User,
     },
 };
 use async_graphql::{
@@ -104,6 +105,17 @@ impl Controller {
         let loader = ctx.get_loader::<DataLoader<ControllerMonthHoursByControllerLoader>>();
         let controller_month_hours = loader.load_one(self.id).await?;
         let result = controller_month_hours.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn controller_month_vent_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerMonthVentOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<ControllerMonthVentOverridesByControllerLoader>>();
+        let controller_month_vent_overrides = loader.load_one(self.id).await?;
+        let result = controller_month_vent_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

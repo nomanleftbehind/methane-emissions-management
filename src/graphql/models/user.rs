@@ -30,6 +30,9 @@ use crate::graphql::{
         controller_month_vent_loader::{
             CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
         },
+        controller_month_vent_override_loader::{
+            CreatedControllerMonthVentOverridesLoader, UpdatedControllerMonthVentOverridesLoader,
+        },
         facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
         gas_analysis_calculated_param_loader::{
             CreatedGasAnalysisCalculatedParamsLoader, UpdatedGasAnalysisCalculatedParamsLoader,
@@ -53,9 +56,10 @@ use crate::graphql::{
     models::{
         Compressor, CompressorBlowdown, CompressorChange, CompressorMonthHours,
         CompressorMonthVent, Controller, ControllerApplication, ControllerChange,
-        ControllerManufacturer, ControllerMonthHours, ControllerMonthVent, Facility, GasAnalysis,
-        GasAnalysisCalculatedParam, TankFarm, TankFarmChange, TankFarmMonthOilFlow,
-        TankFarmMonthVent, TankFarmMonthVentOverride, TankFarmVentFactorCalculated,
+        ControllerManufacturer, ControllerMonthHours, ControllerMonthVent,
+        ControllerMonthVentOverride, Facility, GasAnalysis, GasAnalysisCalculatedParam, TankFarm,
+        TankFarmChange, TankFarmMonthOilFlow, TankFarmMonthVent, TankFarmMonthVentOverride,
+        TankFarmVentFactorCalculated,
     },
 };
 use async_graphql::{
@@ -217,6 +221,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerMonthHoursLoader>>();
         let controller_month_hours = loader.load_one(self.id).await?;
         let result = controller_month_hours.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_controller_month_vent_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerMonthVentOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedControllerMonthVentOverridesLoader>>();
+        let controller_month_vent_overrides = loader.load_one(self.id).await?;
+        let result = controller_month_vent_overrides.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_controller_month_vent_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<ControllerMonthVentOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedControllerMonthVentOverridesLoader>>();
+        let controller_month_vent_overrides = loader.load_one(self.id).await?;
+        let result = controller_month_vent_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

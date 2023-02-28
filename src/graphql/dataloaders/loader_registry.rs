@@ -43,6 +43,10 @@ use super::{
         ControllerMonthVentLoader, ControllerMonthVentsByControllerLoader,
         CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
     },
+    controller_month_vent_override_loader::{
+        ControllerMonthVentOverrideLoader, ControllerMonthVentOverridesByControllerLoader,
+        CreatedControllerMonthVentOverridesLoader, UpdatedControllerMonthVentOverridesLoader,
+    },
     facility_loader::{CreatedFacilitiesLoader, FacilityLoader, UpdatedFacilitiesLoader},
     gas_analysis_calculated_param_loader::{
         CreatedGasAnalysisCalculatedParamsLoader, GasAnalysisCalculatedParamLoader,
@@ -184,6 +188,24 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
     let controller_month_hours_by_updater_id_loader = DataLoader::new(
         UpdatedControllerMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Controller Month Vent Override
+    let controller_month_vent_override_by_id_loader = DataLoader::new(
+        ControllerMonthVentOverrideLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_month_vent_overrides_by_controller_id_loader = DataLoader::new(
+        ControllerMonthVentOverridesByControllerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_month_vent_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedControllerMonthVentOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let controller_month_vent_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedControllerMonthVentOverridesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -424,6 +446,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(controller_month_hours_by_controller_id_loader);
     loaders.insert(controller_month_hours_by_creator_id_loader);
     loaders.insert(controller_month_hours_by_updater_id_loader);
+
+    loaders.insert(controller_month_vent_override_by_id_loader);
+    loaders.insert(controller_month_vent_overrides_by_controller_id_loader);
+    loaders.insert(controller_month_vent_overrides_by_creator_id_loader);
+    loaders.insert(controller_month_vent_overrides_by_updater_id_loader);
 
     loaders.insert(controller_month_vent_by_id_loader);
     loaders.insert(controller_month_vents_by_controller_id_loader);
