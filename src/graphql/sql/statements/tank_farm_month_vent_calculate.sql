@@ -43,12 +43,7 @@ FROM
 				FROM
 					(
 						SELECT
-							tmv.id,
-							tmv.facility_id,
-							tmv.month_beginning,
-							tmv.from_date,
-							tmv.to_date,
-							tmv.gas_volume
+							tmv.*
 						FROM
 							(
 								SELECT
