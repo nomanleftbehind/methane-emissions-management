@@ -36,14 +36,14 @@ pub async fn select_compressor_month_vents(
 pub async fn insert_compressor_month_vents(
     pool: &PgPool,
     user_id: Uuid,
-    month: NaiveDate,
+    months: &[NaiveDate],
     c1: &f64,
     co2: &f64,
 ) -> Result<u64, sqlx::Error> {
     let compressor_month_vents_calculated = query_file_as!(
         CompressorMonthVentCalculated,
         "src/graphql/sql/statements/compressor_month_vent_calculate.sql",
-        month,
+        months,
         c1,
         co2
     )

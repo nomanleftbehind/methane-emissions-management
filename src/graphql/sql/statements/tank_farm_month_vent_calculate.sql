@@ -109,7 +109,7 @@ FROM
 													LEFT OUTER JOIN (
 														SELECT
 															tank_farm_id,
-															DATE_TRUNC('month', date) month_join_beginning,
+															DATE_TRUNC('month', date) as month_join_beginning,
 															DATE_TRUNC(
 																'month',
 																COALESCE(
@@ -120,7 +120,7 @@ FROM
 																	) - INTERVAL '1 day',
 																	CURRENT_DATE
 																)
-															) + INTERVAL '1 month - 1 day' month_join_end,
+															) + INTERVAL '1 month - 1 day' as month_join_end,
 															date as from_date,
 															COALESCE(
 																LEAD(date) OVER (

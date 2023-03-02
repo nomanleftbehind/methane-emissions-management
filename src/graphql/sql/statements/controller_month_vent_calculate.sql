@@ -74,9 +74,9 @@ FROM
 													ctr.id,
 													ctr.facility_id,
 													ctr.month_beginning,
-													GREATEST(cc.date, ctr.month_beginning) as from_date,
+													GREATEST(cc.from_date, ctr.month_beginning) as from_date,
 													LEAST(
-														cc.date_end,
+														cc.to_date,
 														ctr.month_beginning + INTERVAL '1 month - 1 day'
 													) as to_date,
 													DATE_PART(
@@ -109,7 +109,7 @@ FROM
 													LEFT OUTER JOIN (
 														SELECT
 															controller_id,
-															DATE_TRUNC('month', date) month_join_beginning,
+															DATE_TRUNC('month', date) as month_join_beginning,
 															DATE_TRUNC(
 																'month',
 																COALESCE(
@@ -120,8 +120,8 @@ FROM
 																	) - INTERVAL '1 day',
 																	CURRENT_DATE
 																)
-															) + INTERVAL '1 month - 1 day' month_join_end,
-															date,
+															) + INTERVAL '1 month - 1 day' as month_join_end,
+															date as from_date,
 															COALESCE(
 																LEAD(date) OVER (
 																	PARTITION BY controller_id
@@ -129,7 +129,7 @@ FROM
 																		date
 																) - INTERVAL '1 day',
 																CURRENT_DATE
-															) date_end,
+															) as to_date,
 															rate
 														FROM
 															controller_changes
