@@ -1,6 +1,7 @@
 use crate::authentication::{cookie::SessionCookie, SessionManager};
 use crate::configuration::DefaultGasParams;
 use crate::graphql::dataloaders::LoaderRegistry;
+use crate::FdcClient;
 use actix_web::web::Data;
 use async_graphql::{Context, Error};
 use async_redis_session::RedisSessionStore;
@@ -10,6 +11,7 @@ use sqlx::PgPool;
 pub trait ContextExt {
     fn get_loader<T: anymap::any::Any + Send + Sync>(&self) -> &T;
     fn db_pool(&self) -> &PgPool;
+    fn fdc_client(&self) -> &FdcClient;
     fn get_cookie(&self) -> Result<&SessionCookie, Error>;
     fn get_session_manager(&self) -> Result<SessionManager, Error>;
     fn get_default_gas_params(&self) -> &DefaultGasParams;
@@ -22,6 +24,10 @@ impl<'a> ContextExt for Context<'a> {
 
     fn db_pool(&self) -> &PgPool {
         self.data_unchecked::<Data<PgPool>>()
+    }
+
+    fn fdc_client(&self) -> &FdcClient {
+        self.data_unchecked::<Data<FdcClient>>()
     }
 
     /// Gets the SessionCookie or errors if no cookie is found.

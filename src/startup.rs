@@ -1,5 +1,6 @@
+use crate::FdcClient;
 use crate::{
-    configuration::{DatabaseSettings, DefaultGasParams, Settings},
+    configuration::{DatabaseSettings, DefaultGasParams, FdcDatabaseSettings, Settings},
     graphql::{
         dataloaders::{get_loaders, LoaderRegistry},
         interfaces::EmitterInterface,
@@ -22,6 +23,9 @@ use async_redis_session::RedisSessionStore;
 use secrecy::{ExposeSecret, Secret};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::net::TcpListener;
+use tiberius::Client;
+use tokio::net::TcpStream;
+use tokio_util::compat::TokioAsyncWriteCompatExt;
 // use tracing::log::LevelFilter;
 
 pub struct Application {
@@ -32,6 +36,7 @@ pub struct Application {
 impl Application {
     pub async fn build(configuration: Settings) -> Result<Self, anyhow::Error> {
         let connection_pool = get_connection_pool(&configuration.database);
+        let fdc_client = get_fdc_client(&configuration.fdc_database).await?;
 
         let address = format!(
             "{}:{}",
@@ -42,6 +47,7 @@ impl Application {
         let server = run(
             listener,
             connection_pool,
+            fdc_client,
             configuration.application.base_url,
             configuration.application.hmac_secret,
             configuration.application.session_cookie_name,
@@ -68,6 +74,19 @@ pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
         .connect_lazy_with(configuration.with_db())
 }
 
+pub async fn get_fdc_client(
+    configuration: &FdcDatabaseSettings,
+) -> Result<FdcClient, tiberius::error::Error> {
+    let config = configuration.create();
+
+    let tcp = TcpStream::connect(config.get_addr()).await?;
+    tcp.set_nodelay(true)?;
+
+    let client = Client::connect(config, tcp.compat_write()).await;
+
+    client
+}
+
 pub struct ApplicationBaseUrl(pub String);
 #[derive(Clone)]
 pub struct HmacSecret(pub Secret<String>);
@@ -77,6 +96,7 @@ pub struct SessionCookieName(pub Secret<String>);
 pub async fn run(
     listener: TcpListener,
     db_pool: PgPool,
+    fdc_client: FdcClient,
     base_url: String,
     hmac_secret: Secret<String>,
     session_cookie_name: Secret<String>,
@@ -87,6 +107,7 @@ pub async fn run(
     env_logger::init();
 
     let db_pool = Data::new(db_pool);
+    let fdc_client = Data::new(fdc_client);
     let loaders = get_loaders(db_pool.clone()).await;
     let loader_registry_data = Data::new(LoaderRegistry { loaders });
 
@@ -103,6 +124,7 @@ pub async fn run(
         .limit_complexity(1024)
         .data(loader_registry_data)
         .data(db_pool.clone())
+        .data(fdc_client)
         .data(base_url.clone())
         .data(Data::new(default_gas_params.clone()))
         .data(Data::new(HmacSecret(hmac_secret.clone())))

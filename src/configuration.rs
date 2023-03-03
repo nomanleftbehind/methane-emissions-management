@@ -3,10 +3,12 @@ use serde_aux::field_attributes::deserialize_number_from_string;
 use sqlx::postgres::{PgConnectOptions, PgSslMode};
 use sqlx::ConnectOptions;
 use std::convert::{TryFrom, TryInto};
+use tiberius::{AuthMethod, Config};
 
 #[derive(serde::Deserialize, Clone)]
 pub struct Settings {
     pub database: DatabaseSettings,
+    pub fdc_database: FdcDatabaseSettings,
     pub application: ApplicationSettings,
     pub default_gas_params: DefaultGasParams,
     pub redis_uri: Secret<String>,
@@ -62,6 +64,36 @@ impl DatabaseSettings {
         let mut options = self.without_db().database(&self.database_name);
         options.log_statements(tracing::log::LevelFilter::Trace);
         options
+    }
+}
+
+#[derive(serde::Deserialize, Clone)]
+pub struct FdcDatabaseSettings {
+    pub host: String,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
+    pub port: u16,
+    pub database: String,
+    pub username: String,
+    pub password: Secret<String>,
+    pub trust_certificate: bool,
+}
+
+impl FdcDatabaseSettings {
+    pub fn create(&self) -> Config {
+        let mut config = Config::new();
+        config.host(&self.host);
+        config.database(&self.database);
+        config.port(self.port);
+        config.authentication(AuthMethod::sql_server(
+            &self.username,
+            &self.password.expose_secret(),
+        ));
+
+        if self.trust_certificate {
+            config.trust_cert();
+        }
+
+        config
     }
 }
 

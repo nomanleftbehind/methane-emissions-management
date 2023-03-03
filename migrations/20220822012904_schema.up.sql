@@ -381,6 +381,9 @@ CREATE UNIQUE INDEX "controller_month_vent_override_controller_id_month_key" ON 
 CREATE UNIQUE INDEX "controller_month_vent_controller_id_month_key" ON "controller_month_vent"("controller_id", "month");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "compressors_fdc_rec_id_key" ON "compressors"("fdc_rec_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "compressors_serial_number_key" ON "compressors"("serial_number");
 
 -- CreateIndex

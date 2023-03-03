@@ -10,6 +10,13 @@ database:
   password: "password"
   database_name: "emissions"
   require_ssl: false
+fdc_database:
+  host: "localhost"
+  port: 1433
+  database: "test"
+  username: "username"
+  password: "password"
+  trust_certificate: true # on production, it is not a good idea to do this
 default_gas_params:
   c1: 0.82
   co2: 0.0067

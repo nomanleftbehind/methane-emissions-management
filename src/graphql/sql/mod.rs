@@ -1,4 +1,5 @@
 mod compressor;
+mod compressor_blowdown;
 mod compressor_month_vent;
 mod controller;
 mod controller_application;
@@ -10,6 +11,7 @@ mod tank_farm_vent_factor_calculated;
 mod user;
 
 pub use compressor::*;
+pub(in crate::graphql) use compressor_blowdown::*;
 pub(in crate::graphql) use compressor_month_vent::*;
 pub use controller::*;
 pub use controller_application::*;

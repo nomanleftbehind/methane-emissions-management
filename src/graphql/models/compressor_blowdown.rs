@@ -44,3 +44,10 @@ impl CompressorBlowdown {
         compressor
     }
 }
+
+#[derive(SimpleObject, Clone, Debug)]
+pub struct CompressorBlowdownInterim {
+    pub fdc_rec_id: String,
+    pub date: NaiveDate,
+    pub gas_volume: f64,
+}
