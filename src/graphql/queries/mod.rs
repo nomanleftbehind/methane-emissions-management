@@ -4,7 +4,9 @@ use self::{
     controller_month_vent::ControllerMonthVentQuery, facility::FacilityQuery,
     tank_farm_month_vent::TankFarmMonthVentQuery, user::UserQuery,
 };
-use async_graphql::MergedObject;
+use crate::graphql::mutations::validators::MonthBeginningValidator;
+use async_graphql::{InputObject, MergedObject};
+use chrono::NaiveDate;
 
 mod compressor;
 mod compressor_blowdown;
@@ -38,4 +40,12 @@ pub(crate) fn full_query() -> FullQuery {
         CompressorMonthVentQuery,
         TankFarmMonthVentQuery,
     )
+}
+
+#[derive(InputObject, Debug)]
+pub struct FromToDateInput {
+    #[graphql(validator(custom = "MonthBeginningValidator"))]
+    pub from_date: NaiveDate,
+    #[graphql(validator(custom = "MonthBeginningValidator"))]
+    pub to_date: NaiveDate,
 }

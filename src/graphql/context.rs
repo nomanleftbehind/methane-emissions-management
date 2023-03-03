@@ -6,12 +6,14 @@ use actix_web::web::Data;
 use async_graphql::{Context, Error};
 use async_redis_session::RedisSessionStore;
 use sqlx::PgPool;
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 // Sugar that helps make things neater and avoid errors that would only crop up at runtime.
 pub trait ContextExt {
     fn get_loader<T: anymap::any::Any + Send + Sync>(&self) -> &T;
     fn db_pool(&self) -> &PgPool;
-    fn fdc_client(&self) -> &FdcClient;
+    fn fdc_client(&self) -> Result<&Arc<Mutex<FdcClient>>, Error>;
     fn get_cookie(&self) -> Result<&SessionCookie, Error>;
     fn get_session_manager(&self) -> Result<SessionManager, Error>;
     fn get_default_gas_params(&self) -> &DefaultGasParams;
@@ -26,8 +28,8 @@ impl<'a> ContextExt for Context<'a> {
         self.data_unchecked::<Data<PgPool>>()
     }
 
-    fn fdc_client(&self) -> &FdcClient {
-        self.data_unchecked::<Data<FdcClient>>()
+    fn fdc_client(&self) -> Result<&Arc<Mutex<FdcClient>>, Error> {
+        self.data::<Arc<Mutex<FdcClient>>>()
     }
 
     /// Gets the SessionCookie or errors if no cookie is found.

@@ -1,24 +1,19 @@
-use crate::graphql::models::CompressorBlowdownInterim;
-use crate::FdcClient;
-use tiberius::{AuthMethod, Client, Config};
-use tokio::net::TcpStream;
-use tokio_util::compat::TokioAsyncWriteCompatExt;
+use crate::{
+    graphql::{models::CompressorBlowdownInterim, queries::FromToDateInput},
+    FdcClient,
+};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 pub async fn select_compressor_blowdowns_interim(
-    _fdc_client: &FdcClient,
+    atomic_fdc_client: &Arc<Mutex<FdcClient>>,
+    FromToDateInput { from_date, to_date }: FromToDateInput,
 ) -> Result<Vec<CompressorBlowdownInterim>, anyhow::Error> {
-    let mut config = Config::new();
-    config.host("host");
-    config.database("port");
-    config.port(1433);
-    config.authentication(AuthMethod::sql_server("user", "password"));
+    let ac = atomic_fdc_client.clone();
+    let mut mg = ac.lock().await;
+    let fdc_client = &mut *mg;
 
-    let tcp = TcpStream::connect(config.get_addr()).await?;
-    tcp.set_nodelay(true)?;
-
-    let mut client = Client::connect(config, tcp.compat_write()).await?;
-
-    let stream = client.query(r#"SELECT
+    let stream = fdc_client.query(r#"SELECT
 
   c.IDREC as "fdc_rec_id",
   CAST(ume.DTTM as date) as "date",
@@ -35,7 +30,7 @@ pub async fn select_compressor_blowdowns_interim(
   
   ORDER BY
   c.IDREC,
-  ume.DTTM"#, &[&"2022-01-01", &"2022-02-01"]).await?;
+  ume.DTTM"#, &[&from_date, &to_date]).await?;
 
     let v = stream.into_first_result().await?;
 
@@ -47,8 +42,6 @@ pub async fn select_compressor_blowdowns_interim(
             gas_volume: d.get("gas_volume").unwrap(),
         })
         .collect::<Vec<_>>();
-
-    client.close().await?;
 
     Ok(row)
 }

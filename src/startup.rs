@@ -23,8 +23,10 @@ use async_redis_session::RedisSessionStore;
 use secrecy::{ExposeSecret, Secret};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::net::TcpListener;
+use std::sync::Arc;
 use tiberius::Client;
 use tokio::net::TcpStream;
+use tokio::sync::Mutex;
 use tokio_util::compat::TokioAsyncWriteCompatExt;
 // use tracing::log::LevelFilter;
 
@@ -36,7 +38,7 @@ pub struct Application {
 impl Application {
     pub async fn build(configuration: Settings) -> Result<Self, anyhow::Error> {
         let connection_pool = get_connection_pool(&configuration.database);
-        let fdc_client = get_fdc_client(&configuration.fdc_database).await?;
+        let fdc_client = get_fdc_client(&configuration.fdc_database).await;
 
         let address = format!(
             "{}:{}",
@@ -74,15 +76,16 @@ pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
         .connect_lazy_with(configuration.with_db())
 }
 
-pub async fn get_fdc_client(
-    configuration: &FdcDatabaseSettings,
-) -> Result<FdcClient, tiberius::error::Error> {
+/// When getting FDC (Field Data Capture) client, Result is converted to Option because we don't want program to exit in case connection is denied.
+///
+/// FDC is a third party database which makes it susceptible to uncontrolled outages or denials of service.
+///
+/// Application is still 99% usable even if connection to FDC is not able to be established.
+pub async fn get_fdc_client(configuration: &FdcDatabaseSettings) -> Option<FdcClient> {
     let config = configuration.create();
-
-    let tcp = TcpStream::connect(config.get_addr()).await?;
-    tcp.set_nodelay(true)?;
-
-    let client = Client::connect(config, tcp.compat_write()).await;
+    let tcp = TcpStream::connect(config.get_addr()).await.ok()?;
+    tcp.set_nodelay(true).ok()?;
+    let client = Client::connect(config, tcp.compat_write()).await.ok();
 
     client
 }
@@ -96,7 +99,7 @@ pub struct SessionCookieName(pub Secret<String>);
 pub async fn run(
     listener: TcpListener,
     db_pool: PgPool,
-    fdc_client: FdcClient,
+    fdc_client: Option<FdcClient>,
     base_url: String,
     hmac_secret: Secret<String>,
     session_cookie_name: Secret<String>,
@@ -107,7 +110,6 @@ pub async fn run(
     env_logger::init();
 
     let db_pool = Data::new(db_pool);
-    let fdc_client = Data::new(fdc_client);
     let loaders = get_loaders(db_pool.clone()).await;
     let loader_registry_data = Data::new(LoaderRegistry { loaders });
 
@@ -124,13 +126,19 @@ pub async fn run(
         .limit_complexity(1024)
         .data(loader_registry_data)
         .data(db_pool.clone())
-        .data(fdc_client)
         .data(base_url.clone())
         .data(Data::new(default_gas_params.clone()))
         .data(Data::new(HmacSecret(hmac_secret.clone())))
         .data(Data::new(SessionCookieName(session_cookie_name.clone())))
-        .data(redis_store)
-        .finish();
+        .data(redis_store);
+
+    // Append FDC client to schema data in case connection was established, otherwise just finish building the schema without adding any additional data.
+    let schema = if let Some(fc) = fdc_client {
+        let atomic_fc = Arc::new(Mutex::new(fc));
+        schema.data(atomic_fc).finish()
+    } else {
+        schema.finish()
+    };
 
     log::info!("starting HTTP server on port 8080");
     log::info!("GraphiQL playground: http://localhost:8080/graphiql");
