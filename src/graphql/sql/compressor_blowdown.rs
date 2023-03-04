@@ -25,6 +25,11 @@ pub async fn select_compressor_blowdowns(
     .await
 }
 
+/// This function retrieves compressor blowdown volumes data from third party MSSQL database,
+///
+/// swaps MSSQL compressor IDs with Postgres compressor IDs,
+///
+/// transforms data into insert friendly form, and inserts it into Postgres database.
 pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
     pool: &PgPool,
     mssql_fdc_client: &mut MssqlFdcClient,
@@ -37,24 +42,46 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
     let compressor_db_crossref = get_compressor_db_crossref(pool).await?;
 
     let stream = mssql_fdc_client.query(
-        r#"SELECT
+        r#"
+        DECLARE
+        @start_month as date = @P1,
+        @end_month as date = @P2;
 
-        c.IDREC as "fdc_rec_id",
-        CASE WHEN ume.DTTM = '2023-02-18' THEN NULL ELSE CAST(ume.DTTM as date) END as "date",
-        SUM(ume.RATE) as "gas_volume"
-        
-        FROM pvCalcUnitsMetric.PVUNITMETERRATE um
-        INNER JOIN pvCalcUnitsMetric.PVUNITEQUIP c ON c.SERIALNUM = um.SERIALNUM
-        INNER JOIN pvCalcUnitsMetric.PVUNITMETERRATEENTRY ume ON ume.IDRECPARENT = um.IDREC AND DATEADD(D, 1, EOMONTH(ume.DTTM, -1)) BETWEEN @P1 AND @P2
-        
-        
+
+        SELECT
+
+        cb.IDREC as "fdc_rec_id",
+        CAST(cb.DTTM as date) as "date",
+        SUM(cb.RATE) as "gas_volume"
+
+        FROM (
+                SELECT
+
+                c.IDREC,
+                ume.DTTM,
+                ume.RATE
+                
+                FROM pvCalcUnitsMetric.PVUNITMETERRATE um
+                INNER JOIN pvCalcUnitsMetric.PVUNITEQUIP c ON c.SERIALNUM = um.SERIALNUM
+                INNER JOIN pvCalcUnitsMetric.PVUNITMETERRATEENTRY ume ON ume.IDRECPARENT = um.IDREC AND ume.RATE IS NOT NULL AND ume.DTTM BETWEEN c.DTTMSTART AND ISNULL(c.DTTMEND, GETDATE()) AND DATEADD(D, 1, EOMONTH(ume.DTTM, -1)) BETWEEN @start_month AND @end_month
+
+                UNION ALL
+
+                SELECT
+
+                c.IDREC,
+                esde.DTTM,
+                esde.RATE / COUNT(esde.IDREC) OVER (PARTITION BY esd.IDRECPARENT/*Partition by Unit (IDRECPARENT) because sometimes same compressor exists in multiple Units*/, esde.IDREC) as RATE
+
+                FROM pvCalcUnitsMetric.PVUNITMETERRATE um
+                INNER JOIN pvCalcUnitsMetric.PVUNITEQUIP c ON c.SERIALNUM = um.SERIALNUM
+                INNER JOIN pvCalcUnitsMetric.PVUNITMETERRATE esd ON esd.IDRECPARENT = um.IDRECPARENT AND esd.NAME LIKE '%m3%' AND esd.NAME LIKE '%ESD%'
+                INNER JOIN pvCalcUnitsMetric.PVUNITMETERRATEENTRY esde ON esde.IDRECPARENT = esd.IDREC AND esde.RATE IS NOT NULL AND esde.DTTM BETWEEN c.DTTMSTART AND ISNULL(c.DTTMEND, GETDATE()) AND DATEADD(D, 1, EOMONTH(esde.DTTM, -1)) BETWEEN @start_month AND @end_month
+        ) cb
+
         GROUP BY
-        c.IDREC,
-        ume.DTTM
-        
-        ORDER BY
-        c.IDREC,
-        ume.DTTM"#,
+        cb.IDREC,
+        cb.DTTM"#,
         &[&from_month, &to_month]).await?;
 
     let mssql_server_rows = stream.into_first_result().await?;
