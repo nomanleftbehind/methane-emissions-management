@@ -47,11 +47,77 @@ impl CompressorBlowdown {
     }
 }
 
-#[derive(SimpleObject, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub struct CompressorBlowdownInterim {
     pub compressor_id: Uuid,
     pub date: NaiveDate,
     pub gas_volume: f64,
+}
+
+/// This data structure takes two fields:
+/// * `crossref` is reference to [`HashMap`](std::collections::HashMap) where keys are unique IDs of Compressors in third party FDC Microsoft SQL Server database, and values are corresponding unique IDs of compressors in this application's Postgres database.
+/// * `mssql_server_rows` is [`Vec`](alloc::vec) of [`tiberius::Row`](tiberius::Row)s
+///
+/// This struct implements [`From`](core::convert::From) trait that converts `Vec<tiberius::Row>` into `Vec<CompressorBlowdownInterim>` by mapping Postgres compressor IDs onto SQL Server compressor IDs using provided `crossref` `HashMap`.
+pub struct CompressorBlowdownDbCrossrefRows<'m> {
+    pub crossref: &'m HashMap<String, Uuid>,
+    pub mssql_server_rows: Vec<tiberius::Row>,
+}
+
+impl From<CompressorBlowdownDbCrossrefRows<'_>>
+    for Result<Vec<CompressorBlowdownInterim>, tiberius::error::Error>
+{
+    fn from(
+        CompressorBlowdownDbCrossrefRows {
+            crossref,
+            mssql_server_rows,
+        }: CompressorBlowdownDbCrossrefRows,
+    ) -> Self {
+        let mut v = Vec::with_capacity(mssql_server_rows.len());
+
+        for row in mssql_server_rows.into_iter() {
+            // Nested matches to return error if any of the columns were not found or wrong types were detected
+            match row.try_get::<&str, _>("fdc_rec_id") {
+                Ok(fdc_rec_id) => {
+                    match row.try_get("date") {
+                        Ok(date) => {
+                            match row.try_get("gas_volume") {
+                                Ok(gas_volume) => {
+                                    // Nested if let to filter out rows with null values and rows without matching MSSQL and Postgres ID crossreference
+                                    if let Some(fdc_rec_id) = fdc_rec_id {
+                                        // This block is where MSSQL and Postgres ID crossreference is checked
+                                        if let Some(compressor_id) =
+                                            crossref.get(fdc_rec_id).copied()
+                                        {
+                                            if let Some(date) = date {
+                                                if let Some(gas_volume) = gas_volume {
+                                                    v.push(CompressorBlowdownInterim {
+                                                        compressor_id,
+                                                        date,
+                                                        gas_volume,
+                                                    })
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                Err(e) => {
+                                    return Err(e);
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            return Err(e);
+                        }
+                    }
+                }
+                Err(e) => {
+                    return Err(e);
+                }
+            };
+        }
+        Ok(v)
+    }
 }
 
 #[derive(Debug)]
@@ -123,42 +189,5 @@ impl From<CompressorBlowdownInterimUnnestedRows> for CompressorBlowdownInterimNe
             updated_by_id,
             updated_at,
         }
-    }
-}
-
-/// This data structure takes two fields:
-/// * `crossref` is reference to [`HashMap`](std::collections::HashMap) where keys are unique IDs of Compressors in third party FDC Microsoft SQL Server database, and values are corresponding unique IDs of compressors in this application's Postgres database.
-/// * `mssql_server_rows` is [`Vec`](alloc::vec) of [`tiberius::Row`](tiberius::Row)s
-///
-/// This struct implements [`From`](core::convert::From) trait that converts `Vec<tiberius::Row>` into `Vec<CompressorBlowdownInterim>` by mapping Postgres compressor IDs onto SQL Server compressor IDs using provided `crossref` `HashMap`.
-pub struct CompressorBlowdownDbCrossrefRows<'m> {
-    pub crossref: &'m HashMap<String, Uuid>,
-    pub mssql_server_rows: Vec<tiberius::Row>,
-}
-
-impl From<CompressorBlowdownDbCrossrefRows<'_>> for Vec<CompressorBlowdownInterim> {
-    fn from(
-        CompressorBlowdownDbCrossrefRows {
-            crossref,
-            mssql_server_rows,
-        }: CompressorBlowdownDbCrossrefRows,
-    ) -> Self {
-        mssql_server_rows
-            .into_iter()
-            .filter_map(|row| {
-                // Convert all Results to Options and filter out None-s
-                let fdc_rec_id = row.try_get::<&str, _>("fdc_rec_id").ok()??;
-                let date = row.try_get("date").ok()??;
-                let gas_volume = row.try_get("gas_volume").ok()??;
-                // If unable to find MSSQL and Postgres ID crossreference, filter out
-                let compressor_id = crossref.get(fdc_rec_id).copied()?;
-
-                Some(CompressorBlowdownInterim {
-                    compressor_id,
-                    date,
-                    gas_volume,
-                })
-            })
-            .collect()
     }
 }

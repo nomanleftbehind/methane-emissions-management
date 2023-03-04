@@ -1,7 +1,7 @@
 use crate::{
     graphql::{
         models::{
-            CompressorBlowdown, CompressorBlowdownDbCrossrefRows,
+            CompressorBlowdown, CompressorBlowdownDbCrossrefRows, CompressorBlowdownInterim,
             CompressorBlowdownInterimNestedRows, CompressorBlowdownInterimUnnestedRows,
         },
         queries::FromToMonthInput,
@@ -40,7 +40,7 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
         r#"SELECT
 
         c.IDREC as "fdc_rec_id",
-        CAST(ume.DTTM as date) as "date",
+        CASE WHEN ume.DTTM = '2023-02-18' THEN NULL ELSE CAST(ume.DTTM as date) END as "date",
         SUM(ume.RATE) as "gas_volume"
         
         FROM pvCalcUnitsMetric.PVUNITMETERRATE um
@@ -59,11 +59,16 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
 
     let mssql_server_rows = stream.into_first_result().await?;
 
-    let compressor_blowdown_interims = CompressorBlowdownDbCrossrefRows {
+    let compressor_blowdown_db_crossref_rows = CompressorBlowdownDbCrossrefRows {
         crossref: &compressor_db_crossref,
         mssql_server_rows,
-    }
-    .into();
+    };
+
+    let compressor_blowdown_interims_result: Result<
+        Vec<CompressorBlowdownInterim>,
+        tiberius::error::Error,
+    > = compressor_blowdown_db_crossref_rows.into();
+    let compressor_blowdown_interims = compressor_blowdown_interims_result?;
 
     let CompressorBlowdownInterimNestedRows {
         id,

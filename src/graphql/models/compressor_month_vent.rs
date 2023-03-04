@@ -50,7 +50,7 @@ impl CompressorMonthVent {
     }
 }
 
-#[derive(SimpleObject, Clone, FromRow, Debug)]
+#[derive(Clone, FromRow, Debug)]
 pub struct CompressorMonthVentCalculated {
     pub month: NaiveDate,
     pub gas_volume: f64,
