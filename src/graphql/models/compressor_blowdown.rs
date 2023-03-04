@@ -76,45 +76,26 @@ impl From<CompressorBlowdownDbCrossrefRows<'_>>
         let mut v = Vec::with_capacity(mssql_server_rows.len());
 
         for row in mssql_server_rows.into_iter() {
-            // Nested matches to return error if any of the columns were not found or wrong types were detected
-            match row.try_get::<&str, _>("fdc_rec_id") {
-                Ok(fdc_rec_id) => {
-                    match row.try_get("date") {
-                        Ok(date) => {
-                            match row.try_get("gas_volume") {
-                                Ok(gas_volume) => {
-                                    // Nested if let to filter out rows with null values and rows without matching MSSQL and Postgres ID crossreference
-                                    if let Some(fdc_rec_id) = fdc_rec_id {
-                                        // This block is where MSSQL and Postgres ID crossreference is checked
-                                        if let Some(compressor_id) =
-                                            crossref.get(fdc_rec_id).copied()
-                                        {
-                                            if let Some(date) = date {
-                                                if let Some(gas_volume) = gas_volume {
-                                                    v.push(CompressorBlowdownInterim {
-                                                        compressor_id,
-                                                        date,
-                                                        gas_volume,
-                                                    })
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                Err(e) => {
-                                    return Err(e);
-                                }
-                            }
-                        }
-                        Err(e) => {
-                            return Err(e);
-                        }
+            // Match arms to return error if any of the columns were not found or wrong types were detected
+            // and to filter out rows with null values and rows without matching MSSQL and Postgres ID crossreference
+            match (
+                row.try_get::<&str, _>("fdc_rec_id"),
+                row.try_get("date"),
+                row.try_get("gas_volume"),
+            ) {
+                (Ok(Some(fdc_rec_id)), Ok(Some(date)), Ok(Some(gas_volume))) => {
+                    // This if let block is where MSSQL and Postgres ID crossreference is checked
+                    if let Some(compressor_id) = crossref.get(fdc_rec_id).copied() {
+                        v.push(CompressorBlowdownInterim {
+                            compressor_id,
+                            date,
+                            gas_volume,
+                        })
                     }
                 }
-                Err(e) => {
-                    return Err(e);
-                }
-            };
+                (Err(e), ..) | (_, Err(e), _) | (.., Err(e)) => return Err(e),
+                _ => (),
+            }
         }
         Ok(v)
     }
