@@ -1,4 +1,4 @@
-use crate::FdcClient;
+use crate::MssqlFdcClient;
 use crate::{
     configuration::{DatabaseSettings, DefaultGasParams, FdcDatabaseSettings, Settings},
     graphql::{
@@ -38,7 +38,7 @@ pub struct Application {
 impl Application {
     pub async fn build(configuration: Settings) -> Result<Self, anyhow::Error> {
         let connection_pool = get_connection_pool(&configuration.database);
-        let fdc_client = get_fdc_client(&configuration.fdc_database).await;
+        let mssql_fdc_client = get_mssql_fdc_client(&configuration.fdc_database).await;
 
         let address = format!(
             "{}:{}",
@@ -49,7 +49,7 @@ impl Application {
         let server = run(
             listener,
             connection_pool,
-            fdc_client,
+            mssql_fdc_client,
             configuration.application.base_url,
             configuration.application.hmac_secret,
             configuration.application.session_cookie_name,
@@ -76,12 +76,12 @@ pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
         .connect_lazy_with(configuration.with_db())
 }
 
-/// When getting FDC (Field Data Capture) client, Result is converted to Option because we don't want program to exit in case connection is denied.
+/// When getting Microsoft SQL Server client for FDC (Field Data Capture) database, Result is converted to Option because we don't want program to exit in case connection is denied.
 ///
 /// FDC is a third party database which makes it susceptible to uncontrolled outages or denials of service.
 ///
 /// Application is still 99% usable even if connection to FDC is not able to be established.
-pub async fn get_fdc_client(configuration: &FdcDatabaseSettings) -> Option<FdcClient> {
+pub async fn get_mssql_fdc_client(configuration: &FdcDatabaseSettings) -> Option<MssqlFdcClient> {
     let config = configuration.create();
     let tcp = TcpStream::connect(config.get_addr()).await.ok()?;
     tcp.set_nodelay(true).ok()?;
@@ -99,7 +99,7 @@ pub struct SessionCookieName(pub Secret<String>);
 pub async fn run(
     listener: TcpListener,
     db_pool: PgPool,
-    fdc_client: Option<FdcClient>,
+    mssql_fdc_client: Option<MssqlFdcClient>,
     base_url: String,
     hmac_secret: Secret<String>,
     session_cookie_name: Secret<String>,
@@ -133,7 +133,7 @@ pub async fn run(
         .data(redis_store);
 
     // Append FDC client to schema data in case connection was established, otherwise just finish building the schema without adding any additional data.
-    let schema = if let Some(fc) = fdc_client {
+    let schema = if let Some(fc) = mssql_fdc_client {
         let atomic_fc = Arc::new(Mutex::new(fc));
         schema.data(atomic_fc).finish()
     } else {

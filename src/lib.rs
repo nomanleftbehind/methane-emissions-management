@@ -1,10 +1,10 @@
 pub mod authentication;
 pub mod configuration;
-mod fdc_client;
 pub mod graphql;
+mod mssql_fdc_client;
 pub mod routes;
 pub mod startup;
 pub mod telemetry;
 pub mod utils;
 
-pub use fdc_client::FdcClient;
+pub use mssql_fdc_client::MssqlFdcClient;

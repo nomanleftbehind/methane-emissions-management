@@ -1,47 +1,99 @@
 use crate::{
-    graphql::{models::CompressorBlowdownInterim, queries::FromToDateInput},
-    FdcClient,
+    graphql::{
+        models::{
+            CompressorBlowdown, CompressorBlowdownDbCrossrefRows,
+            CompressorBlowdownInterimNestedRows, CompressorBlowdownInterimUnnestedRows,
+        },
+        queries::FromToMonthInput,
+        sql::get_compressor_db_crossref,
+    },
+    MssqlFdcClient,
 };
-use std::sync::Arc;
-use tokio::sync::Mutex;
+use sqlx::{query_as, query_file, Error, PgPool};
+use uuid::Uuid;
 
-pub async fn select_compressor_blowdowns_interim(
-    atomic_fdc_client: &Arc<Mutex<FdcClient>>,
-    FromToDateInput { from_date, to_date }: FromToDateInput,
-) -> Result<Vec<CompressorBlowdownInterim>, anyhow::Error> {
-    let ac = atomic_fdc_client.clone();
-    let mut mg = ac.lock().await;
-    let fdc_client = &mut *mg;
+pub async fn select_compressor_blowdowns(
+    pool: &PgPool,
+    compressor_id: Uuid,
+) -> Result<Vec<CompressorBlowdown>, Error> {
+    query_as!(
+        CompressorBlowdown,
+        "SELECT * FROM compressor_blowdown WHERE compressor_id = $1",
+        compressor_id
+    )
+    .fetch_all(pool)
+    .await
+}
 
-    let stream = fdc_client.query(r#"SELECT
+pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
+    pool: &PgPool,
+    mssql_fdc_client: &mut MssqlFdcClient,
+    user_id: Uuid,
+    FromToMonthInput {
+        from_month,
+        to_month,
+    }: FromToMonthInput,
+) -> Result<u64, anyhow::Error> {
+    let compressor_db_crossref = get_compressor_db_crossref(pool).await?;
 
-  c.IDREC as "fdc_rec_id",
-  CAST(ume.DTTM as date) as "date",
-  SUM(ume.RATE) as "gas_volume"
-  
-  FROM pvCalcUnitsMetric.PVUNITMETERRATE um
-  INNER JOIN pvCalcUnitsMetric.PVUNITEQUIP c ON c.SERIALNUM = um.SERIALNUM
-  INNER JOIN pvCalcUnitsMetric.PVUNITMETERRATEENTRY ume ON ume.IDRECPARENT = um.IDREC AND DATEADD(D, 1, EOMONTH(ume.DTTM, -1)) BETWEEN @P1 AND @P2
-  
-  
-  GROUP BY
-  c.IDREC,
-  ume.DTTM
-  
-  ORDER BY
-  c.IDREC,
-  ume.DTTM"#, &[&from_date, &to_date]).await?;
+    let stream = mssql_fdc_client.query(
+        r#"SELECT
 
-    let v = stream.into_first_result().await?;
+        c.IDREC as "fdc_rec_id",
+        CAST(ume.DTTM as date) as "date",
+        SUM(ume.RATE) as "gas_volume"
+        
+        FROM pvCalcUnitsMetric.PVUNITMETERRATE um
+        INNER JOIN pvCalcUnitsMetric.PVUNITEQUIP c ON c.SERIALNUM = um.SERIALNUM
+        INNER JOIN pvCalcUnitsMetric.PVUNITMETERRATEENTRY ume ON ume.IDRECPARENT = um.IDREC AND DATEADD(D, 1, EOMONTH(ume.DTTM, -1)) BETWEEN @P1 AND @P2
+        
+        
+        GROUP BY
+        c.IDREC,
+        ume.DTTM
+        
+        ORDER BY
+        c.IDREC,
+        ume.DTTM"#,
+        &[&from_month, &to_month]).await?;
 
-    let row = v
-        .into_iter()
-        .map(|d| CompressorBlowdownInterim {
-            fdc_rec_id: d.get("fdc_rec_id").map(str::to_string).unwrap(),
-            date: d.get("date").unwrap(),
-            gas_volume: d.get("gas_volume").unwrap(),
-        })
-        .collect::<Vec<_>>();
+    let mssql_server_rows = stream.into_first_result().await?;
 
-    Ok(row)
+    let compressor_blowdown_interims = CompressorBlowdownDbCrossrefRows {
+        crossref: &compressor_db_crossref,
+        mssql_server_rows,
+    }
+    .into();
+
+    let CompressorBlowdownInterimNestedRows {
+        id,
+        compressor_id,
+        date,
+        gas_volume,
+        created_by_id,
+        created_at,
+        updated_by_id,
+        updated_at,
+    } = CompressorBlowdownInterimUnnestedRows {
+        user_id,
+        compressor_blowdown_interims,
+    }
+    .into();
+
+    let rows_inserted = query_file!(
+        "src/graphql/sql/statements/compressor_blowdown_insert.sql",
+        &id,
+        &compressor_id,
+        &date,
+        &gas_volume,
+        &created_by_id,
+        &created_at,
+        &updated_by_id,
+        &updated_at
+    )
+    .execute(pool)
+    .await?
+    .rows_affected();
+
+    Ok(rows_inserted)
 }

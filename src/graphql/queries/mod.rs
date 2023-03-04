@@ -43,9 +43,9 @@ pub(crate) fn full_query() -> FullQuery {
 }
 
 #[derive(InputObject, Debug)]
-pub struct FromToDateInput {
+pub struct FromToMonthInput {
     #[graphql(validator(custom = "MonthBeginningValidator"))]
-    pub from_date: NaiveDate,
+    pub from_month: NaiveDate,
     #[graphql(validator(custom = "MonthBeginningValidator"))]
-    pub to_date: NaiveDate,
+    pub to_month: NaiveDate,
 }

@@ -1,26 +1,25 @@
 use crate::graphql::{
-    context::ContextExt, models::CompressorBlowdownInterim, queries::FromToDateInput,
-    sql::select_compressor_blowdowns_interim,
+    context::ContextExt, models::CompressorBlowdown, sql::select_compressor_blowdowns,
 };
 use async_graphql::{Context, Error, Object};
+use uuid::Uuid;
 
 #[derive(Default, Clone)]
 pub(super) struct CompressorBlowdownQuery;
 
 #[Object]
 impl CompressorBlowdownQuery {
-    async fn compressor_blowdowns_interim(
+    async fn compressor_blowdowns(
         &self,
         ctx: &Context<'_>,
-        date_range: FromToDateInput,
-    ) -> Result<Vec<CompressorBlowdownInterim>, Error> {
-        let fdc_client = ctx.fdc_client()?;
+        compressor_id: Uuid,
+    ) -> Result<Vec<CompressorBlowdown>, Error> {
+        let pool = ctx.db_pool();
 
-        let compressor_blowdowns_interim =
-            select_compressor_blowdowns_interim(fdc_client, date_range)
-                .await
-                .map_err(Error::from);
+        let compressor_blowdowns = select_compressor_blowdowns(pool, compressor_id)
+            .await
+            .map_err(Error::from);
 
-        compressor_blowdowns_interim
+        compressor_blowdowns
     }
 }

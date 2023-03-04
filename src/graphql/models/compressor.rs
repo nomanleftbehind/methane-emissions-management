@@ -121,6 +121,12 @@ impl Compressor {
     }
 }
 
+#[derive(SimpleObject, Clone, FromRow, Debug)]
+pub struct CompressorMap {
+    pub id: Uuid,
+    pub fdc_rec_id: String,
+}
+
 #[derive(Debug, OneofObject)]
 pub enum CompressorsBy {
     FacilityId(Uuid),
