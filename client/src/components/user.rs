@@ -1,10 +1,10 @@
-use crate::hooks::use_query::{use_query, QueryResponse};
-use crate::models::{
+use crate::hooks::{use_query, QueryResponse};
+use crate::models::queries::user::{
     get_users::{ResponseData, Variables},
     GetUsers,
 };
-use yew::virtual_dom::VNode;
-use yew::{function_component, html, Html};
+use crate::utils::console_log::console_log;
+use yew::{function_component, html, virtual_dom::VNode, Html};
 
 #[function_component(Users)]
 pub fn users() -> Html {
@@ -16,13 +16,14 @@ pub fn users() -> Html {
             ..
         }) => {
             let user_iter = all_users.into_iter().map(|user| {
+                console_log!("role: {:#?}", user.role);
                 html! {
                     <tr>
                         <td> { user.id } </td>
                         <td> { user.email } </td>
                         <td> { user.first_name } </td>
                         <td> { user.last_name } </td>
-                        // <td> { user.role } </td>
+                        <td> { user.role } </td>
                     </tr>
                 }
             });
@@ -47,9 +48,9 @@ pub fn users() -> Html {
                     <tr>
                         <th> { "Id" } </th>
                         <th> { "Email" } </th>
-                        // <th> { "Password" } </th>
                         <th> { "First Name" } </th>
                         <th> { "Last Name" } </th>
+                        <th> { "Role" } </th>
                     </tr>
                 </thead>
                 <tbody>

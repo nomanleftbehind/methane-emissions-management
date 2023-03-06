@@ -1,4 +1,4 @@
-use components::user::Users;
+use components::{login::Login, user::Users};
 use yew::prelude::*;
 
 pub mod components;
@@ -13,6 +13,7 @@ fn app() -> Html {
             <h1>{ "Emissions App" }</h1>
             <div>
                 <h3>{"Users"}</h3>
+                <Login />
                 <Users />
             </div>
         </>
