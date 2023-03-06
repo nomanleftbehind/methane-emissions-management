@@ -1,0 +1,594 @@
+schema {
+  query: FullQuery
+  mutation: FullMutation
+}
+
+enum CalculationMethod {
+  EQUATION
+  MEASURED
+}
+
+type Compressor implements EmitterInterface {
+  id: UUID!
+  fdcRecId: String!
+  facilityId: UUID!
+  name: String!
+  serialNumber: String!
+  installDate: NaiveDate!
+  removeDate: NaiveDate
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  facility: Facility
+  compressorChanges: [CompressorChange!]!
+  compressorMonthHours: [CompressorMonthHours!]!
+  compressorBlowdowns: [CompressorBlowdown!]!
+  compressorMonthVentOverrides: [CompressorMonthVentOverride!]!
+  compressorMonthVents: [CompressorMonthVent!]!
+}
+
+type CompressorBlowdown {
+  id: UUID!
+  date: NaiveDate!
+  gasVolume: Float!
+  compressorId: UUID!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  compressor: Compressor
+}
+
+type CompressorChange {
+  id: UUID!
+  compressorId: UUID!
+  date: NaiveDate!
+  calculationMethod: CalculationMethod!
+  numberOfThrows: Int!
+  rate: Float!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  controller: Compressor
+}
+
+type CompressorMonthHours {
+  id: UUID!
+  month: NaiveDate!
+  pressurizedHours: Float!
+  compressorId: UUID!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  compressor: Compressor
+}
+
+type CompressorMonthVent {
+  id: UUID!
+  month: NaiveDate!
+  gasVolume: Float!
+  c1Volume: Float!
+  co2Volume: Float!
+  compressorId: UUID!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  compressor: Compressor
+}
+
+input CompressorMonthVentBy {
+  compressorId: UUID
+  month: NaiveDate
+}
+
+# Model representing user overrides of calculated monthly vented volumes from compressors.
+#
+# Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::mutations::validators::MonthBeginningValidator).
+#
+# Field `gas_volume` is in m³.
+type CompressorMonthVentOverride {
+  id: UUID!
+  compressorId: UUID!
+  month: NaiveDate!
+  gasVolume: Float!
+  comment: String
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  compressor: Compressor
+}
+
+input CompressorsBy {
+  facilityId: UUID
+  createdById: UUID
+  updatedById: UUID
+}
+
+type Controller implements EmitterInterface {
+  id: UUID!
+  fdcRecId: String!
+  manufacturerId: UUID!
+  model: String
+  serialNumber: String
+  applicationId: UUID
+  facilityId: UUID!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  facility: Facility
+  application: ControllerApplication
+  manufacturer: ControllerManufacturer
+  controllerChanges: [ControllerChange!]!
+  controllerMonthHours: [ControllerMonthHours!]!
+  controllerMonthVentOverrides: [ControllerMonthVentOverride!]!
+  controllerMonthVents: [ControllerMonthVent!]!
+}
+
+type ControllerApplication {
+  id: UUID!
+  application: String!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  controllers: [Controller!]!
+}
+
+type ControllerChange {
+  id: UUID!
+  date: NaiveDate!
+  rate: Float!
+  controllerId: UUID!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  controller: Controller
+}
+
+type ControllerManufacturer {
+  id: UUID!
+  manufacturer: String!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  controllers: [Controller!]!
+}
+
+type ControllerMonthHours {
+  id: UUID!
+  month: NaiveDate!
+  hoursOn: Float!
+  controllerId: UUID!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  controller: Controller
+}
+
+type ControllerMonthVent {
+  id: UUID!
+  month: NaiveDate!
+  gasVolume: Float!
+  c1Volume: Float!
+  co2Volume: Float!
+  controllerId: UUID!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  controller: Controller
+}
+
+input ControllerMonthVentBy {
+  controllerId: UUID
+  month: NaiveDate
+}
+
+# Model representing user overrides of calculated monthly vented volumes from controllers.
+#
+# Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::mutations::validators::MonthBeginningValidator).
+#
+# Field `gas_volume` is in m³.
+type ControllerMonthVentOverride {
+  id: UUID!
+  controllerId: UUID!
+  month: NaiveDate!
+  gasVolume: Float!
+  comment: String
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  controller: Controller
+}
+
+input ControllersBy {
+  facilityId: UUID
+  createdById: UUID
+  updatedById: UUID
+}
+
+interface EmitterInterface {
+  id: UUID!
+  fdcRecId: String!
+  facility: Facility
+  createdBy: User
+  createdAt: NaiveDateTime!
+  updatedBy: User
+  updatedAt: NaiveDateTime!
+}
+
+type Facility {
+  id: UUID!
+  idpa: String!
+  name: String!
+  type: FacilityType!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  controllers: [Controller!]!
+  compressors: [Compressor!]!
+  tankFarm: TankFarm
+  gasAnalyses: [GasAnalysis!]!
+}
+
+input FacilityBy {
+  type: FacilityType
+  name: String
+}
+
+enum FacilityType {
+  TM
+  WT
+  CT
+  DS
+  GS
+  MS
+  GP
+  IF
+  PL
+  WP
+  WS
+  BT
+}
+
+input FromToMonthInput {
+  fromMonth: NaiveDate!
+  toMonth: NaiveDate!
+}
+
+type FullMutation {
+  register(registerUserInput: RegisterUserInput!): User!
+  login(loginUserInput: LoginUserInput!): User!
+  logout: Boolean!
+  insertControllerMonthVents(months: [NaiveDate!]!): Int!
+  insertCompressorMonthVents(months: [NaiveDate!]!): Int!
+  insertCompressorBlowdownsFromFdc(monthRange: FromToMonthInput!): Int!
+  insertTankFarmVentFactors: Int!
+  insertTankFarmMonthVents(months: [NaiveDate!]!): Int!
+  insertGasAnalysisCalculatedParams: Int!
+}
+
+type FullQuery {
+  me: User
+  user(by: UserBy!): User
+  allUsers: [User!]!
+  facilitiesBy(
+    by: FacilityBy!
+    limit: Int! = 10
+    offset: Int! = 0
+  ): [Facility!]!
+  allFacilities(limitOffsetInput: LimitOffsetInput): [Facility!]!
+  userControllers(limit: Int! = 10, offset: Int! = 0): [Controller!]!
+  controllersBy(by: ControllersBy!): [Controller!]!
+  allControllerApplications: [ControllerApplication!]!
+  compressorsBy(by: CompressorsBy!): [Compressor!]!
+  compressorBlowdowns(compressorId: UUID!): [CompressorBlowdown!]!
+  controllerMonthVents(by: ControllerMonthVentBy!): [ControllerMonthVent!]!
+  compressorMonthVents(by: CompressorMonthVentBy!): [CompressorMonthVent!]!
+  tankFarmMonthVents(by: TankFarmMonthVentBy!): [TankFarmMonthVent!]!
+}
+
+type GasAnalysis {
+  id: UUID!
+  facilityId: UUID!
+  date: NaiveDate!
+  h2: Float!
+  he: Float!
+  n2: Float!
+  co2: Float!
+  h2S: Float!
+  c1: Float!
+  c2: Float!
+  c3: Float!
+  c4I: Float!
+  c4N: Float!
+  c5I: Float!
+  c5N: Float!
+  c6: Float!
+  c7Plus: Float!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  facility: Facility
+  gasAnalysisCalculatedParam: GasAnalysisCalculatedParam
+}
+
+type GasAnalysisCalculatedParam {
+  id: UUID!
+  gasGravity: Float!
+  higherHeatingValue: Float!
+  carbonContent: Float!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  gasAnalysis: GasAnalysis
+}
+
+input LimitOffsetInput {
+  limit: Int!
+  offset: Int!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+# ISO 8601 calendar date without timezone.
+# Format: %Y-%m-%d
+#
+# # Examples
+#
+# * `1994-11-13`
+# * `2000-02-24`
+scalar NaiveDate
+
+# ISO 8601 combined date and time without timezone.
+#
+# # Examples
+#
+# * `2015-07-01T08:59:60.123`,
+scalar NaiveDateTime
+
+input RegisterUserInput {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+  role: Role
+}
+
+enum Role {
+  ADMIN
+  ENGINEER
+  REGULATORY
+  OFFICE
+  OPERATOR
+}
+
+type TankFarm {
+  id: UUID!
+  facilityId: UUID!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  facility: Facility
+  tankFarmChanges: [TankFarmChange!]!
+  tankFarmMonthOilFlows: [TankFarmMonthOilFlow!]!
+  tankFarmVentFactorsCalculated: [TankFarmVentFactorCalculated!]!
+  tankFarmMonthVentOverrides: [TankFarmMonthVentOverride!]!
+  tankFarmMonthVents: [TankFarmMonthVent!]!
+}
+
+type TankFarmChange {
+  id: UUID!
+  tankFarmId: UUID!
+  date: NaiveDate!
+  ia: Boolean!
+  vru: Boolean!
+  apiDensity: Float!
+  temperature: Float!
+  pressure: Float!
+  calculationMethod: CalculationMethod!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  tankFarm: TankFarm
+}
+
+type TankFarmMonthOilFlow {
+  id: UUID!
+  tankFarmId: UUID!
+  month: NaiveDate!
+  oil: Float!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  tankFarm: TankFarm
+}
+
+# Model representing monthly vented volumes from tank farms.
+#
+# No mutations are provided which would enable users to enter values directly, instead, all fields are calculated and writter to the database.
+#
+# Field `month` has to be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::mutations::validators::MonthBeginningValidator).
+#
+# All volumes are in m³.
+type TankFarmMonthVent {
+  id: UUID!
+  tankFarmId: UUID!
+  month: NaiveDate!
+  gasVolume: Float!
+  c1Volume: Float!
+  co2Volume: Float!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  tankFarm: TankFarm
+}
+
+input TankFarmMonthVentBy {
+  tankFarmId: UUID
+  month: NaiveDate
+}
+
+# Model representing user overrides of calculated monthly vented volumes from tank farms.
+#
+# Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::mutations::validators::MonthBeginningValidator).
+#
+# Field `gas_volume` is in m³.
+type TankFarmMonthVentOverride {
+  id: UUID!
+  tankFarmId: UUID!
+  month: NaiveDate!
+  gasVolume: Float!
+  comment: String
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  tankFarm: TankFarm
+}
+
+type TankFarmVentFactorCalculated {
+  id: UUID!
+  tankFarmId: UUID!
+  date: NaiveDate!
+  ventFactor: Float!
+  createdById: UUID!
+  createdAt: NaiveDateTime!
+  updatedById: UUID!
+  updatedAt: NaiveDateTime!
+  createdBy: User
+  updatedBy: User
+  tankFarm: TankFarm
+}
+
+# A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
+# Strings within GraphQL. UUIDs are used to assign unique identifiers to
+# entities without requiring a central allocating authority.
+#
+# # References
+#
+# * [Wikipedia: Universally Unique Identifier](http://en.wikipedia.org/wiki/Universally_unique_identifier)
+# * [RFC4122: A Universally Unique IDentifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
+scalar UUID
+
+# `User` model is the root of every other model.
+#
+# Every entry was created and updated by a `User` so the model can load an array of created or updated entries.
+type User {
+  id: UUID!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: Role!
+  createdFacilities: [Facility!]!
+  updatedFacilities: [Facility!]!
+  createdControllers: [Controller!]!
+  updatedControllers: [Controller!]!
+  createdControllerApplications: [ControllerApplication!]!
+  updatedControllerApplications: [ControllerApplication!]!
+  createdControllerManufacturers: [ControllerManufacturer!]!
+  updatedControllerManufacturers: [ControllerManufacturer!]!
+  createdControllerChanges: [ControllerChange!]!
+  updatedControllerChanges: [ControllerChange!]!
+  createdControllerMonthHours: [ControllerMonthHours!]!
+  updatedControllerMonthHours: [ControllerMonthHours!]!
+  createdControllerMonthVentOverrides: [ControllerMonthVentOverride!]!
+  updatedControllerMonthVentOverrides: [ControllerMonthVentOverride!]!
+  createdControllerMonthVents: [ControllerMonthVent!]!
+  updatedControllerMonthVents: [ControllerMonthVent!]!
+  createdCompressors: [Compressor!]!
+  updatedCompressors: [Compressor!]!
+  createdCompressorChanges: [CompressorChange!]!
+  updatedCompressorChanges: [CompressorChange!]!
+  createdCompressorMonthHours: [CompressorMonthHours!]!
+  updatedCompressorMonthHours: [CompressorMonthHours!]!
+  createdCompressorBlowdowns: [CompressorBlowdown!]!
+  updatedCompressorBlowdowns: [CompressorBlowdown!]!
+  createdCompressorMonthVentOverrides: [CompressorMonthVentOverride!]!
+  updatedCompressorMonthVentOverrides: [CompressorMonthVentOverride!]!
+  createdCompressorMonthVents: [CompressorMonthVent!]!
+  updatedCompressorMonthVents: [CompressorMonthVent!]!
+  createdTankFarms: [TankFarm!]!
+  updatedTankFarms: [TankFarm!]!
+  createdTankFarmChanges: [TankFarmChange!]!
+  updatedTankFarmChanges: [TankFarmChange!]!
+  createdTankFarmMonthOilFlows: [TankFarmMonthOilFlow!]!
+  updatedTankFarmMonthOilFlows: [TankFarmMonthOilFlow!]!
+  createdTankFarmVentFactorsCalculated: [TankFarmVentFactorCalculated!]!
+  updatedTankFarmVentFactorsCalculated: [TankFarmVentFactorCalculated!]!
+  createdTankFarmMonthVentOverrides: [TankFarmMonthVentOverride!]!
+  updatedTankFarmMonthVentOverrides: [TankFarmMonthVentOverride!]!
+  createdTankFarmMonthVents: [TankFarmMonthVent!]!
+  updatedTankFarmMonthVents: [TankFarmMonthVent!]!
+  createdGasAnalyses: [GasAnalysis!]!
+  updatedGasAnalyses: [GasAnalysis!]!
+  createdGasAnalysisCalculatedParams: [GasAnalysisCalculatedParam!]!
+  updatedGasAnalysisCalculatedParams: [GasAnalysisCalculatedParam!]!
+}
+
+input UserBy {
+  email: String
+  id: UUID
+}

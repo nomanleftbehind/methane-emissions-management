@@ -1,6 +1,8 @@
 /target
 .env
 dist
+target
+client-old
 
 /configuration/base.yaml
 /prisma
