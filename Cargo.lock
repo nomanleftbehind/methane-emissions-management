@@ -1406,6 +1406,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f107b87b6afc2a64fd13cac55fe06d6c8859f12d4b14cbcdd2c67d0976781be"
 
 [[package]]
+name = "emissions_app_client"
+version = "0.1.0"
+dependencies = [
+ "gloo-net",
+ "graphql_client",
+ "serde",
+ "serde_json",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "yew",
+ "yew-hooks",
+ "yew-router",
+]
+
+[[package]]
 name = "emissionsapp"
 version = "1.0.0"
 dependencies = [
@@ -1867,6 +1882,7 @@ version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8d5564e570a38b43d78bdc063374a0c3098c4f0d64005b12f9bbe87e869b6d7"
 dependencies = [
+ "futures-channel",
  "gloo-events",
  "js-sys",
  "wasm-bindgen",
@@ -3104,6 +3120,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "route-recognizer"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "afab94fb28594581f62d981211a9a4d53cc8130bbcbbb89a0440d9b8e81a7746"
+
+[[package]]
 name = "rust-ini"
 version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4270,20 +4292,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "yew-app"
-version = "0.1.0"
-dependencies = [
- "gloo-net",
- "graphql_client",
- "serde",
- "serde_json",
- "wasm-bindgen-futures",
- "web-sys",
- "yew",
- "yew-hooks",
-]
-
-[[package]]
 name = "yew-hooks"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4309,6 +4317,35 @@ dependencies = [
  "once_cell",
  "prettyplease",
  "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "yew-router"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "426ee0486d2572a6c5e39fbdbc48b58d59bb555f3326f54631025266cf04146e"
+dependencies = [
+ "gloo",
+ "js-sys",
+ "route-recognizer",
+ "serde",
+ "serde_urlencoded",
+ "tracing",
+ "wasm-bindgen",
+ "web-sys",
+ "yew",
+ "yew-router-macro",
+]
+
+[[package]]
+name = "yew-router-macro"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "89b249cdb39e0cddaf0644dedc781854524374664793479fdc01e6a65d6e6ae3"
+dependencies = [
  "proc-macro2",
  "quote",
  "syn",

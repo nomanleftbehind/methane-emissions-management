@@ -11,8 +11,8 @@ use yew::{
 };
 use yew_hooks::use_async;
 
-#[function_component(Login)]
-pub fn login() -> Html {
+#[function_component(Register)]
+pub fn register() -> Html {
     let email = use_state(|| "dsucic@bonterraenergy.com".to_string());
     let password = use_state(|| "everythinghastostartsomewhere".to_string());
 

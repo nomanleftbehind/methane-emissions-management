@@ -5,3 +5,7 @@ mutation Login($loginUserInput: LoginUserInput!) {
     role
 	}
 }
+
+mutation Logout {
+  logout
+}

@@ -1,0 +1,5 @@
+.table-test td, th, table {
+    border: 1px solid black;
+    padding: 4px;
+    margin: 4px;
+}
