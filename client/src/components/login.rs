@@ -16,7 +16,7 @@ pub fn login() -> Html {
     let email = use_state(|| "dsucic@bonterraenergy.com".to_string());
     let password = use_state(|| "everythinghastostartsomewhere".to_string());
 
-    let run_async = {
+    let run_login = {
         let variables = Variables {
             login_user_input: LoginUserInput {
                 email: (*email).clone(),
@@ -27,7 +27,7 @@ pub fn login() -> Html {
     };
 
     let onsubmit = {
-        let run_async = run_async.clone();
+        let run_async = run_login.clone();
 
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
@@ -39,8 +39,7 @@ pub fn login() -> Html {
         let email = email.clone();
         Callback::from(move |e: InputEvent| {
             let input: HtmlInputElement = e.target_unchecked_into();
-            let mut info = (*email).clone();
-            info = input.value();
+            let info = input.value();
             email.set(info)
         })
     };
@@ -49,8 +48,7 @@ pub fn login() -> Html {
         let password = password.clone();
         Callback::from(move |e: InputEvent| {
             let input: HtmlInputElement = e.target_unchecked_into();
-            let mut info = (*password).clone();
-            info = input.value();
+            let info = input.value();
             password.set(info)
         })
     };
