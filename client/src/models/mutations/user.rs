@@ -1,4 +1,5 @@
-use super::super::{Role, UUID};
+use super::super::UUID;
+use common::Role;
 use graphql_client::GraphQLQuery;
 
 #[derive(GraphQLQuery)]

@@ -66,9 +66,9 @@ use crate::graphql::{
     },
 };
 use async_graphql::{
-    dataloader::DataLoader, ComplexObject, Context, Enum, Error, InputObject, OneofObject,
-    SimpleObject,
+    dataloader::DataLoader, ComplexObject, Context, Error, InputObject, OneofObject, SimpleObject,
 };
+use common::Role;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -77,16 +77,6 @@ use uuid::Uuid;
 pub enum UserBy {
     Email(String),
     Id(Uuid),
-}
-
-#[derive(Enum, Copy, Clone, Deserialize, Serialize, Eq, PartialEq, Debug, sqlx::Type)]
-#[sqlx(type_name = "user_role", rename_all = "UPPERCASE")]
-pub enum Role {
-    Admin,
-    Engineer,
-    Regulatory,
-    Office,
-    Operator,
 }
 
 /// `User` model is the root of every other model.

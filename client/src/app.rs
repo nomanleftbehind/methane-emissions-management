@@ -1,5 +1,5 @@
 use crate::{
-    components::{nav::Nav, user::Users},
+    components::{nav::Nav, user::Users, facility::FacilityNav},
     pages::{Home, Register},
 };
 use yew::prelude::*;
@@ -23,6 +23,7 @@ pub fn app() -> Html {
             <main>
                 <Switch<Route> render={switch} />
             </main>
+            <FacilityNav />
         </BrowserRouter>
     }
 }

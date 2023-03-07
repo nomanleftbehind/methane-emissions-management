@@ -1,0 +1,13 @@
+[package]
+name = "common"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sqlx = { version = "0.6", features = ["runtime-tokio-rustls"], optional = true }
+async-graphql = { version = "5", features = ["default"], optional = true }
+serde = { version = "1.0", features = ["default"], optional = true }
+
+[features]
+client = ["serde"]
+server = ["async-graphql", "sqlx"]

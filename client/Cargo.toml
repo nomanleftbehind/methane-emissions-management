@@ -19,3 +19,4 @@ serde_json = "1"
 web-sys = "0.3"
 yew-hooks = "0.2"
 yew-router = "0.17.0"
+common = { path = "../common", features = ["client"] }

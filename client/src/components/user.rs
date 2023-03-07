@@ -4,7 +4,7 @@ use crate::models::queries::user::{
     GetUsers,
 };
 use crate::utils::console_log::console_log;
-use yew::{function_component, html, virtual_dom::VNode, Html};
+use yew::{function_component, html, Html};
 
 #[function_component(Users)]
 pub fn users() -> Html {
@@ -23,14 +23,14 @@ pub fn users() -> Html {
                         <td> { user.email } </td>
                         <td> { user.first_name } </td>
                         <td> { user.last_name } </td>
-                        <td> { user.role } </td>
+                        <td> { format!("{:?}", user.role) } </td>
                     </tr>
                 }
             });
 
             html! { <>{ for user_iter }</> }
         }
-        Ok(_) => VNode::default(),
+        Ok(_) => html! {},
         Err(e) => {
             html! {
                 <tr>

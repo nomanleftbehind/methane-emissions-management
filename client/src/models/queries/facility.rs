@@ -1,13 +1,13 @@
 use super::super::UUID;
-use common::Role;
 use graphql_client::GraphQLQuery;
+use common::FacilityType;
 
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "./graphql/schema.graphql",
     query_path = "./graphql/queries.graphql",
     response_derives = "Debug, Clone, PartialEq",
-    extern_enums("Role")
+    extern_enums("FacilityType")
 )]
 #[derive(Debug)]
-pub struct GetUsers;
+pub struct AllFacilities;

@@ -8,10 +8,10 @@ use crate::graphql::{
     models::{Compressor, Controller, GasAnalysis, TankFarm, User},
 };
 use async_graphql::{
-    dataloader::DataLoader, ComplexObject, Context, Enum, Error, InputObject, OneofObject,
-    SimpleObject,
+    dataloader::DataLoader, ComplexObject, Context, Error, InputObject, OneofObject, SimpleObject,
 };
 use chrono::NaiveDateTime;
+use common::FacilityType;
 use sqlx::FromRow;
 use uuid::Uuid;
 
@@ -19,23 +19,6 @@ use uuid::Uuid;
 pub enum FacilityBy {
     Type(FacilityType),
     Name(String),
-}
-
-#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, sqlx::Type)]
-#[sqlx(type_name = "facility_type")]
-pub enum FacilityType {
-    TM,
-    WT,
-    CT,
-    DS,
-    GS,
-    MS,
-    GP,
-    IF,
-    PL,
-    WP,
-    WS,
-    BT,
 }
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]

@@ -7,3 +7,12 @@ query GetUsers {
     role
   }
 }
+
+query AllFacilities {
+  allFacilities {
+    id
+    idpa
+    name
+    type
+  }
+}

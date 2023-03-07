@@ -1,10 +1,11 @@
-use crate::graphql::models::{RegisterUserInput, Role, User};
+use crate::graphql::models::{RegisterUserInput, User};
 use crate::telemetry::spawn_blocking_with_tracing;
 use anyhow::Context;
 use argon2::{
     password_hash::SaltString, Algorithm, Argon2, Params, PasswordHash, PasswordHasher,
     PasswordVerifier, Version,
 };
+use common::Role;
 use secrecy::{ExposeSecret, Secret};
 use sqlx::PgPool;
 use uuid::Uuid;
