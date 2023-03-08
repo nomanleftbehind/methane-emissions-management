@@ -47,10 +47,10 @@ pub fn facility_nav() -> Html {
     let get_facilities = use_query::<AllFacilities>(Variables);
 
     let inner = match get_facilities {
-        Ok(QueryResponse {
+        QueryResponse {
             data: Some(ResponseData { all_facilities }),
             ..
-        }) => {
+        } => {
             let r = all_facilities.into_iter().enumerate().map(
                 |(
                     row_num,
@@ -78,9 +78,9 @@ pub fn facility_nav() -> Html {
             );
             html! { for r }
         }
-        Ok(_) => html! {},
-        Err(e) => {
-            html! {e}
+        QueryResponse { error: Some(e), .. } => html! {e},
+        _ => {
+            html! {}
         }
     };
 

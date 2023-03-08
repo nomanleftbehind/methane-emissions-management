@@ -30,17 +30,3 @@ query GetControllers($by: ControllersBy!) {
     }
   }
 }
-
-query UserControllers {
-  userControllers {
-    id
-    model
-    serialNumber
-    application {
-      application
-    }
-    manufacturer {
-      manufacturer
-    }
-  }
-}

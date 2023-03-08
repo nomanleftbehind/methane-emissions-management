@@ -11,10 +11,10 @@ pub fn users() -> Html {
     let get_users = use_query::<GetUsers>(Variables);
 
     let users = match get_users {
-        Ok(QueryResponse {
+        QueryResponse {
             data: Some(ResponseData { all_users }),
             ..
-        }) => {
+        } => {
             let user_iter = all_users.into_iter().map(|user| {
                 console_log!("role: {:#?}", user.role);
                 html! {
@@ -30,13 +30,9 @@ pub fn users() -> Html {
 
             html! { <>{ for user_iter }</> }
         }
-        Ok(_) => html! {},
-        Err(e) => {
-            html! {
-                <tr>
-                    <td>{ e }</td>
-                </tr>
-            }
+        QueryResponse { error: Some(e), .. } => html! {e},
+        _ => {
+            html! {}
         }
     };
 

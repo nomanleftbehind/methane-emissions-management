@@ -1,40 +1,38 @@
 use crate::{
     hooks::{use_query, QueryResponse},
     models::queries::controller::{
-        user_controllers::{ResponseData, Variables},
-        UserControllers,
-    }, utils::console_log::console_log,
+        get_controllers::{ControllersBy, ResponseData, Variables},
+        GetControllers,
+    },
+    utils::console_log::console_log,
 };
-use yew::{function_component, html, Html};
 use uuid::uuid;
+use yew::{function_component, html, Html};
+
+// #[derive(Clone, Debug, Eq, PartialEq, Properties)]
+// pub struct Props {
+//     pub id: Uuid,
+// }
 
 #[function_component(ControllersPage)]
 pub fn controllers_page() -> Html {
+    let var = Variables {
+        by: ControllersBy {
+            facility_id: uuid!("3f34bb1e-dc92-4985-869f-27784a3708f6"),
+        },
+    };
 
-    // let var = Variables {
-    //     by: ControllersBy {
-    //         facility_id: Some(uuid!("c86b6414-83d0-4fab-8766-90aa8fa7c710")),
-    //         created_by_id: None,
-    //         updated_by_id: None,
-    //     },
-    // };
-    // console_log!("Hi: {:#?}", &var);
-
-    let get_controllers = use_query::<UserControllers>(Variables);
+    let get_controllers = use_query::<GetControllers>(var);
+    console_log!("Hi: {:#?}", &get_controllers);
 
     let r = match get_controllers {
-        Ok(QueryResponse {
-            data: Some(ResponseData { user_controllers }),
+        QueryResponse {
+            data: Some(ResponseData { controllers_by }),
             ..
-        }) => {
-            let controllers_iter = user_controllers.into_iter().map(|c| {
-
+        } => {
+            let controllers_iter = controllers_by.into_iter().map(|c| {
                 console_log!("ctr: {:#?}", c);
-                let m = if let Some(m) = c.manufacturer {
-                    m.manufacturer
-                } else {
-                    "".to_string()
-                };
+                let m = c.manufacturer.map_or("".to_string(), |v| v.manufacturer);
                 html! {
                     <>
                         <div>{ c.id }</div>
@@ -47,11 +45,11 @@ pub fn controllers_page() -> Html {
 
             html! { for controllers_iter }
         }
-        Ok(r) => {
-            console_log!("resp: {:#?}", &r);
-            html! {}},
-        Err(e) => {
+        QueryResponse { error: Some(e), .. } => {
             html! {e}
+        }
+        _ => {
+            html! {}
         }
     };
 

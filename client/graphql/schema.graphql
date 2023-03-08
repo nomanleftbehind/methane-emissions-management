@@ -238,9 +238,7 @@ type ControllerMonthVentOverride {
 }
 
 input ControllersBy {
-  facilityId: UUID
-  createdById: UUID
-  updatedById: UUID
+  facilityId: UUID!
 }
 
 interface EmitterInterface {
@@ -275,6 +273,9 @@ input FacilityBy {
   name: String
 }
 
+# `FacilityType` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
+#
+# It is defined in common library so it can be used by both server and client.
 enum FacilityType {
   TM
   WT
@@ -403,6 +404,9 @@ input RegisterUserInput {
   role: Role
 }
 
+# `Role` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
+#
+# It is defined in common library so it can be used by both server and client.
 enum Role {
   ADMIN
   ENGINEER

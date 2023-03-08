@@ -15,7 +15,7 @@ use crate::graphql::{
     },
 };
 use async_graphql::{
-    dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,
+    dataloader::DataLoader, ComplexObject, Context, Error, InputObject, SimpleObject,
 };
 use chrono::NaiveDateTime;
 use sqlx::FromRow;
@@ -132,9 +132,7 @@ impl Controller {
     }
 }
 
-#[derive(Debug, OneofObject)]
-pub enum ControllersBy {
-    FacilityId(Uuid),
-    CreatedById(Uuid),
-    UpdatedById(Uuid),
+#[derive(Debug, InputObject)]
+pub struct ControllersBy {
+    pub facility_id: Uuid,
 }

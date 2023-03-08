@@ -9,13 +9,3 @@ use graphql_client::GraphQLQuery;
 )]
 #[derive(Debug)]
 pub struct GetControllers;
-
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "./graphql/schema.graphql",
-    query_path = "./graphql/queries.graphql",
-    response_derives = "Debug, Clone, PartialEq"
-)]
-#[derive(Debug)]
-pub struct UserControllers;

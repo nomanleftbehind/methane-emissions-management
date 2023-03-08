@@ -8,21 +8,21 @@ use yew::{hook, use_effect_with_deps, use_state};
 #[derive(Clone, Debug)]
 pub struct QueryResponse<T> {
     pub data: Option<T>,
+    pub error: Option<AppError>,
     pub loading: bool,
 }
 
 #[hook]
-pub fn use_query<Q>(variables: Q::Variables) -> Result<QueryResponse<Q::ResponseData>, AppError>
+pub fn use_query<Q>(variables: Q::Variables) -> QueryResponse<Q::ResponseData>
 where
     Q: GraphQLQuery,
     Q::Variables: 'static,
     Q::ResponseData: Clone + 'static,
 {
-    let state = use_state(|| {
-        Ok(QueryResponse {
-            data: None,
-            loading: true,
-        })
+    let state = use_state(|| QueryResponse {
+        data: None,
+        error: None,
+        loading: true,
     });
 
     {
@@ -44,19 +44,30 @@ where
                                 .await
                                 .map_err(AppError::from);
                             match json {
-                                Ok(response) => state.set(Ok(QueryResponse {
-                                    data: response.data,
-                                    loading: false,
-                                })),
+                                Ok(response) => {
+                                    let error = response.errors.map(|v| v.into());
+                                    state.set(QueryResponse {
+                                        data: response.data,
+                                        error,
+                                        loading: false,
+                                    })
+                                }
                                 Err(error) => {
-                                    console_log!("response 2 error: {:#?}", error);
-                                    state.set(Err(error));
+                                    state.set(QueryResponse {
+                                        data: None,
+                                        error: Some(error),
+                                        loading: false,
+                                    });
                                 }
                             }
                         }
                         Err(error) => {
                             console_log!("response 1 error: {:#?}", error);
-                            state.set(Err(error));
+                            state.set(QueryResponse {
+                                data: None,
+                                error: Some(error),
+                                loading: false,
+                            });
                         }
                     }
                 });
@@ -90,6 +101,7 @@ where
             match json {
                 Ok(response) => Ok(QueryResponse {
                     data: response.data,
+                    error: response.errors.map(|v| v.into()),
                     loading: false,
                 }),
                 Err(error) => Err(error),
