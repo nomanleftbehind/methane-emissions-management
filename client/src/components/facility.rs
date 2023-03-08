@@ -1,90 +1,67 @@
-use crate::hooks::use_query;
-use crate::{
-    hooks::QueryResponse,
-    models::queries::facility::{
-        all_facilities::{AllFacilitiesAllFacilities, ResponseData, Variables},
-        AllFacilities,
-    },
-};
 use common::FacilityType;
-use yew::{function_component, html, Html, Properties};
+use yew::{classes, function_component, html, Callback, Html, Properties};
+use yew_router::prelude::{use_navigator, use_route, Link};
+
+use crate::{utils::console_log, Route};
 
 #[derive(PartialEq, Clone)]
 pub struct Facility {
-    id: uuid::Uuid,
-    idpa: String,
-    name: String,
-    r#type: FacilityType,
+    pub id: uuid::Uuid,
+    pub idpa: String,
+    pub name: String,
+    pub r#type: FacilityType,
 }
 
 #[derive(Properties, PartialEq)]
-pub struct FacilityProps {
-    row_num: usize,
-    facility: Facility,
+pub struct Props {
+    pub row_num: usize,
+    pub facility: Facility,
+    pub on_facility_click: Callback<Facility>,
 }
 
 #[function_component(FacilityComp)]
 pub fn facility_comp(
-    FacilityProps {
-        facility:
-            Facility {
-                id: _,
-                idpa: _,
-                name,
-                r#type: _,
-            },
+    Props {
+        facility,
         row_num,
-    }: &FacilityProps,
+        on_facility_click,
+    }: &Props,
 ) -> Html {
-    let style = format!("grid-column: 1; grid-row: {};", row_num + 1);
-    html! {
-        <button {style}>{ name }</button>
-    }
-}
+    let on_facility_click = on_facility_click.clone();
+    let facility = facility.clone();
+    let facility_display = facility.clone().name;
 
-#[function_component(FacilityNav)]
-pub fn facility_nav() -> Html {
-    let get_facilities = use_query::<AllFacilities>(Variables);
+    let fi = facility.clone().id;
 
-    let inner = match get_facilities {
-        QueryResponse {
-            data: Some(ResponseData { all_facilities }),
-            ..
-        } => {
-            let r = all_facilities.into_iter().enumerate().map(
-                |(
-                    row_num,
-                    AllFacilitiesAllFacilities {
-                        id,
-                        idpa,
-                        name,
-                        type_,
-                    },
-                )| {
-                    let facility = Facility {
-                        id: id.clone(),
-                        idpa,
-                        name,
-                        r#type: type_,
-                    };
-                    html! {
-                        <FacilityComp
-                            key={id.to_string()}
-                            {facility}
-                            {row_num}
-                        />
-                    }
-                },
-            );
-            html! { for r }
-        }
-        QueryResponse { error: Some(e), .. } => html! {e},
-        _ => {
-            html! {}
-        }
+    let e = use_route::<Route>().unwrap_or(Route::Home);
+
+    let route = match e {
+        Route::Controllers { .. } => Route::Controllers { facility_id: fi },
+        t => t,
     };
 
+    // let navigator = use_navigator().unwrap();
+    // let go_to_first_post_button = {
+    //     // let navigator = navigator.clone();
+    //     let onclick = Callback::from(move |_| navigator.push(&route));
+    //     html! {
+    //         <button {onclick}>{"click to go the first post"}</button>
+    //     }
+    // };
+
+
+    let onclick = Callback::from(move |_| {
+        let facility = facility.clone();
+        on_facility_click.emit(facility);
+        // navigator.push(&route);
+    });
+
+    let style = format!("grid-column: 1; grid-row: {};", row_num + 1);
     html! {
-        <nav class="facility-nav">{ inner }</nav>
+        <button {style} {onclick}>
+            <Link<Route> classes={classes!("navbar-item")} to={route}>
+                { facility_display }
+            </Link<Route>>
+        </button>
     }
 }

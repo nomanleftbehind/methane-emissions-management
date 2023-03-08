@@ -1,6 +1,4 @@
-// use crate::utils::console_log;
-use crate::utils::error::AppError;
-use crate::utils::{common::build_request, console_log::console_log};
+use crate::utils::{common::build_request, error::AppError};
 use graphql_client::{GraphQLQuery, Response};
 use serde_json::json;
 use yew::{hook, use_effect_with_deps, use_state};
@@ -62,7 +60,6 @@ where
                             }
                         }
                         Err(error) => {
-                            console_log!("response 1 error: {:#?}", error);
                             state.set(QueryResponse {
                                 data: None,
                                 error: Some(error),

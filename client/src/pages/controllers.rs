@@ -4,26 +4,27 @@ use crate::{
         get_controllers::{ControllersBy, ResponseData, Variables},
         GetControllers,
     },
-    utils::console_log::console_log,
+    utils::console_log,
 };
-use uuid::uuid;
-use yew::{function_component, html, Html};
+use uuid::Uuid;
+use yew::{function_component, html, Html, Properties};
 
-// #[derive(Clone, Debug, Eq, PartialEq, Properties)]
-// pub struct Props {
-//     pub id: Uuid,
-// }
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct Props {
+    pub facility_id: Uuid,
+}
 
 #[function_component(ControllersPage)]
-pub fn controllers_page() -> Html {
+pub fn controllers_page(Props { facility_id }: &Props) -> Html {
+
+    console_log!("Ctr fac: {}", &facility_id);
     let var = Variables {
         by: ControllersBy {
-            facility_id: uuid!("3f34bb1e-dc92-4985-869f-27784a3708f6"),
+            facility_id: *facility_id,
         },
     };
 
     let get_controllers = use_query::<GetControllers>(var);
-    console_log!("Hi: {:#?}", &get_controllers);
 
     let r = match get_controllers {
         QueryResponse {
@@ -31,7 +32,6 @@ pub fn controllers_page() -> Html {
             ..
         } => {
             let controllers_iter = controllers_by.into_iter().map(|c| {
-                console_log!("ctr: {:#?}", c);
                 let m = c.manufacturer.map_or("".to_string(), |v| v.manufacturer);
                 html! {
                     <>

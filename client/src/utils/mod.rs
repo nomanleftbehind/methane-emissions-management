@@ -1,3 +1,5 @@
 pub mod common;
-pub mod console_log;
+mod console_log;
 pub mod error;
+
+pub(crate) use console_log::console_log;

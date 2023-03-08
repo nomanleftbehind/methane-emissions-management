@@ -7,7 +7,6 @@ use crate::{
         logout::{ResponseData, Variables},
         Logout as LogoutUser,
     },
-    utils::console_log::console_log,
 };
 
 #[function_component(Logout)]
@@ -24,12 +23,10 @@ pub fn logout() -> Html {
     let a = &state.data;
 
     if let Some(QueryResponse {
-        data: Some(ResponseData { logout }),
+        data: Some(ResponseData { logout: _ }),
         ..
     }) = a
-    {
-        console_log!("logout {}", logout);
-    };
+    {};
 
     html! {
         <button class={"logout-button"} {onclick}>{ "Logout" }</button>

@@ -1,4 +1,3 @@
-use crate::utils::console_log::console_log;
 use crate::utils::error::AppError;
 use gloo_net::{
     http::{Request, RequestCredentials, Response},
@@ -16,8 +15,6 @@ pub async fn build_request(request_json: &Value) -> Result<Response, AppError> {
         .send()
         .await
         .map_err(Error::into);
-
-    console_log!("res: {:#?}", &response);
 
     response
 }

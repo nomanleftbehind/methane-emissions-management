@@ -3,7 +3,6 @@ use crate::models::queries::user::{
     get_users::{ResponseData, Variables},
     GetUsers,
 };
-use crate::utils::console_log::console_log;
 use yew::{function_component, html, Html};
 
 #[function_component(Users)]
@@ -16,7 +15,6 @@ pub fn users() -> Html {
             ..
         } => {
             let user_iter = all_users.into_iter().map(|user| {
-                console_log!("role: {:#?}", user.role);
                 html! {
                     <tr>
                         <td> { user.id } </td>
