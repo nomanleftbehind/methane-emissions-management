@@ -3,3 +3,8 @@
     padding: 4px;
     margin: 4px;
 }
+
+.facility-nav {
+    display: grid;
+    width: fit-content;
+}

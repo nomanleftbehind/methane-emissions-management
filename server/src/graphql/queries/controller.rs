@@ -35,6 +35,7 @@ impl ControllerQuery {
         by: ControllersBy,
     ) -> Result<Vec<Controller>, Error> {
         let pool = ctx.db_pool();
+        println!("by: {:#?}", &by);
         let controllers = query_controllers(pool, by).await.map_err(Error::from);
 
         controllers

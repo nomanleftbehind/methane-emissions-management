@@ -16,3 +16,31 @@ query AllFacilities {
     type
   }
 }
+
+query GetControllers($by: ControllersBy!) {
+  controllersBy(by: $by) {
+    id
+    model
+    serialNumber
+    application {
+      application
+    }
+    manufacturer {
+      manufacturer
+    }
+  }
+}
+
+query UserControllers {
+  userControllers {
+    id
+    model
+    serialNumber
+    application {
+      application
+    }
+    manufacturer {
+      manufacturer
+    }
+  }
+}

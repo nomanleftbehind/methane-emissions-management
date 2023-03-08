@@ -1,6 +1,6 @@
 use crate::{
-    components::{nav::Nav, user::Users, facility::FacilityNav},
-    pages::{Home, Register},
+    components::{facility::FacilityNav, nav::Nav, user::Users},
+    pages::{ControllersPage, Home, Register},
 };
 use yew::prelude::*;
 use yew_router::{BrowserRouter, Routable, Switch};
@@ -9,6 +9,8 @@ use yew_router::{BrowserRouter, Routable, Switch};
 pub enum Route {
     #[at("/")]
     Home,
+    #[at("/controllers")]
+    Controllers,
     #[at("/users")]
     Users,
     #[at("/register")]
@@ -32,6 +34,9 @@ fn switch(route: Route) -> Html {
     match route {
         Route::Home => {
             html! { <Home /> }
+        }
+        Route::Controllers => {
+            html! { <ControllersPage /> }
         }
         Route::Users => {
             html! { <Users /> }

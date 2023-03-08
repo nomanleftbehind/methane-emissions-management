@@ -23,7 +23,7 @@ pub fn users() -> Html {
                         <td> { user.email } </td>
                         <td> { user.first_name } </td>
                         <td> { user.last_name } </td>
-                        <td> { format!("{:?}", user.role) } </td>
+                        <td> { user.role } </td>
                     </tr>
                 }
             });
