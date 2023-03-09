@@ -1,8 +1,8 @@
 use common::FacilityType;
 use yew::{classes, function_component, html, Callback, Html, Properties};
-use yew_router::prelude::{use_navigator, use_route, Link};
+use yew_router::prelude::{use_route, Link};
 
-use crate::{utils::console_log, Route};
+use crate::Route;
 
 #[derive(PartialEq, Clone)]
 pub struct Facility {
@@ -58,10 +58,10 @@ pub fn facility_comp(
 
     let style = format!("grid-column: 1; grid-row: {};", row_num + 1);
     html! {
-        <button {style} {onclick}>
+        <span {style} {onclick}>
             <Link<Route> classes={classes!("navbar-item")} to={route}>
                 { facility_display }
             </Link<Route>>
-        </button>
+        </span>
     }
 }

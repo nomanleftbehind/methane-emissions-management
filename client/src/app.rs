@@ -1,11 +1,11 @@
 use crate::{
     components::{facility::Facility, nav::Nav, sidebar::Sidebar, user::Users},
-    pages::{ControllersPage, Home, Register}, utils::console_log,
+    pages::{ControllersPage, Home, Register},
 };
 use uuid::Uuid;
 // use uuid::Uuid;
 use yew::prelude::*;
-use yew_router::{BrowserRouter, Routable, Switch, prelude::{use_route, use_navigator}};
+use yew_router::{BrowserRouter, Routable, Switch};
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
@@ -23,14 +23,9 @@ pub enum Route {
 pub fn app() -> Html {
     let selected_facility = use_state(|| None);
 
-    let (facility_id, facility_display) = (*selected_facility).clone().map_or((Uuid::nil(), "".to_string()), |f: Facility| (f.id, f.name));
-
-
-
-
-
-
-    //  = sf.map_or((Uuid::nil(), "".to_string()), |f: Facility| (f.id, f.name));
+    let (facility_id, facility_display) = (*selected_facility)
+        .clone()
+        .map_or((Uuid::nil(), "".to_string()), |f: Facility| (f.id, f.name));
 
     // Create a callback to be passed down as a prop
     let on_facility_click = {
@@ -41,11 +36,11 @@ pub fn app() -> Html {
     html! {
         <BrowserRouter>
             <Nav {facility_id} />
-            <main>
+            // <div>{ facility_display }</div>
+            <main class="main">
                 <Switch<Route> render={switch} />
+                <Sidebar {on_facility_click} />
             </main>
-            <div>{ facility_display }</div>
-            <Sidebar {on_facility_click} />
         </BrowserRouter>
     }
 }

@@ -58,6 +58,6 @@ pub fn sidebar(Props { on_facility_click }: &Props) -> Html {
     };
 
     html! {
-        <nav class="facility-nav">{ inner }</nav>
+        <nav class="sidebar">{ inner }</nav>
     }
 }

@@ -1,7 +1,7 @@
-use crate::{components::logout::Logout, Route, utils::console_log};
+use crate::{components::logout::Logout, Route};
 use uuid::Uuid;
-use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
-use yew_router::{components::Link, prelude::use_route};
+use yew::{classes, function_component, html, Html, Properties};
+use yew_router::components::Link;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -10,13 +10,8 @@ pub struct Props {
 
 #[function_component(Nav)]
 pub fn nav(Props { facility_id }: &Props) -> Html {
-
-    
     let facility_id = facility_id.clone();
     // console_log!("Nav fac: {}", &facility_id);
-
-
-
 
     // let navbar_active = use_state_eq(|| false);
 
