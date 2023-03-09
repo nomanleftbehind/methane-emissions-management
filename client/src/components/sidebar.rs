@@ -7,11 +7,12 @@ use crate::{
         AllFacilities,
     },
 };
+use uuid::Uuid;
 use yew::{function_component, html, Callback, Html, Properties};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub on_facility_click: Callback<Facility>,
+    pub on_facility_click: Callback<Uuid>,
 }
 
 #[function_component(Sidebar)]
@@ -34,7 +35,7 @@ pub fn sidebar(Props { on_facility_click }: &Props) -> Html {
                     },
                 )| {
                     let facility = Facility {
-                        id: id.clone(),
+                        id,
                         idpa,
                         name,
                         r#type: type_,

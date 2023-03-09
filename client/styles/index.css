@@ -15,11 +15,11 @@
     height: calc(100vh - 83px); /* This thing keep pagination control at the bottom of the page */
 }
 
-.main {
+/* .main {
     display: grid;
     width: fit-content;
     column-gap: 4px;
-}
+} */
 
 .data-window {
     border: 1px solid black;
@@ -43,3 +43,9 @@
     left: 0;
     top: 0
   }
+
+.emitters {
+    display: grid;
+    width: fit-content;
+    column-gap: 4px;
+}

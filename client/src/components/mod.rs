@@ -3,3 +3,4 @@ pub mod logout;
 pub mod nav;
 pub mod user;
 pub mod sidebar;
+pub mod controllers;

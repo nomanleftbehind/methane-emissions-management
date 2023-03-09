@@ -1,25 +1,32 @@
-use yew::{function_component, html, Html};
+use crate::{
+    components::{controllers::ControllersComp, sidebar::Sidebar},
+    utils::console_log,
+};
+use std::rc::Rc;
+use uuid::Uuid;
+use yew::{function_component, html, use_effect_with_deps, use_state, Callback, Html};
 
 #[function_component(Home)]
 pub fn home() -> Html {
+    let selected_facility_id = use_state(|| Uuid::nil());
+
+    let facility_id = Rc::new(*selected_facility_id);
+
+    use_effect_with_deps(
+        move |u| {
+            console_log!("prop id changed: {:#?}", u);
+        },
+        facility_id.clone(),
+    );
+
+    // Create a callback to be passed down as a prop
+    let on_facility_click =
+        Callback::from(move |facility_id: Uuid| selected_facility_id.set(facility_id));
+
     html! {
-        <div class="tile is-ancestor is-vertical">
-            <div class="tile is-child hero">
-                <div class="hero-body container pb-0">
-                    <h1 class="title is-1">{ "Welcome..." }</h1>
-                    <h2 class="subtitle">{ "...to the best yew content" }</h2>
-                </div>
-            </div>
-
-            <div class="tile is-child">
-                <figure class="image is-3by1">
-                    <img alt="A random image for the input term 'yew'." src="https://source.unsplash.com/random/1200x400/?yew" />
-                </figure>
-            </div>
-
-            // <div class="tile is-parent container">
-            //     <InfoTiles />
-            // </div>
+        <div class="emitters">
+            <Sidebar {on_facility_click} />
+            <ControllersComp facility_id={facility_id.clone()} />
         </div>
     }
 }

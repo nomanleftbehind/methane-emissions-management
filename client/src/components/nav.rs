@@ -1,16 +1,9 @@
 use crate::{components::logout::Logout, Route};
-use uuid::Uuid;
-use yew::{classes, function_component, html, Html, Properties};
+use yew::{classes, function_component, html, Html};
 use yew_router::components::Link;
 
-#[derive(Properties, PartialEq)]
-pub struct Props {
-    pub facility_id: Uuid,
-}
-
 #[function_component(Nav)]
-pub fn nav(Props { facility_id }: &Props) -> Html {
-    let facility_id = facility_id.clone();
+pub fn nav() -> Html {
     // console_log!("Nav fac: {}", &facility_id);
 
     // let navbar_active = use_state_eq(|| false);
@@ -44,9 +37,9 @@ pub fn nav(Props { facility_id }: &Props) -> Html {
                     <Link<Route> classes={classes!("navbar-item")} to={Route::Home}>
                         { "Home" }
                     </Link<Route>>
-                    <Link<Route> classes={classes!("navbar-item")} to={Route::Controllers {facility_id}}>
-                        { "Controllers" }
-                    </Link<Route>>
+                    // <Link<Route> classes={classes!("navbar-item")} to={Route::Controllers {facility_id}}>
+                    //     { "Controllers" }
+                    // </Link<Route>>
                     <Link<Route> classes={classes!("navbar-item")} to={Route::Users}>
                         { "Users" }
                     </Link<Route>>
