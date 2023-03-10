@@ -1,10 +1,13 @@
 use crate::{
-    components::{controllers::ControllersComp, sidebar::Sidebar},
+    components::{
+        emitters_window::{compressors::CompressorsComp, controllers::ControllersComp},
+        sidebar::Sidebar,
+    },
     utils::console_log,
 };
 use std::rc::Rc;
 use uuid::Uuid;
-use yew::{function_component, html, use_effect_with_deps, use_state, Callback, Html};
+use yew::{classes, function_component, html, use_effect_with_deps, use_state, Callback, Html};
 
 #[function_component(Home)]
 pub fn home() -> Html {
@@ -24,9 +27,10 @@ pub fn home() -> Html {
         Callback::from(move |facility_id: Uuid| selected_facility_id.set(facility_id));
 
     html! {
-        <div class="emitters">
+        <div class={classes!("data-window")}>
             <Sidebar {on_facility_click} />
-            <ControllersComp facility_id={facility_id.clone()} />
+            // <ControllersComp facility_id={facility_id.clone()} />
+            <CompressorsComp facility_id={facility_id.clone()} />
         </div>
     }
 }

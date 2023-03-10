@@ -1433,6 +1433,7 @@ checksum = "3f107b87b6afc2a64fd13cac55fe06d6c8859f12d4b14cbcdd2c67d0976781be"
 name = "emissions_app_client"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "common",
  "gloo-net",
  "graphql_client",
@@ -1447,7 +1448,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "emissionsapp"
+name = "emissions_app_server"
 version = "1.0.0"
 dependencies = [
  "actix",

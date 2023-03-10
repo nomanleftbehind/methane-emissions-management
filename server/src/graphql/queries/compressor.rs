@@ -2,7 +2,7 @@ use async_graphql::{Context, Error, Object};
 
 use crate::graphql::{
     context::ContextExt,
-    models::{Compressor, CompressorsBy},
+    models::{Compressor, CompressorsByFacilityId},
     sql::query_compressors,
 };
 
@@ -14,7 +14,7 @@ impl CompressorQuery {
     async fn compressors_by(
         &self,
         ctx: &Context<'_>,
-        by: CompressorsBy,
+        by: CompressorsByFacilityId,
     ) -> Result<Vec<Compressor>, Error> {
         let pool = ctx.db_pool();
         let compressors = query_compressors(pool, by).await.map_err(Error::from);

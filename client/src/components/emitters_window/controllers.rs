@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::{
     hooks::{use_query_with_deps, QueryResponse},
     models::queries::controller::{
@@ -8,9 +6,12 @@ use crate::{
     },
     utils::{console_log, gen_style::gen_grid_style},
 };
+use std::rc::Rc;
 use uuid::Uuid;
 use yew::{classes, function_component, html, Html, Properties};
 
+/// In an effort to avoid cloning large amounts of data to create props when re-rendering,
+/// a smart pointer is passed in props to only clone a reference to the data instead of the data itself.
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct Props {
     pub facility_id: Rc<Uuid>,
@@ -44,6 +45,7 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
                         <div style={gen_grid_style(3, row_num + 2)}>{ c.serial_number }</div>
                         <div style={gen_grid_style(4, row_num + 2)}>{ m }</div>
                         <div style={gen_grid_style(5, row_num + 2)}>{ a }</div>
+                        <div style={gen_grid_style(6, row_num + 2)}>{ c.fdc_rec_id }</div>
                     </>
                 }
             });
@@ -59,12 +61,13 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
     };
 
     html! {
-        <div class="data-window">
+        <div class={classes!("emitters")}>
             <div class={classes!("sticky")} style={gen_grid_style(1, 1)}>{ "ID" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Model" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Serial Number" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Manufacturer" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Application" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "FDC ID" }</div>
             { r }
         </div>
     }

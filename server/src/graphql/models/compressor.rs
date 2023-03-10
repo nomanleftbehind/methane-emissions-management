@@ -14,7 +14,7 @@ use crate::graphql::{
     },
 };
 use async_graphql::{
-    dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,
+    dataloader::DataLoader, ComplexObject, Context, Error, InputObject, SimpleObject,
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
@@ -127,9 +127,7 @@ pub struct CompressorMap {
     pub fdc_rec_id: String,
 }
 
-#[derive(Debug, OneofObject)]
-pub enum CompressorsBy {
-    FacilityId(Uuid),
-    CreatedById(Uuid),
-    UpdatedById(Uuid),
+#[derive(Debug, InputObject)]
+pub struct CompressorsByFacilityId {
+    pub facility_id: Uuid,
 }

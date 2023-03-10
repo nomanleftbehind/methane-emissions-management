@@ -36,7 +36,7 @@ pub fn facility_comp(
     let style = format!("grid-column: 1; grid-row: {};", row_num + 1);
     html! {
         <button {style} {onclick}>
-                { &facility.name }
+            { &facility.name }
         </button>
     }
 }

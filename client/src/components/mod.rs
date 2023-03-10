@@ -1,6 +1,6 @@
+pub mod emitters_window;
 pub mod facility;
 pub mod logout;
 pub mod nav;
-pub mod user;
 pub mod sidebar;
-pub mod controllers;
+pub mod user;

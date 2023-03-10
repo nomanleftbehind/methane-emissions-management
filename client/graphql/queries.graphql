@@ -28,5 +28,17 @@ query GetControllers($by: ControllersBy!) {
     manufacturer {
       manufacturer
     }
+    fdcRecId
+  }
+}
+
+query GetCompressors($by: CompressorsByFacilityId!) {
+  compressorsBy(by: $by) {
+    id
+    fdcRecId
+    name
+    serialNumber
+    installDate
+    removeDate
   }
 }

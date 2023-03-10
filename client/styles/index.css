@@ -21,7 +21,7 @@
     column-gap: 4px;
 } */
 
-.data-window {
+.emitters {
     border: 1px solid black;
     display: grid;
     grid-column: 2;
@@ -33,7 +33,7 @@
     border-radius: 6px;
 }
 
-.data-window div {
+.emitters div {
     padding: 2px;
 }
 
@@ -44,7 +44,7 @@
     top: 0
   }
 
-.emitters {
+.data-window {
     display: grid;
     width: fit-content;
     column-gap: 4px;

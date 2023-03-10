@@ -1,4 +1,4 @@
-use emissionsapp::{configuration::get_configuration, startup::Application};
+use emissions_app_server::{configuration::get_configuration, startup::Application};
 use std::fmt::{Debug, Display};
 use tokio::task::JoinError;
 

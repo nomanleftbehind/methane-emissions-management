@@ -1,13 +1,13 @@
 [package]
 edition = "2021"
-name = "emissionsapp"
+name = "emissions_app_server"
 version = "1.0.0"
 
 [lib]
 path = "src/lib.rs"
 
 [[bin]]
-name = "emissionsapp"
+name = "emissions_app_server"
 path = "src/main.rs"
 
 [dependencies]

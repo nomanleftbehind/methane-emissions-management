@@ -21,3 +21,4 @@ yew-hooks = "0.2"
 yew-router = "0.17.0"
 common = { path = "../common", features = ["client"] }
 uuid = { version = "1", features = ["serde"] }
+chrono = { version = "0.4", features = ["wasmbind", "serde"] }
