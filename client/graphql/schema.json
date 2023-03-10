@@ -2890,7 +2890,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "ControllersBy",
+          "name": "ControllersByFacilityId",
           "possibleTypes": null
         },
         {
@@ -3927,7 +3927,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ControllersBy",
+                      "name": "ControllersByFacilityId",
                       "ofType": null
                     }
                   }

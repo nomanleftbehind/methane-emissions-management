@@ -1,9 +1,9 @@
-use crate::graphql::models::{Controller, ControllersBy};
+use crate::graphql::models::{Controller, ControllersByFacilityId};
 use sqlx::{query_as, Error, PgExecutor};
 
 pub async fn query_controllers<'e, E: PgExecutor<'e>>(
     executor: E,
-    ControllersBy { facility_id }: ControllersBy,
+    ControllersByFacilityId { facility_id }: ControllersByFacilityId,
 ) -> Result<Vec<Controller>, Error> {
     query_as!(
         Controller,

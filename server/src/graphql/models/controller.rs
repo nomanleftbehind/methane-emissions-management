@@ -133,6 +133,6 @@ impl Controller {
 }
 
 #[derive(Debug, InputObject)]
-pub struct ControllersBy {
+pub struct ControllersByFacilityId {
     pub facility_id: Uuid,
 }

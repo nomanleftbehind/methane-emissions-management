@@ -1,7 +1,7 @@
 use crate::{
     hooks::{use_query_with_deps, QueryResponse},
     models::queries::controller::{
-        get_controllers::{ControllersBy, ResponseData, Variables},
+        get_controllers::{ControllersByFacilityId, ResponseData, Variables},
         GetControllers,
     },
     utils::gen_style::gen_grid_style,
@@ -21,7 +21,7 @@ pub struct Props {
 pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
     let get_controllers = {
         let variables = Variables {
-            by: ControllersBy {
+            by: ControllersByFacilityId {
                 facility_id: **facility_id,
             },
         };

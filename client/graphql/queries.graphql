@@ -17,7 +17,7 @@ query AllFacilities {
   }
 }
 
-query GetControllers($by: ControllersBy!) {
+query GetControllers($by: ControllersByFacilityId!) {
   controllersBy(by: $by) {
     id
     model

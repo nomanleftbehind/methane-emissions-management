@@ -2,7 +2,7 @@ use async_graphql::{Context, Error, Object};
 
 use crate::graphql::{
     context::ContextExt,
-    models::{Controller, ControllerApplication, ControllersBy},
+    models::{Controller, ControllerApplication, ControllersByFacilityId},
     sql::{query_all_controller_applications, query_controllers, query_user_controllers},
 };
 
@@ -32,10 +32,9 @@ impl ControllerQuery {
     async fn controllers_by(
         &self,
         ctx: &Context<'_>,
-        by: ControllersBy,
+        by: ControllersByFacilityId,
     ) -> Result<Vec<Controller>, Error> {
         let pool = ctx.db_pool();
-        println!("by: {:#?}", &by);
         let controllers = query_controllers(pool, by).await.map_err(Error::from);
 
         controllers
