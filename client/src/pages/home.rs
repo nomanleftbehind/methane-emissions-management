@@ -1,8 +1,5 @@
 use crate::{
-    components::{
-        emitters_window::{compressors::CompressorsComp, controllers::ControllersComp},
-        sidebar::Sidebar,
-    },
+    components::{emitters_window::emitters_window::EmittersWindow, sidebar::Sidebar},
     utils::console_log,
 };
 use std::rc::Rc;
@@ -28,9 +25,8 @@ pub fn home() -> Html {
 
     html! {
         <div class={classes!("data-window")}>
-            <Sidebar {on_facility_click} />
-            // <ControllersComp facility_id={facility_id.clone()} />
-            <CompressorsComp facility_id={facility_id.clone()} />
+            <Sidebar {on_facility_click} facility_id={facility_id.clone()} />
+            <EmittersWindow facility_id={facility_id.clone()} />
         </div>
     }
 }

@@ -21,18 +21,6 @@
     column-gap: 4px;
 } */
 
-.emitters {
-    border: 1px solid black;
-    display: grid;
-    grid-column: 2;
-    grid-row: 1;
-    grid-template-rows: 40px min-content;
-    grid-auto-rows: min-content;
-    height: calc(100vh - 83px); /* This thing keep pagination control at the bottom of the page */
-    overflow: auto;
-    border-radius: 6px;
-}
-
 .emitters div {
     padding: 2px;
 }
@@ -48,4 +36,8 @@
     display: grid;
     width: fit-content;
     column-gap: 4px;
+}
+
+.active {
+    font-weight: bold;
 }

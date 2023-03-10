@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use crate::components::facility::{Facility, FacilityComp};
 use crate::hooks::use_query;
 use crate::{
@@ -8,15 +10,21 @@ use crate::{
     },
 };
 use uuid::Uuid;
-use yew::{function_component, html, Callback, Html, Properties};
+use yew::{classes, function_component, html, Callback, Html, Properties};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub on_facility_click: Callback<Uuid>,
+    pub facility_id: Rc<Uuid>,
 }
 
 #[function_component(Sidebar)]
-pub fn sidebar(Props { on_facility_click }: &Props) -> Html {
+pub fn sidebar(
+    Props {
+        on_facility_click,
+        facility_id,
+    }: &Props,
+) -> Html {
     let get_facilities = use_query::<AllFacilities>(Variables);
 
     let inner = match get_facilities {
@@ -46,6 +54,7 @@ pub fn sidebar(Props { on_facility_click }: &Props) -> Html {
                             {facility}
                             {row_num}
                             {on_facility_click}
+                            {facility_id}
                         />
                     }
                 },
@@ -59,6 +68,6 @@ pub fn sidebar(Props { on_facility_click }: &Props) -> Html {
     };
 
     html! {
-        <nav class="sidebar">{ inner }</nav>
+        <nav class={classes!("sidebar")} role="navigation">{ inner }</nav>
     }
 }

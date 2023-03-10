@@ -4,7 +4,7 @@ use crate::{
         get_controllers::{ControllersBy, ResponseData, Variables},
         GetControllers,
     },
-    utils::{console_log, gen_style::gen_grid_style},
+    utils::gen_style::gen_grid_style,
 };
 use std::rc::Rc;
 use uuid::Uuid;
@@ -19,8 +19,6 @@ pub struct Props {
 
 #[function_component(ControllersComp)]
 pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
-    console_log!("Ctr fac: {}", facility_id);
-
     let get_controllers = {
         let variables = Variables {
             by: ControllersBy {
@@ -40,12 +38,11 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
                 let a = c.application.map_or("".to_string(), |v| v.application);
                 html! {
                     <>
-                        <div style={gen_grid_style(1, row_num + 2)}>{ c.id }</div>
-                        <div style={gen_grid_style(2, row_num + 2)}>{ c.model }</div>
-                        <div style={gen_grid_style(3, row_num + 2)}>{ c.serial_number }</div>
-                        <div style={gen_grid_style(4, row_num + 2)}>{ m }</div>
-                        <div style={gen_grid_style(5, row_num + 2)}>{ a }</div>
-                        <div style={gen_grid_style(6, row_num + 2)}>{ c.fdc_rec_id }</div>
+                        <div style={gen_grid_style(1, row_num + 2)}>{ c.model }</div>
+                        <div style={gen_grid_style(2, row_num + 2)}>{ c.serial_number }</div>
+                        <div style={gen_grid_style(3, row_num + 2)}>{ m }</div>
+                        <div style={gen_grid_style(4, row_num + 2)}>{ a }</div>
+                        <div style={gen_grid_style(5, row_num + 2)}>{ c.fdc_rec_id }</div>
                     </>
                 }
             });
@@ -62,12 +59,11 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
 
     html! {
         <div class={classes!("emitters")}>
-            <div class={classes!("sticky")} style={gen_grid_style(1, 1)}>{ "ID" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Model" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Serial Number" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Manufacturer" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Application" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "FDC ID" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(1, 1)}>{ "Model" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Serial Number" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Manufacturer" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Application" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "FDC ID" }</div>
             { r }
         </div>
     }
