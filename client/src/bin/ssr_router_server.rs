@@ -38,9 +38,11 @@ async fn render(
 ) -> impl IntoResponse {
     let url = url.uri().to_string();
 
+    println!("Queries: {:#?}", queries);
+
     let renderer = yew::ServerRenderer::<ServerApp>::with_props(move || ServerAppProps {
         url: url.into(),
-        queries,
+        // queries,
     });
 
     StreamBody::new(
@@ -88,6 +90,7 @@ async fn main() {
     let (index_html_before, index_html_after) = index_html_s.split_once("<body>").unwrap();
     let mut index_html_before = index_html_before.to_owned();
     index_html_before.push_str("<body>");
+    println!("index html after: {}", index_html_after);
 
     let index_html_after = index_html_after.to_owned();
 

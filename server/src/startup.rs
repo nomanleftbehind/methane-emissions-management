@@ -1,3 +1,4 @@
+use crate::ssr_router::render;
 use crate::MssqlFdcClient;
 use crate::{
     configuration::{DatabaseSettings, DefaultGasParams, FdcDatabaseSettings, Settings},
@@ -20,9 +21,11 @@ use actix_web::{
 use actix_web_flash_messages::{storage::CookieMessageStore, FlashMessagesFramework};
 use async_graphql::{EmptySubscription, Schema};
 use async_redis_session::RedisSessionStore;
+use clap::Parser;
 use secrecy::{ExposeSecret, Secret};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::net::TcpListener;
+use std::path::PathBuf;
 use std::sync::Arc;
 use tiberius::Client;
 use tokio::net::TcpStream;
@@ -96,6 +99,13 @@ pub struct HmacSecret(pub Secret<String>);
 #[derive(Clone)]
 pub struct SessionCookieName(pub Secret<String>);
 
+#[derive(Parser, Debug)]
+struct Opt {
+    /// the "dist" created by trunk directory to be served for hydration.
+    #[clap(short, long)]
+    dir: PathBuf,
+}
+
 pub async fn run(
     listener: TcpListener,
     db_pool: PgPool,
@@ -143,14 +153,20 @@ pub async fn run(
     log::info!("starting HTTP server on port 8080");
     log::info!("GraphiQL playground: http://localhost:8080/graphiql");
 
+    let opts = Opt::parse();
+    let dir_data = Data::new(opts.dir.clone());
+
     let server = HttpServer::new(move || {
         let cors = Cors::permissive();
 
         App::new()
             .wrap(message_framework.clone())
             .app_data(web::Data::new(schema.clone()))
+            .app_data(dir_data.clone())
             .service(graphql)
             .service(graphql_playground)
+            .service(actix_files::Files::new("/dist", opts.dir.clone()))
+            .service(render)
             .wrap(cors)
             .wrap(Logger::default())
     })

@@ -81,3 +81,39 @@ impl Display for Role {
         }
     }
 }
+
+// #[function_component(Comp)]
+// fn comp(_props: &ChildrenProps) -> Html {
+//     Html::default()
+// }
+// #[function_component(Provider)]
+// fn provider(props: &ChildrenProps) -> Html {
+//     let children = props.children.clone();
+//     html! { <>{children}</> }
+// }
+// type Provider1 = Provider;
+// type Provider2 = Provider;
+
+// #[derive(Properties, PartialEq, Eq, Debug)]
+// pub struct ServerAppProps {
+//     pub url: AttrValue,
+// }
+
+// #[function_component(ServerApp)]
+// pub fn server_app(props: &ServerAppProps) -> Html {
+//     let history = AnyHistory::from(MemoryHistory::new());
+//     history.push(&*props.url);
+
+//     html! {
+//         <Router history={history}>
+//             <PhantomComponent<Provider1> />
+//             <main class="main">
+//                 <PhantomComponent<Provider2> />
+//             </main>
+//         </Router>
+//     }
+// }
+
+// use crate::{components::logout::Logout, Route};
+// use yew::{classes, function_component, html, Html};
+// use yew_router::components::Link;

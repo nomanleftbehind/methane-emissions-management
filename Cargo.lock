@@ -69,6 +69,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "actix-files"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d832782fac6ca7369a70c9ee9a20554623c5e51c76e190ad151780ebea1cf689"
+dependencies = [
+ "actix-http",
+ "actix-service",
+ "actix-utils",
+ "actix-web",
+ "askama_escape",
+ "bitflags",
+ "bytes",
+ "derive_more",
+ "futures-core",
+ "http-range",
+ "log",
+ "mime",
+ "mime_guess",
+ "percent-encoding",
+ "pin-project-lite",
+]
+
+[[package]]
 name = "actix-http"
 version = "3.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -480,6 +503,12 @@ name = "ascii_utils"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71938f30533e4d95a6d17aa530939da3842c2ab6f4f84b9dae68447e4129f74a"
+
+[[package]]
+name = "askama_escape"
+version = "0.10.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "619743e34b5ba4e9703bba34deac3427c72507c7159f5fd030aea8cac0cfe341"
 
 [[package]]
 name = "async-channel"
@@ -1066,13 +1095,28 @@ checksum = "71655c45cb9845d3270c9d6df84ebe72b4dad3c2ba3f7023ad47c144e4e473a5"
 dependencies = [
  "atty",
  "bitflags",
- "clap_derive",
- "clap_lex",
+ "clap_derive 3.2.18",
+ "clap_lex 0.2.4",
  "indexmap",
  "once_cell",
  "strsim",
  "termcolor",
  "textwrap",
+]
+
+[[package]]
+name = "clap"
+version = "4.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3d7ae14b20b94cb02149ed21a86c423859cbe18dc7ed69845cace50e52b40a5"
+dependencies = [
+ "bitflags",
+ "clap_derive 4.1.8",
+ "clap_lex 0.3.2",
+ "is-terminal",
+ "once_cell",
+ "strsim",
+ "termcolor",
 ]
 
 [[package]]
@@ -1089,10 +1133,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_derive"
+version = "4.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "44bec8e5c9d09e439c4335b1af0abaab56dcf3b94999a936e1bb47b9134288f0"
+dependencies = [
+ "heck",
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "clap_lex"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2850f2f5a82cbf437dd5af4d49848fbdfc27c157c3d010345776f952765261c5"
+dependencies = [
+ "os_str_bytes",
+]
+
+[[package]]
+name = "clap_lex"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "350b9cf31731f9957399229e9b2adc51eeabdfbe9d71d9a0552275fd12710d09"
 dependencies = [
  "os_str_bytes",
 ]
@@ -1141,6 +1207,8 @@ dependencies = [
  "async-graphql",
  "serde",
  "sqlx",
+ "yew",
+ "yew-router",
 ]
 
 [[package]]
@@ -1532,7 +1600,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "chrono",
- "clap",
+ "clap 3.2.23",
  "common",
  "env_logger 0.9.3",
  "futures",
@@ -1560,6 +1628,7 @@ version = "1.0.0"
 dependencies = [
  "actix",
  "actix-cors",
+ "actix-files",
  "actix-web",
  "actix-web-flash-messages",
  "actix-web-lab",
@@ -1573,9 +1642,12 @@ dependencies = [
  "async-trait",
  "base64 0.21.0",
  "chrono",
+ "clap 4.1.8",
  "common",
  "config",
+ "emissions_app_client",
  "env_logger 0.10.0",
+ "futures",
  "futures-util",
  "hmac 0.12.1",
  "http",
@@ -1594,6 +1666,7 @@ dependencies = [
  "tokio-util 0.7.2",
  "tracing",
  "uuid",
+ "yew",
 ]
 
 [[package]]
@@ -2346,6 +2419,12 @@ dependencies = [
  "http",
  "pin-project-lite",
 ]
+
+[[package]]
+name = "http-range"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "21dec9db110f5f872ed9699c3ecf50cf16f423502706ba5c72462e28d3157573"
 
 [[package]]
 name = "http-range-header"
