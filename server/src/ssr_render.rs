@@ -8,6 +8,12 @@ use std::{convert::Infallible, path::PathBuf};
 
 /// This function reads
 pub async fn ssr_render(req: HttpRequest, static_dir: Data<PathBuf>) -> impl Responder {
+    let c = req.cookie("auth");
+
+    if let Some(c) = c {
+        println!("Cookie {:#?}", c);
+    }
+
     let index_html_string = tokio::fs::read_to_string(static_dir.join("index.html"))
         .await
         .expect("failed to read index.html");

@@ -1,4 +1,4 @@
-use crate::ssr_router::ssr_render;
+use crate::ssr_render::ssr_render;
 use crate::{
     configuration::{DatabaseSettings, DefaultGasParams, FdcDatabaseSettings, Settings},
     graphql::{

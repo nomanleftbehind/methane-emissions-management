@@ -131,6 +131,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "actix-identity"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1224c9f9593dc27c9077b233ce04adedc1d7febcfc35ee9f53ea3c24df180bec"
+dependencies = [
+ "actix-service",
+ "actix-session",
+ "actix-utils",
+ "actix-web",
+ "anyhow",
+ "futures-core",
+ "serde",
+ "tracing",
+]
+
+[[package]]
 name = "actix-macros"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -191,6 +207,25 @@ dependencies = [
  "futures-core",
  "paste",
  "pin-project-lite",
+]
+
+[[package]]
+name = "actix-session"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "43da8b818ae1f11049a4d218975345fe8e56ce5a5f92c11f972abcff5ff80e87"
+dependencies = [
+ "actix-service",
+ "actix-utils",
+ "actix-web",
+ "anyhow",
+ "async-trait",
+ "derive_more",
+ "rand 0.8.5",
+ "redis 0.21.7",
+ "serde",
+ "serde_json",
+ "tracing",
 ]
 
 [[package]]
@@ -696,7 +731,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba82ce101e6cde598074604ef4a882bdd6b3a283baff446ae73ae2727c242452"
 dependencies = [
  "async-session",
- "redis",
+ "redis 0.20.2",
 ]
 
 [[package]]
@@ -1524,6 +1559,8 @@ dependencies = [
  "actix",
  "actix-cors",
  "actix-files",
+ "actix-identity",
+ "actix-session",
  "actix-web",
  "actix-web-flash-messages",
  "actix-web-lab",
@@ -3172,6 +3209,27 @@ dependencies = [
  "sha1 0.6.1",
  "tokio",
  "tokio-util 0.6.10",
+ "url",
+]
+
+[[package]]
+name = "redis"
+version = "0.21.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "152f3863635cbb76b73bc247845781098302c6c9ad2060e1a9a7de56840346b6"
+dependencies = [
+ "arc-swap",
+ "async-trait",
+ "bytes",
+ "combine 4.6.4",
+ "futures",
+ "futures-util",
+ "itoa 1.0.2",
+ "percent-encoding",
+ "pin-project-lite",
+ "ryu",
+ "tokio",
+ "tokio-util 0.7.2",
  "url",
 ]
 
