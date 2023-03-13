@@ -57,7 +57,9 @@ pub struct MssqlCompressorBlowdownRows {
     pub mssql_compressor_blowdown_rows: Vec<tiberius::Row>,
 }
 
-impl From<MssqlCompressorBlowdownRows> for Vec<CompressorBlowdownInterim> {
+impl From<MssqlCompressorBlowdownRows>
+    for Result<Vec<CompressorBlowdownInterim>, tiberius::error::Error>
+{
     fn from(
         MssqlCompressorBlowdownRows {
             mssql_compressor_blowdown_rows,
@@ -69,21 +71,22 @@ impl From<MssqlCompressorBlowdownRows> for Vec<CompressorBlowdownInterim> {
             // Match arms to return error if any of the columns were not found or wrong types were detected
             // and to filter out rows with null values and rows without matching MSSQL and Postgres ID crossreference
             match (
-                row.get::<&str, _>("fdc_rec_id"),
-                row.get("date"),
-                row.get("gas_volume"),
+                row.try_get::<&str, _>("fdc_rec_id"),
+                row.try_get("date"),
+                row.try_get("gas_volume"),
             ) {
-                (Some(fdc_rec_id), Some(date), Some(gas_volume)) => {
+                (Ok(Some(fdc_rec_id)), Ok(Some(date)), Ok(Some(gas_volume))) => {
                     v.push(CompressorBlowdownInterim {
-                        fdc_rec_id: fdc_rec_id.into(),
+                        fdc_rec_id: fdc_rec_id.to_string(),
                         date,
                         gas_volume,
                     });
                 }
+                (Err(e), ..) | (_, Err(e), _) | (.., Err(e)) => return Err(e),
                 _ => (),
             }
         }
-        v
+        Ok(v)
     }
 }
 

@@ -85,8 +85,10 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
         mssql_compressor_blowdown_rows,
     };
 
-    let compressor_blowdown_interims: Vec<CompressorBlowdownInterim> =
-        mssql_compressor_blowdown_rows_struct.into();
+    let compressor_blowdown_interims_result: Result<
+        Vec<CompressorBlowdownInterim>,
+        tiberius::error::Error,
+    > = mssql_compressor_blowdown_rows_struct.into();
 
     let CompressorBlowdownInterimNestedRows {
         id,
@@ -99,7 +101,7 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
         updated_at,
     } = CompressorBlowdownInterimUnnestedRows {
         user_id,
-        compressor_blowdown_interims,
+        compressor_blowdown_interims: compressor_blowdown_interims_result?,
     }
     .into();
 
