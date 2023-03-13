@@ -1,6 +1,5 @@
-use crate::ssr_router::render;
-use crate::MssqlFdcClient;
-use crate::{
+use crate::ssr_router::ssr_render;
+use crate::{MssqlFdcClient,
     configuration::{DatabaseSettings, DefaultGasParams, FdcDatabaseSettings, Settings},
     graphql::{
         dataloaders::{get_loaders, LoaderRegistry},
@@ -165,8 +164,11 @@ pub async fn run(
             .app_data(dir_data.clone())
             .service(graphql)
             .service(graphql_playground)
-            .service(actix_files::Files::new("/dist", opts.dir.clone()))
-            .service(render)
+            .app_data(dir_data.clone())
+            .service(web::resource("/").route(web::get().to(ssr_render)))
+            .service(web::resource("/users").route(web::get().to(ssr_render)))
+            .service(web::resource("/register").route(web::get().to(ssr_render)))
+            .service(actix_files::Files::new("/", opts.dir.clone()))
             .wrap(cors)
             .wrap(Logger::default())
     })

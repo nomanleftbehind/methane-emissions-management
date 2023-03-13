@@ -1,5 +1,4 @@
-use crate::authentication::cookie::SessionCookie;
-use crate::graphql::Schema;
+use crate::{authentication::cookie::SessionCookie, graphql::Schema};
 use actix_web::{get, route, web::Data, Responder};
 use actix_web_lab::respond::Html;
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};

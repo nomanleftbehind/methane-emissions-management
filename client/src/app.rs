@@ -53,14 +53,12 @@ pub fn switch(route: Route) -> Html {
 #[derive(Properties, PartialEq, Eq, Debug)]
 pub struct ServerAppProps {
     pub url: AttrValue,
-    // pub queries: HashMap<String, String>,
 }
 
 #[function_component(ServerApp)]
 pub fn server_app(props: &ServerAppProps) -> Html {
     let history = AnyHistory::from(MemoryHistory::new());
-    history.push(&*props.url /*, &props.queries*/);
-    // .unwrap();
+    history.push(&*props.url);
 
     html! {
         <Router history={history}>
