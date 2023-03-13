@@ -121,12 +121,6 @@ impl Compressor {
     }
 }
 
-#[derive(SimpleObject, Clone, FromRow, Debug)]
-pub struct CompressorMap {
-    pub id: Uuid,
-    pub fdc_rec_id: String,
-}
-
 #[derive(Debug, InputObject)]
 pub struct CompressorsByFacilityId {
     pub facility_id: Uuid,

@@ -1,11 +1,10 @@
 use crate::{
     graphql::{
         models::{
-            CompressorBlowdown, CompressorBlowdownDbCrossrefRows, CompressorBlowdownInterim,
-            CompressorBlowdownInterimNestedRows, CompressorBlowdownInterimUnnestedRows,
+            CompressorBlowdown, CompressorBlowdownInterim, CompressorBlowdownInterimNestedRows,
+            CompressorBlowdownInterimUnnestedRows, MssqlCompressorBlowdownRows,
         },
         queries::FromToMonthInput,
-        sql::get_compressor_db_crossref,
     },
     MssqlFdcClient,
 };
@@ -27,8 +26,6 @@ pub async fn select_compressor_blowdowns(
 
 /// This function retrieves compressor blowdown volumes data from third party MSSQL database,
 ///
-/// swaps MSSQL compressor IDs with Postgres compressor IDs,
-///
 /// transforms data into insert friendly form, and inserts it into Postgres database.
 pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
     pool: &PgPool,
@@ -39,8 +36,6 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
         to_month,
     }: FromToMonthInput,
 ) -> Result<u64, anyhow::Error> {
-    let compressor_db_crossref = get_compressor_db_crossref(pool).await?;
-
     let stream = mssql_fdc_client.query(
         r#"
         DECLARE
@@ -71,7 +66,7 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
 
                 c.IDREC,
                 esde.DTTM,
-                esde.RATE / COUNT(esde.IDREC) OVER (PARTITION BY esd.IDRECPARENT/*Partition by Unit (IDRECPARENT) because sometimes same compressor exists in multiple Units*/, esde.IDREC) as RATE
+                esde.RATE / COUNT(esde.IDREC) OVER (PARTITION BY esd.IDRECPARENT/*Partition by Unit (IDRECPARENT) because sometimes same compressor exist in multiple Units*/, esde.IDREC) as RATE
 
                 FROM pvCalcUnitsMetric.PVUNITMETERRATE um
                 INNER JOIN pvCalcUnitsMetric.PVUNITEQUIP c ON c.SERIALNUM = um.SERIALNUM
@@ -84,22 +79,18 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
         cb.DTTM"#,
         &[&from_month, &to_month]).await?;
 
-    let mssql_server_rows = stream.into_first_result().await?;
+    let mssql_compressor_blowdown_rows = stream.into_first_result().await?;
 
-    let compressor_blowdown_db_crossref_rows = CompressorBlowdownDbCrossrefRows {
-        crossref: &compressor_db_crossref,
-        mssql_server_rows,
+    let mssql_compressor_blowdown_rows_struct = MssqlCompressorBlowdownRows {
+        mssql_compressor_blowdown_rows,
     };
 
-    let compressor_blowdown_interims_result: Result<
-        Vec<CompressorBlowdownInterim>,
-        tiberius::error::Error,
-    > = compressor_blowdown_db_crossref_rows.into();
-    let compressor_blowdown_interims = compressor_blowdown_interims_result?;
+    let compressor_blowdown_interims: Vec<CompressorBlowdownInterim> =
+        mssql_compressor_blowdown_rows_struct.into();
 
     let CompressorBlowdownInterimNestedRows {
         id,
-        compressor_id,
+        fdc_rec_id,
         date,
         gas_volume,
         created_by_id,
@@ -115,7 +106,7 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
     let rows_inserted = query_file!(
         "src/graphql/sql/statements/compressor_blowdown_insert.sql",
         &id,
-        &compressor_id,
+        &fdc_rec_id,
         &date,
         &gas_volume,
         &created_by_id,

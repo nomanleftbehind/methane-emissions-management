@@ -7,7 +7,6 @@ use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, Simpl
 use chrono::{NaiveDate, NaiveDateTime};
 use itertools::MultiUnzip;
 use sqlx::FromRow;
-use std::collections::HashMap;
 use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
@@ -49,55 +48,42 @@ impl CompressorBlowdown {
 
 #[derive(Clone, Debug)]
 pub struct CompressorBlowdownInterim {
-    pub compressor_id: Uuid,
+    pub fdc_rec_id: String,
     pub date: NaiveDate,
     pub gas_volume: f64,
 }
 
-/// This data structure takes two fields:
-/// * `crossref` is reference to [`HashMap`](std::collections::HashMap) where keys are unique IDs of Compressors in third party FDC Microsoft SQL Server database, and values are corresponding unique IDs of compressors in this application's Postgres database.
-/// * `mssql_server_rows` is [`Vec`](alloc::vec) of [`tiberius::Row`](tiberius::Row)s
-///
-/// This struct implements [`From`](core::convert::From) trait that converts `Vec<tiberius::Row>` into `Vec<CompressorBlowdownInterim>` by mapping Postgres compressor IDs onto SQL Server compressor IDs using provided `crossref` `HashMap`.
-pub struct CompressorBlowdownDbCrossrefRows<'m> {
-    pub crossref: &'m HashMap<String, Uuid>,
-    pub mssql_server_rows: Vec<tiberius::Row>,
+pub struct MssqlCompressorBlowdownRows {
+    pub mssql_compressor_blowdown_rows: Vec<tiberius::Row>,
 }
 
-impl From<CompressorBlowdownDbCrossrefRows<'_>>
-    for Result<Vec<CompressorBlowdownInterim>, tiberius::error::Error>
-{
+impl From<MssqlCompressorBlowdownRows> for Vec<CompressorBlowdownInterim> {
     fn from(
-        CompressorBlowdownDbCrossrefRows {
-            crossref,
-            mssql_server_rows,
-        }: CompressorBlowdownDbCrossrefRows,
+        MssqlCompressorBlowdownRows {
+            mssql_compressor_blowdown_rows,
+        }: MssqlCompressorBlowdownRows,
     ) -> Self {
-        let mut v = Vec::with_capacity(mssql_server_rows.len());
+        let mut v = Vec::with_capacity(mssql_compressor_blowdown_rows.len());
 
-        for row in mssql_server_rows.into_iter() {
+        for row in mssql_compressor_blowdown_rows.into_iter() {
             // Match arms to return error if any of the columns were not found or wrong types were detected
             // and to filter out rows with null values and rows without matching MSSQL and Postgres ID crossreference
             match (
-                row.try_get::<&str, _>("fdc_rec_id"),
-                row.try_get("date"),
-                row.try_get("gas_volume"),
+                row.get::<&str, _>("fdc_rec_id"),
+                row.get("date"),
+                row.get("gas_volume"),
             ) {
-                (Ok(Some(fdc_rec_id)), Ok(Some(date)), Ok(Some(gas_volume))) => {
-                    // This if let block is where MSSQL and Postgres ID crossreference is checked
-                    if let Some(compressor_id) = crossref.get(fdc_rec_id).copied() {
-                        v.push(CompressorBlowdownInterim {
-                            compressor_id,
-                            date,
-                            gas_volume,
-                        })
-                    }
+                (Some(fdc_rec_id), Some(date), Some(gas_volume)) => {
+                    v.push(CompressorBlowdownInterim {
+                        fdc_rec_id: fdc_rec_id.into(),
+                        date,
+                        gas_volume,
+                    });
                 }
-                (Err(e), ..) | (_, Err(e), _) | (.., Err(e)) => return Err(e),
                 _ => (),
             }
         }
-        Ok(v)
+        v
     }
 }
 
@@ -110,7 +96,7 @@ pub struct CompressorBlowdownInterimUnnestedRows {
 #[derive(Debug)]
 pub struct CompressorBlowdownInterimNestedRows {
     pub id: Vec<Uuid>,
-    pub compressor_id: Vec<Uuid>,
+    pub fdc_rec_id: Vec<String>,
     pub date: Vec<NaiveDate>,
     pub gas_volume: Vec<f64>,
     pub created_by_id: Vec<Uuid>,
@@ -128,7 +114,7 @@ impl From<CompressorBlowdownInterimUnnestedRows> for CompressorBlowdownInterimNe
     ) -> Self {
         let (
             id,
-            compressor_id,
+            fdc_rec_id,
             date,
             gas_volume,
             created_by_id,
@@ -149,7 +135,7 @@ impl From<CompressorBlowdownInterimUnnestedRows> for CompressorBlowdownInterimNe
             .map(|cmvc| {
                 (
                     Uuid::new_v4(),
-                    cmvc.compressor_id,
+                    cmvc.fdc_rec_id,
                     cmvc.date,
                     cmvc.gas_volume,
                     user_id.clone(),
@@ -162,7 +148,7 @@ impl From<CompressorBlowdownInterimUnnestedRows> for CompressorBlowdownInterimNe
 
         CompressorBlowdownInterimNestedRows {
             id,
-            compressor_id,
+            fdc_rec_id,
             date,
             gas_volume,
             created_by_id,
