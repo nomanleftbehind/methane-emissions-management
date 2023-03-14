@@ -1,5 +1,5 @@
 use crate::{
-    components::{nav::Nav, user::Users},
+    components::{nav::Nav, user::Users, user_ctx::{UserProvider, Producer}},
     pages::{Home, Register},
 };
 use yew::prelude::*;
@@ -12,11 +12,13 @@ use yew_router::{
 pub fn app() -> Html {
     html! {
         <BrowserRouter>
-            <Nav />
-            // <div>{ "Hi" }</div>
-            <main class="main">
-                <Switch<Route> render={switch} />
-            </main>
+            <UserProvider>
+                <Nav />
+                <Producer />
+                <main class="main">
+                    <Switch<Route> render={switch} />
+                </main>
+            </UserProvider>
         </BrowserRouter>
     }
 }
@@ -61,15 +63,17 @@ pub fn server_app(props: &ServerAppProps) -> Html {
 
     println!("props: {:#?}", &props);
 
-    history.replace(&*props.url);
+    history.push(&*props.url);
 
     html! {
         <Router history={history}>
-            <Nav />
-
-            <main class="main">
-                <Switch<Route> render={switch} />
-            </main>
+            <UserProvider>
+                <Nav />
+                <Producer />
+                <main class="main">
+                    <Switch<Route> render={switch} />
+                </main>
+            </UserProvider>
         </Router>
     }
 }

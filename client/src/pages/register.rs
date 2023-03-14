@@ -1,13 +1,15 @@
 use crate::{
+    components::user_ctx::UserContext,
     hooks::use_query_async,
     models::mutations::user::{
         login::{LoginUserInput, Variables},
         Login as LoginUser,
-    },
+    }, utils::console_log,
 };
 use web_sys::HtmlInputElement;
 use yew::{
-    function_component, html, use_state, Callback, Html, InputEvent, SubmitEvent, TargetCast,
+    function_component, html, use_context, use_state, Callback, Html, InputEvent, SubmitEvent,
+    TargetCast,
 };
 use yew_hooks::use_async;
 
@@ -15,6 +17,8 @@ use yew_hooks::use_async;
 pub fn register() -> Html {
     let email = use_state(|| "dsucic@bonterraenergy.com".to_string());
     let password = use_state(|| "everythinghastostartsomewhere".to_string());
+
+    let user_ctx = use_context::<UserContext>().unwrap();
 
     let run_login = {
         let variables = Variables {
@@ -32,6 +36,12 @@ pub fn register() -> Html {
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
             run_async.run();
+            if let Some(query_response) = &run_async.data {
+                console_log!("Login {:#?}", &query_response.data);
+                if let Some(response) = &query_response.data {
+                    user_ctx.dispatch(Some(response.login.id));
+                };
+            }
         })
     };
 

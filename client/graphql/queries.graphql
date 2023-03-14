@@ -42,3 +42,11 @@ query GetCompressors($by: CompressorsByFacilityId!) {
     removeDate
   }
 }
+
+query Me {
+	me {
+    id
+    email
+    role
+  }
+}
