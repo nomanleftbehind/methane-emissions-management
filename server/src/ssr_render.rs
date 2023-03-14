@@ -3,44 +3,62 @@ use actix_web::{
     web::{Bytes, Data},
     HttpRequest, HttpResponse, Responder,
 };
-use async_redis_session::RedisSessionStore;
 use emissions_app_client::{ServerApp, ServerAppProps};
 use futures::stream::{self, StreamExt};
 use std::{convert::Infallible, path::PathBuf};
 
-/// This function reads
 pub async fn ssr_render(
     req: HttpRequest,
     static_dir: Data<PathBuf>,
-    auth_cookie: Option<SessionCookie>,
-    redis_store: Data<RedisSessionStore>,
+    session_cookie_option: Option<SessionCookie>,
+    session_manager: Data<SessionManager>,
 ) -> impl Responder {
-    let condition = {
-        let url = req.uri().to_string();
-        println!("url: {}", url);
-        if url == "/register" {
-            false
+    let _redirect_url = if let Some(session_cookie) = session_cookie_option {
+        if let Ok(_) = session_manager.user_id(&session_cookie).await {
+            req.uri().to_string()
         } else {
-            if let Some(cookie) = auth_cookie {
-                let session_manager = SessionManager::new(&redis_store);
-                let user_id_result = session_manager.user_id(&cookie).await;
-                if let Ok(user_id) = user_id_result {
-                    println!("user id: {}", user_id);
-                    false
-                } else {
-                    true
-                }
-            } else {
-                true
-            }
+            "/register".to_string()
         }
+    } else {
+        "/register".to_string()
     };
 
-    if condition {
-        return HttpResponse::Found()
-            .append_header(("Location", "/register"))
-            .finish();
-    }
+    // let red = session_cookie_option.map_or_else(
+    //     || "register".to_string(),
+    //     async |session_cookie| {
+    //         session_manager
+    //             .user_id(&session_cookie)
+    //             .await
+    //             .map_or_else(|| "/register".to_string(), |a| req.uri().to_string())
+    //     },
+    // );
+
+    // let condition = {
+    //     let url = req.uri().to_string();
+    //     println!("url: {}", url);
+    //     if url == "/register" {
+    //         false
+    //     } else {
+    //         if let Some(cookie) = auth_cookie {
+    //             let session_manager = SessionManager::new(&redis_store);
+    //             let user_id_result = session_manager.user_id(&cookie).await;
+    //             if let Ok(user_id) = user_id_result {
+    //                 println!("user id: {}", user_id);
+    //                 false
+    //             } else {
+    //                 true
+    //             }
+    //         } else {
+    //             true
+    //         }
+    //     }
+    // };
+
+    // if condition {
+    //     return HttpResponse::Found()
+    //         .append_header(("Location", "/register"))
+    //         .finish();
+    // }
 
     let index_html_string = tokio::fs::read_to_string(static_dir.join("index.html"))
         .await

@@ -58,7 +58,10 @@ pub struct ServerAppProps {
 #[function_component(ServerApp)]
 pub fn server_app(props: &ServerAppProps) -> Html {
     let history = AnyHistory::from(MemoryHistory::new());
-    history.push(&*props.url);
+
+    println!("props: {:#?}", &props);
+
+    history.replace(&*props.url);
 
     html! {
         <Router history={history}>

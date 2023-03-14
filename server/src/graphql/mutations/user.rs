@@ -1,5 +1,5 @@
 use crate::{
-    authentication::{register, validate_credentials, Credentials, AUTH_COOKIE_NAME},
+    authentication::{register, validate_credentials, Credentials},
     graphql::{
         context::ContextExt,
         models::{LoginUserInput, RegisterUserInput, User},
@@ -63,14 +63,17 @@ impl UserMutation {
     }
 
     async fn logout(&self, ctx: &Context<'_>) -> Result<bool, Error> {
+        let session_cookie_name = ctx
+            .get_session_cookie_name_secret()?
+            .get_session_cookie_name();
         ctx.insert_http_header(
             SET_COOKIE,
             format!(
                 "{}=deleted; Max-Age=-1; SameSite=None; Secure; Path=/",
-                AUTH_COOKIE_NAME
+                session_cookie_name
             ),
         );
-        println!("Logging out cookie {}", AUTH_COOKIE_NAME);
+        println!("Logging out cookie {}", session_cookie_name);
         Ok(true)
     }
 }

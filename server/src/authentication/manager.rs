@@ -1,17 +1,16 @@
 use super::USER_ID_SESSION_KEY;
 use crate::authentication::cookie::SessionCookie;
-use actix_web::web::Data;
 use async_graphql::Error;
 use async_redis_session::RedisSessionStore;
 use async_session::{Session, SessionStore};
 use uuid::Uuid;
 
 #[derive(Debug)]
-pub struct SessionManager<'sm> {
-    store: &'sm Data<RedisSessionStore>,
+pub struct SessionManager {
+    store: RedisSessionStore,
 }
 
-impl<'sm> SessionManager<'sm> {
+impl SessionManager {
     /// TODO: Stub function atm. Waiting on https://github.com/jbr/async-redis-session/pull/15
     pub fn ping(&self) -> Result<(), Error> {
         // let store = self.store.connection();
@@ -19,8 +18,7 @@ impl<'sm> SessionManager<'sm> {
         Ok(())
     }
 
-    /// Creates new `SessionManager` using a `RedisSessionStore`.
-    pub fn new(store: &'sm Data<RedisSessionStore>) -> Self {
+    pub fn new(store: RedisSessionStore) -> Self {
         Self { store }
     }
 
@@ -28,7 +26,7 @@ impl<'sm> SessionManager<'sm> {
     async fn load_session(&self, session_cookie: &SessionCookie) -> Result<Session, Error> {
         let session = self
             .store
-            .load_session(session_cookie.value.clone())
+            .load_session(session_cookie.0.clone())
             .await?
             .ok_or_else(|| Error::new("Session not found"));
         session
@@ -65,6 +63,6 @@ impl<'sm> SessionManager<'sm> {
             .await?
             .ok_or("Cookie value empty")?;
 
-        Ok(SessionCookie { value })
+        Ok(SessionCookie(value))
     }
 }
