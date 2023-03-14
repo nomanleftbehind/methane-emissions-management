@@ -1,4 +1,3 @@
-use crate::ssr_render::ssr_render;
 use crate::{
     configuration::{DatabaseSettings, DefaultGasParams, FdcDatabaseSettings, Settings},
     graphql::{
@@ -8,28 +7,20 @@ use crate::{
         queries::full_query,
     },
     routes::{graphql, graphql_playground},
+    ssr_render::ssr_render,
     MssqlFdcClient,
 };
 use actix_cors::Cors;
-use actix_web::{
-    cookie::Key,
-    dev::Server,
-    middleware::Logger,
-    web::{self, Data},
-    App, HttpServer,
-};
+use actix_web::{cookie::Key, dev::Server, middleware::Logger, web, App, HttpServer};
 use actix_web_flash_messages::{storage::CookieMessageStore, FlashMessagesFramework};
 use async_graphql::{EmptySubscription, Schema};
 use async_redis_session::RedisSessionStore;
 use clap::Parser;
 use secrecy::{ExposeSecret, Secret};
 use sqlx::{postgres::PgPoolOptions, PgPool};
-use std::net::TcpListener;
-use std::path::PathBuf;
-use std::sync::Arc;
+use std::{net::TcpListener, path::PathBuf, sync::Arc};
 use tiberius::Client;
-use tokio::net::TcpStream;
-use tokio::sync::Mutex;
+use tokio::{net::TcpStream, sync::Mutex};
 use tokio_util::compat::TokioAsyncWriteCompatExt;
 // use tracing::log::LevelFilter;
 
@@ -119,16 +110,17 @@ pub async fn run(
     // env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     env_logger::init();
 
-    let db_pool = Data::new(db_pool);
+    let db_pool = web::Data::new(db_pool);
     let loaders = get_loaders(db_pool.clone()).await;
-    let loader_registry_data = Data::new(LoaderRegistry { loaders });
+    let loader_registry_data = web::Data::new(LoaderRegistry { loaders });
 
-    let base_url = Data::new(ApplicationBaseUrl(base_url));
+    let base_url = web::Data::new(ApplicationBaseUrl(base_url));
     let secret_key = Key::from(hmac_secret.expose_secret().as_bytes());
     let message_store = CookieMessageStore::builder(secret_key.clone()).build();
     let message_framework = FlashMessagesFramework::builder(message_store).build();
     let redis_store = RedisSessionStore::new(redis_uri.expose_secret().as_str())
         .expect("Failed to connect to Redis");
+    let redis_store_atomic = web::Data::new(redis_store);
 
     let schema = Schema::build(full_query(), full_mutation(), EmptySubscription)
         .register_output_type::<EmitterInterface>()
@@ -137,10 +129,12 @@ pub async fn run(
         .data(loader_registry_data)
         .data(db_pool.clone())
         .data(base_url.clone())
-        .data(Data::new(default_gas_params.clone()))
-        .data(Data::new(HmacSecret(hmac_secret.clone())))
-        .data(Data::new(SessionCookieName(session_cookie_name.clone())))
-        .data(redis_store);
+        .data(web::Data::new(default_gas_params.clone()))
+        .data(web::Data::new(HmacSecret(hmac_secret.clone())))
+        .data(web::Data::new(SessionCookieName(
+            session_cookie_name.clone(),
+        )))
+        .data(redis_store_atomic.clone());
 
     // Append FDC client to schema data in case connection was established, otherwise just finish building the schema without adding any additional data.
     let schema = if let Some(fc) = mssql_fdc_client {
@@ -154,7 +148,7 @@ pub async fn run(
     log::info!("GraphiQL playground: http://localhost:8080/graphiql");
 
     let opts = Opt::parse();
-    let dir_data = Data::new(opts.dir.clone());
+    let dir_data = web::Data::new(opts.dir.clone());
 
     let server = HttpServer::new(move || {
         let cors = Cors::permissive();
@@ -163,6 +157,7 @@ pub async fn run(
             .wrap(message_framework.clone())
             .app_data(web::Data::new(schema.clone()))
             .app_data(dir_data.clone())
+            .app_data(redis_store_atomic.clone())
             .service(graphql)
             .service(graphql_playground)
             .service(web::resource("/").route(web::get().to(ssr_render)))

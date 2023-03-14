@@ -1,16 +1,17 @@
 use super::USER_ID_SESSION_KEY;
 use crate::authentication::cookie::SessionCookie;
+use actix_web::web::Data;
 use async_graphql::Error;
 use async_redis_session::RedisSessionStore;
 use async_session::{Session, SessionStore};
 use uuid::Uuid;
 
 #[derive(Debug)]
-pub struct SessionManager<'a> {
-    store: &'a RedisSessionStore,
+pub struct SessionManager<'sm> {
+    store: &'sm Data<RedisSessionStore>,
 }
 
-impl<'a> SessionManager<'a> {
+impl<'sm> SessionManager<'sm> {
     /// TODO: Stub function atm. Waiting on https://github.com/jbr/async-redis-session/pull/15
     pub fn ping(&self) -> Result<(), Error> {
         // let store = self.store.connection();
@@ -19,7 +20,7 @@ impl<'a> SessionManager<'a> {
     }
 
     /// Creates new `SessionManager` using a `RedisSessionStore`.
-    pub fn new(store: &'a RedisSessionStore) -> Self {
+    pub fn new(store: &'sm Data<RedisSessionStore>) -> Self {
         Self { store }
     }
 

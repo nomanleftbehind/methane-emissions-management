@@ -45,7 +45,7 @@ impl<'a> ContextExt for Context<'a> {
 
     fn get_session_manager(&self) -> Result<SessionManager, Error> {
         let store = self
-            .data::<RedisSessionStore>()
+            .data::<Data<RedisSessionStore>>()
             .expect("Session store not found in Context");
         let authorizer = SessionManager::new(store);
         Ok(authorizer)

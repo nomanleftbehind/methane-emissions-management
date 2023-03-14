@@ -1,5 +1,5 @@
 use crate::utils::SessionTokenExtractorError;
-use actix_web::{dev::Payload, FromRequest, HttpRequest};
+use actix_web::{dev::Payload, FromRequest, HttpRequest, web::Data};
 use async_graphql::{Context, Error};
 use async_redis_session::RedisSessionStore;
 use async_session::{Session, SessionStore};
@@ -50,7 +50,7 @@ impl SessionCookie {
     }
 
     /// Load actual session from Redis/Session Store.
-    pub async fn load_session(&self, session_store: &RedisSessionStore) -> Result<Session, Error> {
+    pub async fn load_session(&self, session_store: Data<RedisSessionStore>) -> Result<Session, Error> {
         session_store
             .load_session(self.value.clone())
             .await

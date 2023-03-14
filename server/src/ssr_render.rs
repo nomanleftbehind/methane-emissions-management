@@ -1,17 +1,45 @@
+use crate::authentication::{cookie::SessionCookie, SessionManager};
 use actix_web::{
     web::{Bytes, Data},
     HttpRequest, HttpResponse, Responder,
 };
+use async_redis_session::RedisSessionStore;
 use emissions_app_client::{ServerApp, ServerAppProps};
 use futures::stream::{self, StreamExt};
 use std::{convert::Infallible, path::PathBuf};
 
 /// This function reads
-pub async fn ssr_render(req: HttpRequest, static_dir: Data<PathBuf>) -> impl Responder {
-    let c = req.cookie("auth");
+pub async fn ssr_render(
+    req: HttpRequest,
+    static_dir: Data<PathBuf>,
+    auth_cookie: Option<SessionCookie>,
+    redis_store: Data<RedisSessionStore>,
+) -> impl Responder {
+    let condition = {
+        let url = req.uri().to_string();
+        println!("url: {}", url);
+        if url == "/register" {
+            false
+        } else {
+            if let Some(cookie) = auth_cookie {
+                let session_manager = SessionManager::new(&redis_store);
+                let user_id_result = session_manager.user_id(&cookie).await;
+                if let Ok(user_id) = user_id_result {
+                    println!("user id: {}", user_id);
+                    false
+                } else {
+                    true
+                }
+            } else {
+                true
+            }
+        }
+    };
 
-    if let Some(c) = c {
-        println!("Cookie {:#?}", c);
+    if condition {
+        return HttpResponse::Found()
+            .append_header(("Location", "/register"))
+            .finish();
     }
 
     let index_html_string = tokio::fs::read_to_string(static_dir.join("index.html"))
