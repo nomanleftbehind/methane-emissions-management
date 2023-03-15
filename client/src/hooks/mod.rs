@@ -174,3 +174,40 @@ where
     }
     (*state).clone()
 }
+
+pub async fn lazy_query<Q>(variables: Q::Variables) -> QueryResponse<Q::ResponseData>
+where
+    Q: GraphQLQuery,
+    Q::Variables: 'static,
+    Q::ResponseData: Clone + 'static,
+{
+    let request_body = Q::build_query(variables);
+    let request_json = &json!(request_body);
+    let request = build_request(request_json).await;
+    match request {
+        Ok(response) => {
+            let json = response
+                .json::<Response<Q::ResponseData>>()
+                .await
+                .map_err(AppError::from);
+
+            match json {
+                Ok(response) => QueryResponse {
+                    data: response.data,
+                    error: response.errors.map(|e| e.into()),
+                    loading: false,
+                },
+                Err(error) => QueryResponse {
+                    data: None,
+                    error: Some(error),
+                    loading: false,
+                },
+            }
+        }
+        Err(error) => QueryResponse {
+            data: None,
+            error: Some(error),
+            loading: false,
+        },
+    }
+}

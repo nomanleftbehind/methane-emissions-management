@@ -1,5 +1,9 @@
 use crate::{
-    components::{nav::Nav, user::Users, user_ctx::{UserProvider, Producer}},
+    components::{
+        contexts::user_context::{Producer, UserProvider},
+        nav::Nav,
+        user::Users,
+    },
     pages::{Home, Register},
 };
 use yew::prelude::*;
@@ -27,8 +31,6 @@ pub fn app() -> Html {
 pub enum Route {
     #[at("/")]
     Home,
-    // #[at("/controllers/:facility_id")]
-    // Controllers { facility_id: Uuid },
     #[at("/users")]
     Users,
     #[at("/register")]
@@ -40,9 +42,6 @@ pub fn switch(route: Route) -> Html {
         Route::Home => {
             html! { <Home /> }
         }
-        // Route::Controllers { facility_id } => {
-        //     html! { <ControllersPage {facility_id} /> }
-        // }
         Route::Users => {
             html! { <Users /> }
         }

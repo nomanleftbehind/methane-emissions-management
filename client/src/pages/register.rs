@@ -1,48 +1,44 @@
 use crate::{
-    components::user_ctx::UserContext,
-    hooks::use_query_async,
+    components::contexts::user_context::UserContext,
+    hooks::{lazy_query, QueryResponse},
     models::mutations::user::{
-        login::{LoginUserInput, Variables},
-        Login as LoginUser,
+        login::{LoginUserInput, ResponseData, Variables},
+        Login,
     },
-    utils::console_log,
 };
 use web_sys::HtmlInputElement;
 use yew::{
     function_component, html, use_context, use_state, Callback, Html, InputEvent, SubmitEvent,
     TargetCast,
 };
-use yew_hooks::use_async;
 
 #[function_component(Register)]
 pub fn register() -> Html {
+    let user_ctx = use_context::<UserContext>().unwrap();
     let email = use_state(|| "dsucic@bonterraenergy.com".to_string());
     let password = use_state(|| "everythinghastostartsomewhere".to_string());
 
-    let user_ctx = use_context::<UserContext>().unwrap();
-
-    // let run_login = {
-    // };
-    
     let onsubmit = {
-        // let run_login = run_login.clone();
-        let variables = Variables {
-            login_user_input: LoginUserInput {
-                email: (*email).clone(),
-                password: (*password).clone(),
-            },
-        };
-        let run_login = use_async(async move { use_query_async::<LoginUser>(variables).await });
-
+        let email = email.clone();
+        let password = password.clone();
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
-            run_login.run();
-            // if let Some(query_response) = &run_login.data {
-            //     console_log!("Login {:#?}", &query_response.data);
-            //     if let Some(response) = &query_response.data {
-            //         user_ctx.dispatch(Some(response.login.clone().into()));
-            //     };
-            // }
+            let user_ctx = user_ctx.clone();
+            let variables = Variables {
+                login_user_input: LoginUserInput {
+                    email: (*email).clone(),
+                    password: (*password).clone(),
+                },
+            };
+            wasm_bindgen_futures::spawn_local(async move {
+                if let QueryResponse {
+                    data: Some(ResponseData { login }),
+                    ..
+                } = lazy_query::<Login>(variables).await
+                {
+                    user_ctx.dispatch(Some(login));
+                }
+            });
         })
     };
 

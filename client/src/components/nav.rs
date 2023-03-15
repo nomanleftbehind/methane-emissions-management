@@ -1,22 +1,34 @@
-use crate::{components::logout::Logout, Route};
-use yew::{classes, function_component, html, Html};
+use crate::{
+    components::{contexts::user_context::UserContext, logout::Logout},
+    hooks::{lazy_query, QueryResponse},
+    models::queries::user::{
+        me::{ResponseData, Variables},
+        Me,
+    },
+    Route,
+};
+use yew::{classes, function_component, html, use_context, Html};
+use yew_hooks::use_effect_once;
 use yew_router::components::Link;
 
 #[function_component(Nav)]
 pub fn nav() -> Html {
-    // console_log!("Nav fac: {}", &facility_id);
+    let user_ctx = use_context::<UserContext>().unwrap();
 
-    // let navbar_active = use_state_eq(|| false);
-
-    // let toggle_navbar = {
-    //     let navbar_active = navbar_active.clone();
-
-    //     Callback::from(move |_| {
-    //         navbar_active.set(!*navbar_active);
-    //     })
-    // };
-
-    // let active_class = if !*navbar_active { "is-active" } else { "" };
+    // Nav is the only common UserContext wrapped component to all other components,
+    // so here a query is run every time browser is refreshec to find currently logged in user and update UserContext.
+    use_effect_once(move || {
+        wasm_bindgen_futures::spawn_local(async move {
+            if let QueryResponse {
+                data: Some(ResponseData { me: Some(me) }),
+                ..
+            } = lazy_query::<Me>(Variables).await
+            {
+                user_ctx.dispatch(Some(me.into()));
+            }
+        });
+        || ()
+    });
 
     html! {
         <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
@@ -37,9 +49,6 @@ pub fn nav() -> Html {
                     <Link<Route> classes={classes!("navbar-item")} to={Route::Home}>
                         { "Home" }
                     </Link<Route>>
-                    // <Link<Route> classes={classes!("navbar-item")} to={Route::Controllers {facility_id}}>
-                    //     { "Controllers" }
-                    // </Link<Route>>
                     <Link<Route> classes={classes!("navbar-item")} to={Route::Users}>
                         { "Users" }
                     </Link<Route>>

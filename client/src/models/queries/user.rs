@@ -1,18 +1,15 @@
-use crate::models::mutations::user::login::LoginLogin;
-use self::me::MeMe;
 use super::super::UUID;
 use common::Role;
 use graphql_client::GraphQLQuery;
-use serde::Serialize;
 
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "./graphql/schema.json",
     query_path = "./graphql/queries.graphql",
-    response_derives = "Debug, Clone, PartialEq",
+    response_derives = "Debug, Clone, PartialEq, Eq",
     extern_enums("Role")
 )]
-#[derive(Debug, PartialEq, Eq, Serialize)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Me;
 
 #[derive(GraphQLQuery)]
@@ -24,9 +21,3 @@ pub struct Me;
 )]
 #[derive(Debug, PartialEq)]
 pub struct GetUsers;
-
-impl From<LoginLogin> for MeMe {
-    fn from(LoginLogin { id, email, role }: LoginLogin) -> Self {
-        Self { id, email, role }
-    }
-}
