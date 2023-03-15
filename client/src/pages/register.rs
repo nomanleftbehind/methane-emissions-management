@@ -4,7 +4,8 @@ use crate::{
     models::mutations::user::{
         login::{LoginUserInput, Variables},
         Login as LoginUser,
-    }, utils::console_log,
+    },
+    utils::console_log,
 };
 use web_sys::HtmlInputElement;
 use yew::{
@@ -20,28 +21,28 @@ pub fn register() -> Html {
 
     let user_ctx = use_context::<UserContext>().unwrap();
 
-    let run_login = {
+    // let run_login = {
+    // };
+    
+    let onsubmit = {
+        // let run_login = run_login.clone();
         let variables = Variables {
             login_user_input: LoginUserInput {
                 email: (*email).clone(),
                 password: (*password).clone(),
             },
         };
-        use_async(async move { use_query_async::<LoginUser>(variables).await })
-    };
-
-    let onsubmit = {
-        let run_async = run_login.clone();
+        let run_login = use_async(async move { use_query_async::<LoginUser>(variables).await });
 
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
-            run_async.run();
-            if let Some(query_response) = &run_async.data {
-                console_log!("Login {:#?}", &query_response.data);
-                if let Some(response) = &query_response.data {
-                    user_ctx.dispatch(Some(response.login.id));
-                };
-            }
+            run_login.run();
+            // if let Some(query_response) = &run_login.data {
+            //     console_log!("Login {:#?}", &query_response.data);
+            //     if let Some(response) = &query_response.data {
+            //         user_ctx.dispatch(Some(response.login.clone().into()));
+            //     };
+            // }
         })
     };
 

@@ -3,7 +3,7 @@ use graphql_client::{GraphQLQuery, Response};
 use serde_json::json;
 use yew::{hook, use_effect_with_deps, use_state};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct QueryResponse<T> {
     pub data: Option<T>,
     pub error: Option<AppError>,

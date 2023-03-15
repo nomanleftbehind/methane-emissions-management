@@ -61,7 +61,7 @@ pub struct ServerAppProps {
 pub fn server_app(props: &ServerAppProps) -> Html {
     let history = AnyHistory::from(MemoryHistory::new());
 
-    println!("props: {:#?}", &props);
+    // println!("props: {:#?}", &props);
 
     history.push(&*props.url);
 
