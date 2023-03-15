@@ -6,7 +6,7 @@ use common::FacilityType;
 #[graphql(
     schema_path = "./graphql/schema.json",
     query_path = "./graphql/queries.graphql",
-    response_derives = "Debug, Clone, PartialEq",
+    response_derives = "Debug, Clone, PartialEq, Deserialize",
     extern_enums("FacilityType")
 )]
 #[derive(Debug)]
