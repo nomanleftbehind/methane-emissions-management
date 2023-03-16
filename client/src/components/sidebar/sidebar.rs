@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::components::facility::{Facility, FacilityComp};
+use crate::components::sidebar::facility::{Facility, FacilityComp};
 use crate::hooks::use_query;
 use crate::{
     hooks::QueryResponse,
@@ -32,16 +32,13 @@ pub fn sidebar(
             data: Some(ResponseData { all_facilities }),
             ..
         } => {
-            let r = all_facilities.into_iter().enumerate().map(
-                |(
-                    row_num,
-                    AllFacilitiesAllFacilities {
-                        id,
-                        idpa,
-                        name,
-                        type_,
-                    },
-                )| {
+            let r = all_facilities.into_iter().map(
+                |AllFacilitiesAllFacilities {
+                     id,
+                     idpa,
+                     name,
+                     type_,
+                 }| {
                     let facility = Facility {
                         id,
                         idpa,
@@ -52,7 +49,6 @@ pub fn sidebar(
                         <FacilityComp
                             key={id.to_string()}
                             {facility}
-                            {row_num}
                             {on_facility_click}
                             {facility_id}
                         />

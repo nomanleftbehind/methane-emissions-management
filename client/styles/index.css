@@ -1,43 +1,41 @@
-.table-test td, th, table {
-    border: 1px solid black;
-    padding: 4px;
-    margin: 4px;
+:root {
+  --sidebar-width: 15vw;
+  --sidebar-height: calc(100vh - 83px);
+  --background-color: #ffc900;
+  --standard-padding: 0.8vmin;
 }
 
-.sidebar {
-    border: 1px solid red;
-    display: grid;
-    grid-column: 1;
-    grid-row: 1;
-    width: fit-content;
-    overflow: auto;
-    border-radius: 6px;
-    height: calc(100vh - 83px); /* This thing keep pagination control at the bottom of the page */
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
-/* .main {
-    display: grid;
-    width: fit-content;
-    column-gap: 4px;
-} */
+.table-test td,
+th,
+table {
+  border: 1px solid black;
+  padding: 4px;
+  margin: 4px;
+}
 
 .emitters div {
-    padding: 2px;
+  padding: 2px;
 }
 
 .sticky {
-    position: sticky;
-    background-color: rgb(231, 146, 56);
-    left: 0;
-    top: 0
-  }
+  position: sticky;
+  background-color: rgb(231, 146, 56);
+  left: 0;
+  top: 0
+}
 
 .data-window {
-    display: grid;
-    width: fit-content;
-    column-gap: 4px;
+  display: flex;
+  flex-direction: row;
+  height: var(--sidebar-height);
 }
 
 .active {
-    font-weight: bold;
+  font-weight: bold;
 }

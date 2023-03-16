@@ -1,7 +1,6 @@
 use crate::{
     components::{
-        contexts::user_context::{Producer, UserProvider},
-        nav::Nav,
+        contexts::user_context::UserProvider, navigation::navigation_bar::NavigationBar,
         user::Users,
     },
     pages::{Home, Register},
@@ -17,8 +16,7 @@ pub fn app() -> Html {
     html! {
         <BrowserRouter>
             <UserProvider>
-                <Nav />
-                <Producer />
+                <NavigationBar />
                 <main class="main">
                     <Switch<Route> render={switch} />
                 </main>
@@ -67,8 +65,7 @@ pub fn server_app(props: &ServerAppProps) -> Html {
     html! {
         <Router history={history}>
             <UserProvider>
-                <Nav />
-                <Producer />
+                <NavigationBar />
                 <main class="main">
                     <Switch<Route> render={switch} />
                 </main>

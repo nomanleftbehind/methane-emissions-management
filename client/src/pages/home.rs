@@ -1,5 +1,5 @@
 use crate::{
-    components::{emitters_window::emitters_window::EmittersWindow, sidebar::Sidebar},
+    components::{emitters_window::emitters_window::EmittersWindow, sidebar::sidebar::Sidebar},
     utils::console_log,
 };
 use std::rc::Rc;

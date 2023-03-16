@@ -1,29 +1,18 @@
 .emitters-window {
-    /* border: 1px solid black; */
-    display: flex;
-    flex-direction: column;
-    grid-column: 2;
-    grid-row: 1;
-    grid-template-rows: 40px min-content;
-    grid-auto-rows: min-content;
-    height: calc(100vh - 83px);
-    /* This thing keep pagination control at the bottom of the page */
-    /* overflow: auto; */
-    border-radius: 6px;
-    width: 1000px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.emitters-navbar {
+  display: flex;
+  flex-direction: row;
 }
 
 .emitters {
-    /* position: inline-block; */
-    border: 1px solid black;
-    display: grid;
-    grid-column: 2;
-    grid-row: 1;
-    /* grid-template-rows: 40px min-content; */
-    grid-auto-rows: min-content;
-    /* This thing keep pagination control at the bottom of the page */
-    /* height: calc(100vh - 83px); */
-    height: 100%;
-    overflow: auto;
-    border-radius: 6px;
+  display: grid;
+  grid-auto-rows: min-content;
+  height: 100%;
+  overflow: auto;
+  background: var(--background-color);
 }

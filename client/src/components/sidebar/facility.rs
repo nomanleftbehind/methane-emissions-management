@@ -3,8 +3,6 @@ use std::rc::Rc;
 use uuid::Uuid;
 use yew::{classes, function_component, html, Callback, Html, Properties};
 
-use crate::utils::gen_style::gen_grid_style;
-
 #[derive(PartialEq, Clone)]
 pub struct Facility {
     pub id: uuid::Uuid,
@@ -15,7 +13,6 @@ pub struct Facility {
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub row_num: usize,
     pub facility: Facility,
     pub on_facility_click: Callback<Uuid>,
     pub facility_id: Rc<Uuid>,
@@ -25,7 +22,6 @@ pub struct Props {
 pub fn facility_comp(
     Props {
         facility,
-        row_num,
         on_facility_click,
         facility_id,
     }: &Props,
@@ -39,8 +35,10 @@ pub fn facility_comp(
     });
 
     html! {
-        <button class={classes!((facility_id.as_ref() == &id).then(|| "active"))} style={gen_grid_style(1, row_num + 1)} {onclick}>
-            { &facility.name }
-        </button>
+        <div class={classes!("sidebar-button-container")}>
+            <button class={classes!("sidebar-button", (facility_id.as_ref() == &id).then(|| "green"))} {onclick}>
+                { &facility.name }
+            </button>
+        </div>
     }
 }
