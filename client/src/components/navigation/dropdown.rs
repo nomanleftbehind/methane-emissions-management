@@ -1,6 +1,6 @@
-use yew::{function_component, html, use_context, Html};
+use yew::{classes, function_component, html, use_context, Html};
 
-use crate::components::{contexts::user_context::UserContext, logout::Logout};
+use crate::components::{contexts::user_context::UserContext, navigation::logout::Logout};
 
 #[function_component(Dropdown)]
 pub fn dropdown() -> Html {
@@ -10,11 +10,13 @@ pub fn dropdown() -> Html {
     html! {
         if user_email.is_some() {
             <div class="navbar-end">
-                <div class="navbar-link">
-                    { user_email }
-                </div>
-                <div class="navbar-dropdown">
-                    <Logout />
+                <div class={classes!("dropdown")}>
+                    <div class={classes!("open-dropdown-button")}>
+                        { user_email }
+                    </div>
+                    <div class={classes!("dropdown-list")}>
+                        <Logout />
+                    </div>
                 </div>
             </div>
         }

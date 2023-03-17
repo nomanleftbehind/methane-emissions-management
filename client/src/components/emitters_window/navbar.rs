@@ -28,7 +28,7 @@ pub fn navbar(
 
         html! {
             <button {key} {onclick} class={classes!(
-                "emitter-nav",
+                "emitters-navigation-button",
                 (emitters == &e).then(|| "active")
             )}>{ e }</button>
         }

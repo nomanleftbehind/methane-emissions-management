@@ -26,7 +26,6 @@ pub fn logout() -> Html {
     });
 
     html! {
-
         <div class={classes!("navbar-button-wrapper")}>
             <button class={classes!("navbar-button")} {onclick}>{ "Logout" }</button>
         </div>
