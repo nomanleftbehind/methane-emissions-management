@@ -19,6 +19,7 @@ uuid = { version = "1", features = ["serde"] }
 chrono = { version = "0.4", features = ["wasmbind", "serde"] }
 log = "0.4"
 futures = { version = "0.3", features = ["std"], default-features = false }
+gloo-timers = "0.2.6"
 common = { path = "../common" }
 
 

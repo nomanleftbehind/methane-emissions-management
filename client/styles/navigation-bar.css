@@ -1,6 +1,6 @@
 .navigation-bar {
   display: flex;
-  background-color: #ff9aa2;
+  background-color: rgb(202, 209, 219);
 }
 
 .navbar-brand {
@@ -30,44 +30,36 @@
   justify-content: center;
 }
 
-.navbar-button {
-  background-color: white;
-  border: 2px 2px 2px 0 solid green;
-  padding: 10px 25px;
-  font-weight: bold;
-  font-size: 12px;
-  position: relative;
-  color: green;
-}
-
-.navbar-button:after {
-  content: '';
-  position: absolute;
-  background-color: green;
-  top: 8px;
-  left: 8px;
-  right: -8px;
-  bottom: -8px;
-  z-index: -1;
-}
-
-.navbar-button:hover,
-navbar-button:active {
-  color: white;
-  background-color: green;
-  transition: all 0.3s ease;
-}
-
-.navbar-button:hover:after,
-navbar-button:hover:active {
-  background-color: white;
-  border: 2px solid green;
-  transition: all 0.3s ease;
-}
-
 .navbar-button-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   padding-left: 4px;
+}
+
+.navbar-button {
+  display: inline-block;
+  vertical-align: middle;
+  padding: .5rem .75rem;
+  background-color: #fff;
+  color: #000;
+  border: solid .0625rem currentColor;
+  border-radius: 10rem;
+  font-family: inherit;
+  max-width: 100%;
+  min-width: 0;
+  font-size: .875rem;
+  line-height: 1.3;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .14s ease-out;
+}
+
+.navbar-button:hover {
+  transform: translate(-.25rem,-.25rem);
+  box-shadow: .25rem .25rem #000;
+  box-shadow: .25rem .25rem 0 var(--primary)
 }

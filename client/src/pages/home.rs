@@ -12,12 +12,12 @@ pub fn home() -> Html {
 
     let facility_id = Rc::new(*selected_facility_id);
 
-    use_effect_with_deps(
-        move |u| {
-            console_log!("prop id changed: {:#?}", u);
-        },
-        facility_id.clone(),
-    );
+    // use_effect_with_deps(
+    //     move |u| {
+    //         console_log!("prop id changed: {:#?}", u);
+    //     },
+    //     facility_id.clone(),
+    // );
 
     // Create a callback to be passed down as a prop
     let on_facility_click =

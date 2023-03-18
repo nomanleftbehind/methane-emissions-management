@@ -6,7 +6,7 @@ use crate::{
         Logout as LogoutUser,
     },
 };
-use yew::{classes, function_component, html, use_context, Callback, Html};
+use yew::{function_component, html, use_context, Callback, Html};
 
 #[function_component(Logout)]
 pub fn logout() -> Html {
@@ -26,8 +26,6 @@ pub fn logout() -> Html {
     });
 
     html! {
-        <div class={classes!("navbar-button-wrapper")}>
-            <button class={classes!("navbar-button")} {onclick}>{ "Logout" }</button>
-        </div>
+        <button role="menuitem" {onclick}>{ "Logout bitchaaaa" }</button>
     }
 }
