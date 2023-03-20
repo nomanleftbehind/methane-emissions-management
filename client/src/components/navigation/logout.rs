@@ -6,11 +6,18 @@ use crate::{
         Logout as LogoutUser,
     },
 };
-use yew::{function_component, html, use_context, Callback, Html};
+use yew::{function_component, html, use_context, Callback, Html, Properties};
+
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub on_logout: Callback<()>,
+}
 
 #[function_component(Logout)]
-pub fn logout() -> Html {
+pub fn logout(Props { on_logout }: &Props) -> Html {
     let user_ctx = use_context::<UserContext>().unwrap();
+
+    let on_logout = on_logout.clone();
 
     let onclick = Callback::from(move |_| {
         let user_ctx = user_ctx.clone();
@@ -23,6 +30,7 @@ pub fn logout() -> Html {
                 user_ctx.dispatch(None);
             };
         });
+        on_logout.emit(());
     });
 
     html! {

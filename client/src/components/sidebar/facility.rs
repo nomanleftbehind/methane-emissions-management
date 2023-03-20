@@ -35,10 +35,10 @@ pub fn facility_comp(
     });
 
     html! {
-        <div class={classes!("sidebar-button-container")}>
+        <li class={classes!("sidebar-button-container")}>
             <button class={classes!("sidebar-button", (facility_id.as_ref() == &id).then(|| "green"))} {onclick}>
                 { &facility.name }
             </button>
-        </div>
+        </li>
     }
 }

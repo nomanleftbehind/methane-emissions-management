@@ -64,6 +64,10 @@ pub fn sidebar(
     };
 
     html! {
-        <nav class={classes!("sidebar")} role="navigation">{ inner }</nav>
+        <nav class={classes!("sidebar")} role="navigation">
+            <ol class={classes!("sidebar-list")}>
+                { inner }
+            </ol>
+        </nav>
     }
 }

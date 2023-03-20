@@ -28,7 +28,8 @@
   top: 100%;
   width: -webkit-max-content;
   width: -moz-max-content;
-  width: max-content;
+  width: -webkit-fill-available;
+  width: -moz-available;
   box-shadow: 0.25rem 0.25rem #000;
   box-shadow: 0.25rem 0.25rem 0 var(--primary);
   z-index: 30;
@@ -114,6 +115,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  width: 100%;
 }
 
 [role=button],
