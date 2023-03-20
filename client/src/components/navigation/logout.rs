@@ -26,6 +26,6 @@ pub fn logout() -> Html {
     });
 
     html! {
-        <button role="menuitem" {onclick}>{ "Logout bitchaaaa" }</button>
+        <button role="menuitem" {onclick}>{ "Logout" }</button>
     }
 }
