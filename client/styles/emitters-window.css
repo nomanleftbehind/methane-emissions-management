@@ -7,7 +7,8 @@
 .emitters-navbar {
   display: flex;
   flex-direction: row;
-  padding-bottom: 10px;
+  background-color: #f4f4f0;
+  /* padding-bottom: 10px; */
 }
 
 .emitters {
@@ -19,18 +20,28 @@
 }
 
 .emitters-navigation-button {
-  padding: 12px;
-  /* margin-top: 40px; */
-  width: 10vw;
-  font-size: 12px;
-  background: #7b4397;
-  border-radius: 15px;
-  /* font-weight: 900; */
+  background: transparent;
+  font-size: 1rem;
+  line-height: 1.5;
+  --line-height: 1.5rem;
+  padding: 0.1rem 0.4rem;
+  border: solid .0625rem currentColor;
+  color: currentColor;
+  border-radius: .25rem;
+  font-family: inherit;
+  align-items: center;
+  justify-content: center;
+  grid-gap: .5rem;
+  gap: .5rem;
   cursor: pointer;
-  box-shadow: 5px 5px 0px 0px #000;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  transition: all .14s ease-out;
 }
 
+.emitters-navigation-button:hover,
 .emitters-navigation-button.active {
-  transform: translateY(4px);
-  box-shadow: 1px 2px 0px 0px #000;
+  transform: translate(-.25rem, -.25rem);
+  box-shadow: .25rem .25rem #000;
+  box-shadow: .25rem .25rem 0 var(--primary)
 }

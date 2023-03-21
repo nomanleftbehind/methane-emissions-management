@@ -37,11 +37,11 @@ pub fn dropdown() -> Html {
     html! {
         if user_email.is_some() {
             <div class="navbar-end">
-                <div class={classes!("popover", class_expanded)} {onmouseenter} {onmouseleave} role="menuitem" aria-expanded="true" aria-current="true" aria-controls=":R36l:">
+                <div class={classes!("popover", class_expanded)} {onmouseenter} {onmouseleave} role="menuitem">
                     <div class={classes!("navbar-button", class_expanded)}>
                         { user_email }
                     </div>
-                    <div id=":R36l:" hidden={element_hidden}>
+                    <div hidden={element_hidden}>
                         <div class={classes!("dropdown")} style="transform: translateX(min(929.25px - 100% - var(--spacer-4), -1 * var(--spacer-1))); max-width: calc(1675px - 2 * var(--spacer-4));">
                             <div style="background-color: var(--yellow-dark);" role="menu" aria-label="Design">
                                 <Logout {on_logout} />

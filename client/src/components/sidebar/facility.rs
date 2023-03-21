@@ -36,7 +36,7 @@ pub fn facility_comp(
 
     html! {
         <li class={classes!("sidebar-button-container")}>
-            <button class={classes!("sidebar-button", (facility_id.as_ref() == &id).then(|| "green"))} {onclick}>
+            <button class={classes!("sidebar-button", (facility_id.as_ref() == &id).then(|| "active"))} {onclick}>
                 { &facility.name }
             </button>
         </li>
