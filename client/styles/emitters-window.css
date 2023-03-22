@@ -4,11 +4,16 @@
   width: 100%;
 }
 
-.emitters-navbar {
+.emitters-primary-navbar {
   display: flex;
   flex-direction: row;
-  background-color: #f4f4f0;
-  /* padding-bottom: 10px; */
+  background-color: var(--primary-navbar-color);
+}
+
+.emitters-secondary-navbar {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--secondary-navbar-color);
 }
 
 .emitters {
@@ -20,28 +25,77 @@
 }
 
 .emitters-navigation-button {
-  background: transparent;
-  font-size: 1rem;
-  line-height: 1.5;
-  --line-height: 1.5rem;
-  padding: 0.1rem 0.4rem;
-  border: solid .0625rem currentColor;
-  color: currentColor;
-  border-radius: .25rem;
-  font-family: inherit;
-  align-items: center;
-  justify-content: center;
-  grid-gap: .5rem;
-  gap: .5rem;
-  cursor: pointer;
-  -webkit-text-decoration: none;
-  text-decoration: none;
-  transition: all .14s ease-out;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  color: #555;
+  position: relative;
 }
 
-.emitters-navigation-button:hover,
-.emitters-navigation-button.active {
-  transform: translate(-.25rem, -.25rem);
-  box-shadow: .25rem .25rem #000;
-  box-shadow: .25rem .25rem 0 var(--primary)
+.emitters-primary-navbar .emitters-navigation-button {
+  background-color: var(--primary-navbar-color);
+}
+
+.emitters-secondary-navbar .emitters-navigation-button {
+  background-color: var(--secondary-navbar-color);
+  margin-top: 0.5rem;
+}
+
+/* Select all buttons that are not active, not being hovered over, and not previous to the one active or being hovering over. */
+.emitters-navigation-button:not(.active, :hover, .emitters-navigation-button:has(+ .active, + :hover))::after {
+  content: "";
+  position: absolute;
+  top: 15%;
+  right: 0;
+  height: 70%;
+  border-right: 1px solid #919598;
+}
+
+
+
+/* .emitters-navigation-button::before(2) {
+  content: "";
+  position: absolute;
+  left: -1px;
+  bottom: -10px;
+  width: 50%;
+  height: 10px;
+  border-top-left-radius: 10px;
+  border-top: 1px solid #ccc;
+  background-color: #f1f1f1;
+  z-index: -1;
+  transform: skew(-20deg);
+} */
+
+/* .emitters-navigation-button::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: -10px;
+  width: 50%;
+  height: 10px;
+  border-top-right-radius: 10px;
+  border-top: 1px solid #ccc;
+  background-color: #f1f1f1;
+  z-index: -1;
+  transform: skew(20deg);
+} */
+
+
+.emitters-primary-navbar .emitters-navigation-button:hover {
+  background-color: #f6f6f8;
+}
+
+.emitters-secondary-navbar .emitters-navigation-button:hover {
+  background-color: #f6f6f8;
+}
+
+.emitters-primary-navbar .emitters-navigation-button.active {
+  background-color: var(--secondary-navbar-color);
+}
+
+.emitters-secondary-navbar .emitters-navigation-button.active {
+  background-color: #fff;
 }

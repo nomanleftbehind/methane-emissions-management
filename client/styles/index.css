@@ -3,6 +3,8 @@
   --sidebar-height: calc(100vh - 83px);
   --background-color: #ffc900;
   --standard-padding: 0.8vmin;
+  --primary-navbar-color: #b5babe;
+  --secondary-navbar-color: #e8eaed;
 
   --spacer-1: .25rem;
   --spacer-2: .5rem;

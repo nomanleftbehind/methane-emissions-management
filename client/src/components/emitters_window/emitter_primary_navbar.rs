@@ -44,18 +44,18 @@ pub fn emitter_primary_navbar(
         };
 
         html! {
-            <div class={classes!("navbar-button-wrapper")}>
+            // <div class={classes!("navbar-button-wrapper")}>
                 <button {key} {onclick} class={classes!(
                     "emitters-navigation-button",
                     (emitter == &e).then(|| "active")
                 )}>{ e }
                 </button>
-            </div>
+            // </div>
         }
     });
 
     html! {
-        <nav class={classes!("emitters-navbar")}>
+        <nav class={classes!("emitters-primary-navbar")}>
             { for emitter_iter }
         </nav>
     }

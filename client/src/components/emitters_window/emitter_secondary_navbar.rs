@@ -44,13 +44,13 @@ pub fn emitter_secondary_navbar(
                         };
 
                         html! {
-                            <div class={classes!("navbar-button-wrapper")}>
+                            // <div class={classes!("navbar-button-wrapper")}>
                                 <button {key} {onclick} class={classes!(
                                     "emitters-navigation-button",
                                     (emitter == &csd).then(|| "active")
                                 )}>{ csd }
                                 </button>
-                            </div>
+                            // </div>
                         }
                     });
             html! {
@@ -78,13 +78,13 @@ pub fn emitter_secondary_navbar(
                         };
 
                         html! {
-                            <div class={classes!("navbar-button-wrapper")}>
+                            // <div class={classes!("navbar-button-wrapper")}>
                                 <button {key} {onclick} class={classes!(
                                     "emitters-navigation-button",
                                     (emitter == &csd).then(|| "active")
                                 )}>{ csd }
                                 </button>
-                            </div>
+                            // </div>
                         }
                     });
             html! {
@@ -112,13 +112,13 @@ pub fn emitter_secondary_navbar(
                         };
 
                         html! {
-                            <div class={classes!("navbar-button-wrapper")}>
+                            // <div class={classes!("navbar-button-wrapper")}>
                                 <button {key} {onclick} class={classes!(
                                     "emitters-navigation-button",
                                     (emitter == &tfsd).then(|| "active")
                                 )}>{ tfsd }
                                 </button>
-                            </div>
+                            // </div>
                         }
                     });
             html! {
@@ -128,7 +128,7 @@ pub fn emitter_secondary_navbar(
     };
 
     html! {
-        <nav class={classes!("emitters-navbar")}>
+        <nav class={classes!("emitters-secondary-navbar")}>
             { sub_data }
         </nav>
     }
