@@ -1,9 +1,9 @@
 use crate::components::emitters_window::{
     compressors::CompressorsComp,
     controllers::ControllersComp,
-    navbar::{EmittersData, Navbar},
-    secondary_navbar::SecondaryNavbar,
-    CompressorSubData, ControllerSubData, Emitters, TankFarmSubData,
+    emitter_primary_navbar::{EmitterPrimaryNavbar, EmitterView},
+    emitter_secondary_navbar::EmitterSecondaryNavbar,
+    CompressorSubData, ControllerSubData, Emitter, TankFarmSubData,
 };
 use std::rc::Rc;
 use uuid::Uuid;
@@ -19,23 +19,22 @@ pub fn emitters_window(Props { facility_id }: &Props) -> Html {
     let controller_sub_data_state = use_state_eq(|| ControllerSubData::Controller);
     let compressor_sub_data_state = use_state_eq(|| CompressorSubData::Compressor);
     let tank_farm_sub_data_state = use_state_eq(|| TankFarmSubData::TankFarm);
+    let emitter_state = use_state_eq(|| Emitter::Controller(ControllerSubData::Controller));
 
-    let emitters_state = use_state_eq(|| Emitters::Controllers(ControllerSubData::Controller));
-
-    let emitters = *emitters_state;
+    let emitter = *emitter_state;
     let controller_sub_data = *controller_sub_data_state;
     let compressor_sub_data = *compressor_sub_data_state;
     let tank_farm_sub_data = *tank_farm_sub_data_state;
 
-    let emitters_data = EmittersData {
-        emitters,
+    let emitter_view = EmitterView {
+        emitter,
         controller_sub_data,
         compressor_sub_data,
         tank_farm_sub_data,
     };
 
-    let on_emitters_change = Callback::from(move |e: Emitters| {
-        emitters_state.set(e);
+    let on_emitter_change = Callback::from(move |e: Emitter| {
+        emitter_state.set(e);
     });
 
     let on_controller_sub_data_change = Callback::from(move |csd: ControllerSubData| {
@@ -48,8 +47,8 @@ pub fn emitters_window(Props { facility_id }: &Props) -> Html {
         tank_farm_sub_data_state.set(tfsd);
     });
 
-    let m = match emitters {
-        Emitters::Controllers(controller_sub_data) => match controller_sub_data {
+    let view = match emitter {
+        Emitter::Controller(controller_sub_data) => match controller_sub_data {
             ControllerSubData::Controller => {
                 html! {
                     <ControllersComp {facility_id} />
@@ -71,7 +70,7 @@ pub fn emitters_window(Props { facility_id }: &Props) -> Html {
                 }
             }
         },
-        Emitters::Compressors(compressor_sub_data) => match compressor_sub_data {
+        Emitter::Compressor(compressor_sub_data) => match compressor_sub_data {
             CompressorSubData::Compressor => {
                 html! {
                     <CompressorsComp {facility_id} />
@@ -93,7 +92,7 @@ pub fn emitters_window(Props { facility_id }: &Props) -> Html {
                 }
             }
         },
-        Emitters::TankFarms(tank_farm_sub_data) => match tank_farm_sub_data {
+        Emitter::TankFarm(tank_farm_sub_data) => match tank_farm_sub_data {
             TankFarmSubData::TankFarm => {
                 html! {
                     <div>{ "Tank Farm" }</div>
@@ -119,15 +118,15 @@ pub fn emitters_window(Props { facility_id }: &Props) -> Html {
 
     html! {
         <div class={classes!("emitters-window")}>
-            <Navbar {emitters_data} on_emitters_change={on_emitters_change.clone()} />
-            <SecondaryNavbar
-                {emitters}
-                {on_emitters_change}
+            <EmitterPrimaryNavbar {emitter_view} on_emitter_change={on_emitter_change.clone()} />
+            <EmitterSecondaryNavbar
+                {emitter}
+                {on_emitter_change}
                 {on_controller_sub_data_change}
                 {on_compressor_sub_data_change}
                 {on_tank_farm_sub_data_change}
             />
-            { m }
+            { view }
         </div>
     }
 }
