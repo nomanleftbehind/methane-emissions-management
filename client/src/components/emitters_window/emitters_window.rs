@@ -3,6 +3,7 @@ use crate::components::emitters_window::{
     controllers::ControllersComp,
     emitter_primary_navbar::{EmitterPrimaryNavbar, EmitterView},
     emitter_secondary_navbar::EmitterSecondaryNavbar,
+    tank_farms::TankFarmsComp,
     CompressorSubData, ControllerSubData, Emitter, TankFarmSubData,
 };
 use std::rc::Rc;
@@ -95,7 +96,7 @@ pub fn emitters_window(Props { facility_id }: &Props) -> Html {
         Emitter::TankFarm(tank_farm_sub_data) => match tank_farm_sub_data {
             TankFarmSubData::TankFarm => {
                 html! {
-                    <div>{ "Tank Farm" }</div>
+                    <TankFarmsComp {facility_id} />
                 }
             }
             TankFarmSubData::TankFarmChange => {
@@ -126,6 +127,7 @@ pub fn emitters_window(Props { facility_id }: &Props) -> Html {
                 {on_compressor_sub_data_change}
                 {on_tank_farm_sub_data_change}
             />
+            <div />
             { view }
         </div>
     }

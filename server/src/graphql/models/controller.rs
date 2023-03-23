@@ -14,9 +14,7 @@ use crate::graphql::{
         ControllerMonthVent, ControllerMonthVentOverride, Facility, User,
     },
 };
-use async_graphql::{
-    dataloader::DataLoader, ComplexObject, Context, Error, InputObject, SimpleObject,
-};
+use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -130,9 +128,4 @@ impl Controller {
 
         Ok(result)
     }
-}
-
-#[derive(Debug, InputObject)]
-pub struct ControllersByFacilityId {
-    pub facility_id: Uuid,
 }

@@ -1,7 +1,8 @@
 use crate::{
+    components::emitters_window::entry::{Entry, EntryValue},
     hooks::{use_query_with_deps, QueryResponse},
     models::queries::controller::{
-        get_controllers::{ControllersByFacilityId, ResponseData, Variables},
+        get_controllers::{EmittersByInput, ResponseData, Variables},
         GetControllers,
     },
     utils::gen_style::gen_grid_style,
@@ -21,7 +22,7 @@ pub struct Props {
 pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
     let get_controllers = {
         let variables = Variables {
-            by: ControllersByFacilityId {
+            by: EmittersByInput {
                 facility_id: **facility_id,
             },
         };
@@ -34,15 +35,16 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
             ..
         } => {
             let controllers_iter = controllers_by.into_iter().enumerate().map(|(row_num, c)| {
-                let m = c.manufacturer.map_or("".to_string(), |v| v.manufacturer);
-                let a = c.application.map_or("".to_string(), |v| v.application);
+                let m = c.manufacturer.map(|v| v.manufacturer);
+                let a = c.application.map(|v| v.application);
+                let row_num = row_num + 2;
                 html! {
                     <>
-                        <div style={gen_grid_style(1, row_num + 2)}>{ c.model }</div>
-                        <div style={gen_grid_style(2, row_num + 2)}>{ c.serial_number }</div>
-                        <div style={gen_grid_style(3, row_num + 2)}>{ m }</div>
-                        <div style={gen_grid_style(4, row_num + 2)}>{ a }</div>
-                        <div style={gen_grid_style(5, row_num + 2)}>{ c.fdc_rec_id }</div>
+                        <Entry col_num={1} {row_num} value={EntryValue::OptionString(c.model)} />
+                        <Entry col_num={2} {row_num} value={EntryValue::OptionString(c.serial_number)} />
+                        <Entry col_num={3} {row_num} value={EntryValue::OptionString(m)} />
+                        <Entry col_num={4} {row_num} value={EntryValue::OptionString(a)} />
+                        <Entry col_num={5} {row_num} value={EntryValue::String(c.fdc_rec_id)} />
                     </>
                 }
             });

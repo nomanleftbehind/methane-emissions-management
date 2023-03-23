@@ -1,8 +1,7 @@
 use crate::{
     configuration::DefaultGasParams,
     graphql::{
-        context::ContextExt, mutations::validators::MonthBeginningValidator,
-        sql::insert_controller_month_vents,
+        context::ContextExt, models::MonthBeginningValidator, sql::insert_controller_month_vents,
     },
 };
 use async_graphql::{Context, Error, Object};

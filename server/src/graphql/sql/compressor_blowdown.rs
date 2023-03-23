@@ -1,10 +1,7 @@
 use crate::{
-    graphql::{
-        models::{
-            CompressorBlowdown, CompressorBlowdownInterim, CompressorBlowdownInterimNestedRows,
-            CompressorBlowdownInterimUnnestedRows, MssqlCompressorBlowdownRows,
-        },
-        queries::FromToMonthInput,
+    graphql::models::{
+        CompressorBlowdown, CompressorBlowdownInterim, CompressorBlowdownInterimNestedRows,
+        CompressorBlowdownInterimUnnestedRows, FromToMonthInput, MssqlCompressorBlowdownRows,
     },
     MssqlFdcClient,
 };

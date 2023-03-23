@@ -1,7 +1,7 @@
 use crate::{
     hooks::{use_query_with_deps, QueryResponse},
     models::queries::compressor::{
-        get_compressors::{CompressorsByFacilityId, ResponseData, Variables},
+        get_compressors::{EmittersByInput, ResponseData, Variables},
         GetCompressors,
     },
     utils::gen_style::gen_grid_style
@@ -21,7 +21,7 @@ pub struct Props {
 pub fn compressors_comp(Props { facility_id }: &Props) -> Html {
     let get_compressors = {
         let variables = Variables {
-            by: CompressorsByFacilityId {
+            by: EmittersByInput {
                 facility_id: **facility_id,
             },
         };

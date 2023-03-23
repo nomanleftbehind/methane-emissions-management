@@ -13,9 +13,7 @@ use crate::graphql::{
         CompressorMonthVentOverride, Facility, User,
     },
 };
-use async_graphql::{
-    dataloader::DataLoader, ComplexObject, Context, Error, InputObject, SimpleObject,
-};
+use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -119,9 +117,4 @@ impl Compressor {
 
         Ok(result)
     }
-}
-
-#[derive(Debug, InputObject)]
-pub struct CompressorsByFacilityId {
-    pub facility_id: Uuid,
 }

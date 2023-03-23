@@ -1,5 +1,5 @@
 use crate::graphql::{
-    context::ContextExt, queries::FromToMonthInput,
+    context::ContextExt, models::FromToMonthInput,
     sql::mutatation_insert_compressor_blowdowns_from_fdc,
 };
 use async_graphql::{Context, Error, Object};

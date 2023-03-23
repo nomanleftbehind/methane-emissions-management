@@ -17,7 +17,7 @@ query AllFacilities {
   }
 }
 
-query GetControllers($by: ControllersByFacilityId!) {
+query GetControllers($by: EmittersByInput!) {
   controllersBy(by: $by) {
     id
     model
@@ -32,7 +32,7 @@ query GetControllers($by: ControllersByFacilityId!) {
   }
 }
 
-query GetCompressors($by: CompressorsByFacilityId!) {
+query GetCompressors($by: EmittersByInput!) {
   compressorsBy(by: $by) {
     id
     fdcRecId
@@ -40,6 +40,20 @@ query GetCompressors($by: CompressorsByFacilityId!) {
     serialNumber
     installDate
     removeDate
+  }
+}
+
+query GetTankFarms($by: EmittersByInput!) {
+  tankFarmsBy(by: $by) {
+    id
+    createdBy {
+      email
+    }
+    createdAt
+		updatedBy {
+      email
+    }
+    updatedAt
   }
 }
 

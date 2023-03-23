@@ -1,0 +1,6 @@
+.emitter-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex: 2 1 auto;
+}

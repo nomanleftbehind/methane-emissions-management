@@ -1,9 +1,9 @@
-use crate::graphql::models::{Compressor, CompressorsByFacilityId};
+use crate::graphql::models::{Compressor, EmittersByInput};
 use sqlx::PgPool;
 
 pub async fn query_compressors(
     pool: &PgPool,
-    CompressorsByFacilityId { facility_id }: CompressorsByFacilityId,
+    EmittersByInput { facility_id }: EmittersByInput,
 ) -> Result<Vec<Compressor>, sqlx::Error> {
     sqlx::query_as!(
         Compressor,

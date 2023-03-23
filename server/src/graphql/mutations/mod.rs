@@ -15,7 +15,6 @@ mod gas_analysis_calculated_param;
 mod tank_farm_month_vent;
 mod tank_farm_vent_factor_calculated;
 mod user;
-pub mod validators;
 
 #[derive(MergedObject, Default, Clone)]
 pub struct FullMutation(

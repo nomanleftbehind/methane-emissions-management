@@ -16,6 +16,12 @@
   background-color: var(--secondary-navbar-color);
 }
 
+.emitters-secondary-navbar + div {
+  height: 0.5rem;
+  border-bottom: 1px solid #dbdcdd;
+  background-color: #fff;
+}
+
 .emitters {
   display: grid;
   grid-auto-rows: min-content;
@@ -32,6 +38,10 @@
   border-top-right-radius: 0.5rem;
   color: #555;
   position: relative;
+}
+
+.emitters-navigation-button:first-of-type {
+  margin-left: 0.4rem;
 }
 
 .emitters-primary-navbar .emitters-navigation-button {
@@ -85,7 +95,7 @@
 
 
 .emitters-primary-navbar .emitters-navigation-button:hover {
-  background-color: #f6f6f8;
+  background-color: #d0d2d5;
 }
 
 .emitters-secondary-navbar .emitters-navigation-button:hover {
