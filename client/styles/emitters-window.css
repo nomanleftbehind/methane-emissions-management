@@ -24,7 +24,9 @@
 
 .emitters {
   display: grid;
-  grid-auto-rows: min-content;
+  grid-template-columns: repeat(4, 13rem) 20rem;
+  grid-template-rows: 40px min-content;
+  /* grid-auto-rows: min-content; */
   height: 100%;
   overflow: auto;
 }

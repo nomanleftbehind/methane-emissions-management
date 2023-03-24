@@ -1,4 +1,4 @@
-use super::super::UUID;
+use super::super::{NaiveDateTime, UUID};
 use graphql_client::GraphQLQuery;
 
 #[derive(GraphQLQuery)]

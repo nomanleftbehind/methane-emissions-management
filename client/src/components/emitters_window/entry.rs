@@ -7,6 +7,8 @@ use yew::{
     Html, Properties,
 };
 
+use crate::models::NaiveDateTime;
+
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub row_num: usize,
@@ -80,7 +82,7 @@ pub fn entry(
     let m = match mode {
         EntryMode::ReadOnly => html! {
         <>
-            <div {ondblclick}>{ value }</div>
+            <div class={classes!("entry-read-only")} {ondblclick}>{ value }</div>
         </>
         },
         EntryMode::Write => {
@@ -88,6 +90,7 @@ pub fn entry(
                 EntryValue::String(_) => "text",
                 EntryValue::OptionString(_) => "text",
                 EntryValue::I32(_) => "number",
+                EntryValue::NaiveDateTime(_) => "date",
             };
 
             html! {
@@ -102,8 +105,10 @@ pub fn entry(
     };
 
     html! {
-        <div class={classes!("entry")} {style} ref={div_ref}>
-            { m }
+        <div class={classes!("emitter-cell")} {style}>
+            <div class={classes!("entry")} ref={div_ref}>
+                { m }
+            </div>
         </div>
     }
 }
@@ -119,6 +124,7 @@ pub enum EntryValue {
     String(String),
     OptionString(Option<String>),
     I32(i32),
+    NaiveDateTime(NaiveDateTime),
 }
 
 impl Display for EntryValue {
@@ -127,6 +133,7 @@ impl Display for EntryValue {
             Self::String(s) => write!(f, "{}", s),
             Self::OptionString(os) => write!(f, "{}", os.as_ref().map_or_else(|| "", |s| s)),
             Self::I32(i) => write!(f, "{}", i),
+            Self::NaiveDateTime(ndt) => write!(f, "{}", ndt),
         }
     }
 }

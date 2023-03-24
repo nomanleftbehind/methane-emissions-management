@@ -37,6 +37,7 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
             let controllers_iter = controllers_by.into_iter().enumerate().map(|(row_num, c)| {
                 let m = c.manufacturer.map(|v| v.manufacturer);
                 let a = c.application.map(|v| v.application);
+                let created_by = c.created_by.map(|cb| cb.email);
                 let row_num = row_num + 2;
                 html! {
                     <>
@@ -45,6 +46,8 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
                         <Entry col_num={3} {row_num} value={EntryValue::OptionString(m)} />
                         <Entry col_num={4} {row_num} value={EntryValue::OptionString(a)} />
                         <Entry col_num={5} {row_num} value={EntryValue::String(c.fdc_rec_id)} />
+                        <Entry col_num={6} {row_num} value={EntryValue::OptionString(created_by)} />
+                        <Entry col_num={7} {row_num} value={EntryValue::NaiveDateTime(c.created_at)} />
                     </>
                 }
             });
@@ -66,6 +69,8 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
             <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Manufacturer" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Application" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "FDC ID" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Created By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Created At" }</div>
             { r }
         </div>
     }

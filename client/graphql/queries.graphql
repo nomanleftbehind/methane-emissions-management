@@ -29,6 +29,14 @@ query GetControllers($by: EmittersByInput!) {
       manufacturer
     }
     fdcRecId
+    createdBy {
+      email
+    }
+    createdAt
+		updatedBy {
+      email
+    }
+    updatedAt
   }
 }
 

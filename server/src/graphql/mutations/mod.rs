@@ -1,6 +1,6 @@
 use self::{
     compressor_blowdown::CompressorBlowdownMutation,
-    compressor_month_vent::CompressorMonthVentMutation,
+    compressor_month_vent::CompressorMonthVentMutation, controller::ControllerMutation,
     controller_month_vent::ControllerMonthVentMutation,
     gas_analysis_calculated_param::GasAnalysisCalculatedParamMutation,
     tank_farm_month_vent::TankFarmMonthVentMutation,
@@ -10,6 +10,7 @@ use async_graphql::MergedObject;
 
 mod compressor_blowdown;
 mod compressor_month_vent;
+mod controller;
 mod controller_month_vent;
 mod gas_analysis_calculated_param;
 mod tank_farm_month_vent;
@@ -19,6 +20,7 @@ mod user;
 #[derive(MergedObject, Default, Clone)]
 pub struct FullMutation(
     UserMutation,
+    ControllerMutation,
     ControllerMonthVentMutation,
     CompressorMonthVentMutation,
     CompressorBlowdownMutation,
@@ -30,6 +32,7 @@ pub struct FullMutation(
 pub(crate) fn full_mutation() -> FullMutation {
     FullMutation(
         UserMutation,
+        ControllerMutation,
         ControllerMonthVentMutation,
         CompressorMonthVentMutation,
         CompressorBlowdownMutation,
