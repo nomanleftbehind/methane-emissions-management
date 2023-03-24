@@ -1,13 +1,11 @@
 use std::fmt::Display;
-use wasm_bindgen::prelude::Closure;
 use wasm_bindgen::JsCast;
-use web_sys::{Event, HtmlElement, Node, Document, window};
+use wasm_bindgen::{prelude::Closure, UnwrapThrowExt};
+use web_sys::{window, Event, Node};
 use yew::{
     classes, function_component, html, use_effect_with_deps, use_node_ref, use_state_eq, Callback,
     Html, Properties,
 };
-
-use crate::utils::console_log;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -29,54 +27,49 @@ pub fn entry(
 
     let div_ref = use_node_ref();
 
-
-
     {
+        let mode_state = mode_state.clone();
         let div_ref = div_ref.clone();
 
         use_effect_with_deps(
-            move |_| {
-                let div = div_ref
-                    .cast::<HtmlElement>()
-                    .expect("div_ref not attached to div element");
+            move |div_ref| {
+                let document = window()
+                    .expect_throw("window is undefined")
+                    .document()
+                    .expect_throw("document is undefined");
 
-                let document = window().unwrap().document().unwrap();
+                let div_ref = div_ref.clone();
 
-                let listener = Closure::<dyn Fn(Event)>::wrap(Box::new(|_| {
-                    web_sys::console::log_1(&"Clicked!".into());
-                }));
-
-                let handle_click_outside = Closure::<dyn Fn(Event)>::wrap(Box::new(|e| {
+                let handle_click_outside = Closure::<dyn Fn(Event)>::wrap(Box::new(move |e| {
                     let target = e.target();
+                    let target = target.as_ref().map(|t| t.dyn_ref::<Node>()).flatten();
 
-                    console_log!("target: {:#?}", target);
-            
-            
-                    // if let Some(g) = div_ref.get() {
-                    //     if g.contains(target) {
-            
-                    //     }
-                    // };
+                    if let Some(node) = div_ref.get() {
+                        if !node.contains(target) {
+                            mode_state.set(EntryMode::ReadOnly);
+                        }
+                    };
                 }));
 
-                document.add_event_listener_with_callback("click", handle_click_outside.as_ref().unchecked_ref()).unwrap();
-
-                // div.add_event_listener_with_callback("click", listener.as_ref().unchecked_ref())
-                //     .unwrap();
-
-                move || {
-                    document.remove_event_listener_with_callback(
+                document
+                    .add_event_listener_with_callback(
                         "click",
                         handle_click_outside.as_ref().unchecked_ref(),
                     )
                     .unwrap();
+
+                move || {
+                    document
+                        .remove_event_listener_with_callback(
+                            "click",
+                            handle_click_outside.as_ref().unchecked_ref(),
+                        )
+                        .unwrap();
                 }
             },
-            (),
+            div_ref,
         );
     }
-
-
 
     let mode_state = mode_state.clone();
     let ondblclick = Callback::from(move |_| {

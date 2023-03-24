@@ -27,7 +27,6 @@
   grid-auto-rows: min-content;
   height: 100%;
   overflow: auto;
-  background: var(--background-color);
 }
 
 .emitters-navigation-button {

@@ -80,10 +80,6 @@ table {
   margin: 4px;
 }
 
-.emitters div {
-  padding: 2px;
-}
-
 .sticky {
   position: sticky;
   background-color: rgb(231, 146, 56);

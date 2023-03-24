@@ -1,0 +1,11 @@
+.entry:focus {
+    background-color: rebeccapurple !important;
+}
+
+/* .entry {
+    border: 1px solid blue;
+} */
+
+.emitters div {
+  padding: 2px;
+}
