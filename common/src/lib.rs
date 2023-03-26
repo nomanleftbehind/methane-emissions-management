@@ -1,6 +1,7 @@
-use std::fmt::Display;
-
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
+use std::fmt::Display;
+use uuid::Uuid;
 
 /// `FacilityType` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
 ///
@@ -72,6 +73,41 @@ impl Display for Role {
             Role::Regulatory => write!(f, " Regulatory"),
             Role::Office => write!(f, " Office"),
             Role::Operator => write!(f, " Operator"),
+        }
+    }
+}
+
+#[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+pub enum UpdateFieldVariant {
+    ControllerFdcRecId,
+    ControllerManufacturerId,
+    ControllerModel,
+    ControllerSerialNumber,
+    ControllerApplicationId,
+    ControllerFacilityId,
+}
+
+// graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
+// Leaving this enum and OneofObject trait implementation in `common` library in case of potential upgrades to graphql_client in the future.
+#[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::OneofObject))]
+#[derive(Clone, Eq, PartialEq, Debug)]
+pub enum UpdateFieldValue {
+    StringValue(String),
+    OptionStringValue(Option<String>),
+    IntegerValue(i64),
+    UuidValue(Uuid),
+    NaiveDateTimeValue(NaiveDateTime),
+}
+
+impl Display for UpdateFieldValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::StringValue(s) => write!(f, "{}", s),
+            Self::OptionStringValue(os) => write!(f, "{}", os.as_ref().map_or_else(|| "", |s| s)),
+            Self::IntegerValue(i) => write!(f, "{}", i),
+            Self::UuidValue(u) => write!(f, "{}", u),
+            Self::NaiveDateTimeValue(ndt) => write!(f, "{}", ndt),
         }
     }
 }

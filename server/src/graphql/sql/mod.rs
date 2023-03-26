@@ -9,6 +9,7 @@ mod gas_analysis_calculated_param;
 mod tank_farm;
 mod tank_farm_month_vent;
 mod tank_farm_vent_factor_calculated;
+mod update_field;
 mod user;
 
 pub use compressor::*;
@@ -22,4 +23,5 @@ pub(in crate::graphql) use gas_analysis_calculated_param::*;
 pub(in crate::graphql) use tank_farm::*;
 pub(in crate::graphql) use tank_farm_month_vent::*;
 pub(in crate::graphql) use tank_farm_vent_factor_calculated::*;
-pub use user::*;
+pub use update_field::*;
+pub(in crate::graphql) use user::*;

@@ -9,3 +9,7 @@ mutation Login($loginUserInput: LoginUserInput!) {
 mutation Logout {
   logout
 }
+
+mutation UpdateField($input: UpdateFieldInput!) {
+  updateField(updateFieldInput: $input)
+}
