@@ -8,12 +8,13 @@ use crate::{
             get_controllers::{EmittersByInput, ResponseData, Variables},
             GetControllers,
         },
-        NaiveDateTime,
+        NaiveDate, NaiveDateTime,
     },
     utils::console_log,
 };
 use common::UpdateFieldValue::{
-    self as UpdateFieldValueEnum, IntegerValue, NaiveDateTimeValue, OptionStringValue, StringValue,
+    self as UpdateFieldValueEnum, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue,
+    OptionFloatValue, OptionIntegerValue, OptionStringValue, OptionUuidValue, StringValue,
     UuidValue,
 };
 use uuid::Uuid;
@@ -115,13 +116,29 @@ pub fn entry(
             StringValue(_) => StringValue(input.value()),
             OptionStringValue(_) => OptionStringValue(Some(input.value())),
             IntegerValue(_) => IntegerValue(input.value_as_number() as i64),
-            UuidValue(_) => UuidValue(Uuid::parse_str(input.value().as_str()).unwrap_throw()),
-            NaiveDateTimeValue(_) => IntegerValue(0), // _ => IntegerValue(0),
+            OptionIntegerValue(_) => OptionIntegerValue(Some(input.value_as_number() as i64)),
+            FloatValue(_) => FloatValue(input.value_as_number()),
+            OptionFloatValue(_) => OptionFloatValue(Some(input.value_as_number())),
+            UuidValue(_) => UuidValue(
+                Uuid::parse_str(input.value().as_str())
+                    .expect_throw("Unable to convert &str to Uuid."),
+            ),
+            OptionUuidValue(_) => OptionUuidValue(Some(
+                Uuid::parse_str(input.value().as_str())
+                    .expect_throw("Unable to convert &str to Uuid."),
+            )),
+            NaiveDateTimeValue(_) => NaiveDateTimeValue(
+                NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
+                    .expect_throw("Unable to convert i64 to NaiveDateTime."),
+            ),
+            NaiveDateValue(_) => NaiveDateValue(
+                NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
+                    .expect_throw("Unable to convert i64 to NaiveDateTime.")
+                    .date(),
+            ),
         };
 
         input_value_handle.set(changed_value);
-
-        // console_log!("event: {:#?}", input_value);
     });
 
     if let Some(EditFieldProp {
@@ -129,18 +146,86 @@ pub fn entry(
         update_field_variant,
     }) = edit_field
     {
-        let value = match value.clone() {
+        let value = match input_value.clone() {
             OptionStringValue(option_string_value) => UpdateFieldValue {
-                string_value: option_string_value.clone(),
+                string_value: option_string_value,
                 integer_value: None,
+                float_value: None,
                 uuid_value: None,
+                naive_date_value: None,
                 naive_date_time_value: None,
             },
-            _ => UpdateFieldValue {
-                string_value: Some("Hi".to_string()),
+            StringValue(string_value) => UpdateFieldValue {
+                string_value: Some(string_value),
                 integer_value: None,
+                float_value: None,
                 uuid_value: None,
+                naive_date_value: None,
                 naive_date_time_value: None,
+            },
+            IntegerValue(integer_value) => UpdateFieldValue {
+                string_value: None,
+                integer_value: Some(integer_value),
+                float_value: None,
+                uuid_value: None,
+                naive_date_value: None,
+                naive_date_time_value: None,
+            },
+            OptionIntegerValue(option_integer_value) => UpdateFieldValue {
+                string_value: None,
+                integer_value: option_integer_value,
+                float_value: None,
+                uuid_value: None,
+                naive_date_value: None,
+                naive_date_time_value: None,
+            },
+            FloatValue(float_value) => UpdateFieldValue {
+                string_value: None,
+                integer_value: None,
+                float_value: Some(float_value),
+                uuid_value: None,
+                naive_date_value: None,
+                naive_date_time_value: None,
+            },
+            OptionFloatValue(option_float_value) => UpdateFieldValue {
+                string_value: None,
+                integer_value: None,
+                float_value: option_float_value,
+                uuid_value: None,
+                naive_date_value: None,
+                naive_date_time_value: None,
+            },
+            UuidValue(uuid_value) => UpdateFieldValue {
+                string_value: None,
+                integer_value: None,
+                float_value: None,
+                uuid_value: Some(uuid_value),
+                naive_date_value: None,
+                naive_date_time_value: None,
+            },
+            OptionUuidValue(option_uuid_value) => UpdateFieldValue {
+                string_value: None,
+                integer_value: None,
+                float_value: None,
+                uuid_value: option_uuid_value,
+                naive_date_value: None,
+                naive_date_time_value: None,
+            },
+            NaiveDateValue(naive_date_value) => UpdateFieldValue {
+                string_value: None,
+                integer_value: None,
+                float_value: None,
+                uuid_value: None,
+                naive_date_value: Some(naive_date_value),
+                naive_date_time_value: None,
+            },
+            NaiveDateTimeValue(naive_date_time_value) => UpdateFieldValue {
+                string_value: None,
+                integer_value: None,
+                float_value: None,
+                uuid_value: None,
+                naive_date_value: None,
+                naive_date_time_value: Some(naive_date_time_value),
             },
         };
         let variables = VariablesUpdateField {
@@ -168,8 +253,9 @@ pub fn entry(
         },
         EntryMode::Write => {
             let form_type = match value {
-                IntegerValue(_) => "number",
-                NaiveDateTimeValue(_) => "date",
+                IntegerValue(_) | FloatValue(_) => "number",
+                NaiveDateValue(_) => "date",
+                NaiveDateTimeValue(_) => "datetime-local",
                 _ => "text",
             };
 

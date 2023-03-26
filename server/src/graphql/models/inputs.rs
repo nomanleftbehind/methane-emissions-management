@@ -21,7 +21,9 @@ pub struct FromToMonthInput {
 pub struct UpdateFieldValue {
     pub string_value: Option<String>,
     pub integer_value: Option<i64>,
+    pub float_value: Option<f64>,
     pub uuid_value: Option<Uuid>,
+    pub naive_date_value: Option<NaiveDate>,
     pub naive_date_time_value: Option<NaiveDateTime>,
 }
 

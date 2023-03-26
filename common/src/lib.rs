@@ -1,4 +1,4 @@
-use chrono::NaiveDateTime;
+use chrono::{NaiveDate, NaiveDateTime};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use uuid::Uuid;
@@ -91,13 +91,18 @@ pub enum UpdateFieldVariant {
 // graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
 // Leaving this enum and OneofObject trait implementation in `common` library in case of potential upgrades to graphql_client in the future.
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::OneofObject))]
-#[derive(Clone, Eq, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum UpdateFieldValue {
     StringValue(String),
     OptionStringValue(Option<String>),
     IntegerValue(i64),
+    OptionIntegerValue(Option<i64>),
+    FloatValue(f64),
+    OptionFloatValue(Option<f64>),
     UuidValue(Uuid),
+    OptionUuidValue(Option<Uuid>),
     NaiveDateTimeValue(NaiveDateTime),
+    NaiveDateValue(NaiveDate),
 }
 
 impl Display for UpdateFieldValue {
@@ -106,8 +111,28 @@ impl Display for UpdateFieldValue {
             Self::StringValue(s) => write!(f, "{}", s),
             Self::OptionStringValue(os) => write!(f, "{}", os.as_ref().map_or_else(|| "", |s| s)),
             Self::IntegerValue(i) => write!(f, "{}", i),
+            Self::OptionIntegerValue(oi) => write!(
+                f,
+                "{}",
+                oi.as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::FloatValue(fl) => write!(f, "{}", fl),
+            Self::OptionFloatValue(of) => write!(
+                f,
+                "{}",
+                of.as_ref()
+                    .map_or_else(|| "".to_string(), |fl| fl.to_string())
+            ),
             Self::UuidValue(u) => write!(f, "{}", u),
+            Self::OptionUuidValue(ou) => write!(
+                f,
+                "{}",
+                ou.as_ref()
+                    .map_or_else(|| "".to_string(), |u| u.to_string())
+            ),
             Self::NaiveDateTimeValue(ndt) => write!(f, "{}", ndt),
+            Self::NaiveDateValue(nd) => write!(f, "{}", nd),
         }
     }
 }

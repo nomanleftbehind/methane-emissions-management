@@ -20,7 +20,7 @@ use crate::{
     utils::gen_style::gen_grid_style,
 };
 use common::UpdateFieldValue::{
-    IntegerValue, NaiveDateTimeValue, OptionStringValue, StringValue, UuidValue,
+    IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionStringValue, StringValue, UuidValue,
 };
 use std::rc::Rc;
 use uuid::Uuid;
@@ -63,7 +63,8 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
                 let row_num = row_num + 2;
                 html! {
                     <>
-                        <Entry {id} col_num={1} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MODEL}} value={OptionStringValue(c.model)} />
+                        // <Entry {id} col_num={1} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MODEL}} value={OptionStringValue(c.model)} />
+                        <Entry {id} col_num={1} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MANUFACTURER_ID}} value={UuidValue(id)} />
                         <Entry {id} col_num={2} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_SERIAL_NUMBER}} value={OptionStringValue(c.serial_number)} />
                         <Entry {id} col_num={3} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MANUFACTURER_ID}} value={OptionStringValue(manufacturer)} />
                         <Entry {id} col_num={4} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_APPLICATION_ID}} value={OptionStringValue(application)} />

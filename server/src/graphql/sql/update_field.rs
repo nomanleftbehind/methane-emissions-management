@@ -1,6 +1,7 @@
 use crate::graphql::models::{UpdateFieldInput, UpdateFieldValue};
 use common::UpdateFieldVariant::{
-    ControllerFdcRecId, ControllerManufacturerId, ControllerSerialNumber,
+    ControllerApplicationId, ControllerFacilityId, ControllerFdcRecId, ControllerManufacturerId,
+    ControllerModel, ControllerSerialNumber,
 };
 use sqlx::{query, Error, PgPool};
 use uuid::Uuid;
@@ -15,6 +16,8 @@ pub async fn update_field(
                 string_value,
                 uuid_value,
                 integer_value: _,
+                float_value: _,
+                naive_date_value: _,
                 naive_date_time_value: _,
             },
     }: UpdateFieldInput,
@@ -55,11 +58,44 @@ pub async fn update_field(
             updated_by_id,
             updated_at,
         ),
-        _ => {
-            return Err(Error::ColumnNotFound(
-                "Resolver for field not implemented".to_string(),
-            ))
-        }
+        ControllerApplicationId => query!(
+            "UPDATE controllers
+            SET application_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerModel => query!(
+            "UPDATE controllers
+            SET model = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerFacilityId => query!(
+            "UPDATE controllers
+            SET facility_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            updated_by_id,
+            updated_at,
+        ),
+        // _ => {
+        //     return Err(Error::ColumnNotFound(
+        //         "Resolver for field not implemented".to_string(),
+        //     ))
+        // }
     };
 
     Ok(query.execute(pool).await?.rows_affected())

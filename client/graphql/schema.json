@@ -6426,10 +6426,30 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "floatValue",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "uuidValue",
               "type": {
                 "kind": "SCALAR",
                 "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "naiveDateValue",
+              "type": {
+                "kind": "SCALAR",
+                "name": "NaiveDate",
                 "ofType": null
               }
             },
