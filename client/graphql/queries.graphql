@@ -22,9 +22,11 @@ query GetControllers($by: EmittersByInput!) {
     id
     model
     serialNumber
+    applicationId
     application {
       application
     }
+    manufacturerId
     manufacturer {
       manufacturer
     }

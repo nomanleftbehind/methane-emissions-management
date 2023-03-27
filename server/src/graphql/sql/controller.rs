@@ -7,7 +7,7 @@ pub async fn query_controllers(
 ) -> Result<Vec<Controller>, Error> {
     query_as!(
         Controller,
-        "SELECT * FROM controllers WHERE facility_id = $1",
+        "SELECT * FROM controllers WHERE facility_id = $1 ORDER BY id",
         facility_id
     )
     .fetch_all(pool)

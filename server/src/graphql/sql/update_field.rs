@@ -102,5 +102,11 @@ pub async fn update_field(
         // }
     };
 
-    Ok(query.execute(pool).await?.rows_affected())
+    let res = query.execute(pool).await?.rows_affected();
+
+    println!("rows affected: {}", res);
+
+    Ok(res)
+
+    // Ok(query.execute(pool).await?.rows_affected())
 }
