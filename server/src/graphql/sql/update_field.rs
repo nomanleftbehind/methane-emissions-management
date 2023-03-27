@@ -8,7 +8,13 @@ use uuid::Uuid;
 
 pub async fn update_field(
     pool: &PgPool,
-    UpdateFieldInput {
+    input: UpdateFieldInput,
+    updated_by_id: Uuid,
+) -> Result<u64, Error> {
+    let updated_at = chrono::Utc::now().naive_utc();
+
+    println!("input: {:#?}", &input);
+    let UpdateFieldInput {
         id,
         update_field_variant,
         value:
@@ -20,10 +26,8 @@ pub async fn update_field(
                 naive_date_value: _,
                 naive_date_time_value: _,
             },
-    }: UpdateFieldInput,
-    updated_by_id: Uuid,
-) -> Result<u64, Error> {
-    let updated_at = chrono::Utc::now().naive_utc();
+    } = input;
+
     let query = match update_field_variant {
         ControllerSerialNumber => query!(
             "UPDATE controllers

@@ -12,20 +12,19 @@ use crate::{
     },
     utils::console_log,
 };
-use common::UpdateFieldValue::{
-    self as UpdateFieldValueEnum, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue,
-    OptionFloatValue, OptionIntegerValue, OptionStringValue, OptionUuidValue, StringValue,
-    UuidValue,
+use common::UpdateFieldValueEnum::{
+    self, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionFloatValue,
+    OptionIntegerValue, OptionStringValue, OptionUuidValue, StringValue, UuidValue,
 };
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast, UnwrapThrowExt};
-use web_sys::{window, Event, HtmlInputElement, Node};
+use web_sys::{window, Event, HtmlInputElement, Node, SubmitEvent};
 use yew::{
     classes, function_component, html, use_effect_with_deps, use_node_ref, use_state_eq, Callback,
     Html, Properties, TargetCast,
 };
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub struct EditFieldProp {
     pub update_field_variant: UpdateFieldVariant,
     pub handle_update_field: Callback<VariablesUpdateField>,
@@ -102,12 +101,12 @@ pub fn entry(
         );
     }
 
-    use_effect_with_deps(
-        move |u| {
-            console_log!("input changed: {:#?}", u);
-        },
-        input_value.clone(),
-    );
+    // use_effect_with_deps(
+    //     move |u| {
+    //         console_log!("input changed: {:#?}", u);
+    //     },
+    //     input_value.clone(),
+    // );
 
     let value_for_onchange = value.clone();
     let onchange = Callback::from(move |e: Event| {
@@ -141,103 +140,118 @@ pub fn entry(
         input_value_handle.set(changed_value);
     });
 
-    if let Some(EditFieldProp {
-        handle_update_field,
-        update_field_variant,
-    }) = edit_field
-    {
-        let value = match input_value.clone() {
-            OptionStringValue(option_string_value) => UpdateFieldValue {
-                string_value: option_string_value,
-                integer_value: None,
-                float_value: None,
-                uuid_value: None,
-                naive_date_value: None,
-                naive_date_time_value: None,
-            },
-            StringValue(string_value) => UpdateFieldValue {
-                string_value: Some(string_value),
-                integer_value: None,
-                float_value: None,
-                uuid_value: None,
-                naive_date_value: None,
-                naive_date_time_value: None,
-            },
-            IntegerValue(integer_value) => UpdateFieldValue {
-                string_value: None,
-                integer_value: Some(integer_value),
-                float_value: None,
-                uuid_value: None,
-                naive_date_value: None,
-                naive_date_time_value: None,
-            },
-            OptionIntegerValue(option_integer_value) => UpdateFieldValue {
-                string_value: None,
-                integer_value: option_integer_value,
-                float_value: None,
-                uuid_value: None,
-                naive_date_value: None,
-                naive_date_time_value: None,
-            },
-            FloatValue(float_value) => UpdateFieldValue {
-                string_value: None,
-                integer_value: None,
-                float_value: Some(float_value),
-                uuid_value: None,
-                naive_date_value: None,
-                naive_date_time_value: None,
-            },
-            OptionFloatValue(option_float_value) => UpdateFieldValue {
-                string_value: None,
-                integer_value: None,
-                float_value: option_float_value,
-                uuid_value: None,
-                naive_date_value: None,
-                naive_date_time_value: None,
-            },
-            UuidValue(uuid_value) => UpdateFieldValue {
-                string_value: None,
-                integer_value: None,
-                float_value: None,
-                uuid_value: Some(uuid_value),
-                naive_date_value: None,
-                naive_date_time_value: None,
-            },
-            OptionUuidValue(option_uuid_value) => UpdateFieldValue {
-                string_value: None,
-                integer_value: None,
-                float_value: None,
-                uuid_value: option_uuid_value,
-                naive_date_value: None,
-                naive_date_time_value: None,
-            },
-            NaiveDateValue(naive_date_value) => UpdateFieldValue {
-                string_value: None,
-                integer_value: None,
-                float_value: None,
-                uuid_value: None,
-                naive_date_value: Some(naive_date_value),
-                naive_date_time_value: None,
-            },
-            NaiveDateTimeValue(naive_date_time_value) => UpdateFieldValue {
-                string_value: None,
-                integer_value: None,
-                float_value: None,
-                uuid_value: None,
-                naive_date_value: None,
-                naive_date_time_value: Some(naive_date_time_value),
-            },
-        };
-        let variables = VariablesUpdateField {
-            input: UpdateFieldInput {
-                id: *id,
-                value,
-                update_field_variant: update_field_variant.clone(),
-            },
-        };
+    let onsubmit = {
+        let edit_field = edit_field.clone();
+        let input_value = input_value.clone();
+        let id = id.clone();
 
-        let y = handle_update_field.emit(variables);
+        Callback::from(move |e: SubmitEvent| {
+            e.prevent_default();
+            let edit_field = edit_field.clone();
+            let input_value = input_value.clone();
+
+            if let Some(EditFieldProp {
+                handle_update_field,
+                update_field_variant,
+            }) = edit_field
+            {
+                console_log!("id: {}, input value: {:#?}, update_field_variant: {:#?}", &id, &input_value, &update_field_variant);
+                let value = match input_value {
+                    OptionStringValue(option_string_value) => UpdateFieldValue {
+                        string_value: option_string_value,
+                        integer_value: None,
+                        float_value: None,
+                        uuid_value: None,
+                        naive_date_value: None,
+                        naive_date_time_value: None,
+                    },
+                    StringValue(string_value) => UpdateFieldValue {
+                        string_value: Some(string_value),
+                        integer_value: None,
+                        float_value: None,
+                        uuid_value: None,
+                        naive_date_value: None,
+                        naive_date_time_value: None,
+                    },
+                    IntegerValue(integer_value) => UpdateFieldValue {
+                        string_value: None,
+                        integer_value: Some(integer_value),
+                        float_value: None,
+                        uuid_value: None,
+                        naive_date_value: None,
+                        naive_date_time_value: None,
+                    },
+                    OptionIntegerValue(option_integer_value) => UpdateFieldValue {
+                        string_value: None,
+                        integer_value: option_integer_value,
+                        float_value: None,
+                        uuid_value: None,
+                        naive_date_value: None,
+                        naive_date_time_value: None,
+                    },
+                    FloatValue(float_value) => UpdateFieldValue {
+                        string_value: None,
+                        integer_value: None,
+                        float_value: Some(float_value),
+                        uuid_value: None,
+                        naive_date_value: None,
+                        naive_date_time_value: None,
+                    },
+                    OptionFloatValue(option_float_value) => UpdateFieldValue {
+                        string_value: None,
+                        integer_value: None,
+                        float_value: option_float_value,
+                        uuid_value: None,
+                        naive_date_value: None,
+                        naive_date_time_value: None,
+                    },
+                    UuidValue(uuid_value) => UpdateFieldValue {
+                        string_value: None,
+                        integer_value: None,
+                        float_value: None,
+                        uuid_value: Some(uuid_value),
+                        naive_date_value: None,
+                        naive_date_time_value: None,
+                    },
+                    OptionUuidValue(option_uuid_value) => UpdateFieldValue {
+                        string_value: None,
+                        integer_value: None,
+                        float_value: None,
+                        uuid_value: option_uuid_value,
+                        naive_date_value: None,
+                        naive_date_time_value: None,
+                    },
+                    NaiveDateValue(naive_date_value) => UpdateFieldValue {
+                        string_value: None,
+                        integer_value: None,
+                        float_value: None,
+                        uuid_value: None,
+                        naive_date_value: Some(naive_date_value),
+                        naive_date_time_value: None,
+                    },
+                    NaiveDateTimeValue(naive_date_time_value) => UpdateFieldValue {
+                        string_value: None,
+                        integer_value: None,
+                        float_value: None,
+                        uuid_value: None,
+                        naive_date_value: None,
+                        naive_date_time_value: Some(naive_date_time_value),
+                    },
+                };
+
+                let variables = VariablesUpdateField {
+                    input: UpdateFieldInput {
+                        id,
+                        value,
+                        update_field_variant: update_field_variant.clone(),
+                    },
+                };
+
+                handle_update_field.emit(variables);
+            };
+        })
     };
+
 
     let mode_state = mode_state.clone();
     let ondblclick = Callback::from(move |_| {
@@ -261,7 +275,7 @@ pub fn entry(
 
             html! {
                 <>
-                    <form>
+                    <form {onsubmit}>
                         <input type={form_type} value={input_value.to_string()} {onchange} />
                         <button type="submit">{ "S" }</button>
                     </form>

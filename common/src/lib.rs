@@ -92,7 +92,7 @@ pub enum UpdateFieldVariant {
 // Leaving this enum and OneofObject trait implementation in `common` library in case of potential upgrades to graphql_client in the future.
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::OneofObject))]
 #[derive(Clone, PartialEq, Debug)]
-pub enum UpdateFieldValue {
+pub enum UpdateFieldValueEnum {
     StringValue(String),
     OptionStringValue(Option<String>),
     IntegerValue(i64),
@@ -105,11 +105,13 @@ pub enum UpdateFieldValue {
     NaiveDateValue(NaiveDate),
 }
 
-impl Display for UpdateFieldValue {
+impl Display for UpdateFieldValueEnum {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::StringValue(s) => write!(f, "{}", s),
-            Self::OptionStringValue(os) => write!(f, "{}", os.as_ref().map_or_else(|| "", |s| s)),
+            Self::OptionStringValue(os) => {
+                write!(f, "{}", os.as_ref().map_or_else(|| "", |s| s))
+            }
             Self::IntegerValue(i) => write!(f, "{}", i),
             Self::OptionIntegerValue(oi) => write!(
                 f,

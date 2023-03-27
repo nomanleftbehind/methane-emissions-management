@@ -19,7 +19,7 @@ use crate::{
     },
     utils::gen_style::gen_grid_style,
 };
-use common::UpdateFieldValue::{
+use common::UpdateFieldValueEnum::{
     IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionStringValue, StringValue, UuidValue,
 };
 use std::rc::Rc;
@@ -63,14 +63,14 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
                 let row_num = row_num + 2;
                 html! {
                     <>
-                        // <Entry {id} col_num={1} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MODEL}} value={OptionStringValue(c.model)} />
-                        <Entry {id} col_num={1} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MANUFACTURER_ID}} value={UuidValue(id)} />
-                        <Entry {id} col_num={2} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_SERIAL_NUMBER}} value={OptionStringValue(c.serial_number)} />
-                        <Entry {id} col_num={3} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MANUFACTURER_ID}} value={OptionStringValue(manufacturer)} />
-                        <Entry {id} col_num={4} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_APPLICATION_ID}} value={OptionStringValue(application)} />
-                        <Entry {id} col_num={5} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_FDC_REC_ID}} value={StringValue(c.fdc_rec_id)} />
-                        <Entry {id} col_num={6} {row_num} value={OptionStringValue(created_by)} />
-                        <Entry {id} col_num={7} {row_num} value={NaiveDateTimeValue(c.created_at)} />
+                    <Entry {id} col_num={1} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MODEL}} value={OptionStringValue(c.model)} />
+                    <Entry {id} col_num={2} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_SERIAL_NUMBER}} value={OptionStringValue(c.serial_number)} />
+                    <Entry {id} col_num={3} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MANUFACTURER_ID}} value={OptionStringValue(manufacturer)} />
+                    <Entry {id} col_num={4} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_APPLICATION_ID}} value={OptionStringValue(application)} />
+                    <Entry {id} col_num={5} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_FDC_REC_ID}} value={StringValue(c.fdc_rec_id)} />
+                    <Entry {id} col_num={6} {row_num} value={OptionStringValue(created_by)} />
+                    <Entry {id} col_num={7} {row_num} value={NaiveDateTimeValue(c.created_at)} />
+                    <Entry {id} col_num={8} {row_num} value={UuidValue(id)} />
                     </>
                 }
             });
@@ -94,6 +94,7 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
             <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "FDC ID" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Created By" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Created At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
             { r }
         </div>
     }
