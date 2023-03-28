@@ -54,6 +54,8 @@ pub fn entry(
     let mode = &*mode_handle;
     let div_ref = use_node_ref();
 
+    let editable = edit_field.is_some();
+
     {
         let mode_handle = mode_handle.clone();
         let option_input_value_handle = option_input_value_handle.clone();
@@ -115,7 +117,10 @@ pub fn entry(
             let input: HtmlInputElement = e.target_unchecked_into();
             let changed_value = match value {
                 StringValue(_) => StringValue(input.value()),
-                OptionStringValue(_) => OptionStringValue(Some(input.value())),
+                OptionStringValue(_) => {
+                    let input_value = input.value();
+                    OptionStringValue((!input_value.is_empty()).then(|| input_value))
+                }
                 IntegerValue(_) => IntegerValue(input.value_as_number() as i64),
                 OptionIntegerValue(_) => OptionIntegerValue(Some(input.value_as_number() as i64)),
                 FloatValue(_) => FloatValue(input.value_as_number()),
@@ -272,8 +277,10 @@ pub fn entry(
         let value = value.clone();
 
         Callback::from(move |_| {
-            mode_handle.set(EntryMode::Write);
-            option_input_value_handle.set(Some(value.clone()));
+            if editable {
+                mode_handle.set(EntryMode::Write);
+                option_input_value_handle.set(Some(value.clone()));
+            }
         })
     };
 
@@ -292,8 +299,12 @@ pub fn entry(
 
             html! {
                 <form {onsubmit}>
-                    <input type={form_type} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
-                    <button type="submit">{ "S" }</button>
+                    <fieldset>
+                        <div class={classes!("input")}>
+                            <button type="submit" class={classes!("form-button")}>{ "✓" }</button>
+                            <input type={form_type} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
+                        </div>
+                    </fieldset>
                 </form>
             }
         }
@@ -301,7 +312,7 @@ pub fn entry(
 
     html! {
         <div class={classes!("emitter-cell")} {style}>
-            <div class={classes!("entry")} ref={div_ref}>
+            <div class={classes!("entry", editable.then(|| "editable"), (mode == &EntryMode::Write).then(|| "write"))} ref={div_ref}>
                 { view }
             </div>
         </div>

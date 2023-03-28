@@ -5,6 +5,9 @@
   --standard-padding: 0.8vmin;
   --primary-navbar-color: #b5babe;
   --secondary-navbar-color: #e8eaed;
+  --outline: .125rem solid var(--outline-color);
+  --outline-color: #e2442f;
+  --sticky-border: 3px solid rgb(0, 0, 0);
 
   --spacer-1: .25rem;
   --spacer-2: .5rem;
@@ -55,7 +58,6 @@
   --font-family: Mabry Pro, sans-serif;
   --border: solid .0625rem currentColor;
   --border-width: .0625rem;
-  --outline: .125rem solid #ff90e8;
   --big-icon-size: 1.5em;
   --grid-wrap-breakpoint: 31.25rem;
   --active-bg: #ffffff;
@@ -82,9 +84,29 @@ table {
 
 .sticky {
   position: sticky;
-  background-color: rgb(231, 146, 56);
-  left: 0;
-  top: 0
+  border-radius: 0px;
+  background: var(--outline-color);
+  color: rgb(0, 0, 0);
+  text-align: center;
+  margin: 0px;
+  z-index: 3;
+  top: 0;
+  box-shadow: .25rem .25rem 0 var(--primary);
+  display: grid;
+  align-content: center;
+}
+
+.sticky:first-child {
+  margin-left: 0.4rem;
+  border-radius: 0.25rem 0 0 0.25rem;
+  box-shadow: .25rem .25rem 0 var(--primary);
+}
+
+.sticky:has(+ :not(.sticky)),
+.sticky:last-child {
+  margin-right: 0.4rem;
+  border-radius: 0 0.25rem 0.25rem 0;
+  box-shadow: .25rem .25rem 0 var(--primary);
 }
 
 .data-window {

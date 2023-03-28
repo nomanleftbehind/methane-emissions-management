@@ -23,8 +23,9 @@
 }
 
 .emitters {
+  width: 87vw;
   display: grid;
-  grid-template-columns: repeat(4, 13rem) 20rem;
+  grid-template-columns: repeat(2, 10rem) repeat(2, 13rem) 21rem 14rem 13rem 20rem;
   grid-template-rows: 40px min-content;
   grid-auto-rows: min-content;
   height: 100%;
