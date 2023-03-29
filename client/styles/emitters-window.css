@@ -16,7 +16,7 @@
   background-color: var(--secondary-navbar-color);
 }
 
-.emitters-secondary-navbar + div {
+.emitters-secondary-navbar+div {
   height: 0.5rem;
   border-bottom: 1px solid #dbdcdd;
   background-color: #fff;
@@ -25,11 +25,22 @@
 .emitters {
   width: 87vw;
   display: grid;
-  grid-template-columns: repeat(2, 10rem) repeat(2, 13rem) 21rem repeat(2, 14rem 13rem) 20rem;
   grid-template-rows: 40px min-content;
   grid-auto-rows: min-content;
   height: 100%;
   overflow: auto;
+}
+
+.controllers {
+  grid-template-columns: 3rem repeat(2, 10rem) repeat(2, 13rem) var(--fdc-rec-id-column-width) var(--user-info-column-width) var(--id-column-width);
+}
+
+.compressors {
+  grid-template-columns: 11rem 10rem repeat(2, var(--date-column-width)) var(--fdc-rec-id-column-width) var(--user-info-column-width) var(--id-column-width);
+}
+
+.tank-farms {
+  grid-template-columns: var(--id-column-width) var(--user-info-column-width);
 }
 
 .emitters-navigation-button {

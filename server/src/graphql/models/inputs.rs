@@ -1,7 +1,7 @@
 use crate::graphql::models::MonthBeginningValidator;
 use async_graphql::InputObject;
 use chrono::{NaiveDate, NaiveDateTime};
-use common::UpdateFieldVariant;
+use common::{DeleteEntryVariant, UpdateFieldVariant};
 use uuid::Uuid;
 
 #[derive(Debug, InputObject)]
@@ -32,4 +32,10 @@ pub struct UpdateFieldInput {
     pub id: Uuid,
     pub update_field_variant: UpdateFieldVariant,
     pub value: UpdateFieldValue,
+}
+
+#[derive(InputObject, Debug)]
+pub struct DeleteEntryInput {
+    pub id: Uuid,
+    pub delete_entry_variant: DeleteEntryVariant,
 }

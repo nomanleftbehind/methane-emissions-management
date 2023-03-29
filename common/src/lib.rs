@@ -162,3 +162,11 @@ impl Display for UpdateFieldValueEnum {
         }
     }
 }
+
+#[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+pub enum DeleteEntryVariant {
+    Controller,
+    Compressor,
+    TankFarm,
+}

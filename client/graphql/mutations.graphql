@@ -10,6 +10,10 @@ mutation Logout {
   logout
 }
 
-mutation UpdateField($input: UpdateFieldInput!) {
-  updateField(updateFieldInput: $input)
+mutation UpdateField($updateFieldInput: UpdateFieldInput!) {
+  updateField(updateFieldInput: $updateFieldInput)
+}
+
+mutation DeleteEntry($deleteEntryInput: DeleteEntryInput!) {
+  deleteEntry(deleteEntryInput: $deleteEntryInput)
 }

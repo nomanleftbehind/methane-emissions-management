@@ -8,6 +8,10 @@
   --outline: .125rem solid var(--outline-color);
   --outline-color: #e2442f;
   --sticky-border: 3px solid rgb(0, 0, 0);
+  --id-column-width: 20rem;
+  --date-column-width: 12.5rem;
+  --fdc-rec-id-column-width: 21rem;
+  --user-info-column-width: repeat(2, 14rem 13rem);
 
   --spacer-1: .25rem;
   --spacer-2: .5rem;

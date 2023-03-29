@@ -1,6 +1,6 @@
 use crate::{
     models::{
-        mutations::update_field::update_field::{
+        mutations::manual_mutation::update_field::{
             UpdateFieldInput, UpdateFieldValue, UpdateFieldVariant,
             Variables as VariablesUpdateField,
         },
@@ -284,7 +284,7 @@ pub fn entry(
                     };
 
                     let variables = VariablesUpdateField {
-                        input: UpdateFieldInput {
+                        update_field_input: UpdateFieldInput {
                             id,
                             value,
                             update_field_variant: update_field_variant.clone(),

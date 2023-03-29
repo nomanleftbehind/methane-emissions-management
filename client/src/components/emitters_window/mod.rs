@@ -2,6 +2,7 @@ use std::fmt::Display;
 
 pub mod compressors;
 pub mod controllers;
+pub mod delete_entry;
 pub mod emitter_primary_navbar;
 pub mod emitter_secondary_navbar;
 pub mod emitters_window;
