@@ -86,6 +86,12 @@ pub enum UpdateFieldVariant {
     ControllerSerialNumber,
     ControllerApplicationId,
     ControllerFacilityId,
+    CompressorFdcRecId,
+    CompressorFacilityId,
+    CompressorName,
+    CompressorSerialNumber,
+    CompressorInstallDate,
+    CompressorRemoveDate,
 }
 
 // graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
@@ -101,8 +107,10 @@ pub enum UpdateFieldValueEnum {
     OptionFloatValue(Option<f64>),
     UuidValue(Uuid),
     OptionUuidValue(Option<Uuid>),
-    NaiveDateTimeValue(NaiveDateTime),
     NaiveDateValue(NaiveDate),
+    OptionNaiveDateValue(Option<NaiveDate>),
+    NaiveDateTimeValue(NaiveDateTime),
+    OptionNaiveDateTimeValue(Option<NaiveDateTime>),
 }
 
 impl Display for UpdateFieldValueEnum {
@@ -133,8 +141,24 @@ impl Display for UpdateFieldValueEnum {
                 ou.as_ref()
                     .map_or_else(|| "".to_string(), |u| u.to_string())
             ),
-            Self::NaiveDateTimeValue(ndt) => write!(f, "{}", ndt),
             Self::NaiveDateValue(nd) => write!(f, "{}", nd),
+            Self::OptionNaiveDateValue(ond) => {
+                write!(
+                    f,
+                    "{}",
+                    ond.as_ref()
+                        .map_or_else(|| "".to_string(), |nd| nd.to_string())
+                )
+            }
+            Self::NaiveDateTimeValue(ndt) => write!(f, "{}", ndt),
+            Self::OptionNaiveDateTimeValue(ondt) => {
+                write!(
+                    f,
+                    "{}",
+                    ondt.as_ref()
+                        .map_or_else(|| "".to_string(), |ndt| ndt.to_string())
+                )
+            }
         }
     }
 }

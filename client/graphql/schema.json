@@ -6507,6 +6507,42 @@
               "description": null,
               "isDeprecated": false,
               "name": "CONTROLLER_FACILITY_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "COMPRESSOR_FDC_REC_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "COMPRESSOR_FACILITY_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "COMPRESSOR_NAME"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "COMPRESSOR_SERIAL_NUMBER"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "COMPRESSOR_INSTALL_DATE"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "COMPRESSOR_REMOVE_DATE"
             }
           ],
           "fields": null,

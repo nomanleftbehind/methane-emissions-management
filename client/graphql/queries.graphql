@@ -50,6 +50,14 @@ query GetCompressors($by: EmittersByInput!) {
     serialNumber
     installDate
     removeDate
+    createdBy {
+      email
+    }
+    createdAt
+		updatedBy {
+      email
+    }
+    updatedAt
   }
 }
 

@@ -1,14 +1,32 @@
 use crate::{
-    hooks::{use_query_with_deps, QueryResponse},
-    models::queries::compressor::{
-        get_compressors::{EmittersByInput, ResponseData, Variables},
-        GetCompressors,
+    components::emitters_window::entry::{EditFieldProp, Entry},
+    hooks::{lazy_query, use_query_with_deps, QueryResponse},
+    models::{
+        mutations::update_field::{
+            update_field::{
+                ResponseData as ResponseDataUpdateField,
+                UpdateFieldVariant::{
+                    COMPRESSOR_FDC_REC_ID, COMPRESSOR_INSTALL_DATE, COMPRESSOR_NAME,
+                    COMPRESSOR_REMOVE_DATE, COMPRESSOR_SERIAL_NUMBER,
+                },
+                Variables as VariablesUpdateField,
+            },
+            UpdateField,
+        },
+        queries::compressor::{
+            get_compressors::{EmittersByInput, ResponseData, Variables},
+            GetCompressors,
+        },
     },
-    utils::gen_style::gen_grid_style
+    utils::{console_log, gen_style::gen_grid_style},
+};
+use common::UpdateFieldValueEnum::{
+    NaiveDateTimeValue, NaiveDateValue, OptionNaiveDateValue, OptionStringValue, StringValue,
+    UuidValue,
 };
 use std::rc::Rc;
 use uuid::Uuid;
-use yew::{classes, function_component, html, Html, Properties};
+use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
 
 /// In an effort to avoid cloning large amounts of data to create props when re-rendering,
 /// a smart pointer is passed in props to only clone a reference to the data instead of the data itself.
@@ -19,14 +37,36 @@ pub struct Props {
 
 #[function_component(CompressorsComp)]
 pub fn compressors_comp(Props { facility_id }: &Props) -> Html {
+    let number_of_updated_fields_handle = use_state_eq(|| 0);
+    let number_of_updated_fields = *number_of_updated_fields_handle;
+
     let get_compressors = {
         let variables = Variables {
             by: EmittersByInput {
                 facility_id: **facility_id,
             },
         };
-        use_query_with_deps::<GetCompressors, _>(variables, facility_id.clone())
+        use_query_with_deps::<GetCompressors, _>(
+            variables,
+            (facility_id.clone(), number_of_updated_fields),
+        )
     };
+
+    let handle_update_field = Callback::from(move |variables: VariablesUpdateField| {
+        let updated_fields_handle = number_of_updated_fields_handle.clone();
+        wasm_bindgen_futures::spawn_local(async move {
+            match lazy_query::<UpdateField>(variables).await {
+                QueryResponse {
+                    data: Some(ResponseDataUpdateField { update_field }),
+                    ..
+                } => updated_fields_handle.set(number_of_updated_fields + update_field),
+                QueryResponse { error: Some(e), .. } => {
+                    console_log!("Update error: {}", e);
+                }
+                _ => {}
+            };
+        });
+    });
 
     let compressors = match get_compressors {
         QueryResponse {
@@ -34,13 +74,22 @@ pub fn compressors_comp(Props { facility_id }: &Props) -> Html {
             ..
         } => {
             let compressors_iter = compressors_by.into_iter().enumerate().map(|(row_num, c)| {
+                let id = c.id;
+                let created_by = c.created_by.map(|cb| cb.email);
+                let updated_by = c.updated_by.map(|ub| ub.email);
+                let row_num = row_num + 2;
                 html! {
                     <>
-                        <div style={gen_grid_style(1, row_num + 2)}>{ c.name }</div>
-                        <div style={gen_grid_style(2, row_num + 2)}>{ c.serial_number }</div>
-                        <div style={gen_grid_style(3, row_num + 2)}>{ c.install_date }</div>
-                        <div style={gen_grid_style(4, row_num + 2)}>{ c.remove_date }</div>
-                        <div style={gen_grid_style(5, row_num + 2)}>{ c.fdc_rec_id }</div>
+                        <Entry {id} col_num={1} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_NAME}} value={StringValue(c.name)} />
+                        <Entry {id} col_num={2} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_SERIAL_NUMBER}} value={StringValue(c.serial_number)} />
+                        <Entry {id} col_num={3} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_INSTALL_DATE}} value={NaiveDateValue(c.install_date)} />
+                        <Entry {id} col_num={4} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_REMOVE_DATE}} value={OptionNaiveDateValue(c.remove_date)} />
+                        <Entry {id} col_num={5} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_FDC_REC_ID}} value={StringValue(c.fdc_rec_id)} />
+                        <Entry {id} col_num={6} {row_num} value={OptionStringValue(created_by)} />
+                        <Entry {id} col_num={7} {row_num} value={NaiveDateTimeValue(c.created_at)} />
+                        <Entry {id} col_num={8} {row_num} value={OptionStringValue(updated_by)} />
+                        <Entry {id} col_num={9} {row_num} value={NaiveDateTimeValue(c.updated_at)} />
+                        <Entry {id} col_num={10} {row_num} value={UuidValue(id)} />
                     </>
                 }
             });
@@ -59,6 +108,11 @@ pub fn compressors_comp(Props { facility_id }: &Props) -> Html {
             <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Install Date" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Remove Date" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "FDC ID" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Created By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Created At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Updated By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Updated At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "ID" }</div>
             { compressors }
         </div>
     }

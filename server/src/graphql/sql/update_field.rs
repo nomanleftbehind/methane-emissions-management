@@ -1,7 +1,8 @@
 use crate::graphql::models::{UpdateFieldInput, UpdateFieldValue};
 use common::UpdateFieldVariant::{
-    ControllerApplicationId, ControllerFacilityId, ControllerFdcRecId, ControllerManufacturerId,
-    ControllerModel, ControllerSerialNumber,
+    CompressorFacilityId, CompressorFdcRecId, CompressorInstallDate, CompressorName,
+    CompressorRemoveDate, CompressorSerialNumber, ControllerApplicationId, ControllerFacilityId,
+    ControllerFdcRecId, ControllerManufacturerId, ControllerModel, ControllerSerialNumber,
 };
 use sqlx::{query, Error, PgPool};
 use uuid::Uuid;
@@ -23,7 +24,7 @@ pub async fn update_field(
                 uuid_value,
                 integer_value: _,
                 float_value: _,
-                naive_date_value: _,
+                naive_date_value,
                 naive_date_time_value: _,
             },
     } = input;
@@ -95,11 +96,72 @@ pub async fn update_field(
             updated_by_id,
             updated_at,
         ),
-        // _ => {
-        //     return Err(Error::ColumnNotFound(
-        //         "Resolver for field not implemented".to_string(),
-        //     ))
-        // }
+        CompressorName => query!(
+            "UPDATE compressors
+            SET name = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            updated_by_id,
+            updated_at,
+        ),
+        CompressorSerialNumber => query!(
+            "UPDATE compressors
+            SET serial_number = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            updated_by_id,
+            updated_at,
+        ),
+        CompressorFacilityId => query!(
+            "UPDATE compressors
+            SET facility_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            updated_by_id,
+            updated_at,
+        ),
+        CompressorFdcRecId => query!(
+            "UPDATE compressors
+            SET fdc_rec_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            updated_by_id,
+            updated_at,
+        ),
+        CompressorInstallDate => query!(
+            "UPDATE compressors
+            SET install_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            updated_by_id,
+            updated_at,
+        ),
+        CompressorRemoveDate => query!(
+            "UPDATE compressors
+            SET remove_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            updated_by_id,
+            updated_at,
+        ),
     };
 
     let res = query.execute(pool).await?.rows_affected();

@@ -10,7 +10,8 @@ use crate::{
 };
 use common::UpdateFieldValueEnum::{
     self, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionFloatValue,
-    OptionIntegerValue, OptionStringValue, OptionUuidValue, StringValue, UuidValue,
+    OptionIntegerValue, OptionNaiveDateTimeValue, OptionNaiveDateValue, OptionStringValue,
+    OptionUuidValue, StringValue, UuidValue,
 };
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast, UnwrapThrowExt};
@@ -139,15 +140,24 @@ pub fn entry(
                     };
                     OptionUuidValue(Some(uuid_value))
                 }
-                NaiveDateTimeValue(_) => NaiveDateTimeValue(
-                    NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
-                        .expect_throw("Unable to convert i64 to NaiveDateTime."),
-                ),
                 NaiveDateValue(_) => NaiveDateValue(
                     NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
                         .expect_throw("Unable to convert i64 to NaiveDateTime.")
                         .date(),
                 ),
+                OptionNaiveDateValue(_) => OptionNaiveDateValue(Some(
+                    NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
+                        .expect_throw("Unable to convert i64 to NaiveDateTime.")
+                        .date(),
+                )),
+                NaiveDateTimeValue(_) => NaiveDateTimeValue(
+                    NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
+                        .expect_throw("Unable to convert i64 to NaiveDateTime."),
+                ),
+                OptionNaiveDateTimeValue(_) => OptionNaiveDateTimeValue(Some(
+                    NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
+                        .expect_throw("Unable to convert i64 to NaiveDateTime."),
+                )),
             };
 
             option_input_value_handle.set(Some(changed_value));
@@ -173,16 +183,16 @@ pub fn entry(
             {
                 if let Some(input_value) = option_input_value {
                     let value = match input_value {
-                        OptionStringValue(option_string_value) => UpdateFieldValue {
-                            string_value: option_string_value,
+                        StringValue(string_value) => UpdateFieldValue {
+                            string_value: Some(string_value),
                             integer_value: None,
                             float_value: None,
                             uuid_value: None,
                             naive_date_value: None,
                             naive_date_time_value: None,
                         },
-                        StringValue(string_value) => UpdateFieldValue {
-                            string_value: Some(string_value),
+                        OptionStringValue(option_string_value) => UpdateFieldValue {
+                            string_value: option_string_value,
                             integer_value: None,
                             float_value: None,
                             uuid_value: None,
@@ -245,6 +255,14 @@ pub fn entry(
                             naive_date_value: Some(naive_date_value),
                             naive_date_time_value: None,
                         },
+                        OptionNaiveDateValue(option_naive_date_value) => UpdateFieldValue {
+                            string_value: None,
+                            integer_value: None,
+                            float_value: None,
+                            uuid_value: None,
+                            naive_date_value: option_naive_date_value,
+                            naive_date_time_value: None,
+                        },
                         NaiveDateTimeValue(naive_date_time_value) => UpdateFieldValue {
                             string_value: None,
                             integer_value: None,
@@ -253,6 +271,16 @@ pub fn entry(
                             naive_date_value: None,
                             naive_date_time_value: Some(naive_date_time_value),
                         },
+                        OptionNaiveDateTimeValue(option_naive_date_time_value) => {
+                            UpdateFieldValue {
+                                string_value: None,
+                                integer_value: None,
+                                float_value: None,
+                                uuid_value: None,
+                                naive_date_value: None,
+                                naive_date_time_value: option_naive_date_time_value,
+                            }
+                        }
                     };
 
                     let variables = VariablesUpdateField {
@@ -291,10 +319,12 @@ pub fn entry(
         },
         EntryMode::Write => {
             let form_type = match value {
-                IntegerValue(_) | FloatValue(_) => "number",
-                NaiveDateValue(_) => "date",
-                NaiveDateTimeValue(_) => "datetime-local",
-                _ => "text",
+                IntegerValue(_) | OptionIntegerValue(_) | FloatValue(_) | OptionFloatValue(_) => {
+                    "number"
+                }
+                NaiveDateValue(_) | OptionNaiveDateValue(_) => "date",
+                NaiveDateTimeValue(_) | OptionNaiveDateTimeValue(_) => "datetime-local",
+                StringValue(_) | OptionStringValue(_) | UuidValue(_) | OptionUuidValue(_) => "text",
             };
 
             html! {

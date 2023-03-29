@@ -21,8 +21,7 @@ use crate::{
     utils::{console_log, gen_style::gen_grid_style},
 };
 use common::UpdateFieldValueEnum::{
-    IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionStringValue, OptionUuidValue,
-    StringValue, UuidValue,
+    NaiveDateTimeValue, OptionStringValue, OptionUuidValue, StringValue, UuidValue,
 };
 use std::rc::Rc;
 use uuid::Uuid;
@@ -88,6 +87,7 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
                 let manufacturer = c.manufacturer.map(|m| m.manufacturer);
                 let application = c.application.map(|a| a.application);
                 let created_by = c.created_by.map(|cb| cb.email);
+                let updated_by = c.updated_by.map(|ub| ub.email);
                 let row_num = row_num + 2;
                 html! {
                     <>
@@ -98,7 +98,9 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
                         <Entry {id} col_num={5} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_FDC_REC_ID}} value={StringValue(c.fdc_rec_id)} />
                         <Entry {id} col_num={6} {row_num} value={OptionStringValue(created_by)} />
                         <Entry {id} col_num={7} {row_num} value={NaiveDateTimeValue(c.created_at)} />
-                        <Entry {id} col_num={8} {row_num} value={UuidValue(id)} />
+                        <Entry {id} col_num={8} {row_num} value={OptionStringValue(updated_by)} />
+                        <Entry {id} col_num={9} {row_num} value={NaiveDateTimeValue(c.updated_at)} />
+                        <Entry {id} col_num={10} {row_num} value={UuidValue(id)} />
                     </>
                 }
             });
@@ -122,7 +124,9 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
             <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "FDC ID" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Created By" }</div>
             <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Created At" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Updated By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Updated At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "ID" }</div>
             { r }
         </div>
     }

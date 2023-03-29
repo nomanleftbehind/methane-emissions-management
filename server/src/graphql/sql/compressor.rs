@@ -7,7 +7,7 @@ pub async fn query_compressors(
 ) -> Result<Vec<Compressor>, Error> {
     query_as!(
         Compressor,
-        "SELECT * FROM compressors WHERE facility_id = $1",
+        "SELECT * FROM compressors WHERE facility_id = $1 ORDER BY id",
         facility_id
     )
     .fetch_all(pool)
