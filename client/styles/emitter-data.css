@@ -1,3 +1,17 @@
+@keyframes rollout {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+.emitter-data {
+  animation: rollout 0.4s ease-out 0s 1;
+}
+
 .emitter-data {
   height: 15rem;
   padding: 0.4rem;
