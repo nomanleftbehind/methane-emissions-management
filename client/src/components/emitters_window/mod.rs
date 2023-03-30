@@ -1,13 +1,17 @@
 use std::fmt::Display;
 
 pub mod compressors;
+mod controller_data;
+mod controller_row;
 pub mod controllers;
 pub mod delete_entry;
 pub mod emitter_primary_navbar;
 pub mod emitter_secondary_navbar;
 pub mod emitters_window;
 pub mod entry;
+mod expand_data;
 pub mod tank_farms;
+mod expand_svg;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum Emitter {

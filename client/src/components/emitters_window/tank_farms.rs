@@ -1,12 +1,18 @@
 use crate::{
-    components::emitters_window::entry::Entry,
+    components::emitters_window::{
+        delete_entry::DeleteEntryComponent, entry::Entry, expand_data::ExpandDataComponent,
+    },
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
     models::{
         mutations::manual_mutation::{
+            delete_entry::{
+                DeleteEntryVariant::TANK_FARM, ResponseData as ResponseDataDeleteEntry,
+                Variables as VariablesDeleteEntry,
+            },
             update_field::{
                 ResponseData as ResponseDataUpdateField, Variables as VariablesUpdateField,
             },
-            UpdateField,
+            DeleteEntry, UpdateField,
         },
         queries::tank_farm::{
             get_tank_farms::{EmittersByInput, ResponseData, Variables},
@@ -43,16 +49,35 @@ pub fn tank_farms_comp(Props { facility_id }: &Props) -> Html {
         )
     };
 
-    let _handle_update_field = Callback::from(move |variables: VariablesUpdateField| {
-        let updated_fields_handle = number_of_updated_fields_handle.clone();
+    let _handle_update_field = {
+        let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
+        Callback::from(move |variables: VariablesUpdateField| {
+            let updated_fields_handle = number_of_updated_fields_handle.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                match lazy_query::<UpdateField>(variables).await {
+                    QueryResponse {
+                        data: Some(ResponseDataUpdateField { update_field }),
+                        ..
+                    } => updated_fields_handle.set(number_of_updated_fields + update_field),
+                    QueryResponse { error: Some(e), .. } => {
+                        console_log!("Update error: {}", e);
+                    }
+                    _ => {}
+                };
+            });
+        })
+    };
+
+    let handle_delete_entry = Callback::from(move |variables: VariablesDeleteEntry| {
+        let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
         wasm_bindgen_futures::spawn_local(async move {
-            match lazy_query::<UpdateField>(variables).await {
+            match lazy_query::<DeleteEntry>(variables).await {
                 QueryResponse {
-                    data: Some(ResponseDataUpdateField { update_field }),
+                    data: Some(ResponseDataDeleteEntry { delete_entry }),
                     ..
-                } => updated_fields_handle.set(number_of_updated_fields + update_field),
+                } => number_of_updated_fields_handle.set(number_of_updated_fields + delete_entry),
                 QueryResponse { error: Some(e), .. } => {
-                    console_log!("Update error: {}", e);
+                    console_log!("Delete error: {}", e);
                 }
                 _ => {}
             };
@@ -72,11 +97,13 @@ pub fn tank_farms_comp(Props { facility_id }: &Props) -> Html {
 
                 html! {
                     <>
-                        <Entry {id} col_num={1} {row_num} value={UuidValue(id)} />
-                        <Entry {id} col_num={2} {row_num} value={OptionStringValue(created_by)} />
-                        <Entry {id} col_num={3} {row_num} value={NaiveDateTimeValue(tf.created_at)} />
-                        <Entry {id} col_num={4} {row_num} value={OptionStringValue(updated_by)} />
-                        <Entry {id} col_num={5} {row_num} value={NaiveDateTimeValue(tf.updated_at)} />
+                        <DeleteEntryComponent {id} col_num={1} {row_num} delete_entry_variant={TANK_FARM} handle_delete_entry={handle_delete_entry.clone()} />
+                        // <ExpandDataComponent {id} col_num={2} {row_num} />
+                        <Entry {id} col_num={3} {row_num} value={UuidValue(id)} />
+                        <Entry {id} col_num={4} {row_num} value={OptionStringValue(created_by)} />
+                        <Entry {id} col_num={5} {row_num} value={NaiveDateTimeValue(tf.created_at)} />
+                        <Entry {id} col_num={6} {row_num} value={OptionStringValue(updated_by)} />
+                        <Entry {id} col_num={7} {row_num} value={NaiveDateTimeValue(tf.updated_at)} />
                     </>
                 }
             });
@@ -90,11 +117,13 @@ pub fn tank_farms_comp(Props { facility_id }: &Props) -> Html {
 
     html! {
        <div class={classes!("emitters", "tank-farms")}>
-            <div class={classes!("sticky")} style={gen_grid_style(1, 1)}>{ "ID" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Created By" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Created At" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Updated By" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Updated At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(1, 1)}></div>
+            <div class={classes!("sticky")} style={gen_grid_style(2, 1)}></div>
+            <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "ID" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Created By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Created At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Updated By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated At" }</div>
             { view }
        </div>
     }

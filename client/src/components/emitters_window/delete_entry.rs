@@ -42,8 +42,8 @@ pub fn delete_entry_component(
     };
 
     html! {
-        <div class={classes!("emitter-cell")} {style}>
-            <button class={classes!("form-button")} {onclick}>{ "🗑" }</button>
+        <div class={classes!("emitter-cell", "center")} {style}>
+            <button class={classes!("entry-button")} {onclick}>{ "🗑" }</button>
         </div>
     }
 }

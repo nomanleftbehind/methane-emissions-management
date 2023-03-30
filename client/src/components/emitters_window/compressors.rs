@@ -2,6 +2,7 @@ use crate::{
     components::emitters_window::{
         delete_entry::DeleteEntryComponent,
         entry::{EditFieldProp, Entry},
+        expand_data::ExpandDataComponent,
     },
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
     models::{
@@ -109,16 +110,17 @@ pub fn compressors_comp(Props { facility_id }: &Props) -> Html {
                 html! {
                     <>
                         <DeleteEntryComponent {id} col_num={1} {row_num} delete_entry_variant={COMPRESSOR} handle_delete_entry={handle_delete_entry.clone()} />
-                        <Entry {id} col_num={2} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_NAME}} value={StringValue(c.name)} />
-                        <Entry {id} col_num={3} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_SERIAL_NUMBER}} value={StringValue(c.serial_number)} />
-                        <Entry {id} col_num={4} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_INSTALL_DATE}} value={NaiveDateValue(c.install_date)} />
-                        <Entry {id} col_num={5} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_REMOVE_DATE}} value={OptionNaiveDateValue(c.remove_date)} />
-                        <Entry {id} col_num={6} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_FDC_REC_ID}} value={StringValue(c.fdc_rec_id)} />
-                        <Entry {id} col_num={7} {row_num} value={OptionStringValue(created_by)} />
-                        <Entry {id} col_num={8} {row_num} value={NaiveDateTimeValue(c.created_at)} />
-                        <Entry {id} col_num={9} {row_num} value={OptionStringValue(updated_by)} />
-                        <Entry {id} col_num={10} {row_num} value={NaiveDateTimeValue(c.updated_at)} />
-                        <Entry {id} col_num={11} {row_num} value={UuidValue(id)} />
+                        // <ExpandDataComponent {id} col_num={2} {row_num} />
+                        <Entry {id} col_num={3} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_NAME}} value={StringValue(c.name)} />
+                        <Entry {id} col_num={4} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_SERIAL_NUMBER}} value={StringValue(c.serial_number)} />
+                        <Entry {id} col_num={5} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_INSTALL_DATE}} value={NaiveDateValue(c.install_date)} />
+                        <Entry {id} col_num={6} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_REMOVE_DATE}} value={OptionNaiveDateValue(c.remove_date)} />
+                        <Entry {id} col_num={7} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: COMPRESSOR_FDC_REC_ID}} value={StringValue(c.fdc_rec_id)} />
+                        <Entry {id} col_num={8} {row_num} value={OptionStringValue(created_by)} />
+                        <Entry {id} col_num={9} {row_num} value={NaiveDateTimeValue(c.created_at)} />
+                        <Entry {id} col_num={10} {row_num} value={OptionStringValue(updated_by)} />
+                        <Entry {id} col_num={11} {row_num} value={NaiveDateTimeValue(c.updated_at)} />
+                        <Entry {id} col_num={12} {row_num} value={UuidValue(id)} />
                     </>
                 }
             });
@@ -132,16 +134,18 @@ pub fn compressors_comp(Props { facility_id }: &Props) -> Html {
 
     html! {
         <div class={classes!("emitters", "compressors")}>
-            <div class={classes!("sticky")} style={gen_grid_style(1, 1)}>{ "Name" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Serial Number" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Install Date" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Remove Date" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "FDC ID" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Created By" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Created At" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Updated By" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Updated At" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "ID" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(1, 1)}></div>
+            <div class={classes!("sticky")} style={gen_grid_style(2, 1)}></div>
+            <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Name" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Serial Number" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Install Date" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Remove Date" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "FDC ID" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Created By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Created At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Updated By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Updated At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "ID" }</div>
             { compressors }
         </div>
     }

@@ -1,22 +1,13 @@
 use crate::{
-    components::emitters_window::{
-        delete_entry::DeleteEntryComponent,
-        entry::{EditFieldProp, Entry},
-    },
+    components::emitters_window::controller_row::ControllerRowComponent,
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
     models::{
         mutations::manual_mutation::{
             delete_entry::{
-                DeleteEntryVariant::CONTROLLER, ResponseData as ResponseDataDeleteEntry,
-                Variables as VariablesDeleteEntry,
+                ResponseData as ResponseDataDeleteEntry, Variables as VariablesDeleteEntry,
             },
             update_field::{
-                ResponseData as ResponseDataUpdateField,
-                UpdateFieldVariant::{
-                    CONTROLLER_APPLICATION_ID, CONTROLLER_FDC_REC_ID, CONTROLLER_MANUFACTURER_ID,
-                    CONTROLLER_MODEL, CONTROLLER_SERIAL_NUMBER,
-                },
-                Variables as VariablesUpdateField,
+                ResponseData as ResponseDataUpdateField, Variables as VariablesUpdateField,
             },
             DeleteEntry, UpdateField,
         },
@@ -26,9 +17,6 @@ use crate::{
         },
     },
     utils::{console_log, gen_style::gen_grid_style},
-};
-use common::UpdateFieldValueEnum::{
-    NaiveDateTimeValue, OptionStringValue, OptionUuidValue, StringValue, UuidValue,
 };
 use std::rc::Rc;
 use uuid::Uuid;
@@ -110,27 +98,10 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
             data: Some(ResponseData { controllers_by }),
             ..
         } => {
-            let controllers_iter = controllers_by.into_iter().enumerate().map(|(row_num, c)| {
-                let id = c.id;
-                let manufacturer = c.manufacturer.map(|m| m.manufacturer);
-                let application = c.application.map(|a| a.application);
-                let created_by = c.created_by.map(|cb| cb.email);
-                let updated_by = c.updated_by.map(|ub| ub.email);
-                let row_num = row_num + 2;
+            let controllers_iter = controllers_by.into_iter().enumerate().map(|(mut row_num, controller)| {
+                row_num = (row_num + 1) * 2;
                 html! {
-                    <>
-                        <DeleteEntryComponent {id} col_num={1} {row_num} delete_entry_variant={CONTROLLER} handle_delete_entry={handle_delete_entry.clone()} />
-                        <Entry {id} col_num={2} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MODEL}} value={OptionStringValue(c.model)} />
-                        <Entry {id} col_num={3} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_SERIAL_NUMBER}} value={OptionStringValue(c.serial_number)} />
-                        <Entry {id} col_num={4} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_MANUFACTURER_ID}} value={UuidValue(c.manufacturer_id)} display_value={OptionStringValue(manufacturer)} />
-                        <Entry {id} col_num={5} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_APPLICATION_ID}} value={OptionUuidValue(c.application_id)} display_value={OptionStringValue(application)} />
-                        <Entry {id} col_num={6} {row_num} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: CONTROLLER_FDC_REC_ID}} value={StringValue(c.fdc_rec_id)} />
-                        <Entry {id} col_num={7} {row_num} value={OptionStringValue(created_by)} />
-                        <Entry {id} col_num={8} {row_num} value={NaiveDateTimeValue(c.created_at)} />
-                        <Entry {id} col_num={9} {row_num} value={OptionStringValue(updated_by)} />
-                        <Entry {id} col_num={10} {row_num} value={NaiveDateTimeValue(c.updated_at)} />
-                        <Entry {id} col_num={11} {row_num} value={UuidValue(id)} />
-                    </>
+                    <ControllerRowComponent {row_num} {controller} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -146,17 +117,18 @@ pub fn controllers_comp(Props { facility_id }: &Props) -> Html {
 
     html! {
         <div class={classes!("emitters", "controllers")}>
-            <div class={classes!("sticky")} style={gen_grid_style(1, 1)}>{ "Add" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Model" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Serial Number" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Manufacturer" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Application" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "FDC ID" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Created By" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Created At" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Updated By" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Updated At" }</div>
-            <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "ID" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(1, 1)}></div>
+            <div class={classes!("sticky")} style={gen_grid_style(2, 1)}></div>
+            <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Model" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Serial Number" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Manufacturer" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Application" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "FDC ID" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Created By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Created At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Updated By" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Updated At" }</div>
+            <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "ID" }</div>
             { controllers }
         </div>
     }

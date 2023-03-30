@@ -1,0 +1,13 @@
+.emitter-data {
+  height: 15rem;
+  padding: 0.4rem;
+}
+
+.emitter-data-entry {
+  background-color: #f4f4f0;
+  border: solid 0.0625rem #0000;
+  color: var(--primary);
+  border-radius: .25rem;
+  transition: all .14s ease-out;
+  height: 100%;
+}
