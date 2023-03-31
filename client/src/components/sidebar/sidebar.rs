@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::components::sidebar::facility::{Facility, FacilityComp};
 use crate::hooks::use_query;
 use crate::{
@@ -9,6 +7,7 @@ use crate::{
         AllFacilities,
     },
 };
+use std::rc::Rc;
 use uuid::Uuid;
 use yew::{classes, function_component, html, Callback, Html, Properties};
 

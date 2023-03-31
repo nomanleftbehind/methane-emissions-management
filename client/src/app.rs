@@ -33,6 +33,9 @@ pub enum Route {
     Users,
     #[at("/register")]
     Register,
+    #[not_found]
+    #[at("/404")]
+    NotFound,
 }
 
 pub fn switch(route: Route) -> Html {
@@ -46,6 +49,7 @@ pub fn switch(route: Route) -> Html {
         Route::Register => {
             html! { <Register /> }
         }
+        Route::NotFound => html! { <h1>{ "404" }</h1> },
     }
 }
 

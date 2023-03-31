@@ -25,3 +25,16 @@
   transition: all .14s ease-out;
   height: 100%;
 }
+
+.emitter-data-side {
+  background-color:var(--yellow-dark);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  width: 12rem;
+  padding: 0;
+  box-shadow: initial;
+  border-radius: 0.25rem;
+  color: var(--primary);
+  box-shadow: 0.25rem 0.25rem 0 var(--primary);
+}
