@@ -63,6 +63,7 @@ chrono = "0.4.22"
 tiberius = { version = "0.12", features = ["chrono"] }
 tokio-util = { version = "0.7", features = ["compat"] }
 common = { path = "../common" }
+emissions_app_derive = { path = "../app_derive" }
 yew = { version = "0.20", features = ["ssr"] }
 clap = { version = "4.1", features = ["derive"] }
 emissions_app_client = { path = "../client", features = ["ssr"] }
