@@ -7,7 +7,6 @@ pub mod compressor_month_vent_override_loader;
 pub mod controller_application_loader;
 pub mod controller_change_loader;
 pub mod controller_loader;
-// pub mod controller_loader_macro;
 pub mod controller_manufacturer_loader;
 pub mod controller_month_hours_loader;
 pub mod controller_month_vent_loader;
