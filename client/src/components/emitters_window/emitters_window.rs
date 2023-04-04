@@ -1,10 +1,20 @@
-use crate::components::emitters_window::{
-    compressors::CompressorsComp, controllers::ControllersComp, emitter_navbar::EmitterNavbar,
-    tank_farms::TankFarmsComp, Emitter,
+use crate::{
+    components::emitters_window::{
+        data::objects::ObjectsComponent,
+        emitter_navbar::EmitterNavbar,
+        Emitter::{self, Compressor, Controller, TankFarm},
+    },
+    models::queries::get_object::get_object::GetObjectVariant::{
+        COMPRESSOR_BY_FACILITY_ID, CONTROLLER_BY_FACILITY_ID, TANK_FARM_BY_FACILITY_ID,
+    },
+    utils::console_log,
 };
 use std::rc::Rc;
 use uuid::Uuid;
-use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
+use yew::{
+    classes, function_component, html, use_effect_with_deps, use_state_eq, Callback, Html,
+    Properties,
+};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -13,7 +23,7 @@ pub struct Props {
 
 #[function_component(EmittersWindow)]
 pub fn emitters_window(Props { facility_id }: &Props) -> Html {
-    let emitter_state = use_state_eq(|| Emitter::Controller);
+    let emitter_state = use_state_eq(|| Controller);
 
     let emitter = *emitter_state;
 
@@ -21,23 +31,22 @@ pub fn emitters_window(Props { facility_id }: &Props) -> Html {
         emitter_state.set(e);
     });
 
-    let view = match emitter {
-        Emitter::Controller => html! {
-            <ControllersComp {facility_id} />
+    use_effect_with_deps(
+        move |u| {
+            console_log!("emitter type: {}", u);
         },
-        Emitter::Compressor => html! {
-            <CompressorsComp {facility_id} />
-        },
-        Emitter::TankFarm => html! {
-            <TankFarmsComp {facility_id} />
-        },
-    };
+        emitter.clone(),
+    );
 
     html! {
         <div class={classes!("emitters-window")}>
-            <EmitterNavbar {emitter} on_emitter_change={on_emitter_change} />
+            <EmitterNavbar {emitter} {on_emitter_change} />
             <div />
-            { view }
+            <ObjectsComponent id={facility_id} object_variant={match emitter {
+                Controller => CONTROLLER_BY_FACILITY_ID,
+                Compressor => COMPRESSOR_BY_FACILITY_ID,
+                TankFarm => TANK_FARM_BY_FACILITY_ID,
+            }} />
         </div>
     }
 }

@@ -7,4 +7,4 @@ use graphql_client::GraphQLQuery;
     query_path = "./graphql/queries.graphql",
     response_derives = "Debug, Clone, PartialEq"
 )]
-pub struct GetControllerChanges;
+pub struct GetObject;

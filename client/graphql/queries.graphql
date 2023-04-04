@@ -17,6 +17,73 @@ query AllFacilities {
   }
 }
 
+query GetObject($getObjectInput: GetObjectInput!) {
+  getObject(input: $getObjectInput) {
+    controllers {
+      id
+      model
+      serialNumber
+      applicationId
+      application {
+        application
+      }
+      manufacturerId
+      manufacturer {
+        manufacturer
+      }
+      fdcRecId
+      createdBy {
+        email
+      }
+      createdAt
+      updatedBy {
+        email
+      }
+      updatedAt
+    }
+    compressors {
+      id
+      fdcRecId
+      name
+      serialNumber
+      installDate
+      removeDate
+      createdBy {
+        email
+      }
+      createdAt
+      updatedBy {
+        email
+      }
+      updatedAt
+    }
+    tankFarms {
+      id
+      createdBy {
+        email
+      }
+      createdAt
+      updatedBy {
+        email
+      }
+      updatedAt
+    }
+    controllerChanges {
+      id
+      date
+      rate
+      createdBy {
+        email
+      }
+      createdAt
+      updatedBy {
+        email
+      }
+      updatedAt
+    }
+  }
+}
+
 query GetControllers($by: EmittersByInput!) {
   controllersBy(by: $by) {
     id

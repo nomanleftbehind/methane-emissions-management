@@ -37,6 +37,10 @@
   grid-template-columns: repeat(2, 2.7rem) var(--id-column-width) var(--user-info-column-width);
 }
 
+.controller-changes {
+  grid-template-columns: 2.7rem var(--date-column-width) 8rem var(--user-info-column-width) var(--id-column-width);
+}
+
 .emitters-navigation-button {
   display: inline-block;
   padding: 0.5rem 1rem;

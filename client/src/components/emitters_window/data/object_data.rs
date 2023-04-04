@@ -1,8 +1,10 @@
+use crate::{
+    components::emitters_window::data::objects::ObjectsComponent,
+    models::queries::get_object::get_object::GetObjectVariant::CONTROLLER_CHANGE_BY_CONTROLLER_ID,
+};
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::{classes, function_component, html, Html, Properties};
-
-use crate::components::emitters_window::controller_changes::ControllerChangeComp;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -11,8 +13,8 @@ pub struct Props {
     pub col_num: usize,
 }
 
-#[function_component(ControllerDataComponent)]
-pub fn controller_data_component(
+#[function_component(ObjectDataComponent)]
+pub fn object_data_component(
     Props {
         id,
         row_num,
@@ -20,8 +22,7 @@ pub fn controller_data_component(
     }: &Props,
 ) -> Html {
     let style = format!("grid-row: {}; grid-column: 3/{};", row_num, col_num + 1);
-
-    let controller_id = Rc::new(*id);
+    let id = Rc::new(*id);
 
     html! {
         <div class={classes!("emitter-data-wrapper")} {style}>
@@ -30,7 +31,9 @@ pub fn controller_data_component(
                     <button>{ "Changes" }</button>
                     <button>{ "Month Vent Overrides" }</button>
                 </div>
-                <ControllerChangeComp {controller_id} />
+                <div class={classes!("emitter-data-main")}>
+                    <ObjectsComponent {id} object_variant={CONTROLLER_CHANGE_BY_CONTROLLER_ID} />
+                </div>
             </div>
         </div>
     }

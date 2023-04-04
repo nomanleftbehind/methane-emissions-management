@@ -103,12 +103,12 @@ pub fn entry(
         );
     }
 
-    use_effect_with_deps(
-        move |u| {
-            console_log!("input value: {:#?}", u);
-        },
-        option_input_value.clone(),
-    );
+    // use_effect_with_deps(
+    //     move |u| {
+    //         console_log!("input value: {:#?}", u);
+    //     },
+    //     option_input_value.clone(),
+    // );
 
     let onchange = {
         let value = value.clone();
