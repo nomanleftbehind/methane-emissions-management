@@ -1,8 +1,9 @@
 use crate::graphql::models::{UpdateFieldInput, UpdateFieldValue};
 use common::UpdateFieldVariant::{
     CompressorFacilityId, CompressorFdcRecId, CompressorInstallDate, CompressorName,
-    CompressorRemoveDate, CompressorSerialNumber, ControllerApplicationId, ControllerFacilityId,
-    ControllerFdcRecId, ControllerManufacturerId, ControllerModel, ControllerSerialNumber,
+    CompressorRemoveDate, CompressorSerialNumber, ControllerApplicationId, ControllerChangeDate,
+    ControllerChangeId, ControllerChangeRate, ControllerFacilityId, ControllerFdcRecId,
+    ControllerManufacturerId, ControllerModel, ControllerSerialNumber,
 };
 use sqlx::{query, Error, PgPool};
 use uuid::Uuid;
@@ -23,7 +24,7 @@ pub async fn update_field(
                 string_value,
                 uuid_value,
                 integer_value: _,
-                float_value: _,
+                float_value,
                 naive_date_value,
                 naive_date_time_value: _,
             },
@@ -159,6 +160,39 @@ pub async fn update_field(
             WHERE id = $1",
             id,
             naive_date_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerChangeId => query!(
+            "UPDATE controller_changes
+            SET controller_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerChangeDate => query!(
+            "UPDATE controller_changes
+            SET date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerChangeRate => query!(
+            "UPDATE controller_changes
+            SET rate = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
             updated_by_id,
             updated_at,
         ),

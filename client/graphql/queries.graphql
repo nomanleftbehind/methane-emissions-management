@@ -82,3 +82,19 @@ query Me {
     role
   }
 }
+
+query GetControllerChanges($controllerChangeInput: ControllerChangeInput!) {
+  getControllerChanges(input: $controllerChangeInput) {
+    id
+    date
+    rate
+    createdBy {
+      email
+    }
+    createdAt
+		updatedBy {
+      email
+    }
+    updatedAt
+  }
+}

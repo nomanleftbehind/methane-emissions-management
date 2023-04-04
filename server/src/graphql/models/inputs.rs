@@ -39,3 +39,8 @@ pub struct DeleteEntryInput {
     pub id: Uuid,
     pub delete_entry_variant: DeleteEntryVariant,
 }
+
+#[derive(Debug, InputObject)]
+pub struct ControllerChangeInput {
+    pub controller_id: Uuid,
+}

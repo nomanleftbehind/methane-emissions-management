@@ -1,5 +1,8 @@
+use std::rc::Rc;
 use uuid::Uuid;
 use yew::{classes, function_component, html, Html, Properties};
+
+use crate::components::emitters_window::controller_changes::ControllerChangeComp;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -18,13 +21,16 @@ pub fn controller_data_component(
 ) -> Html {
     let style = format!("grid-row: {}; grid-column: 3/{};", row_num, col_num + 1);
 
+    let controller_id = Rc::new(*id);
+
     html! {
-        <div class={classes!("emitter-data")} {style}>
-            <div class={classes!("emitter-data-entry")}>
+        <div class={classes!("emitter-data-wrapper")} {style}>
+            <div class={classes!("emitter-data")}>
                 <div class={classes!("emitter-data-side")}>
-                    <button role="menuitem">{ "Changes" }</button>
-                    <button role="menuitem">{ "Month Vent Overrides" }</button>
+                    <button>{ "Changes" }</button>
+                    <button>{ "Month Vent Overrides" }</button>
                 </div>
+                <ControllerChangeComp {controller_id} />
             </div>
         </div>
     }

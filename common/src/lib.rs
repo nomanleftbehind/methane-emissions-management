@@ -92,6 +92,9 @@ pub enum UpdateFieldVariant {
     CompressorSerialNumber,
     CompressorInstallDate,
     CompressorRemoveDate,
+    ControllerChangeId,
+    ControllerChangeDate,
+    ControllerChangeRate,
 }
 
 // graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
@@ -169,4 +172,5 @@ pub enum DeleteEntryVariant {
     Controller,
     Compressor,
     TankFarm,
+    ControllerChange,
 }

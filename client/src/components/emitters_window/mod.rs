@@ -1,6 +1,8 @@
 use std::fmt::Display;
 
 pub mod compressors;
+mod controller_change_row;
+mod controller_changes;
 mod controller_data;
 mod controller_row;
 pub mod controllers;
