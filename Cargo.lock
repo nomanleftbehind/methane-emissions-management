@@ -1539,6 +1539,7 @@ dependencies = [
  "chrono",
  "common",
  "futures",
+ "gloo",
  "gloo-net",
  "gloo-timers",
  "graphql_client",

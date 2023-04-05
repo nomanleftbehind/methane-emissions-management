@@ -84,84 +84,10 @@ query GetObject($getObjectInput: GetObjectInput!) {
   }
 }
 
-query GetControllers($by: EmittersByInput!) {
-  controllersBy(by: $by) {
-    id
-    model
-    serialNumber
-    applicationId
-    application {
-      application
-    }
-    manufacturerId
-    manufacturer {
-      manufacturer
-    }
-    fdcRecId
-    createdBy {
-      email
-    }
-    createdAt
-		updatedBy {
-      email
-    }
-    updatedAt
-  }
-}
-
-query GetCompressors($by: EmittersByInput!) {
-  compressorsBy(by: $by) {
-    id
-    fdcRecId
-    name
-    serialNumber
-    installDate
-    removeDate
-    createdBy {
-      email
-    }
-    createdAt
-		updatedBy {
-      email
-    }
-    updatedAt
-  }
-}
-
-query GetTankFarms($by: EmittersByInput!) {
-  tankFarmsBy(by: $by) {
-    id
-    createdBy {
-      email
-    }
-    createdAt
-		updatedBy {
-      email
-    }
-    updatedAt
-  }
-}
-
 query Me {
 	me {
     id
     email
     role
-  }
-}
-
-query GetControllerChanges($controllerChangeInput: ControllerChangeInput!) {
-  getControllerChanges(input: $controllerChangeInput) {
-    id
-    date
-    rate
-    createdBy {
-      email
-    }
-    createdAt
-		updatedBy {
-      email
-    }
-    updatedAt
   }
 }

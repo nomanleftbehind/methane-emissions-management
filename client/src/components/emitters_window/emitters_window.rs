@@ -31,12 +31,12 @@ pub fn emitters_window(Props { facility_id }: &Props) -> Html {
         emitter_state.set(e);
     });
 
-    use_effect_with_deps(
-        move |u| {
-            console_log!("emitter type: {}", u);
-        },
-        emitter.clone(),
-    );
+    // use_effect_with_deps(
+    //     move |u| {
+    //         console_log!("emitter type: {}", u);
+    //     },
+    //     emitter.clone(),
+    // );
 
     html! {
         <div class={classes!("emitters-window")}>

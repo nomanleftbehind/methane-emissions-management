@@ -53,12 +53,12 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
         )
     };
 
-    use_effect_with_deps(
-        move |u| {
-            console_log!("object_variant: {:#?}", u);
-        },
-        object_variant.clone(),
-    );
+    // use_effect_with_deps(
+    //     move |u| {
+    //         console_log!("object_variant: {:#?}", u);
+    //     },
+    //     object_variant.clone(),
+    // );
 
     let handle_update_field = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
@@ -97,12 +97,12 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
         });
     });
 
-    use_effect_with_deps(
-        move |u| {
-            console_log!("number_of_updated_fields: {:#?}", u);
-        },
-        number_of_updated_fields,
-    );
+    // use_effect_with_deps(
+    //     move |u| {
+    //         console_log!("number_of_updated_fields: {:#?}", u);
+    //     },
+    //     number_of_updated_fields,
+    // );
 
     let view = match get_objects {
         QueryResponse {
