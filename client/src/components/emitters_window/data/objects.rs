@@ -1,8 +1,5 @@
 use crate::{
-    components::{
-        emitters_window::data::object_row::{ObjectDataProp, ObjectRowComponent},
-        modal::{error::Error, modal::Modal},
-    },
+    components::emitters_window::data::object_row::{ObjectDataProp, ObjectRowComponent},
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
     models::{
         mutations::manual_mutation::{
@@ -21,16 +18,11 @@ use crate::{
             GetObject,
         },
     },
-    utils::{console_log, gen_style::gen_grid_style},
+    utils::{error::AppError, gen_style::gen_grid_style},
 };
 use std::rc::Rc;
 use uuid::Uuid;
-use wasm_bindgen::JsCast;
-use web_sys::HtmlDialogElement;
-use yew::{
-    classes, function_component, html, use_effect, use_effect_with_deps, use_state_eq, Callback,
-    Html, MouseEvent, Properties,
-};
+use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
 
 /// In an effort to avoid cloning large amounts of data to create props when re-rendering,
 /// a smart pointer is passed in props to only clone a reference to the data instead of the data itself.
@@ -38,44 +30,19 @@ use yew::{
 pub struct Props {
     pub id: Rc<Uuid>,
     pub object_variant: GetObjectVariant,
+    pub error_handle: Callback<Option<AppError>>,
 }
 
 #[function_component(ObjectsComponent)]
-pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
+pub fn objects_component(
+    Props {
+        id,
+        object_variant,
+        error_handle,
+    }: &Props,
+) -> Html {
     let number_of_updated_fields_handle = use_state_eq(|| 0);
     let number_of_updated_fields = *number_of_updated_fields_handle;
-
-    let error_handle = use_state_eq(|| None);
-    let error = (*error_handle).clone();
-
-    let modal_root_handle = use_state_eq(|| Rc::new(None));
-    let modal_root = (*modal_root_handle).clone();
-    use_effect(move || {
-        let modal_root = gloo::utils::document()
-            .get_element_by_id("modal-root")
-            .expect("Expected to find a #modal-root element")
-            .dyn_into::<HtmlDialogElement>()
-            .expect("#modal-root is not a <dialog> element");
-
-        modal_root_handle.set(Rc::new(Some(modal_root)));
-    });
-
-    // let modal_root = Rc::new(
-    //     gloo::utils::document()
-    //         .get_element_by_id("modal-root")
-    //         .expect("Expected to find a #modal-root element")
-    //         .dyn_into::<HtmlDialogElement>()
-    //         .expect("#modal-root is not a <dialog> element"),
-    // );
-
-    // let open_error_dialog_handle = use_state_eq(|| false);
-    // let open_error_dialog = *open_error_dialog_handle;
-    let on_error_dialog_button_click = {
-        let error_handle = error_handle.clone();
-        Callback::from(move |_: MouseEvent| {
-            error_handle.set(None);
-        })
-    };
 
     let get_objects = {
         let variables = Variables {
@@ -100,11 +67,9 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
     let handle_update_field = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
         let error_handle = error_handle.clone();
-        let modal_root = Rc::clone(&modal_root);
         Callback::from(move |variables: VariablesUpdateField| {
             let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
             let error_handle = error_handle.clone();
-            let modal_root = Rc::clone(&modal_root);
             wasm_bindgen_futures::spawn_local(async move {
                 match lazy_query::<UpdateField>(variables).await {
                     QueryResponse {
@@ -114,12 +79,9 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
                         number_of_updated_fields_handle.set(number_of_updated_fields + update_field)
                     }
                     QueryResponse { error: Some(e), .. } => {
-                        error_handle.set(Some(e));
-                        if let Some(ref modal_root) = *modal_root {
-                            let _ = modal_root.show_modal();
-                        }
+                        error_handle.emit(Some(e));
                     }
-                    _ => {}
+                    _ => (),
                 };
             });
         })
@@ -127,11 +89,9 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
 
     let handle_delete_entry = {
         let error_handle = error_handle.clone();
-        let modal_root = Rc::clone(&modal_root);
         Callback::from(move |variables: VariablesDeleteEntry| {
             let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
             let error_handle = error_handle.clone();
-            let modal_root = Rc::clone(&modal_root);
             wasm_bindgen_futures::spawn_local(async move {
                 match lazy_query::<DeleteEntry>(variables).await {
                     QueryResponse {
@@ -141,12 +101,9 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
                         number_of_updated_fields_handle.set(number_of_updated_fields + delete_entry)
                     }
                     QueryResponse { error: Some(e), .. } => {
-                        error_handle.set(Some(e));
-                        if let Some(ref modal_root) = *modal_root {
-                            let _ = modal_root.show_modal();
-                        }
+                        error_handle.emit(Some(e));
                     }
-                    _ => {}
+                    _ => (),
                 };
             });
         })
@@ -174,7 +131,7 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
             let controllers_iter = controllers.into_iter().enumerate().map(|(mut row_num, controller)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} object_data={ObjectDataProp::Controller(controller)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::Controller(controller)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -210,7 +167,7 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
             let compressors_iter = compressors.into_iter().enumerate().map(|(mut row_num, compressor)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} object_data={ObjectDataProp::Compressor(compressor)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::Compressor(compressor)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -246,7 +203,7 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
             let tank_farms_iter = tank_farms.into_iter().enumerate().map(|(mut row_num, tank_farm)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} object_data={ObjectDataProp::TankFarm(tank_farm)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::TankFarm(tank_farm)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -277,7 +234,7 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
             let controller_changes_iter = controller_changes.into_iter().enumerate().map(|(mut row_num, controller_change)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} object_data={ObjectDataProp::ControllerChange(controller_change)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::ControllerChange(controller_change)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -296,27 +253,11 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
             }
         }
         QueryResponse { error: Some(e), .. } => {
-            error_handle.set(Some(e));
-            if let Some(ref modal_root) = *modal_root {
-                let _ = modal_root.show_modal();
-            }
-            html! {}
+            error_handle.emit(Some(e));
+            Html::default()
         }
-        _ => {
-            html! {}
-        }
+        _ => Html::default(),
     };
 
-    html! {
-        <>
-            <Error {on_error_dialog_button_click}>
-                if let Some(error) = error {
-                    <>{error}</>
-                } else {
-                    <></>
-                }
-            </Error>
-            { view }
-        </>
-    }
+    view
 }

@@ -1,12 +1,8 @@
-use crate::{
-    models::{
-        mutations::manual_mutation::update_field::{
-            UpdateFieldInput, UpdateFieldValue, UpdateFieldVariant,
-            Variables as VariablesUpdateField,
-        },
-        NaiveDateTime,
+use crate::models::{
+    mutations::manual_mutation::update_field::{
+        UpdateFieldInput, UpdateFieldValue, UpdateFieldVariant, Variables as VariablesUpdateField,
     },
-    utils::console_log,
+    NaiveDateTime,
 };
 use common::UpdateFieldValueEnum::{
     self, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionFloatValue,

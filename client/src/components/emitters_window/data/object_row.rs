@@ -15,7 +15,7 @@ use crate::{
             GetObjectGetObjectControllers, GetObjectGetObjectTankFarms,
         },
     },
-    utils::console_log,
+    utils::error::AppError,
 };
 use common::UpdateFieldValueEnum::{
     FloatValue, NaiveDateTimeValue, NaiveDateValue, OptionNaiveDateValue, OptionStringValue,
@@ -37,6 +37,7 @@ pub struct Props {
     pub object_data: ObjectDataProp,
     pub handle_update_field: Callback<VariablesUpdateField>,
     pub handle_delete_entry: Callback<VariablesDeleteEntry>,
+    pub error_handle: Callback<Option<AppError>>,
 }
 
 #[function_component(ObjectRowComponent)]
@@ -46,6 +47,7 @@ pub fn object_row_component(
         object_data,
         handle_update_field,
         handle_delete_entry,
+        error_handle,
     }: &Props,
 ) -> Html {
     let expanded_handle = use_state_eq(|| false);
@@ -79,7 +81,7 @@ pub fn object_row_component(
                     <Entry {id} {row_num} col_num={11} value={NaiveDateTimeValue(controller.updated_at)} />
                     <Entry {id} {row_num} col_num={12} value={UuidValue(id)} />
                     if expanded {
-                        <ObjectDataComponent {id} row_num={row_num + 1} col_num={12} />
+                        <ObjectDataComponent {id} {error_handle} row_num={row_num + 1} col_num={12} />
                     }
                 </>
             }

@@ -23,13 +23,11 @@ pub fn emitter_navbar(
         };
 
         html! {
-            // <div class={classes!("navbar-button-wrapper")}>
-                <button {key} {onclick} class={classes!(
-                    "emitters-navigation-button",
-                    (emitter == &e).then(|| "active")
-                )}>{ e }
-                </button>
-            // </div>
+            <button {key} {onclick} class={classes!(
+                "emitters-navigation-button",
+                (emitter == &e).then(|| "active")
+            )}>{ e }
+            </button>
         }
     });
 
