@@ -1,21 +1,13 @@
-use common::FacilityType;
+use crate::models::queries::facility::all_facilities::AllFacilitiesAllFacilities;
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::{classes, function_component, html, Callback, Html, Properties};
 
-#[derive(PartialEq, Clone)]
-pub struct Facility {
-    pub id: uuid::Uuid,
-    pub idpa: String,
-    pub name: String,
-    pub r#type: FacilityType,
-}
-
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub facility: Facility,
+    pub facility: AllFacilitiesAllFacilities,
     pub on_facility_click: Callback<Uuid>,
-    pub facility_id: Rc<Uuid>,
+    pub facility_id: Option<Rc<Uuid>>,
 }
 
 #[function_component(FacilityComp)]
@@ -36,7 +28,7 @@ pub fn facility_comp(
 
     html! {
         <li class={classes!("sidebar-button-container")}>
-            <button class={classes!("sidebar-button", (facility_id.as_ref() == &id).then(|| "active"))} {onclick}>
+            <button class={classes!("sidebar-button", facility_id.as_ref().and_then(|u| (u.as_ref() == &id).then(|| "active")))} {onclick}>
                 { &facility.name }
             </button>
         </li>

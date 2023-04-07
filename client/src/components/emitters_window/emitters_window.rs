@@ -15,7 +15,7 @@ use yew::{classes, function_component, html, use_state_eq, Callback, Html, Prope
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub facility_id: Rc<Uuid>,
+    pub facility_id: Option<Rc<Uuid>>,
     pub error_handle: Callback<Option<AppError>>,
 }
 
@@ -45,11 +45,13 @@ pub fn emitters_window(
         <div class={classes!("emitters-window")}>
             <EmitterNavbar {emitter} {on_emitter_change} />
             <div />
-            <ObjectsComponent id={facility_id} {error_handle} object_variant={match emitter {
-                Controller => CONTROLLER_BY_FACILITY_ID,
-                Compressor => COMPRESSOR_BY_FACILITY_ID,
-                TankFarm => TANK_FARM_BY_FACILITY_ID,
-            }} />
+            if let Some(id) = facility_id {
+                <ObjectsComponent {id} {error_handle} object_variant={match emitter {
+                    Controller => CONTROLLER_BY_FACILITY_ID,
+                    Compressor => COMPRESSOR_BY_FACILITY_ID,
+                    TankFarm => TANK_FARM_BY_FACILITY_ID,
+                }} />
+            }
         </div>
     }
 }

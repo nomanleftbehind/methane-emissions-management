@@ -23,11 +23,14 @@ pub fn error(
 
     html! {
         <Modal>
+            // <form> attribute method="dialog" is necessary to close the <dialog> on button click.
             <form method="dialog">
                 <div>
                     { for children.iter() }
                 </div>
-                <button {onclick}>{"Confirm"}</button>
+                <div>
+                    <button {onclick}>{"Ok"}</button>
+                </div>
             </form>
         </Modal>
     }
