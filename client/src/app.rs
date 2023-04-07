@@ -14,14 +14,17 @@ use yew_router::{
 #[function_component(App)]
 pub fn app() -> Html {
     html! {
-        <BrowserRouter>
-            <UserProvider>
-                <NavigationBar />
-                <main class="main">
-                    <Switch<Route> render={switch} />
-                </main>
-            </UserProvider>
-        </BrowserRouter>
+        <>
+            <BrowserRouter>
+                <UserProvider>
+                    <NavigationBar />
+                    <main class="main">
+                        <Switch<Route> render={switch} />
+                    </main>
+                </UserProvider>
+            </BrowserRouter>
+            <dialog id="modal-root"></dialog>
+        </>
     }
 }
 
@@ -67,13 +70,16 @@ pub fn server_app(props: &ServerAppProps) -> Html {
     history.push(&*props.url);
 
     html! {
-        <Router history={history}>
-            <UserProvider>
-                <NavigationBar />
-                <main class="main">
-                    <Switch<Route> render={switch} />
-                </main>
-            </UserProvider>
-        </Router>
+        <>
+            <Router history={history}>
+                <UserProvider>
+                    <NavigationBar />
+                    <main class="main">
+                        <Switch<Route> render={switch} />
+                    </main>
+                </UserProvider>
+            </Router>
+            <dialog id="modal-root"></dialog>
+        </>
     }
 }

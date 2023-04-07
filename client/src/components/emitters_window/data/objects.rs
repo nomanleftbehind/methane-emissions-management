@@ -1,5 +1,8 @@
 use crate::{
-    components::emitters_window::data::object_row::{ObjectDataProp, ObjectRowComponent},
+    components::{
+        emitters_window::data::object_row::{ObjectDataProp, ObjectRowComponent},
+        modal::{error::Error, modal::Modal},
+    },
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
     models::{
         mutations::manual_mutation::{
@@ -22,9 +25,11 @@ use crate::{
 };
 use std::rc::Rc;
 use uuid::Uuid;
+use wasm_bindgen::JsCast;
+use web_sys::HtmlDialogElement;
 use yew::{
-    classes, function_component, html, use_effect_with_deps, use_state_eq, Callback, Html,
-    Properties,
+    classes, function_component, html, use_effect, use_effect_with_deps, use_state_eq, Callback,
+    Html, MouseEvent, Properties,
 };
 
 /// In an effort to avoid cloning large amounts of data to create props when re-rendering,
@@ -39,6 +44,38 @@ pub struct Props {
 pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
     let number_of_updated_fields_handle = use_state_eq(|| 0);
     let number_of_updated_fields = *number_of_updated_fields_handle;
+
+    let error_handle = use_state_eq(|| None);
+    let error = (*error_handle).clone();
+
+    let modal_root_handle = use_state_eq(|| Rc::new(None));
+    let modal_root = (*modal_root_handle).clone();
+    use_effect(move || {
+        let modal_root = gloo::utils::document()
+            .get_element_by_id("modal-root")
+            .expect("Expected to find a #modal-root element")
+            .dyn_into::<HtmlDialogElement>()
+            .expect("#modal-root is not a <dialog> element");
+
+        modal_root_handle.set(Rc::new(Some(modal_root)));
+    });
+
+    // let modal_root = Rc::new(
+    //     gloo::utils::document()
+    //         .get_element_by_id("modal-root")
+    //         .expect("Expected to find a #modal-root element")
+    //         .dyn_into::<HtmlDialogElement>()
+    //         .expect("#modal-root is not a <dialog> element"),
+    // );
+
+    // let open_error_dialog_handle = use_state_eq(|| false);
+    // let open_error_dialog = *open_error_dialog_handle;
+    let on_error_dialog_button_click = {
+        let error_handle = error_handle.clone();
+        Callback::from(move |_: MouseEvent| {
+            error_handle.set(None);
+        })
+    };
 
     let get_objects = {
         let variables = Variables {
@@ -62,8 +99,12 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
 
     let handle_update_field = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
+        let error_handle = error_handle.clone();
+        let modal_root = Rc::clone(&modal_root);
         Callback::from(move |variables: VariablesUpdateField| {
             let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
+            let error_handle = error_handle.clone();
+            let modal_root = Rc::clone(&modal_root);
             wasm_bindgen_futures::spawn_local(async move {
                 match lazy_query::<UpdateField>(variables).await {
                     QueryResponse {
@@ -73,7 +114,10 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
                         number_of_updated_fields_handle.set(number_of_updated_fields + update_field)
                     }
                     QueryResponse { error: Some(e), .. } => {
-                        console_log!("Update error: {}", e);
+                        error_handle.set(Some(e));
+                        if let Some(ref modal_root) = *modal_root {
+                            let _ = modal_root.show_modal();
+                        }
                     }
                     _ => {}
                 };
@@ -81,21 +125,32 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
         })
     };
 
-    let handle_delete_entry = Callback::from(move |variables: VariablesDeleteEntry| {
-        let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
-        wasm_bindgen_futures::spawn_local(async move {
-            match lazy_query::<DeleteEntry>(variables).await {
-                QueryResponse {
-                    data: Some(ResponseDataDeleteEntry { delete_entry }),
-                    ..
-                } => number_of_updated_fields_handle.set(number_of_updated_fields + delete_entry),
-                QueryResponse { error: Some(e), .. } => {
-                    console_log!("Delete error: {}", e);
-                }
-                _ => {}
-            };
-        });
-    });
+    let handle_delete_entry = {
+        let error_handle = error_handle.clone();
+        let modal_root = Rc::clone(&modal_root);
+        Callback::from(move |variables: VariablesDeleteEntry| {
+            let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
+            let error_handle = error_handle.clone();
+            let modal_root = Rc::clone(&modal_root);
+            wasm_bindgen_futures::spawn_local(async move {
+                match lazy_query::<DeleteEntry>(variables).await {
+                    QueryResponse {
+                        data: Some(ResponseDataDeleteEntry { delete_entry }),
+                        ..
+                    } => {
+                        number_of_updated_fields_handle.set(number_of_updated_fields + delete_entry)
+                    }
+                    QueryResponse { error: Some(e), .. } => {
+                        error_handle.set(Some(e));
+                        if let Some(ref modal_root) = *modal_root {
+                            let _ = modal_root.show_modal();
+                        }
+                    }
+                    _ => {}
+                };
+            });
+        })
+    };
 
     // use_effect_with_deps(
     //     move |u| {
@@ -241,12 +296,27 @@ pub fn objects_component(Props { id, object_variant }: &Props) -> Html {
             }
         }
         QueryResponse { error: Some(e), .. } => {
-            html! {e}
+            error_handle.set(Some(e));
+            if let Some(ref modal_root) = *modal_root {
+                let _ = modal_root.show_modal();
+            }
+            html! {}
         }
         _ => {
             html! {}
         }
     };
 
-    view
+    html! {
+        <>
+            <Error {on_error_dialog_button_click}>
+                if let Some(error) = error {
+                    <>{error}</>
+                } else {
+                    <></>
+                }
+            </Error>
+            { view }
+        </>
+    }
 }

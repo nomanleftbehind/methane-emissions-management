@@ -1,12 +1,9 @@
 use crate::{
-    components::{
-        emitters_window::{
-            data::object_data::ObjectDataComponent,
-            delete_entry::DeleteEntryComponent,
-            entry::{EditFieldProp, Entry},
-            expand_data::ExpandDataComponent,
-        },
-        modal::modal::Modal,
+    components::emitters_window::{
+        data::object_data::ObjectDataComponent,
+        delete_entry::DeleteEntryComponent,
+        entry::{EditFieldProp, Entry},
+        expand_data::ExpandDataComponent,
     },
     models::{
         mutations::manual_mutation::{
@@ -69,11 +66,6 @@ pub fn object_row_component(
 
             html! {
                 <>
-                    if expanded {
-                        <Modal>
-                            <div>{ "Bitch" }</div>
-                        </Modal>
-                    }
                     <DeleteEntryComponent {id} {row_num} col_num={1} delete_entry_variant={DeleteEntryVariant::CONTROLLER} handle_delete_entry={handle_delete_entry.clone()} />
                     <ExpandDataComponent {row_num} col_num={2} {expanded} {handle_expand_data} />
                     <Entry {id} {row_num} col_num={3} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_MODEL}} value={OptionStringValue(controller.model)} />
