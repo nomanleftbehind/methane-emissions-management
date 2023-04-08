@@ -12,10 +12,13 @@ use crate::{
         },
         queries::get_object::get_object::{
             GetObjectGetObjectCompressors, GetObjectGetObjectControllerChanges,
-            GetObjectGetObjectControllerMonthHours, GetObjectGetObjectControllers,
+            GetObjectGetObjectControllerMonthHours, GetObjectGetObjectControllerMonthVent,
+            GetObjectGetObjectControllerMonthVentOverride, GetObjectGetObjectControllers,
             GetObjectGetObjectTankFarms,
             GetObjectVariant::{
                 CONTROLLER_CHANGE_BY_CONTROLLER_ID, CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID,
+                CONTROLLER_MONTH_VENT_BY_CONTROLLER_ID,
+                CONTROLLER_MONTH_VENT_OVERRIDE_BY_CONTROLLER_ID,
             },
         },
     },
@@ -34,6 +37,8 @@ pub enum ObjectDataProp {
     TankFarm(GetObjectGetObjectTankFarms),
     ControllerChange(GetObjectGetObjectControllerChanges),
     ControllerMonthHours(GetObjectGetObjectControllerMonthHours),
+    ControllerMonthVentOverride(GetObjectGetObjectControllerMonthVentOverride),
+    ControllerMonthVent(GetObjectGetObjectControllerMonthVent),
 }
 
 #[derive(Clone, Debug, PartialEq, Properties)]
@@ -74,6 +79,8 @@ pub fn object_row_component(
             let sidebar_items = vec![
                 CONTROLLER_CHANGE_BY_CONTROLLER_ID,
                 CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID,
+                CONTROLLER_MONTH_VENT_OVERRIDE_BY_CONTROLLER_ID,
+                CONTROLLER_MONTH_VENT_BY_CONTROLLER_ID,
             ];
 
             html! {
@@ -172,6 +179,47 @@ pub fn object_row_component(
                     <Entry {id} {row_num} col_num={6} value={OptionStringValue(updated_by)} />
                     <Entry {id} {row_num} col_num={7} value={NaiveDateTimeValue(controller_month_hours.updated_at)} />
                     <Entry {id} {row_num} col_num={8} value={UuidValue(id)} />
+                </>
+            }
+        }
+        ObjectDataProp::ControllerMonthVentOverride(controller_month_vent_override) => {
+            let controller_month_vent_override = controller_month_vent_override.clone();
+            let id = controller_month_vent_override.id;
+            let created_by = controller_month_vent_override.created_by.map(|cb| cb.email);
+            let updated_by = controller_month_vent_override.updated_by.map(|ub| ub.email);
+
+            html! {
+                <>
+                    <DeleteEntryComponent {id} {row_num} col_num={1} delete_entry_variant={DeleteEntryVariant::CONTROLLER_MONTH_VENT_OVERRIDE} handle_delete_entry={handle_delete_entry.clone()} />
+                    <Entry {id} {row_num} col_num={2} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_MONTH_VENT_OVERRIDE_MONTH}} value={NaiveDateValue(controller_month_vent_override.month)} />
+                    <Entry {id} {row_num} col_num={3} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_MONTH_VENT_OVERRIDE_GAS_VOLUME}} value={FloatValue(controller_month_vent_override.gas_volume)} display_value={StringValue(format!("{:.2}", controller_month_vent_override.gas_volume))}/>
+                    <Entry {id} {row_num} col_num={4} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_MONTH_VENT_OVERRIDE_COMMENT}} value={OptionStringValue(controller_month_vent_override.comment)} />
+                    <Entry {id} {row_num} col_num={5} value={OptionStringValue(created_by)} />
+                    <Entry {id} {row_num} col_num={6} value={NaiveDateTimeValue(controller_month_vent_override.created_at)} />
+                    <Entry {id} {row_num} col_num={7} value={OptionStringValue(updated_by)} />
+                    <Entry {id} {row_num} col_num={8} value={NaiveDateTimeValue(controller_month_vent_override.updated_at)} />
+                    <Entry {id} {row_num} col_num={9} value={UuidValue(id)} />
+                </>
+            }
+        }
+        ObjectDataProp::ControllerMonthVent(controller_month_vent) => {
+            let controller_month_vent = controller_month_vent.clone();
+            let id = controller_month_vent.id;
+            let created_by = controller_month_vent.created_by.map(|cb| cb.email);
+            let updated_by = controller_month_vent.updated_by.map(|ub| ub.email);
+
+            html! {
+                <>
+                    <DeleteEntryComponent {id} {row_num} col_num={1} delete_entry_variant={DeleteEntryVariant::CONTROLLER_MONTH_VENT} handle_delete_entry={handle_delete_entry.clone()} />
+                    <Entry {id} {row_num} col_num={2} value={NaiveDateValue(controller_month_vent.month)} />
+                    <Entry {id} {row_num} col_num={3} value={FloatValue(controller_month_vent.gas_volume)} display_value={StringValue(format!("{:.2}", controller_month_vent.gas_volume))}/>
+                    <Entry {id} {row_num} col_num={4} value={FloatValue(controller_month_vent.c1_volume)} display_value={StringValue(format!("{:.2}", controller_month_vent.c1_volume))}/>
+                    <Entry {id} {row_num} col_num={5} value={FloatValue(controller_month_vent.co2_volume)} display_value={StringValue(format!("{:.2}", controller_month_vent.co2_volume))}/>
+                    <Entry {id} {row_num} col_num={6} value={OptionStringValue(created_by)} />
+                    <Entry {id} {row_num} col_num={7} value={NaiveDateTimeValue(controller_month_vent.created_at)} />
+                    <Entry {id} {row_num} col_num={8} value={OptionStringValue(updated_by)} />
+                    <Entry {id} {row_num} col_num={9} value={NaiveDateTimeValue(controller_month_vent.updated_at)} />
+                    <Entry {id} {row_num} col_num={10} value={UuidValue(id)} />
                 </>
             }
         }

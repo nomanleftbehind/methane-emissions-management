@@ -1,10 +1,10 @@
-use std::fmt::Display;
-
 use crate::models::queries::get_object::get_object::GetObjectVariant::{
     self, Other, COMPRESSOR_BY_FACILITY_ID, CONTROLLER_BY_FACILITY_ID,
     CONTROLLER_CHANGE_BY_CONTROLLER_ID, CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID,
+    CONTROLLER_MONTH_VENT_BY_CONTROLLER_ID, CONTROLLER_MONTH_VENT_OVERRIDE_BY_CONTROLLER_ID,
     TANK_FARM_BY_FACILITY_ID,
 };
+use std::fmt::Display;
 
 pub mod data;
 pub mod delete_entry;
@@ -38,6 +38,10 @@ impl Display for GetObjectVariant {
             TANK_FARM_BY_FACILITY_ID => write!(f, "Tank Farms"),
             CONTROLLER_CHANGE_BY_CONTROLLER_ID => write!(f, "Controller Changes"),
             CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID => write!(f, "Controller Month Hours"),
+            CONTROLLER_MONTH_VENT_OVERRIDE_BY_CONTROLLER_ID => {
+                write!(f, "Controller Month Vent Override")
+            }
+            CONTROLLER_MONTH_VENT_BY_CONTROLLER_ID => write!(f, "Controller Month Vent"),
             Other(s) => write!(f, "Other: {}", s),
         }
     }

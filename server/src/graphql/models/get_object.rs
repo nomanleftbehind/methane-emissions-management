@@ -1,5 +1,6 @@
 use crate::graphql::models::{
-    Compressor, Controller, ControllerChange, ControllerMonthHours, TankFarm,
+    Compressor, Controller, ControllerChange, ControllerMonthHours, ControllerMonthVent,
+    ControllerMonthVentOverride, TankFarm,
 };
 use async_graphql::SimpleObject;
 
@@ -10,4 +11,6 @@ pub struct GetObject {
     pub tank_farms: Option<Vec<TankFarm>>,
     pub controller_changes: Option<Vec<ControllerChange>>,
     pub controller_month_hours: Option<Vec<ControllerMonthHours>>,
+    pub controller_month_vent_override: Option<Vec<ControllerMonthVentOverride>>,
+    pub controller_month_vent: Option<Vec<ControllerMonthVent>>,
 }

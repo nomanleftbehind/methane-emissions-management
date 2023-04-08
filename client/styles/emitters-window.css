@@ -49,6 +49,14 @@
   grid-template-columns: 2.7rem var(--date-column-width) 8rem var(--user-info-column-width) var(--id-column-width);
 }
 
+.controller-month-vent-override {
+  grid-template-columns: 2.7rem var(--date-column-width) 8rem var(--user-info-column-width) var(--id-column-width);
+}
+
+.controller-month-vent {
+  grid-template-columns: 2.7rem 8rem repeat(3, 6rem) var(--user-info-column-width) var(--id-column-width);
+}
+
 .emitters-navigation-button {
   display: inline-block;
   padding: 0.5rem 1rem;

@@ -5,7 +5,9 @@ use common::UpdateFieldVariant::{
     CompressorRemoveDate, CompressorSerialNumber, ControllerApplicationId, ControllerChangeDate,
     ControllerChangeId, ControllerChangeRate, ControllerFacilityId, ControllerFdcRecId,
     ControllerManufacturerId, ControllerModel, ControllerMonthHoursControllerId,
-    ControllerMonthHoursHoursOn, ControllerMonthHoursMonth, ControllerSerialNumber,
+    ControllerMonthHoursHoursOn, ControllerMonthHoursMonth, ControllerMonthVentOverrideComment,
+    ControllerMonthVentOverrideControllerId, ControllerMonthVentOverrideGasVolume,
+    ControllerMonthVentOverrideMonth, ControllerSerialNumber,
 };
 use sqlx::{query, Error, PgPool};
 use uuid::Uuid;
@@ -240,6 +242,62 @@ pub async fn update_field(
             WHERE id = $1",
             id,
             float_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerMonthVentOverrideControllerId => query!(
+            "UPDATE controller_month_vent_override
+            SET controller_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerMonthVentOverrideMonth => {
+            if let Some(value) = &naive_date_value {
+                if value.day() > 1 {
+                    let error = Error::Io(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected first day of the month, got `{}`", value),
+                    ));
+                    return Err(error);
+                }
+            }
+
+            query!(
+                "UPDATE controller_month_vent_override
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                updated_by_id,
+                updated_at,
+            )
+        }
+        ControllerMonthVentOverrideGasVolume => query!(
+            "UPDATE controller_month_vent_override
+            SET gas_volume = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerMonthVentOverrideComment => query!(
+            "UPDATE controller_month_vent_override
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
             updated_by_id,
             updated_at,
         ),

@@ -139,8 +139,8 @@ pub fn objects_component(
 
             html! {
                 <div class={classes!("emitters", "controllers")}>
-                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}></div>
-                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}></div>
+                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
+                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
                     <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Model" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Serial Number" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Manufacturer" }</div>
@@ -175,8 +175,8 @@ pub fn objects_component(
 
             html! {
                 <div class={classes!("emitters", "compressors")}>
-                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}></div>
-                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}></div>
+                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
+                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
                     <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Name" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Serial Number" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Install Date" }</div>
@@ -211,8 +211,8 @@ pub fn objects_component(
 
             html! {
                 <div class={classes!("emitters", "tank-farms")}>
-                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}></div>
-                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}></div>
+                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
+                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
                     <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "ID" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Created By" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Created At" }</div>
@@ -242,7 +242,7 @@ pub fn objects_component(
 
             html! {
                 <div class={classes!("emitters", "controller-changes")}>
-                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}></div>
+                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
                     <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Date" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Rate" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Created By" }</div>
@@ -274,7 +274,7 @@ pub fn objects_component(
 
             html! {
                 <div class={classes!("emitters", "controller-month-hours")}>
-                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}></div>
+                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
                     <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Month" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Hours On" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Created By" }</div>
@@ -283,6 +283,73 @@ pub fn objects_component(
                     <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
                     { for controller_month_hours_iter }
+                </div>
+            }
+        }
+        QueryResponse {
+            data:
+                Some(ResponseData {
+                    get_object:
+                        GetObjectGetObject {
+                            controller_month_vent_override: Some(controller_month_vent_overrides),
+                            ..
+                        },
+                }),
+            ..
+        } => {
+            let controller_month_vent_overrides_iter = controller_month_vent_overrides.into_iter().enumerate().map(|(mut row_num, controller_month_vent_override)| {
+                row_num = (row_num + 1) * 2;
+                html! {
+                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::ControllerMonthVentOverride(controller_month_vent_override)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                }
+            });
+
+            html! {
+                <div class={classes!("emitters", "controller-month-vent-override")}>
+                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
+                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Month" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Gas Volume (m³)" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Comment" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Created By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Created At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Updated At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "ID" }</div>
+                    { for controller_month_vent_overrides_iter }
+                </div>
+            }
+        }
+        QueryResponse {
+            data:
+                Some(ResponseData {
+                    get_object:
+                        GetObjectGetObject {
+                            controller_month_vent: Some(controller_month_vents),
+                            ..
+                        },
+                }),
+            ..
+        } => {
+            let controller_month_vents_iter = controller_month_vents.into_iter().enumerate().map(|(mut row_num, controller_month_vent)| {
+                row_num = (row_num + 1) * 2;
+                html! {
+                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::ControllerMonthVent(controller_month_vent)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                }
+            });
+
+            html! {
+                <div class={classes!("emitters", "controller-month-vent")}>
+                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
+                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Month" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Gas Volume (m³)" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Methane Volume (m³)" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "CO₂ Volume (m³)" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Created By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Created At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Updated By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Updated At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "ID" }</div>
+                    { for controller_month_vents_iter }
                 </div>
             }
         }

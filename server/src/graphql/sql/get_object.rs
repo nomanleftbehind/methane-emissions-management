@@ -1,10 +1,11 @@
 use crate::graphql::models::{
-    Compressor, Controller, ControllerChange, ControllerMonthHours, GetObject, GetObjectInput,
-    TankFarm,
+    Compressor, Controller, ControllerChange, ControllerMonthHours, ControllerMonthVent,
+    ControllerMonthVentOverride, GetObject, GetObjectInput, TankFarm,
 };
 use common::GetObjectVariant::{
     CompressorByFacilityId, ControllerByFacilityId, ControllerChangeByControllerId,
-    ControllerMonthHoursByControllerId, TankFarmByFacilityId,
+    ControllerMonthHoursByControllerId, ControllerMonthVentByControllerId,
+    ControllerMonthVentOverrideByControllerId, TankFarmByFacilityId,
 };
 use sqlx::{query_as, Error, PgPool};
 
@@ -30,6 +31,8 @@ pub async fn get_object(
             tank_farms: None,
             controller_changes: None,
             controller_month_hours: None,
+            controller_month_vent_override: None,
+            controller_month_vent: None,
         },
         CompressorByFacilityId => GetObject {
             controllers: None,
@@ -45,6 +48,8 @@ pub async fn get_object(
             tank_farms: None,
             controller_changes: None,
             controller_month_hours: None,
+            controller_month_vent_override: None,
+            controller_month_vent: None,
         },
         TankFarmByFacilityId => GetObject {
             compressors: None,
@@ -60,6 +65,8 @@ pub async fn get_object(
             ),
             controller_changes: None,
             controller_month_hours: None,
+            controller_month_vent_override: None,
+            controller_month_vent: None,
         },
         ControllerChangeByControllerId => GetObject {
             compressors: None,
@@ -75,6 +82,8 @@ pub async fn get_object(
                 .await?,
             ),
             controller_month_hours: None,
+            controller_month_vent_override: None,
+            controller_month_vent: None,
         },
         ControllerMonthHoursByControllerId => GetObject {
             compressors: None,
@@ -90,6 +99,42 @@ pub async fn get_object(
                 .fetch_all(pool)
                 .await?,
             ),
+            controller_month_vent_override: None,
+            controller_month_vent: None,
+        },
+        ControllerMonthVentByControllerId => GetObject {
+            compressors: None,
+            controllers: None,
+            tank_farms: None,
+            controller_changes: None,
+            controller_month_hours: None,
+            controller_month_vent_override: None,
+            controller_month_vent: Some(
+                query_as!(
+                    ControllerMonthVent,
+                    "SELECT * FROM controller_month_vent WHERE controller_id = $1 ORDER BY id",
+                    id
+                )
+                .fetch_all(pool)
+                .await?,
+            ),
+        },
+        ControllerMonthVentOverrideByControllerId => GetObject {
+            compressors: None,
+            controllers: None,
+            tank_farms: None,
+            controller_changes: None,
+            controller_month_hours: None,
+            controller_month_vent_override: Some(
+                query_as!(
+                    ControllerMonthVentOverride,
+                    "SELECT * FROM controller_month_vent_override WHERE controller_id = $1 ORDER BY id",
+                    id
+                )
+                .fetch_all(pool)
+                .await?,
+            ),
+            controller_month_vent: None,
         },
     };
 

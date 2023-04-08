@@ -2914,6 +2914,18 @@
               "description": null,
               "isDeprecated": false,
               "name": "CONTROLLER_MONTH_HOURS"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_VENT_OVERRIDE"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_VENT"
             }
           ],
           "fields": null,
@@ -4822,6 +4834,46 @@
                   }
                 }
               }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "controllerMonthVentOverride",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ControllerMonthVentOverride",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "controllerMonthVent",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ControllerMonthVent",
+                    "ofType": null
+                  }
+                }
+              }
             }
           ],
           "inputFields": null,
@@ -4901,6 +4953,18 @@
               "description": null,
               "isDeprecated": false,
               "name": "CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_VENT_OVERRIDE_BY_CONTROLLER_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_VENT_BY_CONTROLLER_ID"
             }
           ],
           "fields": null,
@@ -6693,6 +6757,30 @@
               "description": null,
               "isDeprecated": false,
               "name": "CONTROLLER_MONTH_HOURS_HOURS_ON"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_VENT_OVERRIDE_CONTROLLER_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_VENT_OVERRIDE_MONTH"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_VENT_OVERRIDE_GAS_VOLUME"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_VENT_OVERRIDE_COMMENT"
             }
           ],
           "fields": null,

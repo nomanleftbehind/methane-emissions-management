@@ -98,6 +98,10 @@ pub enum UpdateFieldVariant {
     ControllerMonthHoursControllerId,
     ControllerMonthHoursMonth,
     ControllerMonthHoursHoursOn,
+    ControllerMonthVentOverrideControllerId,
+    ControllerMonthVentOverrideMonth,
+    ControllerMonthVentOverrideGasVolume,
+    ControllerMonthVentOverrideComment,
 }
 
 // graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
@@ -177,6 +181,8 @@ pub enum DeleteEntryVariant {
     TankFarm,
     ControllerChange,
     ControllerMonthHours,
+    ControllerMonthVentOverride,
+    ControllerMonthVent,
 }
 
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
@@ -187,4 +193,6 @@ pub enum GetObjectVariant {
     TankFarmByFacilityId,
     ControllerChangeByControllerId,
     ControllerMonthHoursByControllerId,
+    ControllerMonthVentOverrideByControllerId,
+    ControllerMonthVentByControllerId,
 }

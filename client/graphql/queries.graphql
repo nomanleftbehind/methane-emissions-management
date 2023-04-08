@@ -94,6 +94,35 @@ query GetObject($getObjectInput: GetObjectInput!) {
       }
       updatedAt
     }
+    controllerMonthVentOverride {
+      id
+      month
+      gasVolume
+      comment
+      createdBy {
+        email
+      }
+      createdAt
+      updatedBy {
+        email
+      }
+      updatedAt
+    }
+    controllerMonthVent {
+      id
+      month
+      gasVolume
+      c1Volume
+      co2Volume
+      createdBy {
+        email
+      }
+      createdAt
+      updatedBy {
+        email
+      }
+      updatedAt
+    }
   }
 }
 
