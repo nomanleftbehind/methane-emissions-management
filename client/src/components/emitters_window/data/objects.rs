@@ -76,7 +76,8 @@ pub fn objects_component(
                         data: Some(ResponseDataUpdateField { update_field }),
                         ..
                     } => {
-                        number_of_updated_fields_handle.set(number_of_updated_fields + update_field)
+                        number_of_updated_fields_handle
+                            .set(number_of_updated_fields + update_field);
                     }
                     QueryResponse { error: Some(e), .. } => {
                         error_handle.emit(Some(e));
@@ -98,7 +99,8 @@ pub fn objects_component(
                         data: Some(ResponseDataDeleteEntry { delete_entry }),
                         ..
                     } => {
-                        number_of_updated_fields_handle.set(number_of_updated_fields + delete_entry)
+                        number_of_updated_fields_handle
+                            .set(number_of_updated_fields + delete_entry);
                     }
                     QueryResponse { error: Some(e), .. } => {
                         error_handle.emit(Some(e));
@@ -249,6 +251,38 @@ pub fn objects_component(
                     <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
                     { for controller_changes_iter }
+                </div>
+            }
+        }
+        QueryResponse {
+            data:
+                Some(ResponseData {
+                    get_object:
+                        GetObjectGetObject {
+                            controller_month_hours: Some(controller_month_hours),
+                            ..
+                        },
+                }),
+            ..
+        } => {
+            let controller_month_hours_iter = controller_month_hours.into_iter().enumerate().map(|(mut row_num, controller_month_hours)| {
+                row_num = (row_num + 1) * 2;
+                html! {
+                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::ControllerMonthHours(controller_month_hours)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                }
+            });
+
+            html! {
+                <div class={classes!("emitters", "controller-month-hours")}>
+                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}></div>
+                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Month" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Hours On" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Created By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Created At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Updated By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
+                    { for controller_month_hours_iter }
                 </div>
             }
         }

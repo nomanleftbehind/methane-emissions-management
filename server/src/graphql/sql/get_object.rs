@@ -1,9 +1,10 @@
 use crate::graphql::models::{
-    Compressor, Controller, ControllerChange, GetObject, GetObjectInput, TankFarm,
+    Compressor, Controller, ControllerChange, ControllerMonthHours, GetObject, GetObjectInput,
+    TankFarm,
 };
 use common::GetObjectVariant::{
     CompressorByFacilityId, ControllerByFacilityId, ControllerChangeByControllerId,
-    TankFarmByFacilityId,
+    ControllerMonthHoursByControllerId, TankFarmByFacilityId,
 };
 use sqlx::{query_as, Error, PgPool};
 
@@ -28,6 +29,7 @@ pub async fn get_object(
             compressors: None,
             tank_farms: None,
             controller_changes: None,
+            controller_month_hours: None,
         },
         CompressorByFacilityId => GetObject {
             controllers: None,
@@ -42,6 +44,7 @@ pub async fn get_object(
             ),
             tank_farms: None,
             controller_changes: None,
+            controller_month_hours: None,
         },
         TankFarmByFacilityId => GetObject {
             compressors: None,
@@ -56,6 +59,7 @@ pub async fn get_object(
                 .await?,
             ),
             controller_changes: None,
+            controller_month_hours: None,
         },
         ControllerChangeByControllerId => GetObject {
             compressors: None,
@@ -65,6 +69,22 @@ pub async fn get_object(
                 query_as!(
                     ControllerChange,
                     "SELECT * FROM controller_changes WHERE controller_id = $1 ORDER BY id",
+                    id
+                )
+                .fetch_all(pool)
+                .await?,
+            ),
+            controller_month_hours: None,
+        },
+        ControllerMonthHoursByControllerId => GetObject {
+            compressors: None,
+            controllers: None,
+            tank_farms: None,
+            controller_changes: None,
+            controller_month_hours: Some(
+                query_as!(
+                    ControllerMonthHours,
+                    "SELECT * FROM controller_month_hours WHERE controller_id = $1 ORDER BY id",
                     id
                 )
                 .fetch_all(pool)

@@ -2908,6 +2908,12 @@
               "description": null,
               "isDeprecated": false,
               "name": "CONTROLLER_CHANGE"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_HOURS"
             }
           ],
           "fields": null,
@@ -4796,6 +4802,26 @@
                   }
                 }
               }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "controllerMonthHours",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ControllerMonthHours",
+                    "ofType": null
+                  }
+                }
+              }
             }
           ],
           "inputFields": null,
@@ -4869,6 +4895,12 @@
               "description": null,
               "isDeprecated": false,
               "name": "CONTROLLER_CHANGE_BY_CONTROLLER_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID"
             }
           ],
           "fields": null,
@@ -6643,6 +6675,24 @@
               "description": null,
               "isDeprecated": false,
               "name": "CONTROLLER_CHANGE_RATE"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_HOURS_CONTROLLER_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_HOURS_MONTH"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONTROLLER_MONTH_HOURS_HOURS_ON"
             }
           ],
           "fields": null,

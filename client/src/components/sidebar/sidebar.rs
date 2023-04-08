@@ -29,7 +29,7 @@ pub fn sidebar(
 ) -> Html {
     let get_facilities = use_query::<AllFacilities>(Variables);
 
-    let inner = match get_facilities {
+    let view = match get_facilities {
         QueryResponse {
             data: Some(ResponseData { all_facilities }),
             ..
@@ -59,7 +59,7 @@ pub fn sidebar(
     html! {
         <nav class={classes!("sidebar")} role="navigation">
             <ol class={classes!("sidebar-list")}>
-                { inner }
+                { view }
             </ol>
         </nav>
     }

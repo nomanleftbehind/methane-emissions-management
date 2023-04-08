@@ -59,7 +59,7 @@
 
 }
 
-.emitter-data-side button:hover {
+.emitter-data-side button:hover, .emitter-data-side button.active {
   background-color: var(--primary);
   color: var(--contrast-primary)
 }

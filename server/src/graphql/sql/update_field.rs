@@ -1,9 +1,11 @@
 use crate::graphql::models::{UpdateFieldInput, UpdateFieldValue};
+use chrono::Datelike;
 use common::UpdateFieldVariant::{
     CompressorFacilityId, CompressorFdcRecId, CompressorInstallDate, CompressorName,
     CompressorRemoveDate, CompressorSerialNumber, ControllerApplicationId, ControllerChangeDate,
     ControllerChangeId, ControllerChangeRate, ControllerFacilityId, ControllerFdcRecId,
-    ControllerManufacturerId, ControllerModel, ControllerSerialNumber,
+    ControllerManufacturerId, ControllerModel, ControllerMonthHoursControllerId,
+    ControllerMonthHoursHoursOn, ControllerMonthHoursMonth, ControllerSerialNumber,
 };
 use sqlx::{query, Error, PgPool};
 use uuid::Uuid;
@@ -188,6 +190,51 @@ pub async fn update_field(
         ControllerChangeRate => query!(
             "UPDATE controller_changes
             SET rate = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerMonthHoursControllerId => query!(
+            "UPDATE controller_month_hours
+            SET controller_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            updated_by_id,
+            updated_at,
+        ),
+        ControllerMonthHoursMonth => {
+            if let Some(value) = &naive_date_value {
+                if value.day() > 1 {
+                    let error = Error::Io(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected first day of the month, got `{}`", value),
+                    ));
+                    return Err(error);
+                }
+            }
+
+            query!(
+                "UPDATE controller_month_hours
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                updated_by_id,
+                updated_at,
+            )
+        }
+        ControllerMonthHoursHoursOn => query!(
+            "UPDATE controller_month_hours
+            SET hours_on = $2,
                 updated_by_id = $3,
                 updated_at = $4
             WHERE id = $1",

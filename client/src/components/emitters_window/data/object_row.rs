@@ -12,7 +12,11 @@ use crate::{
         },
         queries::get_object::get_object::{
             GetObjectGetObjectCompressors, GetObjectGetObjectControllerChanges,
-            GetObjectGetObjectControllers, GetObjectGetObjectTankFarms,
+            GetObjectGetObjectControllerMonthHours, GetObjectGetObjectControllers,
+            GetObjectGetObjectTankFarms,
+            GetObjectVariant::{
+                CONTROLLER_CHANGE_BY_CONTROLLER_ID, CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID,
+            },
         },
     },
     utils::error::AppError,
@@ -29,6 +33,7 @@ pub enum ObjectDataProp {
     Compressor(GetObjectGetObjectCompressors),
     TankFarm(GetObjectGetObjectTankFarms),
     ControllerChange(GetObjectGetObjectControllerChanges),
+    ControllerMonthHours(GetObjectGetObjectControllerMonthHours),
 }
 
 #[derive(Clone, Debug, PartialEq, Properties)]
@@ -66,6 +71,11 @@ pub fn object_row_component(
             let created_by = controller.created_by.map(|cb| cb.email);
             let updated_by = controller.updated_by.map(|ub| ub.email);
 
+            let sidebar_items = vec![
+                CONTROLLER_CHANGE_BY_CONTROLLER_ID,
+                CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID,
+            ];
+
             html! {
                 <>
                     <DeleteEntryComponent {id} {row_num} col_num={1} delete_entry_variant={DeleteEntryVariant::CONTROLLER} handle_delete_entry={handle_delete_entry.clone()} />
@@ -81,7 +91,7 @@ pub fn object_row_component(
                     <Entry {id} {row_num} col_num={11} value={NaiveDateTimeValue(controller.updated_at)} />
                     <Entry {id} {row_num} col_num={12} value={UuidValue(id)} />
                     if expanded {
-                        <ObjectDataComponent {id} {error_handle} row_num={row_num + 1} col_num={12} />
+                        <ObjectDataComponent {id} {sidebar_items} {error_handle} row_num={row_num + 1} col_num={12} />
                     }
                 </>
             }
@@ -142,6 +152,25 @@ pub fn object_row_component(
                     <Entry {id} {row_num} col_num={5} value={NaiveDateTimeValue(controller_change.created_at)} />
                     <Entry {id} {row_num} col_num={6} value={OptionStringValue(updated_by)} />
                     <Entry {id} {row_num} col_num={7} value={NaiveDateTimeValue(controller_change.updated_at)} />
+                    <Entry {id} {row_num} col_num={8} value={UuidValue(id)} />
+                </>
+            }
+        }
+        ObjectDataProp::ControllerMonthHours(controller_month_hours) => {
+            let controller_month_hours = controller_month_hours.clone();
+            let id = controller_month_hours.id;
+            let created_by = controller_month_hours.created_by.map(|cb| cb.email);
+            let updated_by = controller_month_hours.updated_by.map(|ub| ub.email);
+
+            html! {
+                <>
+                    <DeleteEntryComponent {id} {row_num} col_num={1} delete_entry_variant={DeleteEntryVariant::CONTROLLER_MONTH_HOURS} handle_delete_entry={handle_delete_entry.clone()} />
+                    <Entry {id} {row_num} col_num={2} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_MONTH_HOURS_MONTH}} value={NaiveDateValue(controller_month_hours.month)} />
+                    <Entry {id} {row_num} col_num={3} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_MONTH_HOURS_HOURS_ON}} value={FloatValue(controller_month_hours.hours_on)} display_value={StringValue(format!("{:.1}", controller_month_hours.hours_on))}/>
+                    <Entry {id} {row_num} col_num={4} value={OptionStringValue(created_by)} />
+                    <Entry {id} {row_num} col_num={5} value={NaiveDateTimeValue(controller_month_hours.created_at)} />
+                    <Entry {id} {row_num} col_num={6} value={OptionStringValue(updated_by)} />
+                    <Entry {id} {row_num} col_num={7} value={NaiveDateTimeValue(controller_month_hours.updated_at)} />
                     <Entry {id} {row_num} col_num={8} value={UuidValue(id)} />
                 </>
             }

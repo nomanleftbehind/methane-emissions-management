@@ -1,5 +1,11 @@
 use std::fmt::Display;
 
+use crate::models::queries::get_object::get_object::GetObjectVariant::{
+    self, Other, COMPRESSOR_BY_FACILITY_ID, CONTROLLER_BY_FACILITY_ID,
+    CONTROLLER_CHANGE_BY_CONTROLLER_ID, CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID,
+    TANK_FARM_BY_FACILITY_ID,
+};
+
 pub mod data;
 pub mod delete_entry;
 pub mod emitter_navbar;
@@ -21,6 +27,18 @@ impl Display for Emitter {
             Emitter::Controller => write!(f, "Controllers"),
             Emitter::Compressor => write!(f, "Compressors"),
             Emitter::TankFarm => write!(f, "Tank Farms"),
+        }
+    }
+}
+impl Display for GetObjectVariant {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CONTROLLER_BY_FACILITY_ID => write!(f, "Controllers"),
+            COMPRESSOR_BY_FACILITY_ID => write!(f, "Compressors"),
+            TANK_FARM_BY_FACILITY_ID => write!(f, "Tank Farms"),
+            CONTROLLER_CHANGE_BY_CONTROLLER_ID => write!(f, "Controller Changes"),
+            CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID => write!(f, "Controller Month Hours"),
+            Other(s) => write!(f, "Other: {}", s),
         }
     }
 }

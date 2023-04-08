@@ -81,6 +81,19 @@ query GetObject($getObjectInput: GetObjectInput!) {
       }
       updatedAt
     }
+    controllerMonthHours {
+      id
+      month
+      hoursOn
+      createdBy {
+        email
+      }
+      createdAt
+      updatedBy {
+        email
+      }
+      updatedAt
+    }
   }
 }
 

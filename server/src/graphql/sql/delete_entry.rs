@@ -1,5 +1,7 @@
 use crate::graphql::models::DeleteEntryInput;
-use common::DeleteEntryVariant::{Compressor, Controller, ControllerChange, TankFarm};
+use common::DeleteEntryVariant::{
+    Compressor, Controller, ControllerChange, ControllerMonthHours, TankFarm,
+};
 use sqlx::{query, Error, PgPool};
 
 pub async fn delete_entry(
@@ -14,6 +16,7 @@ pub async fn delete_entry(
         Compressor => query!("DELETE FROM compressors WHERE id = $1", id,),
         TankFarm => query!("DELETE FROM tank_farms WHERE id = $1", id,),
         ControllerChange => query!("DELETE FROM controller_changes WHERE id = $1", id,),
+        ControllerMonthHours => query!("DELETE FROM controller_month_hours WHERE id = $1", id,),
     };
 
     Ok(query.execute(pool).await?.rows_affected())
