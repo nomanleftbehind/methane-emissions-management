@@ -4,7 +4,8 @@ use crate::{
     models::{
         mutations::manual_mutation::{
             delete_entry::{
-                ResponseData as ResponseDataDeleteEntry, Variables as VariablesDeleteEntry,
+                DeleteEntryInput, ResponseData as ResponseDataDeleteEntry,
+                Variables as VariablesDeleteEntry,
             },
             update_field::{
                 ResponseData as ResponseDataUpdateField, Variables as VariablesUpdateField,
@@ -18,11 +19,15 @@ use crate::{
             GetObject,
         },
     },
-    utils::{error::AppError, gen_style::gen_grid_style},
+    pages::ModalVariant,
+    utils::{console_log, gen_style::gen_grid_style},
 };
 use std::rc::Rc;
 use uuid::Uuid;
-use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
+use yew::{
+    classes, function_component, html, use_effect_with_deps, use_state_eq, Callback, Html,
+    Properties,
+};
 
 /// In an effort to avoid cloning large amounts of data to create props when re-rendering,
 /// a smart pointer is passed in props to only clone a reference to the data instead of the data itself.
@@ -30,7 +35,7 @@ use yew::{classes, function_component, html, use_state_eq, Callback, Html, Prope
 pub struct Props {
     pub id: Rc<Uuid>,
     pub object_variant: GetObjectVariant,
-    pub error_handle: Callback<Option<AppError>>,
+    pub modal_variant_handle: Callback<Option<ModalVariant>>,
 }
 
 #[function_component(ObjectsComponent)]
@@ -38,7 +43,7 @@ pub fn objects_component(
     Props {
         id,
         object_variant,
-        error_handle,
+        modal_variant_handle,
     }: &Props,
 ) -> Html {
     let number_of_updated_fields_handle = use_state_eq(|| 0);
@@ -66,10 +71,10 @@ pub fn objects_component(
 
     let handle_update_field = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
-        let error_handle = error_handle.clone();
+        let modal_variant_handle = modal_variant_handle.clone();
         Callback::from(move |variables: VariablesUpdateField| {
             let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
-            let error_handle = error_handle.clone();
+            let modal_variant_handle = modal_variant_handle.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 match lazy_query::<UpdateField>(variables).await {
                     QueryResponse {
@@ -80,7 +85,7 @@ pub fn objects_component(
                             .set(number_of_updated_fields + update_field);
                     }
                     QueryResponse { error: Some(e), .. } => {
-                        error_handle.emit(Some(e));
+                        modal_variant_handle.emit(Some(ModalVariant::Error(e)));
                     }
                     _ => (),
                 };
@@ -88,35 +93,64 @@ pub fn objects_component(
         })
     };
 
+    // The reason for having callback within callback is to have access to both local and parent component's state.
+    // Outer callback modifies parent component's state (opens modal to confirm deletion) and passes it the inner callback which modifies local state (updates number of modified fields once deletion has been confirmed and returned successfully).
     let handle_delete_entry = {
-        let error_handle = error_handle.clone();
-        Callback::from(move |variables: VariablesDeleteEntry| {
-            let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
-            let error_handle = error_handle.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                match lazy_query::<DeleteEntry>(variables).await {
-                    QueryResponse {
-                        data: Some(ResponseDataDeleteEntry { delete_entry }),
-                        ..
-                    } => {
-                        number_of_updated_fields_handle
-                            .set(number_of_updated_fields + delete_entry);
-                    }
-                    QueryResponse { error: Some(e), .. } => {
-                        error_handle.emit(Some(e));
-                    }
-                    _ => (),
+        let modal_variant_handle = modal_variant_handle.clone();
+        let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
+
+        Callback::from(
+            move |VariablesDeleteEntry {
+                      delete_entry_input:
+                          DeleteEntryInput {
+                              id,
+                              delete_entry_variant,
+                          },
+                  }: VariablesDeleteEntry| {
+                let delete_entry_callback = {
+                    let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
+                    let modal_variant_handle = modal_variant_handle.clone();
+
+                    Callback::from(move |_| {
+                        let delete_entry_variant = delete_entry_variant.clone();
+                        let variables = VariablesDeleteEntry {
+                            delete_entry_input: DeleteEntryInput {
+                                id,
+                                delete_entry_variant,
+                            },
+                        };
+                        let number_of_updated_fields_handle =
+                            number_of_updated_fields_handle.clone();
+                        let modal_variant_handle = modal_variant_handle.clone();
+                        wasm_bindgen_futures::spawn_local(async move {
+                            match lazy_query::<DeleteEntry>(variables).await {
+                                QueryResponse {
+                                    data: Some(ResponseDataDeleteEntry { delete_entry }),
+                                    ..
+                                } => {
+                                    number_of_updated_fields_handle
+                                        .set(number_of_updated_fields + delete_entry);
+                                }
+                                QueryResponse { error: Some(e), .. } => {
+                                    modal_variant_handle.emit(Some(ModalVariant::Error(e)));
+                                }
+                                _ => (),
+                            };
+                        });
+                    })
                 };
-            });
-        })
+
+                modal_variant_handle.emit(Some(ModalVariant::ConfirmDelete(delete_entry_callback)));
+            },
+        )
     };
 
-    // use_effect_with_deps(
-    //     move |u| {
-    //         console_log!("number_of_updated_fields: {:#?}", u);
-    //     },
-    //     number_of_updated_fields,
-    // );
+    use_effect_with_deps(
+        move |u| {
+            console_log!("number_of_updated_fields: {:#?}", u);
+        },
+        number_of_updated_fields,
+    );
 
     let view = match get_objects {
         QueryResponse {
@@ -133,7 +167,7 @@ pub fn objects_component(
             let controllers_iter = controllers.into_iter().enumerate().map(|(mut row_num, controller)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::Controller(controller)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::Controller(controller)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -169,7 +203,7 @@ pub fn objects_component(
             let compressors_iter = compressors.into_iter().enumerate().map(|(mut row_num, compressor)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::Compressor(compressor)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::Compressor(compressor)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -205,7 +239,7 @@ pub fn objects_component(
             let tank_farms_iter = tank_farms.into_iter().enumerate().map(|(mut row_num, tank_farm)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::TankFarm(tank_farm)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::TankFarm(tank_farm)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -236,7 +270,7 @@ pub fn objects_component(
             let controller_changes_iter = controller_changes.into_iter().enumerate().map(|(mut row_num, controller_change)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::ControllerChange(controller_change)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::ControllerChange(controller_change)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -268,7 +302,7 @@ pub fn objects_component(
             let controller_month_hours_iter = controller_month_hours.into_iter().enumerate().map(|(mut row_num, controller_month_hours)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::ControllerMonthHours(controller_month_hours)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::ControllerMonthHours(controller_month_hours)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -300,7 +334,7 @@ pub fn objects_component(
             let controller_month_vent_overrides_iter = controller_month_vent_overrides.into_iter().enumerate().map(|(mut row_num, controller_month_vent_override)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::ControllerMonthVentOverride(controller_month_vent_override)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::ControllerMonthVentOverride(controller_month_vent_override)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -333,7 +367,7 @@ pub fn objects_component(
             let controller_month_vents_iter = controller_month_vents.into_iter().enumerate().map(|(mut row_num, controller_month_vent)| {
                 row_num = (row_num + 1) * 2;
                 html! {
-                    <ObjectRowComponent {row_num} {error_handle} object_data={ObjectDataProp::ControllerMonthVent(controller_month_vent)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::ControllerMonthVent(controller_month_vent)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
@@ -354,7 +388,7 @@ pub fn objects_component(
             }
         }
         QueryResponse { error: Some(e), .. } => {
-            error_handle.emit(Some(e));
+            modal_variant_handle.emit(Some(ModalVariant::Error(e)));
             Html::default()
         }
         _ => Html::default(),

@@ -3,7 +3,7 @@ use crate::{
         emitter_sidebar::EmitterSidebar, objects::ObjectsComponent,
     },
     models::queries::get_object::get_object::GetObjectVariant,
-    utils::error::AppError,
+    pages::ModalVariant,
 };
 use std::rc::Rc;
 use uuid::Uuid;
@@ -15,7 +15,7 @@ pub struct Props {
     pub row_num: usize,
     pub col_num: usize,
     pub sidebar_items: Vec<GetObjectVariant>,
-    pub error_handle: Callback<Option<AppError>>,
+    pub modal_variant_handle: Callback<Option<ModalVariant>>,
 }
 
 #[function_component(ObjectDataComponent)]
@@ -24,7 +24,7 @@ pub fn object_data_component(
         id,
         row_num,
         col_num,
-        error_handle,
+        modal_variant_handle,
         sidebar_items,
     }: &Props,
 ) -> Html {
@@ -44,7 +44,7 @@ pub fn object_data_component(
                 <EmitterSidebar sidebar_items={sidebar_items.clone()} selected_sidebar_item={selected_sidebar_item.clone()} {select_sidebar_item_callback} />
                 if let Some(sidebar_item) = selected_sidebar_item {
                     <div class={classes!("emitter-data-main")}>
-                        <ObjectsComponent {id} {error_handle} object_variant={sidebar_item} />
+                        <ObjectsComponent {id} {modal_variant_handle} object_variant={sidebar_item} />
                     </div>
                 }
             </div>

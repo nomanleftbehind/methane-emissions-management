@@ -11,18 +11,12 @@ impl From<gloo_net::Error> for AppError {
     }
 }
 
-impl From<graphql_client::Error> for AppError {
-    fn from(value: graphql_client::Error) -> Self {
-        Self::RequestError(format!("{:#?}", value))
-    }
-}
-
 impl From<Vec<graphql_client::Error>> for AppError {
     fn from(value: Vec<graphql_client::Error>) -> Self {
         Self::RequestError(
             value
                 .into_iter()
-                .map(|e| format!("{:#?}", e))
+                .map(|e| format!("{:#?}", e.message))
                 .collect::<Vec<_>>()
                 .join(", "),
         )

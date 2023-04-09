@@ -1,6 +1,6 @@
 use crate::components::sidebar::facility::FacilityComp;
 use crate::hooks::use_query;
-use crate::utils::error::AppError;
+use crate::pages::ModalVariant;
 use crate::{
     hooks::QueryResponse,
     models::queries::facility::{
@@ -16,7 +16,7 @@ use yew::{classes, function_component, html, Callback, Html, Properties};
 pub struct Props {
     pub on_facility_click: Callback<Uuid>,
     pub facility_id: Option<Rc<Uuid>>,
-    pub error_handle: Callback<Option<AppError>>,
+    pub modal_variant_handle: Callback<Option<ModalVariant>>,
 }
 
 #[function_component(Sidebar)]
@@ -24,7 +24,7 @@ pub fn sidebar(
     Props {
         on_facility_click,
         facility_id,
-        error_handle,
+        modal_variant_handle,
     }: &Props,
 ) -> Html {
     let get_facilities = use_query::<AllFacilities>(Variables);
@@ -50,7 +50,7 @@ pub fn sidebar(
         QueryResponse {
             error: Some(error), ..
         } => {
-            error_handle.emit(Some(error));
+            modal_variant_handle.emit(Some(ModalVariant::Error(error)));
             Html::default()
         }
         _ => Html::default(),

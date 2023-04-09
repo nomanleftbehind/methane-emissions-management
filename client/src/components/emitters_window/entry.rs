@@ -323,12 +323,17 @@ pub fn entry(
                 StringValue(_) | OptionStringValue(_) | UuidValue(_) | OptionUuidValue(_) => "text",
             };
 
+            let form_step = match value {
+                FloatValue(_) | OptionFloatValue(_) => Some("any"),
+                _ => None,
+            };
+
             html! {
                 <form {onsubmit}>
                     <fieldset>
                         <div class={classes!("input")}>
                             <button type="submit" class={classes!("form-button")}>{ "✓" }</button>
-                            <input type={form_type} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
+                            <input type={form_type} step={form_step} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
                         </div>
                     </fieldset>
                 </form>

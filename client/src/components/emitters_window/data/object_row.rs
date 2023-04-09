@@ -22,7 +22,7 @@ use crate::{
             },
         },
     },
-    utils::error::AppError,
+    pages::ModalVariant,
 };
 use common::UpdateFieldValueEnum::{
     FloatValue, NaiveDateTimeValue, NaiveDateValue, OptionNaiveDateValue, OptionStringValue,
@@ -47,7 +47,7 @@ pub struct Props {
     pub object_data: ObjectDataProp,
     pub handle_update_field: Callback<VariablesUpdateField>,
     pub handle_delete_entry: Callback<VariablesDeleteEntry>,
-    pub error_handle: Callback<Option<AppError>>,
+    pub modal_variant_handle: Callback<Option<ModalVariant>>,
 }
 
 #[function_component(ObjectRowComponent)]
@@ -57,7 +57,7 @@ pub fn object_row_component(
         object_data,
         handle_update_field,
         handle_delete_entry,
-        error_handle,
+        modal_variant_handle,
     }: &Props,
 ) -> Html {
     let expanded_handle = use_state_eq(|| false);
@@ -98,7 +98,7 @@ pub fn object_row_component(
                     <Entry {id} {row_num} col_num={11} value={NaiveDateTimeValue(controller.updated_at)} />
                     <Entry {id} {row_num} col_num={12} value={UuidValue(id)} />
                     if expanded {
-                        <ObjectDataComponent {id} {sidebar_items} {error_handle} row_num={row_num + 1} col_num={12} />
+                        <ObjectDataComponent {id} {sidebar_items} {modal_variant_handle} row_num={row_num + 1} col_num={12} />
                     }
                 </>
             }
