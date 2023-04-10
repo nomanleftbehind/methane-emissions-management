@@ -1,6 +1,6 @@
 use crate::graphql::{
     context::ContextExt,
-    models::{DeleteEntryInput, UpdateFieldInput},
+    models::{DeleteEntryInput, InsertEntryInput, UpdateFieldInput},
     sql,
 };
 use async_graphql::{Context, Error, Object};
@@ -20,6 +20,22 @@ impl ManualMutation {
         let updated_by_id = ctx.get_session_manager()?.user_id(cookie).await?;
 
         let rows_inserted = sql::update_field(pool, update_field_input, updated_by_id)
+            .await
+            .map_err(Error::from);
+
+        rows_inserted
+    }
+
+    async fn insert_entry(
+        &self,
+        ctx: &Context<'_>,
+        insert_entry_input: InsertEntryInput,
+    ) -> Result<u64, Error> {
+        let pool = ctx.db_pool();
+        let cookie = ctx.get_cookie()?;
+        let user_id = ctx.get_session_manager()?.user_id(cookie).await?;
+
+        let rows_inserted = sql::insert_entry(pool, insert_entry_input, user_id)
             .await
             .map_err(Error::from);
 

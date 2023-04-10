@@ -1,16 +1,19 @@
 use self::{
     compressor_blowdown::CompressorBlowdownMutation,
-    compressor_month_vent::CompressorMonthVentMutation, controller::ControllerMutation,
+    compressor_month_vent::CompressorMonthVentMutation,
+    // controller::ControllerMutation,
     controller_month_vent::ControllerMonthVentMutation,
     gas_analysis_calculated_param::GasAnalysisCalculatedParamMutation,
-    manual_mutation::ManualMutation, tank_farm_month_vent::TankFarmMonthVentMutation,
-    tank_farm_vent_factor_calculated::TankFarmVentFactorCalculatedMutation, user::UserMutation,
+    manual_mutation::ManualMutation,
+    tank_farm_month_vent::TankFarmMonthVentMutation,
+    tank_farm_vent_factor_calculated::TankFarmVentFactorCalculatedMutation,
+    user::UserMutation,
 };
 use async_graphql::MergedObject;
 
 mod compressor_blowdown;
 mod compressor_month_vent;
-mod controller;
+// mod controller;
 mod controller_month_vent;
 mod gas_analysis_calculated_param;
 mod manual_mutation;
@@ -22,7 +25,7 @@ mod user;
 pub struct FullMutation(
     ManualMutation,
     UserMutation,
-    ControllerMutation,
+    // ControllerMutation,
     ControllerMonthVentMutation,
     CompressorMonthVentMutation,
     CompressorBlowdownMutation,
@@ -35,7 +38,7 @@ pub(crate) fn full_mutation() -> FullMutation {
     FullMutation(
         ManualMutation,
         UserMutation,
-        ControllerMutation,
+        // ControllerMutation,
         ControllerMonthVentMutation,
         CompressorMonthVentMutation,
         CompressorBlowdownMutation,

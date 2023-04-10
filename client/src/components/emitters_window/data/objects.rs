@@ -7,10 +7,13 @@ use crate::{
                 DeleteEntryInput, ResponseData as ResponseDataDeleteEntry,
                 Variables as VariablesDeleteEntry,
             },
+            insert_entry::{
+                ResponseData as ResponseDataInsertEntry, Variables as VariablesInsertEntry,
+            },
             update_field::{
                 ResponseData as ResponseDataUpdateField, Variables as VariablesUpdateField,
             },
-            DeleteEntry, UpdateField,
+            DeleteEntry, InsertEntry, UpdateField,
         },
         queries::get_object::{
             get_object::{
@@ -66,6 +69,32 @@ pub fn objects_component(
     //     object_variant.clone(),
     // );
 
+    let handle_insert_entry = {
+        let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
+        let modal_variant_handle = modal_variant_handle.clone();
+        Callback::from(move |variables: VariablesInsertEntry| {
+            let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
+            let modal_variant_handle = modal_variant_handle.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                match lazy_query::<InsertEntry>(variables).await {
+                    QueryResponse {
+                        data: Some(ResponseDataInsertEntry { insert_entry }),
+                        ..
+                    } => {
+                        number_of_updated_fields_handle
+                            .set(number_of_updated_fields + insert_entry);
+                    }
+                    QueryResponse {
+                        error: Some(error), ..
+                    } => {
+                        modal_variant_handle.emit(Some(ModalVariant::Error(error)));
+                    }
+                    _ => (),
+                };
+            });
+        })
+    };
+
     let handle_update_field = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
         let modal_variant_handle = modal_variant_handle.clone();
@@ -81,8 +110,10 @@ pub fn objects_component(
                         number_of_updated_fields_handle
                             .set(number_of_updated_fields + update_field);
                     }
-                    QueryResponse { error: Some(e), .. } => {
-                        modal_variant_handle.emit(Some(ModalVariant::Error(e)));
+                    QueryResponse {
+                        error: Some(error), ..
+                    } => {
+                        modal_variant_handle.emit(Some(ModalVariant::Error(error)));
                     }
                     _ => (),
                 };

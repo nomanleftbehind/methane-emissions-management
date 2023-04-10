@@ -46,6 +46,11 @@ pub struct DeleteEntryInput {
     pub delete_entry_variant: DeleteEntryVariant,
 }
 
+#[derive(Debug, InputObject)]
+pub struct ControllerChangeInput {
+    pub controller_id: Uuid,
+}
+
 #[derive(InputObject, Debug)]
 pub struct InsertControllerInput {
     pub fdc_rec_id: String,
@@ -56,7 +61,18 @@ pub struct InsertControllerInput {
     pub facility_id: Uuid,
 }
 
-#[derive(Debug, InputObject)]
-pub struct ControllerChangeInput {
-    pub controller_id: Uuid,
+#[derive(InputObject, Debug)]
+pub struct InsertCompressorInput {
+    pub fdc_rec_id: String,
+    pub facility_id: Uuid,
+    pub name: String,
+    pub serial_number: String,
+    pub install_date: NaiveDate,
+    pub remove_date: Option<NaiveDate>,
+}
+
+#[derive(InputObject, Debug)]
+pub struct InsertEntryInput {
+    pub controller: Option<InsertControllerInput>,
+    pub compressor: Option<InsertCompressorInput>,
 }
