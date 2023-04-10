@@ -20,14 +20,11 @@ use crate::{
         },
     },
     pages::ModalVariant,
-    utils::{console_log, gen_style::gen_grid_style},
+    utils::gen_style::gen_grid_style,
 };
 use std::rc::Rc;
 use uuid::Uuid;
-use yew::{
-    classes, function_component, html, use_effect_with_deps, use_state_eq, Callback, Html,
-    Properties,
-};
+use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
 
 /// In an effort to avoid cloning large amounts of data to create props when re-rendering,
 /// a smart pointer is passed in props to only clone a reference to the data instead of the data itself.
@@ -93,8 +90,9 @@ pub fn objects_component(
         })
     };
 
-    // The reason for having callback within callback is to have access to both local and parent component's state.
-    // Outer callback modifies parent component's state (opens modal to confirm deletion) and passes it the inner callback which modifies local state (updates number of modified fields once deletion has been confirmed and returned successfully).
+    // The reason for having callback within callback is to be able to modify to both local and parent component's state.
+    // Outer callback modifies parent component's state (opens modal to confirm deletion) and passes the inner callback to parent component.
+    // Inner callback modifies local state (updates number of modified fields once deletion has been confirmed and returned successfully).
     let handle_delete_entry = {
         let modal_variant_handle = modal_variant_handle.clone();
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
@@ -131,8 +129,10 @@ pub fn objects_component(
                                     number_of_updated_fields_handle
                                         .set(number_of_updated_fields + delete_entry);
                                 }
-                                QueryResponse { error: Some(e), .. } => {
-                                    modal_variant_handle.emit(Some(ModalVariant::Error(e)));
+                                QueryResponse {
+                                    error: Some(error), ..
+                                } => {
+                                    modal_variant_handle.emit(Some(ModalVariant::Error(error)));
                                 }
                                 _ => (),
                             };
@@ -145,12 +145,12 @@ pub fn objects_component(
         )
     };
 
-    use_effect_with_deps(
-        move |u| {
-            console_log!("number_of_updated_fields: {:#?}", u);
-        },
-        number_of_updated_fields,
-    );
+    // use_effect_with_deps(
+    //     move |u| {
+    //         console_log!("number_of_updated_fields: {:#?}", u);
+    //     },
+    //     number_of_updated_fields,
+    // );
 
     let view = match get_objects {
         QueryResponse {

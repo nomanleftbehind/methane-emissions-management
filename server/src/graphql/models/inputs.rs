@@ -46,6 +46,16 @@ pub struct DeleteEntryInput {
     pub delete_entry_variant: DeleteEntryVariant,
 }
 
+#[derive(InputObject, Debug)]
+pub struct InsertControllerInput {
+    pub fdc_rec_id: String,
+    pub manufacturer_id: Uuid,
+    pub model: Option<String>,
+    pub serial_number: Option<String>,
+    pub application_id: Option<Uuid>,
+    pub facility_id: Uuid,
+}
+
 #[derive(Debug, InputObject)]
 pub struct ControllerChangeInput {
     pub controller_id: Uuid,
