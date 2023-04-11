@@ -1,41 +1,24 @@
-use crate::models::mutations::manual_mutation::insert_entry::{
-    InsertEntryInput, Variables as VariablesInsertEntry,
-};
-use yew::{classes, function_component, html, Callback, Html, Properties};
+use yew::{classes, function_component, html, Callback, Html, MouseEvent, Properties};
+
+use crate::utils::gen_style::gen_grid_style;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub row_num: usize,
-    pub col_num: usize,
-    pub input: InsertEntryInput,
-    pub handle_insert_entry: Callback<VariablesInsertEntry>,
+    pub handle_open_insert_form: Callback<MouseEvent>,
+    pub open_insert_form: bool,
 }
 
 #[function_component(InsertEntryButton)]
 pub fn insert_entry_button(
     Props {
-        row_num,
-        col_num,
-        input,
-        handle_insert_entry,
+        handle_open_insert_form,
+        open_insert_form,
     }: &Props,
 ) -> Html {
-    let style = format!("grid-row: {}; grid-column: {};", row_num, col_num);
-
-    let onclick = {
-        let input = input.clone();
-        let handle_insert_entry = handle_insert_entry.clone();
-        Callback::from(move |_| {
-            let variables = VariablesInsertEntry {
-                insert_entry_input: input.clone(),
-            };
-            handle_insert_entry.emit(variables);
-        })
-    };
-
+    let display = if *open_insert_form { "x" } else { "+" };
     html! {
-        <div class={classes!("emitter-cell", "center")} {style}>
-            <button class={classes!("entry-button")} {onclick}>{ "+" }</button>
+        <div class={classes!("sticky", "center")} style={gen_grid_style(1, 1)}>
+            <button class={classes!("entry-button")} onclick={handle_open_insert_form}>{ display }</button>
         </div>
     }
 }

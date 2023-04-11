@@ -1,19 +1,28 @@
 use crate::{
-    components::emitters_window::data::object_row::{ObjectDataProp, ObjectRowComponent},
+    components::emitters_window::data::{
+        insert_controller_form::InsertControllerForm,
+        insert_entry_button::InsertEntryButton,
+        object_row::{ObjectDataProp, ObjectRowComponent},
+    },
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
     models::{
-        mutations::manual_mutation::{
-            delete_entry::{
-                DeleteEntryInput, ResponseData as ResponseDataDeleteEntry,
-                Variables as VariablesDeleteEntry,
+        mutations::{
+            controller::{
+                insert_controller::{
+                    ResponseData as ResponseDataInsertController,
+                    Variables as VariablesInsertController,
+                },
+                InsertController,
             },
-            insert_entry::{
-                ResponseData as ResponseDataInsertEntry, Variables as VariablesInsertEntry,
+            manual_mutation::{
+                delete_entry::{
+                    ResponseData as ResponseDataDeleteEntry, Variables as VariablesDeleteEntry,
+                },
+                update_field::{
+                    ResponseData as ResponseDataUpdateField, Variables as VariablesUpdateField,
+                },
+                DeleteEntry, UpdateField,
             },
-            update_field::{
-                ResponseData as ResponseDataUpdateField, Variables as VariablesUpdateField,
-            },
-            DeleteEntry, InsertEntry, UpdateField,
         },
         queries::get_object::{
             get_object::{
@@ -49,8 +58,12 @@ pub fn objects_component(
     let number_of_updated_fields_handle = use_state_eq(|| 0);
     let number_of_updated_fields = *number_of_updated_fields_handle;
 
-    let insert_form_handle = use_state_eq(|| false);
-    let insert_form = *insert_form_handle;
+    let open_insert_form_handle = use_state_eq(|| false);
+    let open_insert_form = *open_insert_form_handle;
+
+    let handle_open_insert_form = Callback::from(move |_| {
+        open_insert_form_handle.set(!open_insert_form);
+    });
 
     let get_objects = {
         let variables = Variables {
@@ -72,20 +85,20 @@ pub fn objects_component(
     //     object_variant.clone(),
     // );
 
-    let handle_insert_entry = {
+    let handle_insert_controller = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
         let modal_variant_handle = modal_variant_handle.clone();
-        Callback::from(move |variables: VariablesInsertEntry| {
+        Callback::from(move |variables: VariablesInsertController| {
             let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
             let modal_variant_handle = modal_variant_handle.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                match lazy_query::<InsertEntry>(variables).await {
+                match lazy_query::<InsertController>(variables).await {
                     QueryResponse {
-                        data: Some(ResponseDataInsertEntry { insert_entry }),
+                        data: Some(ResponseDataInsertController { insert_controller }),
                         ..
                     } => {
                         number_of_updated_fields_handle
-                            .set(number_of_updated_fields + insert_entry);
+                            .set(number_of_updated_fields + insert_controller);
                     }
                     QueryResponse {
                         error: Some(error), ..
@@ -184,30 +197,31 @@ pub fn objects_component(
             ..
         } => {
             let controllers_iter = controllers.into_iter().enumerate().map(|(mut row_num, controller)| {
-                row_num = (row_num + 1) * 2;
+                row_num = (row_num + 2) * 2 - 1;
                 html! {
                     <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::Controller(controller)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
             html! {
-                <>
-                    <div class={classes!("emitters", "controllers")}>
-                        <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
-                        <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
-                        <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Model" }</div>
-                        <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Serial Number" }</div>
-                        <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Manufacturer" }</div>
-                        <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Application" }</div>
-                        <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "FDC ID" }</div>
-                        <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Created By" }</div>
-                        <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Created At" }</div>
-                        <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Updated By" }</div>
-                        <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Updated At" }</div>
-                        <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "ID" }</div>
-                        { for controllers_iter }
-                    </div>
-                </>
+                <div class={classes!("emitters", "controllers")}>
+                    <InsertEntryButton {open_insert_form} {handle_open_insert_form}/>
+                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
+                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Model" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Serial Number" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Manufacturer" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Application" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "FDC ID" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Created By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Created At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Updated By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Updated At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "ID" }</div>
+                    if open_insert_form {
+                        <InsertControllerForm facility_id={id} {handle_insert_controller} />
+                    }
+                    { for controllers_iter }
+                </div>
             }
         }
         QueryResponse {
@@ -222,7 +236,7 @@ pub fn objects_component(
             ..
         } => {
             let compressors_iter = compressors.into_iter().enumerate().map(|(mut row_num, compressor)| {
-                row_num = (row_num + 1) * 2;
+                row_num = (row_num + 2) * 2 - 1;
                 html! {
                     <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::Compressor(compressor)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
@@ -258,7 +272,7 @@ pub fn objects_component(
             ..
         } => {
             let tank_farms_iter = tank_farms.into_iter().enumerate().map(|(mut row_num, tank_farm)| {
-                row_num = (row_num + 1) * 2;
+                row_num = (row_num + 2) * 2 - 1;
                 html! {
                     <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::TankFarm(tank_farm)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
@@ -289,7 +303,7 @@ pub fn objects_component(
             ..
         } => {
             let controller_changes_iter = controller_changes.into_iter().enumerate().map(|(mut row_num, controller_change)| {
-                row_num = (row_num + 1) * 2;
+                row_num = (row_num + 2) * 2 - 1;
                 html! {
                     <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::ControllerChange(controller_change)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
@@ -321,7 +335,7 @@ pub fn objects_component(
             ..
         } => {
             let controller_month_hours_iter = controller_month_hours.into_iter().enumerate().map(|(mut row_num, controller_month_hours)| {
-                row_num = (row_num + 1) * 2;
+                row_num = (row_num + 2) * 2 - 1;
                 html! {
                     <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::ControllerMonthHours(controller_month_hours)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
@@ -353,7 +367,7 @@ pub fn objects_component(
             ..
         } => {
             let controller_month_vent_overrides_iter = controller_month_vent_overrides.into_iter().enumerate().map(|(mut row_num, controller_month_vent_override)| {
-                row_num = (row_num + 1) * 2;
+                row_num = (row_num + 2) * 2 - 1;
                 html! {
                     <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::ControllerMonthVentOverride(controller_month_vent_override)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
@@ -386,7 +400,7 @@ pub fn objects_component(
             ..
         } => {
             let controller_month_vents_iter = controller_month_vents.into_iter().enumerate().map(|(mut row_num, controller_month_vent)| {
-                row_num = (row_num + 1) * 2;
+                row_num = (row_num + 2) * 2 - 1;
                 html! {
                     <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::ControllerMonthVent(controller_month_vent)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }

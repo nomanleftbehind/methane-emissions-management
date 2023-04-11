@@ -22,6 +22,6 @@ mutation DeleteEntry($deleteEntryInput: DeleteEntryInput!) {
   deleteEntry(deleteEntryInput: $deleteEntryInput)
 }
 
-# mutation InsertController($insertControllerInput: InsertControllerInput!) {
-#   insertController(insertControllerInput: $insertControllerInput)
-# }
+mutation InsertController($insertControllerInput: InsertControllerInput!) {
+  insertController(insertControllerInput: $insertControllerInput)
+}

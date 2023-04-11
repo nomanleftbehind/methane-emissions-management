@@ -1,0 +1,39 @@
+.insert-form {
+  display: flex;
+  grid-row: 2;
+  grid-column: 1/8;
+  padding-top: 0.8rem;
+  margin-bottom: -0.4rem;
+}
+
+.insert-form fieldset {
+  display: grid;
+  border: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.insert-form input {
+  display: inline-flex;
+  align-items: center;
+  /* gap: 0.5rem; */
+  position: relative;
+  outline: var(--outline);
+  font-family: inherit;
+  padding: 0 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border: solid 0.0625rem #0000;
+  border-radius: 0.25rem;
+  background-color: var(--background);
+  color: var(--primary);
+  margin-right: 0.75rem;
+  height: 100%;
+}
+
+.controller-form {
+  /* grid-row: 2;
+  grid-column: 1/8; */
+  grid-template-columns: repeat(2, 2.7rem) repeat(2, 10rem) repeat(2, 13rem) var(--fdc-rec-id-column-width);
+}

@@ -9,7 +9,7 @@
   align-content: center;
 }
 
-.emitter-cell[style^="grid-row: 2;"] {
+.emitter-cell[style^="grid-row: 3;"] {
   margin-top: 0.4rem;
 }
 
