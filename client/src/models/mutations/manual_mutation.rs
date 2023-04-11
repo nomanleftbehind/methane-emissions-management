@@ -13,6 +13,7 @@ pub struct UpdateField;
 #[graphql(
     schema_path = "graphql/schema.json",
     query_path = "graphql/mutations.graphql",
+    variables_derives = "PartialEq, Clone",
     response_derives = "Debug, Clone, PartialEq"
 )]
 pub struct InsertEntry;
@@ -21,6 +22,7 @@ pub struct InsertEntry;
 #[graphql(
     schema_path = "graphql/schema.json",
     query_path = "graphql/mutations.graphql",
+    variables_derives = "PartialEq, Clone",
     response_derives = "Debug, Clone, PartialEq"
 )]
 pub struct DeleteEntry;

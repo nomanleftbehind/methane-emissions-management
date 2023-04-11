@@ -49,6 +49,9 @@ pub fn objects_component(
     let number_of_updated_fields_handle = use_state_eq(|| 0);
     let number_of_updated_fields = *number_of_updated_fields_handle;
 
+    let insert_form_handle = use_state_eq(|| false);
+    let insert_form = *insert_form_handle;
+
     let get_objects = {
         let variables = Variables {
             get_object_input: GetObjectInput {
@@ -128,52 +131,37 @@ pub fn objects_component(
         let modal_variant_handle = modal_variant_handle.clone();
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
 
-        Callback::from(
-            move |VariablesDeleteEntry {
-                      delete_entry_input:
-                          DeleteEntryInput {
-                              id,
-                              delete_entry_variant,
-                          },
-                  }: VariablesDeleteEntry| {
-                let delete_entry_callback = {
+        Callback::from(move |variables: VariablesDeleteEntry| {
+            let delete_entry_callback = {
+                let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
+                let modal_variant_handle = modal_variant_handle.clone();
+
+                Callback::from(move |_| {
+                    let variables = variables.clone();
                     let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
                     let modal_variant_handle = modal_variant_handle.clone();
-
-                    Callback::from(move |_| {
-                        let delete_entry_variant = delete_entry_variant.clone();
-                        let variables = VariablesDeleteEntry {
-                            delete_entry_input: DeleteEntryInput {
-                                id,
-                                delete_entry_variant,
-                            },
+                    wasm_bindgen_futures::spawn_local(async move {
+                        match lazy_query::<DeleteEntry>(variables).await {
+                            QueryResponse {
+                                data: Some(ResponseDataDeleteEntry { delete_entry }),
+                                ..
+                            } => {
+                                number_of_updated_fields_handle
+                                    .set(number_of_updated_fields + delete_entry);
+                            }
+                            QueryResponse {
+                                error: Some(error), ..
+                            } => {
+                                modal_variant_handle.emit(Some(ModalVariant::Error(error)));
+                            }
+                            _ => (),
                         };
-                        let number_of_updated_fields_handle =
-                            number_of_updated_fields_handle.clone();
-                        let modal_variant_handle = modal_variant_handle.clone();
-                        wasm_bindgen_futures::spawn_local(async move {
-                            match lazy_query::<DeleteEntry>(variables).await {
-                                QueryResponse {
-                                    data: Some(ResponseDataDeleteEntry { delete_entry }),
-                                    ..
-                                } => {
-                                    number_of_updated_fields_handle
-                                        .set(number_of_updated_fields + delete_entry);
-                                }
-                                QueryResponse {
-                                    error: Some(error), ..
-                                } => {
-                                    modal_variant_handle.emit(Some(ModalVariant::Error(error)));
-                                }
-                                _ => (),
-                            };
-                        });
-                    })
-                };
+                    });
+                })
+            };
 
-                modal_variant_handle.emit(Some(ModalVariant::ConfirmDelete(delete_entry_callback)));
-            },
-        )
+            modal_variant_handle.emit(Some(ModalVariant::ConfirmDelete(delete_entry_callback)));
+        })
     };
 
     // use_effect_with_deps(
@@ -203,21 +191,23 @@ pub fn objects_component(
             });
 
             html! {
-                <div class={classes!("emitters", "controllers")}>
-                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
-                    <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
-                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Model" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Serial Number" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Manufacturer" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Application" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "FDC ID" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Created By" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Created At" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Updated By" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Updated At" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "ID" }</div>
-                    { for controllers_iter }
-                </div>
+                <>
+                    <div class={classes!("emitters", "controllers")}>
+                        <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
+                        <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
+                        <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Model" }</div>
+                        <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Serial Number" }</div>
+                        <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Manufacturer" }</div>
+                        <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Application" }</div>
+                        <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "FDC ID" }</div>
+                        <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "Created By" }</div>
+                        <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Created At" }</div>
+                        <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Updated By" }</div>
+                        <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Updated At" }</div>
+                        <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "ID" }</div>
+                        { for controllers_iter }
+                    </div>
+                </>
             }
         }
         QueryResponse {

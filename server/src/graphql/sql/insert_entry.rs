@@ -10,7 +10,10 @@ pub async fn insert_entry(
     let now = chrono::Utc::now().naive_utc();
 
     let query = match input {
-        InsertEntryInput {controller: Some(InsertControllerInput {fdc_rec_id, facility_id, application_id, manufacturer_id, model, serial_number}), ..} => query!(
+        InsertEntryInput {controller: Some(
+            InsertControllerInput {fdc_rec_id, facility_id, application_id, manufacturer_id, model, serial_number}
+        ), ..} => {
+                query!(
             "INSERT INTO controllers (id, fdc_rec_id, manufacturer_id, model, serial_number, application_id, facility_id, created_by_id, created_at, updated_by_id, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);",
             Uuid::new_v4(),
@@ -23,7 +26,8 @@ pub async fn insert_entry(
             user_id,
             now,
             user_id,
-            now),
+            now)
+        },
         InsertEntryInput {compressor: Some(InsertCompressorInput {facility_id, fdc_rec_id, name, serial_number, install_date, remove_date}), ..} => query!(
             "INSERT INTO compressors (id, fdc_rec_id, facility_id, name, serial_number, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);",
