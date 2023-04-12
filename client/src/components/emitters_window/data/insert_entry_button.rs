@@ -4,21 +4,21 @@ use crate::utils::gen_style::gen_grid_style;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub handle_open_insert_form: Callback<MouseEvent>,
-    pub open_insert_form: bool,
+    pub toggle_insert_form_is_open: Callback<MouseEvent>,
+    pub insert_form_is_open: bool,
 }
 
 #[function_component(InsertEntryButton)]
 pub fn insert_entry_button(
     Props {
-        handle_open_insert_form,
-        open_insert_form,
+        toggle_insert_form_is_open,
+        insert_form_is_open,
     }: &Props,
 ) -> Html {
-    let display = if *open_insert_form { "x" } else { "+" };
+    let display = if *insert_form_is_open { "x" } else { "+" };
     html! {
         <div class={classes!("sticky", "center")} style={gen_grid_style(1, 1)}>
-            <button class={classes!("entry-button")} onclick={handle_open_insert_form}>{ display }</button>
+            <button class={classes!("entry-button")} onclick={toggle_insert_form_is_open}>{ display }</button>
         </div>
     }
 }

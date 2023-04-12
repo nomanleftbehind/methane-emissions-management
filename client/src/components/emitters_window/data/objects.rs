@@ -58,11 +58,18 @@ pub fn objects_component(
     let number_of_updated_fields_handle = use_state_eq(|| 0);
     let number_of_updated_fields = *number_of_updated_fields_handle;
 
-    let open_insert_form_handle = use_state_eq(|| false);
-    let open_insert_form = *open_insert_form_handle;
+    let insert_form_is_open_handle = use_state_eq(|| false);
+    let insert_form_is_open = *insert_form_is_open_handle;
 
-    let handle_open_insert_form = Callback::from(move |_| {
-        open_insert_form_handle.set(!open_insert_form);
+    let toggle_insert_form_is_open = {
+        let insert_form_is_open_handle = insert_form_is_open_handle.clone();
+        Callback::from(move |_| {
+            insert_form_is_open_handle.set(!insert_form_is_open);
+        })
+    };
+
+    let close_insert_form = Callback::from(move |_| {
+        insert_form_is_open_handle.set(false);
     });
 
     let get_objects = {
@@ -205,7 +212,7 @@ pub fn objects_component(
 
             html! {
                 <div class={classes!("emitters", "controllers")}>
-                    <InsertEntryButton {open_insert_form} {handle_open_insert_form}/>
+                    <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
                     <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
                     <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Model" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Serial Number" }</div>
@@ -217,8 +224,8 @@ pub fn objects_component(
                     <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Updated By" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "ID" }</div>
-                    if open_insert_form {
-                        <InsertControllerForm facility_id={id} {handle_insert_controller} />
+                    if insert_form_is_open {
+                        <InsertControllerForm facility_id={id} {close_insert_form} {handle_insert_controller} />
                     }
                     { for controllers_iter }
                 </div>

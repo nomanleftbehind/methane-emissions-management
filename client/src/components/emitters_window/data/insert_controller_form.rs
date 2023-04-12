@@ -13,6 +13,7 @@ use yew::{
 pub struct Props {
     pub facility_id: Rc<Uuid>,
     pub handle_insert_controller: Callback<VariablesInsertController>,
+    pub close_insert_form: Callback<()>,
 }
 
 #[function_component(InsertControllerForm)]
@@ -20,14 +21,9 @@ pub fn insert_controller_form(
     Props {
         facility_id,
         handle_insert_controller,
+        close_insert_form,
     }: &Props,
 ) -> Html {
-    // let input_entry_input_handle = use_state_eq(|| InsertEntryInput {
-    //     controller: InsertControllerInput {},
-    //     compressor: None,
-    // });
-    // let insert_entry_input = (*input_entry_input_handle).clone();
-
     let input_model_handle = use_state_eq(|| None);
     let input_serial_number_handle = use_state_eq(|| None);
     let input_manufacturer_id_handle = use_state_eq(|| None);
@@ -73,6 +69,7 @@ pub fn insert_controller_form(
 
     let onsubmit = {
         let handle_insert_controller = handle_insert_controller.clone();
+        let close_insert_form = close_insert_form.clone();
         let facility_id = facility_id.clone();
 
         Callback::from(move |e: SubmitEvent| {
@@ -92,7 +89,8 @@ pub fn insert_controller_form(
                         fdc_rec_id,
                     },
                 };
-                handle_insert_controller.emit(variables)
+                handle_insert_controller.emit(variables);
+                close_insert_form.emit(());
             }
         })
     };

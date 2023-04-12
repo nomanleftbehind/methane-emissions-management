@@ -21,7 +21,7 @@ pub async fn get_object(
             controllers: Some(
                 query_as!(
                     Controller,
-                    "SELECT * FROM controllers WHERE facility_id = $1 ORDER BY id",
+                    "SELECT * FROM controllers WHERE facility_id = $1 ORDER BY created_at DESC",
                     id
                 )
                 .fetch_all(pool)
