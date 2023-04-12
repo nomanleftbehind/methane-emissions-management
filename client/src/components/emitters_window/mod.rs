@@ -13,6 +13,7 @@ pub mod emitters_window;
 pub mod entry;
 mod expand_data;
 mod expand_svg;
+pub mod id_selection;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum Emitter {

@@ -4,22 +4,26 @@ use crate::{
         delete_entry::DeleteEntryComponent,
         entry::{EditFieldProp, Entry},
         expand_data::ExpandDataComponent,
+        id_selection::IdSelectionProp,
     },
     models::{
         mutations::manual_mutation::{
             delete_entry::{DeleteEntryVariant, Variables as VariablesDeleteEntry},
             update_field::{UpdateFieldVariant, Variables as VariablesUpdateField},
         },
-        queries::get_object::get_object::{
-            GetObjectGetObjectCompressors, GetObjectGetObjectControllerChanges,
-            GetObjectGetObjectControllerMonthHours, GetObjectGetObjectControllerMonthVent,
-            GetObjectGetObjectControllerMonthVentOverride, GetObjectGetObjectControllers,
-            GetObjectGetObjectTankFarms,
-            GetObjectVariant::{
-                CONTROLLER_CHANGE_BY_CONTROLLER_ID, CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID,
-                CONTROLLER_MONTH_VENT_BY_CONTROLLER_ID,
-                CONTROLLER_MONTH_VENT_OVERRIDE_BY_CONTROLLER_ID,
+        queries::{
+            get_object::get_object::{
+                GetObjectGetObjectCompressors, GetObjectGetObjectControllerChanges,
+                GetObjectGetObjectControllerMonthHours, GetObjectGetObjectControllerMonthVent,
+                GetObjectGetObjectControllerMonthVentOverride, GetObjectGetObjectControllers,
+                GetObjectGetObjectTankFarms,
+                GetObjectVariant::{
+                    CONTROLLER_CHANGE_BY_CONTROLLER_ID, CONTROLLER_MONTH_HOURS_BY_CONTROLLER_ID,
+                    CONTROLLER_MONTH_VENT_BY_CONTROLLER_ID,
+                    CONTROLLER_MONTH_VENT_OVERRIDE_BY_CONTROLLER_ID,
+                },
             },
+            id_selection::id_selection::IdSelectionVariant,
         },
     },
     pages::ModalVariant,
@@ -89,8 +93,18 @@ pub fn object_row_component(
                     <ExpandDataComponent {row_num} col_num={2} {expanded} {handle_expand_data} />
                     <Entry {id} {row_num} col_num={3} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_MODEL}} value={OptionStringValue(controller.model)} />
                     <Entry {id} {row_num} col_num={4} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_SERIAL_NUMBER}} value={OptionStringValue(controller.serial_number)} />
-                    <Entry {id} {row_num} col_num={5} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_MANUFACTURER_ID}} value={UuidValue(controller.manufacturer_id)} display_value={OptionStringValue(manufacturer)} />
-                    <Entry {id} {row_num} col_num={6} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_APPLICATION_ID}} value={OptionUuidValue(controller.application_id)} display_value={OptionStringValue(application)} />
+                    <Entry {id} {row_num} col_num={5}
+                        edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_MANUFACTURER_ID}}
+                        id_selection={IdSelectionProp {variant: IdSelectionVariant::CONTROLLER_MANUFACTURER_ID, modal_variant_handle: modal_variant_handle.clone()}}
+                        value={UuidValue(controller.manufacturer_id)}
+                        display_value={OptionStringValue(manufacturer)}
+                    />
+                    <Entry {id} {row_num} col_num={6}
+                        edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_APPLICATION_ID}}
+                        id_selection={IdSelectionProp {variant: IdSelectionVariant::CONTROLLER_APPLICATION_ID, modal_variant_handle: modal_variant_handle.clone()}}
+                        value={OptionUuidValue(controller.application_id)}
+                        display_value={OptionStringValue(application)}
+                    />
                     <Entry {id} {row_num} col_num={7} edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::CONTROLLER_FDC_REC_ID}} value={StringValue(controller.fdc_rec_id)} />
                     <Entry {id} {row_num} col_num={8} value={OptionStringValue(created_by)} />
                     <Entry {id} {row_num} col_num={9} value={NaiveDateTimeValue(controller.created_at)} />

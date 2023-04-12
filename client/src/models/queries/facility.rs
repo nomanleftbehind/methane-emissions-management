@@ -1,13 +1,12 @@
 use super::super::UUID;
-use graphql_client::GraphQLQuery;
 use common::FacilityType;
+use graphql_client::GraphQLQuery;
 
-#[derive(GraphQLQuery)]
+#[derive(GraphQLQuery, Debug)]
 #[graphql(
     schema_path = "./graphql/schema.json",
     query_path = "./graphql/queries.graphql",
     response_derives = "Debug, Clone, PartialEq, Deserialize",
     extern_enums("FacilityType")
 )]
-#[derive(Debug)]
 pub struct AllFacilities;

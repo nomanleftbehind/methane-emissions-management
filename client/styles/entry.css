@@ -59,7 +59,8 @@
   color: var(--primary);
 }
 
-.entry input {
+.entry input,
+.entry select {
   border: none;
   flex: 1;
   background: 0 0;

@@ -1,8 +1,6 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{
-        controller_loader::ControllersByApplicationLoader, user_loader::UserLoader,
-    },
+    dataloaders::{controller_loader::ControllersByApplicationLoader, user_loader::UserLoader},
     models::{Controller, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};

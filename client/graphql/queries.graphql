@@ -133,3 +133,17 @@ query Me {
     role
   }
 }
+
+query IdSelection($variant: IdSelectionVariant!) {
+	idSelection(variant: $variant) {
+		id
+    name
+  }
+}
+
+query ControllerManufacturerSelection {
+	controllerManufacturerSelection {
+    id
+    name
+  }
+}

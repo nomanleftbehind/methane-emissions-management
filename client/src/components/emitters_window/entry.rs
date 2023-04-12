@@ -1,8 +1,12 @@
-use crate::models::{
-    mutations::manual_mutation::update_field::{
-        UpdateFieldInput, UpdateFieldValue, UpdateFieldVariant, Variables as VariablesUpdateField,
+use crate::{
+    components::emitters_window::id_selection::{IdSelectionComponent, IdSelectionProp},
+    models::{
+        mutations::manual_mutation::update_field::{
+            UpdateFieldInput, UpdateFieldValue, UpdateFieldVariant,
+            Variables as VariablesUpdateField,
+        },
+        NaiveDateTime,
     },
-    NaiveDateTime,
 };
 use common::UpdateFieldValueEnum::{
     self, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionFloatValue,
@@ -31,6 +35,7 @@ pub struct Props {
     pub value: UpdateFieldValueEnum,
     pub display_value: Option<UpdateFieldValueEnum>,
     pub edit_field: Option<EditFieldProp>,
+    pub id_selection: Option<IdSelectionProp>,
 }
 
 #[function_component(Entry)]
@@ -42,6 +47,7 @@ pub fn entry(
         value,
         display_value,
         edit_field,
+        id_selection,
     }: &Props,
 ) -> Html {
     let option_input_value_handle = use_state_eq(|| None);
@@ -333,7 +339,11 @@ pub fn entry(
                     <fieldset>
                         <div class={classes!("input")}>
                             <button type="submit" class={classes!("form-button")}>{ "✓" }</button>
-                            <input type={form_type} step={form_step} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
+                            if let Some(id_selection) = id_selection {
+                                <IdSelectionComponent id_selection={id_selection.clone()} {onchange}/>
+                            } else {
+                                <input type={form_type} step={form_step} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
+                            }
                         </div>
                     </fieldset>
                 </form>

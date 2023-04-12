@@ -85,6 +85,28 @@ pub fn objects_component(
         )
     };
 
+    // let handle_get_id_selection = {
+    //     Callback::from(move |variables: VariablesIdSelection| {
+    //         wasm_bindgen_futures::spawn_local(async move {
+    //             match lazy_query::<IdSelection>(variables).await {
+    //                 QueryResponse {
+    //                     data: Some(ResponseDataIdSelection { id_selection }),
+    //                     ..
+    //                 } => {
+    //                     number_of_updated_fields_handle
+    //                         .set(number_of_updated_fields + update_field);
+    //                 }
+    //                 QueryResponse {
+    //                     error: Some(error), ..
+    //                 } => {
+    //                     modal_variant_handle.emit(Some(ModalVariant::Error(error)));
+    //                 }
+    //                 _ => (),
+    //             };
+    //         });
+    //     })
+    // };
+
     // use_effect_with_deps(
     //     move |u| {
     //         console_log!("object_variant: {:#?}", u);
@@ -144,7 +166,7 @@ pub fn objects_component(
         })
     };
 
-    // The reason for having callback within callback is to be able to modify to both local and parent component's state.
+    // The reason for having callback within callback is to be able to modify both local and parent component's state.
     // Outer callback modifies parent component's state (opens modal to confirm deletion) and passes the inner callback to parent component.
     // Inner callback modifies local state (updates number of modified fields once deletion has been confirmed and returned successfully).
     let handle_delete_entry = {
