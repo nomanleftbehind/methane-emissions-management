@@ -1,5 +1,5 @@
 use crate::{
-    components::emitters_window::id_selection::{IdSelectionComponent, IdSelectionProp},
+    components::emitters_window::data::entry::{IdSelectionComponent, IdSelectionProp},
     models::{
         mutations::manual_mutation::update_field::{
             UpdateFieldInput, UpdateFieldValue, UpdateFieldVariant,

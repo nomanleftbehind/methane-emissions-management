@@ -1,5 +1,6 @@
+pub mod controller;
 mod emitter_sidebar;
-mod insert_controller_form;
+pub mod entry;
 mod insert_entry_button;
 mod object_data;
 mod object_row;

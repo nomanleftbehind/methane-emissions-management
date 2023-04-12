@@ -1,6 +1,6 @@
 use crate::{
     components::emitters_window::data::{
-        insert_controller_form::InsertControllerForm,
+        controller::InsertControllerForm,
         insert_entry_button::InsertEntryButton,
         object_row::{ObjectDataProp, ObjectRowComponent},
     },
@@ -84,28 +84,6 @@ pub fn objects_component(
             (id.clone(), number_of_updated_fields, object_variant.clone()),
         )
     };
-
-    // let handle_get_id_selection = {
-    //     Callback::from(move |variables: VariablesIdSelection| {
-    //         wasm_bindgen_futures::spawn_local(async move {
-    //             match lazy_query::<IdSelection>(variables).await {
-    //                 QueryResponse {
-    //                     data: Some(ResponseDataIdSelection { id_selection }),
-    //                     ..
-    //                 } => {
-    //                     number_of_updated_fields_handle
-    //                         .set(number_of_updated_fields + update_field);
-    //                 }
-    //                 QueryResponse {
-    //                     error: Some(error), ..
-    //                 } => {
-    //                     modal_variant_handle.emit(Some(ModalVariant::Error(error)));
-    //                 }
-    //                 _ => (),
-    //             };
-    //         });
-    //     })
-    // };
 
     // use_effect_with_deps(
     //     move |u| {

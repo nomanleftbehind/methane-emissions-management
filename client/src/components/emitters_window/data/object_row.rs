@@ -1,10 +1,11 @@
 use crate::{
     components::emitters_window::{
-        data::object_data::ObjectDataComponent,
+        data::{
+            entry::{EditFieldProp, Entry, IdSelectionProp},
+            object_data::ObjectDataComponent,
+        },
         delete_entry::DeleteEntryComponent,
-        entry::{EditFieldProp, Entry},
         expand_data::ExpandDataComponent,
-        id_selection::IdSelectionProp,
     },
     models::{
         mutations::manual_mutation::{
