@@ -7,6 +7,7 @@ use crate::{
         },
         NaiveDateTime,
     },
+    utils::console_log,
 };
 use common::UpdateFieldValueEnum::{
     self, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionFloatValue,
@@ -118,48 +119,45 @@ pub fn entry(
 
         Callback::from(move |e: Event| {
             let input: HtmlInputElement = e.target_unchecked_into();
+            // let num = input.value_as_number().is_nan();
+            console_log!("onchange input value: {}", input.value_as_number());
             let changed_value = match value {
-                StringValue(_) => StringValue(input.value()),
-                OptionStringValue(_) => {
+                StringValue(_) | OptionStringValue(_) => {
                     let input_value = input.value();
                     OptionStringValue((!input_value.is_empty()).then(|| input_value))
                 }
-                IntegerValue(_) => IntegerValue(input.value_as_number() as i64),
-                OptionIntegerValue(_) => OptionIntegerValue(Some(input.value_as_number() as i64)),
-                FloatValue(_) => FloatValue(input.value_as_number()),
-                OptionFloatValue(_) => OptionFloatValue(Some(input.value_as_number())),
-                UuidValue(_) => {
-                    let Ok(uuid_value) = Uuid::parse_str(input.value().as_str()) else {
-                        option_input_value_handle.set(None);
-                        return
-                    };
-                    UuidValue(uuid_value)
+                IntegerValue(_) | OptionIntegerValue(_) => {
+                    let input_value = input.value_as_number();
+                    OptionIntegerValue((!input_value.is_nan()).then(|| input_value as i64))
                 }
-                OptionUuidValue(_) => {
-                    let Ok(uuid_value) = Uuid::parse_str(input.value().as_str()) else {
-                        option_input_value_handle.set(None);
-                        return
-                    };
-                    OptionUuidValue(Some(uuid_value))
+                FloatValue(_) | OptionFloatValue(_) => {
+                    let input_value = input.value_as_number();
+                    OptionFloatValue((!input_value.is_nan()).then(|| input_value))
                 }
-                NaiveDateValue(_) => NaiveDateValue(
-                    NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
-                        .expect_throw("Unable to convert i64 to NaiveDateTime.")
-                        .date(),
-                ),
-                OptionNaiveDateValue(_) => OptionNaiveDateValue(Some(
-                    NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
-                        .expect_throw("Unable to convert i64 to NaiveDateTime.")
-                        .date(),
-                )),
-                NaiveDateTimeValue(_) => NaiveDateTimeValue(
-                    NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
-                        .expect_throw("Unable to convert i64 to NaiveDateTime."),
-                ),
-                OptionNaiveDateTimeValue(_) => OptionNaiveDateTimeValue(Some(
-                    NaiveDateTime::from_timestamp_millis(input.value_as_number() as i64)
-                        .expect_throw("Unable to convert i64 to NaiveDateTime."),
-                )),
+                UuidValue(_) | OptionUuidValue(_) => {
+                    let input_value = input.value();
+                    OptionUuidValue(
+                        (!input_value.is_empty())
+                            .then(|| Uuid::parse_str(input_value.as_str()).ok())
+                            .flatten(),
+                    )
+                }
+                NaiveDateValue(_) | OptionNaiveDateValue(_) => {
+                    let input_value = input.value_as_number();
+
+                    OptionNaiveDateValue((!input_value.is_nan()).then(|| {
+                        NaiveDateTime::from_timestamp_millis(input_value as i64)
+                            .expect_throw("Unable to convert i64 to NaiveDateTime.")
+                            .date()
+                    }))
+                }
+                NaiveDateTimeValue(_) | OptionNaiveDateTimeValue(_) => {
+                    let input_value = input.value_as_number();
+                    OptionNaiveDateTimeValue((!input_value.is_nan()).then(|| {
+                        NaiveDateTime::from_timestamp_millis(input_value as i64)
+                            .expect_throw("Unable to convert i64 to NaiveDateTime.")
+                    }))
+                }
             };
 
             option_input_value_handle.set(Some(changed_value));
@@ -301,7 +299,7 @@ pub fn entry(
         })
     };
 
-    let ondblclick = {
+    let onclick = {
         let mode_handle = mode_handle.clone();
         let option_input_value_handle = option_input_value_handle.clone();
         let value = value.clone();
@@ -315,46 +313,49 @@ pub fn entry(
     };
 
     let style = format!("grid-row: {}; grid-column: {};", row_num, col_num);
-    let view = match mode {
-        EntryMode::ReadOnly => html! {
-            <div class={classes!("entry-read-only")} {ondblclick}>{ if let Some(value) = display_value { value } else { value } }</div>
-        },
-        EntryMode::Write => {
-            let form_type = match value {
-                IntegerValue(_) | OptionIntegerValue(_) | FloatValue(_) | OptionFloatValue(_) => {
-                    "number"
-                }
-                NaiveDateValue(_) | OptionNaiveDateValue(_) => "date",
-                NaiveDateTimeValue(_) | OptionNaiveDateTimeValue(_) => "datetime-local",
-                StringValue(_) | OptionStringValue(_) | UuidValue(_) | OptionUuidValue(_) => "text",
-            };
 
-            let form_step = match value {
-                FloatValue(_) | OptionFloatValue(_) => Some("any"),
-                _ => None,
-            };
+    let form_type = match value {
+        IntegerValue(_) | OptionIntegerValue(_) | FloatValue(_) | OptionFloatValue(_) => "number",
+        NaiveDateValue(_) | OptionNaiveDateValue(_) => "date",
+        NaiveDateTimeValue(_) | OptionNaiveDateTimeValue(_) => "datetime-local",
+        StringValue(_) | OptionStringValue(_) | UuidValue(_) | OptionUuidValue(_) => "text",
+    };
 
-            html! {
-                <form {onsubmit}>
-                    <fieldset>
-                        <div class={classes!("input")}>
-                            <button type="submit" class={classes!("form-button")}>{ "✓" }</button>
-                            if let Some(id_selection) = id_selection {
-                                <IdSelectionComponent id_selection={id_selection.clone()} {onchange}/>
-                            } else {
-                                <input type={form_type} step={form_step} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
-                            }
-                        </div>
-                    </fieldset>
-                </form>
-            }
-        }
+    let form_step = match value {
+        FloatValue(_) | OptionFloatValue(_) => Some("any"),
+        _ => None,
+    };
+
+    let null_option = match value {
+        OptionStringValue(_)
+        | OptionIntegerValue(_)
+        | OptionFloatValue(_)
+        | OptionUuidValue(_)
+        | OptionNaiveDateValue(_)
+        | OptionNaiveDateTimeValue(_) => true,
+        _ => false,
     };
 
     html! {
         <div class={classes!("emitter-cell")} {style}>
             <div class={classes!("entry", editable.then(|| "editable"), (mode == &EntryMode::Write).then(|| "write"))} ref={div_ref}>
-                { view }
+                // Child <div> of div_ref element cannot be conditionally rendered like child <form> because div_ref wouldn't register it as a descendant node of itself when clicking on div_ref.
+                // Consequentially `EntryMode` would be flash set to `Write` and immediately turned back to `ReadOnly` when clicking on div_ref.
+                <div style={(mode == &EntryMode::Write).then(|| "display: none;")} class={classes!("entry-read-only")} {onclick}>{ if let Some(value) = display_value { value } else { value } }</div>
+                if mode == &EntryMode::Write {
+                    <form {onsubmit}>
+                        <fieldset>
+                            <div class={classes!("input")}>
+                                <button type="submit" class={classes!("form-button")}>{ "✓" }</button>
+                                if let Some(id_selection) = id_selection {
+                                    <IdSelectionComponent id_selection={id_selection.clone()} {onchange} {null_option} value={value.to_string()}/>
+                                } else {
+                                    <input type={form_type} step={form_step} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
+                                }
+                            </div>
+                        </fieldset>
+                    </form>
+                }
             </div>
         </div>
     }

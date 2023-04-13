@@ -18,6 +18,8 @@ pub struct IdSelectionProp {
 pub struct Props {
     pub id_selection: IdSelectionProp,
     pub onchange: Callback<Event>,
+    pub null_option: bool,
+    pub value: String,
 }
 
 #[function_component(IdSelectionComponent)]
@@ -29,6 +31,8 @@ pub fn id_selection(
                 modal_variant_handle,
             },
         onchange,
+        null_option,
+        value,
     }: &Props,
 ) -> Html {
     let get_id_selection = {
@@ -44,12 +48,17 @@ pub fn id_selection(
             ..
         } => html! {
                 <select name="id-select" onchange={onchange.clone()}>
+                    if *null_option {
+                        <option key="" value="" selected={value == ""}>{ "None" }</option>
+                    }
                     {
                         id_selection
                         .into_iter()
                         .map(|IdSelectionIdSelection { id, name }| {
+                            let id_string = id.to_string();
+                            let selected = &id_string == value;
                             html! {
-                                <option key={id.to_string()} value={id.to_string()}>{ name }</option>
+                                <option key={id_string.clone()} value={id_string} {selected}>{ name }</option>
                             }
                         })
                         .collect::<Html>()
