@@ -1,6 +1,6 @@
 use crate::graphql::models::{
-    Compressor, Controller, ControllerChange, ControllerMonthHours, ControllerMonthVent,
-    ControllerMonthVentOverride, GetObject, GetObjectInput, TankFarm,
+    pneumatic_device::Controller, Compressor, ControllerChange, ControllerMonthHours,
+    ControllerMonthVent, ControllerMonthVentOverride, GetObject, GetObjectInput, TankFarm,
 };
 use common::GetObjectVariant::{
     CompressorByFacilityId, ControllerByFacilityId, ControllerChangeByControllerId,

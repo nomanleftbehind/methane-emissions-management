@@ -57,12 +57,12 @@ use crate::graphql::{
         },
     },
     models::{
-        Compressor, CompressorBlowdown, CompressorChange, CompressorMonthHours,
-        CompressorMonthVent, CompressorMonthVentOverride, Controller, ControllerApplication,
-        ControllerChange, ControllerManufacturer, ControllerMonthHours, ControllerMonthVent,
-        ControllerMonthVentOverride, Facility, GasAnalysis, GasAnalysisCalculatedParam, TankFarm,
-        TankFarmChange, TankFarmMonthOilFlow, TankFarmMonthVent, TankFarmMonthVentOverride,
-        TankFarmVentFactorCalculated,
+        pneumatic_device::Controller, Compressor, CompressorBlowdown, CompressorChange,
+        CompressorMonthHours, CompressorMonthVent, CompressorMonthVentOverride,
+        ControllerApplication, ControllerChange, ControllerManufacturer, ControllerMonthHours,
+        ControllerMonthVent, ControllerMonthVentOverride, Facility, GasAnalysis,
+        GasAnalysisCalculatedParam, TankFarm, TankFarmChange, TankFarmMonthOilFlow,
+        TankFarmMonthVent, TankFarmMonthVentOverride, TankFarmVentFactorCalculated,
     },
 };
 use async_graphql::{

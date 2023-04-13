@@ -5,7 +5,7 @@ use crate::graphql::{
         gas_analysis_loader::GasAnalysesByFacilityLoader, tank_farm_loader::FacilityTankFarmLoader,
         user_loader::UserLoader,
     },
-    models::{Compressor, Controller, GasAnalysis, TankFarm, User},
+    models::{pneumatic_device::Controller, Compressor, GasAnalysis, TankFarm, User},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Error, InputObject, OneofObject, SimpleObject,

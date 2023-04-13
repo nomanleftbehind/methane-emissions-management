@@ -1,4 +1,4 @@
-use crate::graphql::models::{Compressor, Controller, Facility, User};
+use crate::graphql::models::{pneumatic_device::Controller, Compressor, Facility, User};
 use async_graphql::Interface;
 use chrono::NaiveDateTime;
 use uuid::Uuid;
