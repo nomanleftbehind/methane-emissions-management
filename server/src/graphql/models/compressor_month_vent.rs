@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{compressor_loader::CompressorLoader, user_loader::UserLoader},
-    models::{Compressor, User},
+    models::{compressor::Compressor, User},
 };
 use async_graphql::{
     dataloader::DataLoader, ComplexObject, Context, Error, OneofObject, SimpleObject,

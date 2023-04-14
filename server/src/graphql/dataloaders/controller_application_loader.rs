@@ -1,4 +1,4 @@
-use crate::graphql::models::ControllerApplication;
+use crate::graphql::models::pneumatic_device::NonLevelControllerType;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
@@ -18,12 +18,12 @@ impl CreatedControllerApplicationsLoader {
 
 #[async_trait::async_trait]
 impl Loader<Uuid> for CreatedControllerApplicationsLoader {
-    type Value = Vec<ControllerApplication>;
+    type Value = Vec<NonLevelControllerType>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut controller_applications = sqlx::query_as!(
-            ControllerApplication,
+            NonLevelControllerType,
             "SELECT * FROM controller_applications WHERE created_by_id = ANY($1)",
             keys
         )
@@ -55,12 +55,12 @@ impl UpdatedControllerApplicationsLoader {
 
 #[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedControllerApplicationsLoader {
-    type Value = Vec<ControllerApplication>;
+    type Value = Vec<NonLevelControllerType>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut controller_applications = sqlx::query_as!(
-            ControllerApplication,
+            NonLevelControllerType,
             "SELECT * FROM controller_applications WHERE updated_by_id = ANY($1)",
             keys
         )
@@ -92,12 +92,12 @@ impl ControllerApplicationLoader {
 
 #[async_trait::async_trait]
 impl Loader<Uuid> for ControllerApplicationLoader {
-    type Value = ControllerApplication;
+    type Value = NonLevelControllerType;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let controller_applications = sqlx::query_as!(
-            ControllerApplication,
+            NonLevelControllerType,
             "SELECT * FROM controller_applications WHERE id = ANY($1)",
             keys
         )

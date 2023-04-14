@@ -1,4 +1,4 @@
-use crate::graphql::models::{pneumatic_device::Controller, User, UserBy};
+use crate::graphql::models::{pneumatic_device::NonLevelController, User, UserBy};
 use sqlx::PgExecutor;
 use uuid::Uuid;
 
@@ -33,9 +33,9 @@ pub async fn query_user_controllers<'e, E: PgExecutor<'e>>(
     user_id: Uuid,
     limit: i64,
     offset: i64,
-) -> Result<Vec<Controller>, sqlx::Error> {
+) -> Result<Vec<NonLevelController>, sqlx::Error> {
     let controllers = sqlx::query_as!(
-        Controller,
+        NonLevelController,
         r#"SELECT p.* FROM "controllers" p WHERE p."created_by_id" = $1 LIMIT $2 OFFSET $3"#,
         user_id,
         limit,

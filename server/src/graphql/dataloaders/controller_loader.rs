@@ -1,4 +1,4 @@
-use crate::graphql::models::pneumatic_device::Controller;
+use crate::graphql::models::pneumatic_device::NonLevelController;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
@@ -18,12 +18,12 @@ impl ControllerLoader {
 
 #[async_trait::async_trait]
 impl Loader<Uuid> for ControllerLoader {
-    type Value = Controller;
+    type Value = NonLevelController;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let controllers = sqlx::query_as!(
-            Controller,
+            NonLevelController,
             "SELECT * FROM controllers WHERE id = ANY($1)",
             keys
         )
@@ -49,12 +49,12 @@ impl CreatedControllersLoader {
 
 #[async_trait::async_trait]
 impl Loader<Uuid> for CreatedControllersLoader {
-    type Value = Vec<Controller>;
+    type Value = Vec<NonLevelController>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut controllers = sqlx::query_as!(
-            Controller,
+            NonLevelController,
             "SELECT * FROM controllers WHERE created_by_id = ANY($1)",
             keys
         )
@@ -85,12 +85,12 @@ impl UpdatedControllersLoader {
 
 #[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedControllersLoader {
-    type Value = Vec<Controller>;
+    type Value = Vec<NonLevelController>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut controllers = sqlx::query_as!(
-            Controller,
+            NonLevelController,
             "SELECT * FROM controllers WHERE updated_by_id = ANY($1)",
             keys
         )
@@ -121,12 +121,12 @@ impl FacilityControllersLoader {
 
 #[async_trait::async_trait]
 impl Loader<Uuid> for FacilityControllersLoader {
-    type Value = Vec<Controller>;
+    type Value = Vec<NonLevelController>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut controllers = sqlx::query_as!(
-            Controller,
+            NonLevelController,
             "SELECT * FROM controllers WHERE facility_id = ANY($1)",
             keys
         )
@@ -157,12 +157,12 @@ impl ControllersByApplicationLoader {
 
 #[async_trait::async_trait]
 impl Loader<Uuid> for ControllersByApplicationLoader {
-    type Value = Vec<Controller>;
+    type Value = Vec<NonLevelController>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut controllers = sqlx::query_as!(
-            Controller,
+            NonLevelController,
             "SELECT * FROM controllers WHERE application_id = ANY($1)",
             keys
         )
@@ -195,12 +195,12 @@ impl ControllersByManufacturerLoader {
 
 #[async_trait::async_trait]
 impl Loader<Uuid> for ControllersByManufacturerLoader {
-    type Value = Vec<Controller>;
+    type Value = Vec<NonLevelController>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut controllers = sqlx::query_as!(
-            Controller,
+            NonLevelController,
             "SELECT * FROM controllers WHERE manufacturer_id = ANY($1)",
             keys
         )

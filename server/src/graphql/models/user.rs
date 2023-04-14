@@ -57,9 +57,10 @@ use crate::graphql::{
         },
     },
     models::{
-        pneumatic_device::Controller, Compressor, CompressorBlowdown, CompressorChange,
-        CompressorMonthHours, CompressorMonthVent, CompressorMonthVentOverride,
-        ControllerApplication, ControllerChange, ControllerManufacturer, ControllerMonthHours,
+        compressor::Compressor,
+        pneumatic_device::{NonLevelController, NonLevelControllerChange, NonLevelControllerType},
+        CompressorBlowdown, CompressorChange, CompressorMonthHours, CompressorMonthVent,
+        CompressorMonthVentOverride, ControllerManufacturer, ControllerMonthHours,
         ControllerMonthVent, ControllerMonthVentOverride, Facility, GasAnalysis,
         GasAnalysisCalculatedParam, TankFarm, TankFarmChange, TankFarmMonthOilFlow,
         TankFarmMonthVent, TankFarmMonthVentOverride, TankFarmVentFactorCalculated,
@@ -112,7 +113,10 @@ impl User {
         Ok(result)
     }
 
-    async fn created_controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
+    async fn created_controllers(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<NonLevelController>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllersLoader>>();
         let controllers = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no created controllers
@@ -121,7 +125,10 @@ impl User {
         Ok(result)
     }
 
-    async fn updated_controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
+    async fn updated_controllers(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<NonLevelController>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllersLoader>>();
         let controllers = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no updated controllers
@@ -133,7 +140,7 @@ impl User {
     async fn created_controller_applications(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerApplication>, Error> {
+    ) -> Result<Vec<NonLevelControllerType>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllerApplicationsLoader>>();
         let controller_applications = loader.load_one(self.id).await?;
         let result = controller_applications.unwrap_or(vec![]);
@@ -144,7 +151,7 @@ impl User {
     async fn updated_controller_applications(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerApplication>, Error> {
+    ) -> Result<Vec<NonLevelControllerType>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerApplicationsLoader>>();
         let controller_applications = loader.load_one(self.id).await?;
         let result = controller_applications.unwrap_or(vec![]);
@@ -177,7 +184,7 @@ impl User {
     async fn created_controller_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerChange>, Error> {
+    ) -> Result<Vec<NonLevelControllerChange>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllerChangesLoader>>();
         let controller_changes = loader.load_one(self.id).await?;
         let result = controller_changes.unwrap_or(vec![]);
@@ -188,7 +195,7 @@ impl User {
     async fn updated_controller_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerChange>, Error> {
+    ) -> Result<Vec<NonLevelControllerChange>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerChangesLoader>>();
         let controller_changes = loader.load_one(self.id).await?;
         let result = controller_changes.unwrap_or(vec![]);

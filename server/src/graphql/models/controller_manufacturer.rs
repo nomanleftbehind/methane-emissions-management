@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{controller_loader::ControllersByManufacturerLoader, user_loader::UserLoader},
-    models::{pneumatic_device::Controller, User},
+    models::{pneumatic_device::NonLevelController, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;
@@ -35,7 +35,7 @@ impl ControllerManufacturer {
         updated_by
     }
 
-    async fn controllers(&self, ctx: &Context<'_>) -> Result<Vec<Controller>, Error> {
+    async fn controllers(&self, ctx: &Context<'_>) -> Result<Vec<NonLevelController>, Error> {
         let loader = ctx.get_loader::<DataLoader<ControllersByManufacturerLoader>>();
         let controllers = loader.load_one(self.id).await?;
         let result = controllers.unwrap_or(vec![]);

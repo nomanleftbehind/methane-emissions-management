@@ -1,11 +1,11 @@
-use crate::graphql::models::{ControllerApplication, IdSelection};
+use crate::graphql::models::{pneumatic_device::NonLevelControllerType, IdSelection};
 use sqlx::{query_as, PgPool};
 
 pub async fn query_all_controller_applications(
     pool: &PgPool,
-) -> Result<Vec<ControllerApplication>, sqlx::Error> {
+) -> Result<Vec<NonLevelControllerType>, sqlx::Error> {
     let controller_applications = query_as!(
-        ControllerApplication,
+        NonLevelControllerType,
         "SELECT * FROM controller_applications"
     )
     .fetch_all(pool)

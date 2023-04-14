@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{controller_loader::ControllerLoader, user_loader::UserLoader},
-    models::{pneumatic_device::Controller, User},
+    models::{pneumatic_device::NonLevelController, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct ControllerChange {
+pub struct NonLevelControllerChange {
     pub id: Uuid,
     pub date: NaiveDate,
     pub rate: f64,
@@ -22,7 +22,7 @@ pub struct ControllerChange {
 }
 
 #[ComplexObject]
-impl ControllerChange {
+impl NonLevelControllerChange {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -37,7 +37,7 @@ impl ControllerChange {
         updated_by
     }
 
-    async fn controller(&self, ctx: &Context<'_>) -> Result<Option<Controller>, Error> {
+    async fn controller(&self, ctx: &Context<'_>) -> Result<Option<NonLevelController>, Error> {
         let loader = ctx.get_loader::<DataLoader<ControllerLoader>>();
         let controller = loader.load_one(self.controller_id).await;
 

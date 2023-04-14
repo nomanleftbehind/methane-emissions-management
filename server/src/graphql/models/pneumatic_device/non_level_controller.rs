@@ -1,3 +1,4 @@
+use super::NonLevelControllerChange;
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
@@ -10,7 +11,7 @@ use crate::graphql::{
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
     models::{
-        ControllerApplication, ControllerChange, ControllerManufacturer, ControllerMonthHours,
+        pneumatic_device::NonLevelControllerType, ControllerManufacturer, ControllerMonthHours,
         ControllerMonthVent, ControllerMonthVentOverride, Facility, User,
     },
 };
@@ -21,7 +22,7 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct Controller {
+pub struct NonLevelController {
     pub id: Uuid,
     pub fdc_rec_id: String,
     pub manufacturer_id: Uuid,
@@ -36,7 +37,7 @@ pub struct Controller {
 }
 
 #[ComplexObject]
-impl Controller {
+impl NonLevelController {
     pub(in crate::graphql) async fn created_by(
         &self,
         ctx: &Context<'_>,
@@ -67,7 +68,10 @@ impl Controller {
         facility
     }
 
-    async fn application(&self, ctx: &Context<'_>) -> Result<Option<ControllerApplication>, Error> {
+    async fn application(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Option<NonLevelControllerType>, Error> {
         let loader = ctx.get_loader::<DataLoader<ControllerApplicationLoader>>();
         let application = if let Some(id) = self.application_id {
             loader.load_one(id).await
@@ -88,7 +92,10 @@ impl Controller {
         manufacturer
     }
 
-    async fn controller_changes(&self, ctx: &Context<'_>) -> Result<Vec<ControllerChange>, Error> {
+    async fn controller_changes(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<NonLevelControllerChange>, Error> {
         let loader = ctx.get_loader::<DataLoader<ControllerChangesByControllerLoader>>();
         let controller_changes = loader.load_one(self.id).await?;
         let result = controller_changes.unwrap_or(vec![]);

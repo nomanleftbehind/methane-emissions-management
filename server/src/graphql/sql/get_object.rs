@@ -1,6 +1,8 @@
 use crate::graphql::models::{
-    pneumatic_device::Controller, Compressor, ControllerChange, ControllerMonthHours,
-    ControllerMonthVent, ControllerMonthVentOverride, GetObject, GetObjectInput, TankFarm,
+    compressor::Compressor,
+    pneumatic_device::{NonLevelController, NonLevelControllerChange},
+    ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride, GetObject,
+    GetObjectInput, TankFarm,
 };
 use common::GetObjectVariant::{
     CompressorByFacilityId, ControllerByFacilityId, ControllerChangeByControllerId,
@@ -20,7 +22,7 @@ pub async fn get_object(
         ControllerByFacilityId => GetObject {
             controllers: Some(
                 query_as!(
-                    Controller,
+                    NonLevelController,
                     "SELECT * FROM controllers WHERE facility_id = $1 ORDER BY created_at DESC",
                     id
                 )
@@ -74,7 +76,7 @@ pub async fn get_object(
             tank_farms: None,
             controller_changes: Some(
                 query_as!(
-                    ControllerChange,
+                    NonLevelControllerChange,
                     "SELECT * FROM controller_changes WHERE controller_id = $1 ORDER BY id",
                     id
                 )
