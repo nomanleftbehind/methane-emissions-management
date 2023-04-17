@@ -15,12 +15,12 @@ RUN cargo build --release --bin emissions_app_server
 
 FROM gcr.io/distroless/cc-debian10
 
-COPY --from=build /usr/src/fullstackrust/target/release/server /usr/local/bin/server
+COPY --from=build /usr/src/fullstackrust/target/release /usr/local/bin
 
 COPY --from=build /usr/src/fullstackrust/client/dist /usr/local/bin/dist
 
 WORKDIR /usr/local/bin 
 
-RUN cargo install --path .
+# RUN cargo install --path .
 
-CMD ["emissions_app_server"]
+# CMD ["emissions_app_server"]

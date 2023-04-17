@@ -1,7 +1,10 @@
 use crate::graphql::models::{
     compressor::Compressor,
-    pneumatic_device::{NonLevelController, NonLevelControllerChange},
-    ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride, TankFarm,
+    pneumatic_device::{
+        ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride, NonLevelController,
+        NonLevelControllerChange,
+    },
+    TankFarm,
 };
 use async_graphql::SimpleObject;
 use sqlx::FromRow;

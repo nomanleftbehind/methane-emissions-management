@@ -11,8 +11,11 @@ use crate::graphql::{
         facility_loader::FacilityLoader, user_loader::UserLoader,
     },
     models::{
-        pneumatic_device::{ControllerManufacturer, NonLevelControllerType},
-        ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride, Facility, User,
+        pneumatic_device::{
+            ControllerManufacturer, ControllerMonthHours, ControllerMonthVent,
+            ControllerMonthVentOverride, NonLevelControllerType,
+        },
+        Facility, User,
     },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};

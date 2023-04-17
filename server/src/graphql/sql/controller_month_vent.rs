@@ -1,4 +1,4 @@
-use crate::graphql::models::{
+use crate::graphql::models::pneumatic_device::{
     ControllerMonthVent,
     ControllerMonthVentBy::{self, ControllerId, Month},
     ControllerMonthVentCalculated, ControllerMonthVentNestedRows, ControllerMonthVentUnnestedRows,

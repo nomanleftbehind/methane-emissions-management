@@ -1,11 +1,10 @@
-use crate::graphql::models::ControllerMonthHours;
+use crate::graphql::models::pneumatic_device::ControllerMonthHours;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
 use sqlx::PgPool;
 use std::collections::HashMap;
 use uuid::Uuid;
-
 
 pub struct ControllerMonthHoursLoader {
     pool: Data<PgPool>,
@@ -37,9 +36,6 @@ impl Loader<Uuid> for ControllerMonthHoursLoader {
         Ok(controller_month_hours)
     }
 }
-
-
-
 
 pub struct CreatedControllerMonthHoursLoader {
     pool: Data<PgPool>,

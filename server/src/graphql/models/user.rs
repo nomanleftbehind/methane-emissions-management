@@ -59,12 +59,12 @@ use crate::graphql::{
     models::{
         compressor::Compressor,
         pneumatic_device::{
-            ControllerManufacturer, NonLevelController, NonLevelControllerChange,
+            ControllerManufacturer, ControllerMonthHours, ControllerMonthVent,
+            ControllerMonthVentOverride, NonLevelController, NonLevelControllerChange,
             NonLevelControllerType,
         },
         CompressorBlowdown, CompressorChange, CompressorMonthHours, CompressorMonthVent,
-        CompressorMonthVentOverride, ControllerMonthHours, ControllerMonthVent,
-        ControllerMonthVentOverride, Facility, GasAnalysis, GasAnalysisCalculatedParam, TankFarm,
+        CompressorMonthVentOverride, Facility, GasAnalysis, GasAnalysisCalculatedParam, TankFarm,
         TankFarmChange, TankFarmMonthOilFlow, TankFarmMonthVent, TankFarmMonthVentOverride,
         TankFarmVentFactorCalculated,
     },

@@ -1,6 +1,6 @@
 use crate::graphql::{
     context::ContextExt,
-    models::{ControllerMonthVent, ControllerMonthVentBy},
+    models::pneumatic_device::{ControllerMonthVent, ControllerMonthVentBy},
     sql::select_controller_month_vents,
 };
 use async_graphql::{Context, Error, Object};
