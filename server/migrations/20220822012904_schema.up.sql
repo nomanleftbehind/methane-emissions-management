@@ -5,6 +5,21 @@ CREATE TYPE "user_role" AS ENUM ('ADMIN', 'ENGINEER', 'REGULATORY', 'OFFICE', 'O
 CREATE TYPE "facility_type" AS ENUM ('TM', 'WT', 'CT', 'DS', 'GS', 'MS', 'GP', 'IF', 'PL', 'WP', 'WS', 'BT');
 
 -- CreateEnum
+CREATE TYPE "site_type" AS ENUM ('Battery', 'Satellite', 'Well', 'GasPlant', 'Compressor');
+
+-- CreateEnum
+CREATE TYPE "methane_emission_source" AS ENUM ('pneumatic_instrument', 'pneumatic_pump', 'compressor_seal', 'tank');
+
+-- CreateEnum
+CREATE TYPE "methane_emission_category" AS ENUM ('Routine', 'Nonroutine', 'Fugitive');
+
+-- CreateEnum
+CREATE TYPE "compressor_type" AS ENUM ('Reciprocating', 'Centrifugal', 'Screw', 'Scroll');
+
+-- CreateEnum
+CREATE TYPE "seal_type" AS ENUM ('Rodpacking', 'Dry', 'Wet');
+
+-- CreateEnum
 CREATE TYPE "calculation_method" AS ENUM ('EQUATION', 'MEASURED');
 
 -- CreateTable
@@ -34,36 +49,35 @@ CREATE TABLE "facilities" (
 );
 
 -- CreateTable
-CREATE TABLE "controllers" (
+CREATE TABLE "site" (
     "id" UUID NOT NULL,
-    "fdc_rec_id" VARCHAR(32) NOT NULL,
-    "manufacturer_id" UUID NOT NULL,
-    "model" TEXT,
-    "serial_number" TEXT,
-    "application_id" UUID,
     "facility_id" UUID NOT NULL,
+    "fdc_rec_id" VARCHAR(32) NOT NULL,
+    "name" TEXT NOT NULL,
+    "type" "site_type" NOT NULL,
+    "description" TEXT,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "controllers_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "site_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "controller_applications" (
+CREATE TABLE "pneumatic_instrument_type" (
     "id" UUID NOT NULL,
-    "application" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "controller_applications_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "pneumatic_instrument_type_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "controller_manufacturers" (
+CREATE TABLE "device_manufacturer" (
     "id" UUID NOT NULL,
     "manufacturer" TEXT NOT NULL,
     "created_by_id" UUID NOT NULL,
@@ -71,27 +85,44 @@ CREATE TABLE "controller_manufacturers" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "controller_manufacturers_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "device_manufacturer_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "controller_changes" (
+CREATE TABLE "pneumatic_instrument" (
     "id" UUID NOT NULL,
-    "controller_id" UUID NOT NULL,
-    "date" DATE NOT NULL,
-    "rate" DOUBLE PRECISION NOT NULL,
+    "site_id" UUID NOT NULL,
+    "type_id" UUID NOT NULL,
+    "manufacturer_id" UUID NOT NULL,
+    "model" TEXT,
+    "serial_number" TEXT,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "controller_changes_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "pneumatic_instrument_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "controller_month_hours" (
+CREATE TABLE "pneumatic_instrument_change" (
     "id" UUID NOT NULL,
-    "controller_id" UUID NOT NULL,
+    "pneumatic_instrument_id" UUID NOT NULL,
+    "date" DATE NOT NULL,
+    "rate" DOUBLE PRECISION NOT NULL,
+    "actuation_frequency" DOUBLE PRECISION NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "pneumatic_instrument_change_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "pneumatic_instrument_month_hours" (
+    "id" UUID NOT NULL,
+    "pneumatic_instrument_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "hours_on" DOUBLE PRECISION NOT NULL,
     "created_by_id" UUID NOT NULL,
@@ -99,13 +130,13 @@ CREATE TABLE "controller_month_hours" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "controller_month_hours_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "pneumatic_instrument_month_hours_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "controller_month_vent_override" (
+CREATE TABLE "pneumatic_instrument_month_methane_emission_override" (
     "id" UUID NOT NULL,
-    "controller_id" UUID NOT NULL,
+    "pneumatic_instrument_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "gas_volume" DOUBLE PRECISION NOT NULL,
     "comment" TEXT,
@@ -114,13 +145,15 @@ CREATE TABLE "controller_month_vent_override" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "controller_month_vent_override_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "pneumatic_instrument_month_methane_emission_override_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "controller_month_vent" (
+CREATE TABLE "pneumatic_instrument_month_methane_emission" (
     "id" UUID NOT NULL,
-    "controller_id" UUID NOT NULL,
+    "source" "methane_emission_source" NOT NULL,
+    "source_id" UUID NOT NULL,
+    "category" "methane_emission_category" NOT NULL,
     "month" DATE NOT NULL,
     "gas_volume" DOUBLE PRECISION NOT NULL,
     "c1_volume" DOUBLE PRECISION NOT NULL,
@@ -130,16 +163,76 @@ CREATE TABLE "controller_month_vent" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "controller_month_vent_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "pneumatic_instrument_month_methane_emission_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "compressors" (
+CREATE TABLE "pneumatic_pump" (
     "id" UUID NOT NULL,
+    "site_id" UUID NOT NULL,
+    "manufacturer_id" UUID NOT NULL,
+    "model" TEXT,
+    "serial_number" TEXT,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "pneumatic_pump_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "pneumatic_pump_change" (
+    "id" UUID NOT NULL,
+    "pneumatic_pump_id" UUID NOT NULL,
+    "date" DATE NOT NULL,
+    "rate" DOUBLE PRECISION NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "pneumatic_pump_change_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "pneumatic_pump_month_hours" (
+    "id" UUID NOT NULL,
+    "pneumatic_pump_id" UUID NOT NULL,
+    "month" DATE NOT NULL,
+    "hours_on" DOUBLE PRECISION NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "pneumatic_pump_month_hours_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "pneumatic_pump_month_methane_emission_override" (
+    "id" UUID NOT NULL,
+    "pneumatic_pump_id" UUID NOT NULL,
+    "month" DATE NOT NULL,
+    "gas_volume" DOUBLE PRECISION NOT NULL,
+    "comment" TEXT,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "pneumatic_pump_month_methane_emission_override_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "compressor" (
+    "id" UUID NOT NULL,
+    "site_id" UUID NOT NULL,
     "fdc_rec_id" VARCHAR(32) NOT NULL,
-    "facility_id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "serial_number" TEXT NOT NULL,
+    "power" DOUBLE PRECISION NOT NULL,
+    "throw_count" INTEGER,
     "install_date" DATE NOT NULL,
     "remove_date" DATE,
     "created_by_id" UUID NOT NULL,
@@ -147,23 +240,35 @@ CREATE TABLE "compressors" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "compressors_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "compressor_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "compressor_changes" (
+CREATE TABLE "compressor_seal" (
     "id" UUID NOT NULL,
-    "compressor_id" UUID NOT NULL,
-    "date" DATE NOT NULL,
-    "calculation_method" "calculation_method" NOT NULL,
-    "number_of_throws" INTEGER NOT NULL,
-    "rate" DOUBLE PRECISION NOT NULL,
+    "controlled" BOOLEAN NOT NULL,
+    "description" TEXT,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "compressor_changes_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "compressor_seal_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "compressor_seal_test" (
+    "id" UUID NOT NULL,
+    "compressor_seal_id" UUID NOT NULL,
+    "date" DATE NOT NULL,
+    "rate" DOUBLE PRECISION NOT NULL,
+    "equipment_used" TEXT NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "compressor_seal_test_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -195,9 +300,9 @@ CREATE TABLE "compressor_blowdown" (
 );
 
 -- CreateTable
-CREATE TABLE "compressor_month_vent_override" (
+CREATE TABLE "compressor_seal_month_methane_emission_override" (
     "id" UUID NOT NULL,
-    "compressor_id" UUID NOT NULL,
+    "compressor_seal_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "gas_volume" DOUBLE PRECISION NOT NULL,
     "comment" TEXT,
@@ -206,23 +311,7 @@ CREATE TABLE "compressor_month_vent_override" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "compressor_month_vent_override_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "compressor_month_vent" (
-    "id" UUID NOT NULL,
-    "compressor_id" UUID NOT NULL,
-    "month" DATE NOT NULL,
-    "gas_volume" DOUBLE PRECISION NOT NULL,
-    "c1_volume" DOUBLE PRECISION NOT NULL,
-    "co2_volume" DOUBLE PRECISION NOT NULL,
-    "created_by_id" UUID NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_by_id" UUID NOT NULL,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "compressor_month_vent_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "compressor_seal_month_methane_emission_override_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -285,7 +374,7 @@ CREATE TABLE "tank_farm_month_oil_flow" (
 );
 
 -- CreateTable
-CREATE TABLE "tank_farm_month_vent_override" (
+CREATE TABLE "tank_farm_month_methane_emission_override" (
     "id" UUID NOT NULL,
     "tank_farm_id" UUID NOT NULL,
     "month" DATE NOT NULL,
@@ -296,23 +385,7 @@ CREATE TABLE "tank_farm_month_vent_override" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "tank_farm_month_vent_override_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "tank_farm_month_vent" (
-    "id" UUID NOT NULL,
-    "tank_farm_id" UUID NOT NULL,
-    "month" DATE NOT NULL,
-    "gas_volume" DOUBLE PRECISION NOT NULL,
-    "c1_volume" DOUBLE PRECISION NOT NULL,
-    "co2_volume" DOUBLE PRECISION NOT NULL,
-    "created_by_id" UUID NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_by_id" UUID NOT NULL,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "tank_farm_month_vent_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "tank_farm_month_methane_emission_override_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -363,31 +436,43 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 CREATE UNIQUE INDEX "facilities_idpa_key" ON "facilities"("idpa");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "controller_applications_application_key" ON "controller_applications"("application");
+CREATE UNIQUE INDEX "site_fdc_rec_id_key" ON "site"("fdc_rec_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "controller_manufacturers_manufacturer_key" ON "controller_manufacturers"("manufacturer");
+CREATE UNIQUE INDEX "pneumatic_instrument_type_type_key" ON "pneumatic_instrument_type"("type");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "controller_changes_controller_id_date_key" ON "controller_changes"("controller_id", "date");
+CREATE UNIQUE INDEX "device_manufacturer_manufacturer_key" ON "device_manufacturer"("manufacturer");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "controller_month_hours_controller_id_month_key" ON "controller_month_hours"("controller_id", "month");
+CREATE UNIQUE INDEX "pneumatic_instrument_change_pneumatic_instrument_id_date_key" ON "pneumatic_instrument_change"("pneumatic_instrument_id", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "controller_month_vent_override_controller_id_month_key" ON "controller_month_vent_override"("controller_id", "month");
+CREATE UNIQUE INDEX "pneumatic_instrument_month_hours_pneumatic_instrument_id_mo_key" ON "pneumatic_instrument_month_hours"("pneumatic_instrument_id", "month");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "controller_month_vent_controller_id_month_key" ON "controller_month_vent"("controller_id", "month");
+CREATE UNIQUE INDEX "pneumatic_instrument_month_methane_emission_override_pneuma_key" ON "pneumatic_instrument_month_methane_emission_override"("pneumatic_instrument_id", "month");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "compressors_fdc_rec_id_key" ON "compressors"("fdc_rec_id");
+CREATE UNIQUE INDEX "pneumatic_instrument_month_methane_emission_source_id_categ_key" ON "pneumatic_instrument_month_methane_emission"("source_id", "category", "month");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "compressors_serial_number_key" ON "compressors"("serial_number");
+CREATE UNIQUE INDEX "pneumatic_pump_change_pneumatic_pump_id_date_key" ON "pneumatic_pump_change"("pneumatic_pump_id", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "compressor_changes_compressor_id_date_key" ON "compressor_changes"("compressor_id", "date");
+CREATE UNIQUE INDEX "pneumatic_pump_month_hours_pneumatic_pump_id_month_key" ON "pneumatic_pump_month_hours"("pneumatic_pump_id", "month");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "pneumatic_pump_month_methane_emission_override_pneumatic_pu_key" ON "pneumatic_pump_month_methane_emission_override"("pneumatic_pump_id", "month");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "compressor_fdc_rec_id_key" ON "compressor"("fdc_rec_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "compressor_serial_number_key" ON "compressor"("serial_number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "compressor_seal_test_compressor_seal_id_date_key" ON "compressor_seal_test"("compressor_seal_id", "date");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "compressor_month_hours_compressor_id_month_key" ON "compressor_month_hours"("compressor_id", "month");
@@ -396,10 +481,7 @@ CREATE UNIQUE INDEX "compressor_month_hours_compressor_id_month_key" ON "compres
 CREATE UNIQUE INDEX "compressor_blowdown_compressor_id_date_key" ON "compressor_blowdown"("compressor_id", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "compressor_month_vent_override_compressor_id_month_key" ON "compressor_month_vent_override"("compressor_id", "month");
-
--- CreateIndex
-CREATE UNIQUE INDEX "compressor_month_vent_compressor_id_month_key" ON "compressor_month_vent"("compressor_id", "month");
+CREATE UNIQUE INDEX "compressor_seal_month_methane_emission_override_compressor__key" ON "compressor_seal_month_methane_emission_override"("compressor_seal_id", "month");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tank_farms_facility_id_key" ON "tank_farms"("facility_id");
@@ -414,10 +496,7 @@ CREATE UNIQUE INDEX "tank_farm_vent_factors_calculated_tank_farm_id_date_key" ON
 CREATE UNIQUE INDEX "tank_farm_month_oil_flow_tank_farm_id_month_key" ON "tank_farm_month_oil_flow"("tank_farm_id", "month");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tank_farm_month_vent_override_tank_farm_id_month_key" ON "tank_farm_month_vent_override"("tank_farm_id", "month");
-
--- CreateIndex
-CREATE UNIQUE INDEX "tank_farm_month_vent_tank_farm_id_month_key" ON "tank_farm_month_vent"("tank_farm_id", "month");
+CREATE UNIQUE INDEX "tank_farm_month_methane_emission_override_tank_farm_id_mont_key" ON "tank_farm_month_methane_emission_override"("tank_farm_id", "month");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "gas_analyses_facility_id_date_key" ON "gas_analyses"("facility_id", "date");
@@ -429,88 +508,142 @@ ALTER TABLE "facilities" ADD CONSTRAINT "facilities_created_by_id_fkey" FOREIGN 
 ALTER TABLE "facilities" ADD CONSTRAINT "facilities_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controllers" ADD CONSTRAINT "controllers_manufacturer_id_fkey" FOREIGN KEY ("manufacturer_id") REFERENCES "controller_manufacturers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "site" ADD CONSTRAINT "site_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controllers" ADD CONSTRAINT "controllers_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "controller_applications"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "site" ADD CONSTRAINT "site_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controllers" ADD CONSTRAINT "controllers_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "site" ADD CONSTRAINT "site_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controllers" ADD CONSTRAINT "controllers_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_type" ADD CONSTRAINT "pneumatic_instrument_type_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controllers" ADD CONSTRAINT "controllers_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_type" ADD CONSTRAINT "pneumatic_instrument_type_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_applications" ADD CONSTRAINT "controller_applications_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "device_manufacturer" ADD CONSTRAINT "device_manufacturer_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_applications" ADD CONSTRAINT "controller_applications_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "device_manufacturer" ADD CONSTRAINT "device_manufacturer_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_manufacturers" ADD CONSTRAINT "controller_manufacturers_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument" ADD CONSTRAINT "pneumatic_instrument_site_id_fkey" FOREIGN KEY ("site_id") REFERENCES "site"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_manufacturers" ADD CONSTRAINT "controller_manufacturers_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument" ADD CONSTRAINT "pneumatic_instrument_type_id_fkey" FOREIGN KEY ("type_id") REFERENCES "pneumatic_instrument_type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_changes" ADD CONSTRAINT "controller_changes_controller_id_fkey" FOREIGN KEY ("controller_id") REFERENCES "controllers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument" ADD CONSTRAINT "pneumatic_instrument_manufacturer_id_fkey" FOREIGN KEY ("manufacturer_id") REFERENCES "device_manufacturer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_changes" ADD CONSTRAINT "controller_changes_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument" ADD CONSTRAINT "pneumatic_instrument_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_changes" ADD CONSTRAINT "controller_changes_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument" ADD CONSTRAINT "pneumatic_instrument_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_month_hours" ADD CONSTRAINT "controller_month_hours_controller_id_fkey" FOREIGN KEY ("controller_id") REFERENCES "controllers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_change" ADD CONSTRAINT "pneumatic_instrument_change_pneumatic_instrument_id_fkey" FOREIGN KEY ("pneumatic_instrument_id") REFERENCES "pneumatic_instrument"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_month_hours" ADD CONSTRAINT "controller_month_hours_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_change" ADD CONSTRAINT "pneumatic_instrument_change_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_month_hours" ADD CONSTRAINT "controller_month_hours_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_change" ADD CONSTRAINT "pneumatic_instrument_change_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_month_vent_override" ADD CONSTRAINT "controller_month_vent_override_controller_id_fkey" FOREIGN KEY ("controller_id") REFERENCES "controllers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_month_hours" ADD CONSTRAINT "pneumatic_instrument_month_hours_pneumatic_instrument_id_fkey" FOREIGN KEY ("pneumatic_instrument_id") REFERENCES "pneumatic_instrument"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_month_vent_override" ADD CONSTRAINT "controller_month_vent_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_month_hours" ADD CONSTRAINT "pneumatic_instrument_month_hours_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_month_vent_override" ADD CONSTRAINT "controller_month_vent_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_month_hours" ADD CONSTRAINT "pneumatic_instrument_month_hours_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_month_vent" ADD CONSTRAINT "controller_month_vent_controller_id_fkey" FOREIGN KEY ("controller_id") REFERENCES "controllers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_month_methane_emission_override" ADD CONSTRAINT "pneumatic_instrument_month_methane_emission_override_pneum_fkey" FOREIGN KEY ("pneumatic_instrument_id") REFERENCES "pneumatic_instrument"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_month_vent" ADD CONSTRAINT "controller_month_vent_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_month_methane_emission_override" ADD CONSTRAINT "pneumatic_instrument_month_methane_emission_override_creat_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "controller_month_vent" ADD CONSTRAINT "controller_month_vent_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_month_methane_emission_override" ADD CONSTRAINT "pneumatic_instrument_month_methane_emission_override_updat_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressors" ADD CONSTRAINT "compressors_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_month_methane_emission" ADD CONSTRAINT "pneumatic_instrument_month_methane_emission_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressors" ADD CONSTRAINT "compressors_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_instrument_month_methane_emission" ADD CONSTRAINT "pneumatic_instrument_month_methane_emission_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressors" ADD CONSTRAINT "compressors_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_pump" ADD CONSTRAINT "pneumatic_pump_site_id_fkey" FOREIGN KEY ("site_id") REFERENCES "site"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressor_changes" ADD CONSTRAINT "compressor_changes_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_pump" ADD CONSTRAINT "pneumatic_pump_manufacturer_id_fkey" FOREIGN KEY ("manufacturer_id") REFERENCES "device_manufacturer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressor_changes" ADD CONSTRAINT "compressor_changes_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_pump" ADD CONSTRAINT "pneumatic_pump_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressor_changes" ADD CONSTRAINT "compressor_changes_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_pump" ADD CONSTRAINT "pneumatic_pump_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressor_month_hours" ADD CONSTRAINT "compressor_month_hours_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pneumatic_pump_change" ADD CONSTRAINT "pneumatic_pump_change_pneumatic_pump_id_fkey" FOREIGN KEY ("pneumatic_pump_id") REFERENCES "pneumatic_pump"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "pneumatic_pump_change" ADD CONSTRAINT "pneumatic_pump_change_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "pneumatic_pump_change" ADD CONSTRAINT "pneumatic_pump_change_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "pneumatic_pump_month_hours" ADD CONSTRAINT "pneumatic_pump_month_hours_pneumatic_pump_id_fkey" FOREIGN KEY ("pneumatic_pump_id") REFERENCES "pneumatic_pump"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "pneumatic_pump_month_hours" ADD CONSTRAINT "pneumatic_pump_month_hours_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "pneumatic_pump_month_hours" ADD CONSTRAINT "pneumatic_pump_month_hours_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "pneumatic_pump_month_methane_emission_override" ADD CONSTRAINT "pneumatic_pump_month_methane_emission_override_pneumatic_p_fkey" FOREIGN KEY ("pneumatic_pump_id") REFERENCES "pneumatic_pump"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "pneumatic_pump_month_methane_emission_override" ADD CONSTRAINT "pneumatic_pump_month_methane_emission_override_created_by__fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "pneumatic_pump_month_methane_emission_override" ADD CONSTRAINT "pneumatic_pump_month_methane_emission_override_updated_by__fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor" ADD CONSTRAINT "compressor_site_id_fkey" FOREIGN KEY ("site_id") REFERENCES "site"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor" ADD CONSTRAINT "compressor_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor" ADD CONSTRAINT "compressor_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_seal" ADD CONSTRAINT "compressor_seal_id_fkey" FOREIGN KEY ("id") REFERENCES "compressor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_seal" ADD CONSTRAINT "compressor_seal_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_seal" ADD CONSTRAINT "compressor_seal_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_seal_test" ADD CONSTRAINT "compressor_seal_test_compressor_seal_id_fkey" FOREIGN KEY ("compressor_seal_id") REFERENCES "compressor_seal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_seal_test" ADD CONSTRAINT "compressor_seal_test_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_seal_test" ADD CONSTRAINT "compressor_seal_test_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_month_hours" ADD CONSTRAINT "compressor_month_hours_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "compressor_month_hours" ADD CONSTRAINT "compressor_month_hours_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -519,7 +652,7 @@ ALTER TABLE "compressor_month_hours" ADD CONSTRAINT "compressor_month_hours_crea
 ALTER TABLE "compressor_month_hours" ADD CONSTRAINT "compressor_month_hours_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -528,22 +661,13 @@ ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_created_by
 ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressor_month_vent_override" ADD CONSTRAINT "compressor_month_vent_override_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "compressor_seal_month_methane_emission_override" ADD CONSTRAINT "compressor_seal_month_methane_emission_override_compressor_fkey" FOREIGN KEY ("compressor_seal_id") REFERENCES "compressor_seal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressor_month_vent_override" ADD CONSTRAINT "compressor_month_vent_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "compressor_seal_month_methane_emission_override" ADD CONSTRAINT "compressor_seal_month_methane_emission_override_created_by_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressor_month_vent_override" ADD CONSTRAINT "compressor_month_vent_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "compressor_month_vent" ADD CONSTRAINT "compressor_month_vent_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressors"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "compressor_month_vent" ADD CONSTRAINT "compressor_month_vent_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "compressor_month_vent" ADD CONSTRAINT "compressor_month_vent_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "compressor_seal_month_methane_emission_override" ADD CONSTRAINT "compressor_seal_month_methane_emission_override_updated_by_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "tank_farms" ADD CONSTRAINT "tank_farms_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -582,22 +706,13 @@ ALTER TABLE "tank_farm_month_oil_flow" ADD CONSTRAINT "tank_farm_month_oil_flow_
 ALTER TABLE "tank_farm_month_oil_flow" ADD CONSTRAINT "tank_farm_month_oil_flow_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_farm_month_vent_override" ADD CONSTRAINT "tank_farm_month_vent_override_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tank_farm_month_methane_emission_override" ADD CONSTRAINT "tank_farm_month_methane_emission_override_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_farm_month_vent_override" ADD CONSTRAINT "tank_farm_month_vent_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tank_farm_month_methane_emission_override" ADD CONSTRAINT "tank_farm_month_methane_emission_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_farm_month_vent_override" ADD CONSTRAINT "tank_farm_month_vent_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_tank_farm_id_fkey" FOREIGN KEY ("tank_farm_id") REFERENCES "tank_farms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "tank_farm_month_vent" ADD CONSTRAINT "tank_farm_month_vent_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tank_farm_month_methane_emission_override" ADD CONSTRAINT "tank_farm_month_methane_emission_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "gas_analyses" ADD CONSTRAINT "gas_analyses_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facilities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
