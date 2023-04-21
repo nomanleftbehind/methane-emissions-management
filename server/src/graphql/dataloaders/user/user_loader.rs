@@ -23,7 +23,7 @@ impl Loader<Uuid> for UserLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let users = sqlx::query_as!(
             User,
-            r#"SELECT id, email, password, first_name, last_name, role as "role: _" FROM "users" WHERE id = ANY($1)"#,
+            r#"SELECT id, email, password, first_name, last_name, role as "role: _" FROM "user" WHERE id = ANY($1)"#,
             keys
         )
         .fetch_all(&**self.pool)

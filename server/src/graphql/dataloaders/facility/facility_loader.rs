@@ -26,7 +26,7 @@ impl Loader<Uuid> for CreatedFacilitiesLoader {
             Facility,
             r#"SELECT
             id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
-            FROM facilities
+            FROM facility
             WHERE created_by_id = ANY($1)"#,
             keys
         )
@@ -66,7 +66,7 @@ impl Loader<Uuid> for UpdatedFacilitiesLoader {
             Facility,
             r#"SELECT
             id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
-            FROM facilities
+            FROM facility
             WHERE updated_by_id = ANY($1)"#,
             keys
         )
@@ -106,7 +106,7 @@ impl Loader<Uuid> for FacilityLoader {
             Facility,
             r#"SELECT
             id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
-            FROM facilities
+            FROM facility
             WHERE id = ANY($1)"#,
             keys
         )

@@ -59,9 +59,8 @@ use crate::graphql::{
     models::{
         compressor::Compressor,
         pneumatic_device::{
-            ControllerManufacturer, ControllerMonthHours, ControllerMonthVent,
-            ControllerMonthVentOverride, NonLevelController, NonLevelControllerChange,
-            NonLevelControllerType,
+            ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride,
+            DeviceManufacturer, NonLevelControllerChange, PneumaticDevice,
         },
         CompressorBlowdown, CompressorChange, CompressorMonthHours, CompressorMonthVent,
         CompressorMonthVentOverride, Facility, GasAnalysis, GasAnalysisCalculatedParam, TankFarm,
@@ -116,70 +115,48 @@ impl User {
         Ok(result)
     }
 
-    async fn created_controllers(
+    async fn created_pneumatic_devices(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelController>, Error> {
+    ) -> Result<Vec<PneumaticDevice>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllersLoader>>();
-        let controllers = loader.load_one(self.id).await?;
-        // Need to return empty vector if user has no created controllers
-        let result = controllers.unwrap_or(vec![]);
+        let pneumatic_devices = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no created pneumatic devices
+        let result = pneumatic_devices.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_controllers(
+    async fn updated_pneumatic_devices(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelController>, Error> {
+    ) -> Result<Vec<PneumaticDevice>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllersLoader>>();
-        let controllers = loader.load_one(self.id).await?;
-        // Need to return empty vector if user has no updated controllers
-        let result = controllers.unwrap_or(vec![]);
+        let pneumatic_devices = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no updated pneumatic devices
+        let result = pneumatic_devices.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_controller_applications(
+    async fn created_device_manufacturers(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerType>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedControllerApplicationsLoader>>();
-        let controller_applications = loader.load_one(self.id).await?;
-        let result = controller_applications.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
-    async fn updated_controller_applications(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerType>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedControllerApplicationsLoader>>();
-        let controller_applications = loader.load_one(self.id).await?;
-        let result = controller_applications.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
-    async fn created_controller_manufacturers(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerManufacturer>, Error> {
+    ) -> Result<Vec<DeviceManufacturer>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllerManufacturersLoader>>();
-        let controller_manufacturers = loader.load_one(self.id).await?;
-        let result = controller_manufacturers.unwrap_or(vec![]);
+        let device_manufacturers = loader.load_one(self.id).await?;
+        let result = device_manufacturers.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_controller_manufacturers(
+    async fn updated_device_manufacturers(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerManufacturer>, Error> {
+    ) -> Result<Vec<DeviceManufacturer>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerManufacturersLoader>>();
-        let controller_manufacturers = loader.load_one(self.id).await?;
-        let result = controller_manufacturers.unwrap_or(vec![]);
+        let device_manufacturers = loader.load_one(self.id).await?;
+        let result = device_manufacturers.unwrap_or(vec![]);
 
         Ok(result)
     }

@@ -1,5 +1,5 @@
 use crate::graphql::models::{
-    compressor::Compressor, pneumatic_device::NonLevelController, Facility, User,
+    compressor::Compressor, pneumatic_device::PneumaticDevice, Facility, User,
 };
 use async_graphql::Interface;
 use chrono::NaiveDateTime;
@@ -16,6 +16,6 @@ use uuid::Uuid;
     field(name = "updated_at", type = "&NaiveDateTime")
 )]
 pub enum EmitterInterface {
-    Controller(NonLevelController),
+    Controller(PneumaticDevice),
     Compressor(Compressor),
 }

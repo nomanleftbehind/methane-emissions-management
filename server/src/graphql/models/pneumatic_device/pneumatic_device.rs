@@ -2,37 +2,37 @@ use super::NonLevelControllerChange;
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        controller_application_loader::ControllerApplicationLoader,
         controller_change_loader::ControllerChangesByControllerLoader,
         controller_manufacturer_loader::ControllerManufacturerLoader,
         controller_month_hours_loader::ControllerMonthHoursByControllerLoader,
         controller_month_vent_loader::ControllerMonthVentsByControllerLoader,
         controller_month_vent_override_loader::ControllerMonthVentOverridesByControllerLoader,
-        facility_loader::FacilityLoader, user_loader::UserLoader,
+        facility::FacilityLoader, site::SiteLoader, user::UserLoader,
     },
     models::{
         pneumatic_device::{
-            ControllerManufacturer, ControllerMonthHours, ControllerMonthVent,
-            ControllerMonthVentOverride, NonLevelControllerType,
+            ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride,
+            DeviceManufacturer,
         },
+        site::Site,
         Facility, User,
     },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;
+use common::PneumaticDeviceType;
 use sqlx::FromRow;
 use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct NonLevelController {
+pub struct PneumaticDevice {
     pub id: Uuid,
-    pub fdc_rec_id: String,
+    pub site_id: Uuid,
+    pub r#type: PneumaticDeviceType,
     pub manufacturer_id: Uuid,
     pub model: Option<String>,
     pub serial_number: Option<String>,
-    pub application_id: Option<Uuid>,
-    pub facility_id: Uuid,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -40,7 +40,7 @@ pub struct NonLevelController {
 }
 
 #[ComplexObject]
-impl NonLevelController {
+impl PneumaticDevice {
     pub(in crate::graphql) async fn created_by(
         &self,
         ctx: &Context<'_>,
@@ -61,34 +61,14 @@ impl NonLevelController {
         updated_by
     }
 
-    pub(in crate::graphql) async fn facility(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Option<Facility>, Error> {
-        let loader = ctx.get_loader::<DataLoader<FacilityLoader>>();
-        let facility = loader.load_one(self.facility_id).await;
+    pub(in crate::graphql) async fn site(&self, ctx: &Context<'_>) -> Result<Option<Site>, Error> {
+        let loader = ctx.get_loader::<DataLoader<SiteLoader>>();
+        let facility = loader.load_one(self.site_id).await;
 
         facility
     }
 
-    async fn application(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Option<NonLevelControllerType>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerApplicationLoader>>();
-        let application = if let Some(id) = self.application_id {
-            loader.load_one(id).await
-        } else {
-            Ok(None)
-        };
-
-        application
-    }
-
-    async fn manufacturer(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Option<ControllerManufacturer>, Error> {
+    async fn manufacturer(&self, ctx: &Context<'_>) -> Result<Option<DeviceManufacturer>, Error> {
         let loader = ctx.get_loader::<DataLoader<ControllerManufacturerLoader>>();
         let manufacturer = loader.load_one(self.manufacturer_id).await;
 

@@ -63,7 +63,7 @@ async fn get_stored_credentials(
 ) -> Result<Option<UserSecret>, anyhow::Error> {
     let row = sqlx::query_as!(
         User,
-        r#"SELECT id, email, password, first_name, last_name, role as "role: _" FROM "users" WHERE email = $1"#,
+        r#"SELECT id, email, password, first_name, last_name, role as "role: _" FROM "user" WHERE email = $1"#,
         email
     )
     .fetch_optional(pool)
@@ -201,7 +201,7 @@ pub async fn register(
     let user = if let Some(some_role) = role {
         sqlx::query_as!(
             User,
-            r#"INSERT INTO users (id, email, password, first_name, last_name, role)
+            r#"INSERT INTO "user" (id, email, password, first_name, last_name, role)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING email, id, password, first_name, last_name, role as "role: _";"#,
             Uuid::new_v4(),
@@ -216,7 +216,7 @@ pub async fn register(
     } else {
         sqlx::query_as!(
             User,
-            r#"INSERT INTO users (id, email, password, first_name, last_name)
+            r#"INSERT INTO "user" (id, email, password, first_name, last_name)
             VALUES ($1, $2, $3, $4, $5)
             RETURNING email, id, password, first_name, last_name, role as "role: _";
             "#,

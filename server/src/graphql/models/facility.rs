@@ -6,7 +6,7 @@ use crate::graphql::{
         user_loader::UserLoader,
     },
     models::{
-        compressor::Compressor, pneumatic_device::NonLevelController, GasAnalysis, TankFarm, User,
+        compressor::Compressor, pneumatic_device::PneumaticDevice, GasAnalysis, TankFarm, User,
     },
 };
 use async_graphql::{
@@ -52,11 +52,11 @@ impl Facility {
         updated_by
     }
 
-    async fn controllers(&self, ctx: &Context<'_>) -> Result<Vec<NonLevelController>, Error> {
+    async fn pneumatic_devices(&self, ctx: &Context<'_>) -> Result<Vec<PneumaticDevice>, Error> {
         let loader = ctx.get_loader::<DataLoader<FacilityControllersLoader>>();
-        let non_level_controllers = loader.load_one(self.id).await?;
-        // Need to return empty vector if facility has no associated non-level controllers
-        let result = non_level_controllers.unwrap_or(vec![]);
+        let pneumatic_devices = loader.load_one(self.id).await?;
+        // Need to return empty vector if facility has no associated pneumatic devices
+        let result = pneumatic_devices.unwrap_or(vec![]);
 
         Ok(result)
     }
