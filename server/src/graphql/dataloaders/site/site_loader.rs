@@ -2,7 +2,7 @@ use crate::graphql::models::site::Site;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
-use sqlx::PgPool;
+use sqlx::{query_as, PgPool};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -22,7 +22,7 @@ impl Loader<Uuid> for SiteLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let sites = sqlx::query_as!(
+        let sites = query_as!(
             Site,
             r#"SELECT
             id, facility_id, fdc_rec_id, name, type as "type: _", description, created_by_id, created_at, updated_by_id, updated_at
@@ -56,7 +56,7 @@ impl Loader<Uuid> for CreatedSitesLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut sites = sqlx::query_as!(
+        let mut sites = query_as!(
             Site,
             r#"SELECT
             id, facility_id, fdc_rec_id, name, type as "type: _", description, created_by_id, created_at, updated_by_id, updated_at
@@ -96,7 +96,7 @@ impl Loader<Uuid> for UpdatedSitesLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut sites = sqlx::query_as!(
+        let mut sites = query_as!(
             Site,
             r#"SELECT
             id, facility_id, fdc_rec_id, name, type as "type: _", description, created_by_id, created_at, updated_by_id, updated_at
@@ -136,7 +136,7 @@ impl Loader<Uuid> for FacilitySitesLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut sites = sqlx::query_as!(
+        let mut sites = query_as!(
             Site,
             r#"SELECT id, facility_id, fdc_rec_id, name, type as "type: _", description, created_by_id, created_at, updated_by_id, updated_at FROM site WHERE facility_id = ANY($1)"#,
             keys

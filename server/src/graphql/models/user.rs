@@ -58,9 +58,10 @@ use crate::graphql::{
     },
     models::{
         compressor::Compressor,
+        month_methane_emission::MonthMethaneEmission,
         pneumatic_device::{
-            ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride,
-            DeviceManufacturer, NonLevelControllerChange, PneumaticDevice,
+            ControllerMonthVentOverride, DeviceManufacturer, PneumaticDevice,
+            PneumaticDeviceChange, PneumaticDeviceMonthHours,
         },
         CompressorBlowdown, CompressorChange, CompressorMonthHours, CompressorMonthVent,
         CompressorMonthVentOverride, Facility, GasAnalysis, GasAnalysisCalculatedParam, TankFarm,
@@ -164,7 +165,7 @@ impl User {
     async fn created_controller_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerChange>, Error> {
+    ) -> Result<Vec<PneumaticDeviceChange>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllerChangesLoader>>();
         let controller_changes = loader.load_one(self.id).await?;
         let result = controller_changes.unwrap_or(vec![]);
@@ -175,7 +176,7 @@ impl User {
     async fn updated_controller_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerChange>, Error> {
+    ) -> Result<Vec<PneumaticDeviceChange>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerChangesLoader>>();
         let controller_changes = loader.load_one(self.id).await?;
         let result = controller_changes.unwrap_or(vec![]);
@@ -186,7 +187,7 @@ impl User {
     async fn created_controller_month_hours(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerMonthHours>, Error> {
+    ) -> Result<Vec<PneumaticDeviceMonthHours>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllerMonthHoursLoader>>();
         let controller_month_hours = loader.load_one(self.id).await?;
         let result = controller_month_hours.unwrap_or(vec![]);
@@ -197,7 +198,7 @@ impl User {
     async fn updated_controller_month_hours(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerMonthHours>, Error> {
+    ) -> Result<Vec<PneumaticDeviceMonthHours>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerMonthHoursLoader>>();
         let controller_month_hours = loader.load_one(self.id).await?;
         let result = controller_month_hours.unwrap_or(vec![]);
@@ -227,10 +228,10 @@ impl User {
         Ok(result)
     }
 
-    async fn created_controller_month_vents(
+    async fn created_month_methane_emissions(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerMonthVent>, Error> {
+    ) -> Result<Vec<MonthMethaneEmission>, Error> {
         let loader = ctx.get_loader::<DataLoader<CreatedControllerMonthVentsLoader>>();
         let controller_month_vents = loader.load_one(self.id).await?;
         let result = controller_month_vents.unwrap_or(vec![]);
@@ -238,10 +239,10 @@ impl User {
         Ok(result)
     }
 
-    async fn updated_controller_month_vents(
+    async fn updated_month_methane_emissions(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerMonthVent>, Error> {
+    ) -> Result<Vec<MonthMethaneEmission>, Error> {
         let loader = ctx.get_loader::<DataLoader<UpdatedControllerMonthVentsLoader>>();
         let controller_month_vents = loader.load_one(self.id).await?;
         let result = controller_month_vents.unwrap_or(vec![]);

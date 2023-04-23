@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{controller_loader::ControllerLoader, user_loader::UserLoader},
-    models::{pneumatic_device::NonLevelController, User},
+    dataloaders::{compressor::CompressorLoader, user::UserLoader},
+    models::{compressor::Compressor, user::User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -10,11 +10,11 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct ControllerMonthHours {
+pub struct CompressorMonthHours {
     pub id: Uuid,
+    pub compressor_id: Uuid,
     pub month: NaiveDate,
-    pub hours_on: f64,
-    pub controller_id: Uuid,
+    pub pressurized_hours: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -22,7 +22,7 @@ pub struct ControllerMonthHours {
 }
 
 #[ComplexObject]
-impl ControllerMonthHours {
+impl CompressorMonthHours {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -37,10 +37,10 @@ impl ControllerMonthHours {
         updated_by
     }
 
-    async fn controller(&self, ctx: &Context<'_>) -> Result<Option<NonLevelController>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerLoader>>();
-        let controller = loader.load_one(self.controller_id).await;
+    async fn compressor(&self, ctx: &Context<'_>) -> Result<Option<Compressor>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorLoader>>();
+        let compressor = loader.load_one(self.compressor_id).await;
 
-        controller
+        compressor
     }
 }

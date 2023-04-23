@@ -1,21 +1,24 @@
-use super::NonLevelControllerChange;
+use super::PneumaticDeviceChange;
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        controller_change_loader::ControllerChangesByControllerLoader,
-        controller_manufacturer_loader::ControllerManufacturerLoader,
-        controller_month_hours_loader::ControllerMonthHoursByControllerLoader,
-        controller_month_vent_loader::ControllerMonthVentsByControllerLoader,
-        controller_month_vent_override_loader::ControllerMonthVentOverridesByControllerLoader,
-        facility::FacilityLoader, site::SiteLoader, user::UserLoader,
+        month_methane_emission::MonthMethaneEmissionsByEmissionSourceLoader,
+        pneumatic_device::{
+            DeviceManufacturerLoader, PneumaticDeviceChangesByPneumaticDeviceLoader,
+            PneumaticDeviceMonthHoursByPneumaticDeviceLoader,
+            PneumaticDeviceMonthMethaneEmissionOverridesByPneumaticDeviceLoader,
+        },
+        site::SiteLoader,
+        user::UserLoader,
     },
     models::{
+        month_methane_emission::MonthMethaneEmission,
         pneumatic_device::{
-            ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride,
-            DeviceManufacturer,
+            DeviceManufacturer, PneumaticDeviceMonthHours,
+            PneumaticDeviceMonthMethaneEmissionOverride,
         },
         site::Site,
-        Facility, User,
+        user::User,
     },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
@@ -41,27 +44,21 @@ pub struct PneumaticDevice {
 
 #[ComplexObject]
 impl PneumaticDevice {
-    pub(in crate::graphql) async fn created_by(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Option<User>, Error> {
+    async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
 
         created_by
     }
 
-    pub(in crate::graphql) async fn updated_by(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Option<User>, Error> {
+    async fn updated_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let updated_by = loader.load_one(self.updated_by_id).await;
 
         updated_by
     }
 
-    pub(in crate::graphql) async fn site(&self, ctx: &Context<'_>) -> Result<Option<Site>, Error> {
+    async fn site(&self, ctx: &Context<'_>) -> Result<Option<Site>, Error> {
         let loader = ctx.get_loader::<DataLoader<SiteLoader>>();
         let facility = loader.load_one(self.site_id).await;
 
@@ -69,50 +66,51 @@ impl PneumaticDevice {
     }
 
     async fn manufacturer(&self, ctx: &Context<'_>) -> Result<Option<DeviceManufacturer>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerManufacturerLoader>>();
+        let loader = ctx.get_loader::<DataLoader<DeviceManufacturerLoader>>();
         let manufacturer = loader.load_one(self.manufacturer_id).await;
 
         manufacturer
     }
 
-    async fn controller_changes(
+    async fn pneumatic_device_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerChangesByControllerLoader>>();
-        let controller_changes = loader.load_one(self.id).await?;
-        let result = controller_changes.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticDeviceChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<PneumaticDeviceChangesByPneumaticDeviceLoader>>();
+        let pneumatic_device_changes = loader.load_one(self.id).await?;
+        let result = pneumatic_device_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn controller_month_hours(
+    async fn pneumatic_device_month_hours(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerMonthHours>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerMonthHoursByControllerLoader>>();
-        let controller_month_hours = loader.load_one(self.id).await?;
-        let result = controller_month_hours.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticDeviceMonthHours>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<PneumaticDeviceMonthHoursByPneumaticDeviceLoader>>();
+        let pneumatic_device_month_hours = loader.load_one(self.id).await?;
+        let result = pneumatic_device_month_hours.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn controller_month_vent_overrides(
+    async fn pneumatic_device_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerMonthVentOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerMonthVentOverridesByControllerLoader>>();
-        let controller_month_vent_overrides = loader.load_one(self.id).await?;
-        let result = controller_month_vent_overrides.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticDeviceMonthMethaneEmissionOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<PneumaticDeviceMonthMethaneEmissionOverridesByPneumaticDeviceLoader>>();
+        let pneumatic_device_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = pneumatic_device_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn controller_month_vents(
+    async fn month_methane_emissions(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerMonthVent>, Error> {
-        let loader = ctx.get_loader::<DataLoader<ControllerMonthVentsByControllerLoader>>();
+    ) -> Result<Vec<MonthMethaneEmission>, Error> {
+        let loader = ctx.get_loader::<DataLoader<MonthMethaneEmissionsByEmissionSourceLoader>>();
         let controller_month_vents = loader.load_one(self.id).await?;
         let result = controller_month_vents.unwrap_or(vec![]);
 

@@ -6,6 +6,40 @@ use sqlx::PgPool;
 use std::collections::HashMap;
 use uuid::Uuid;
 
+pub struct FacilityLoader {
+    pool: Data<PgPool>,
+}
+
+impl FacilityLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for FacilityLoader {
+    type Value = Facility;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let facilities = sqlx::query_as!(
+            Facility,
+            r#"SELECT
+            id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
+            FROM facility
+            WHERE id = ANY($1)"#,
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?
+        .into_iter()
+        .map(|facility| (facility.id, facility))
+        .collect();
+
+        Ok(facilities)
+    }
+}
+
 pub struct CreatedFacilitiesLoader {
     pool: Data<PgPool>,
 }
@@ -83,39 +117,5 @@ impl Loader<Uuid> for UpdatedFacilitiesLoader {
             .collect();
 
         Ok(updated_facilities)
-    }
-}
-
-pub struct FacilityLoader {
-    pool: Data<PgPool>,
-}
-
-impl FacilityLoader {
-    pub fn new(pool: Data<PgPool>) -> Self {
-        Self { pool }
-    }
-}
-
-#[async_trait::async_trait]
-impl Loader<Uuid> for FacilityLoader {
-    type Value = Facility;
-    type Error = async_graphql::Error;
-
-    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let facilities = sqlx::query_as!(
-            Facility,
-            r#"SELECT
-            id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
-            FROM facility
-            WHERE id = ANY($1)"#,
-            keys
-        )
-        .fetch_all(&**self.pool)
-        .await?
-        .into_iter()
-        .map(|facility| (facility.id, facility))
-        .collect();
-
-        Ok(facilities)
     }
 }

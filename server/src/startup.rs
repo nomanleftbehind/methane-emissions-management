@@ -3,7 +3,6 @@ use crate::{
     configuration::{DatabaseSettings, DefaultGasParams, FdcDatabaseSettings, Settings},
     graphql::{
         dataloaders::{get_loaders, LoaderRegistry},
-        interfaces::EmitterInterface,
         mutations::full_mutation,
         queries::full_query,
     },
@@ -126,7 +125,6 @@ pub async fn run(
     let session_cookie_name_secret_atomic = web::Data::new(session_cookie_name_secret);
 
     let schema_builder = Schema::build(full_query(), full_mutation(), EmptySubscription)
-        .register_output_type::<EmitterInterface>()
         .extension(async_graphql::extensions::Tracing)
         .limit_complexity(1024)
         .data(loader_registry_data)

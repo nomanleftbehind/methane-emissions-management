@@ -2,7 +2,7 @@ use crate::graphql::models::compressor::Compressor;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
-use sqlx::PgPool;
+use sqlx::{query_as, PgPool};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -22,9 +22,14 @@ impl Loader<Uuid> for CompressorLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let compressors = sqlx::query_as!(
+        let compressors = query_as!(
             Compressor,
-            "SELECT * FROM compressors WHERE id = ANY($1)",
+            r#"
+            SELECT
+            id, site_id, fdc_rec_id, type as "type: _", controlled, name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM compressor
+            WHERE id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -55,7 +60,12 @@ impl Loader<Uuid> for CreatedCompressorsLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressors = sqlx::query_as!(
             Compressor,
-            "SELECT * FROM compressors WHERE created_by_id = ANY($1)",
+            r#"
+            SELECT
+            id, site_id, fdc_rec_id, type as "type: _", controlled, name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM compressor
+            WHERE created_by_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -91,7 +101,12 @@ impl Loader<Uuid> for UpdatedCompressorsLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressors = sqlx::query_as!(
             Compressor,
-            "SELECT * FROM compressors WHERE updated_by_id = ANY($1)",
+            r#"
+            SELECT
+            id, site_id, fdc_rec_id, type as "type: _", controlled, name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM compressor
+            WHERE updated_by_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -109,25 +124,30 @@ impl Loader<Uuid> for UpdatedCompressorsLoader {
     }
 }
 
-pub struct FacilityCompressorsLoader {
+pub struct SiteCompressorsLoader {
     pool: Data<PgPool>,
 }
 
-impl FacilityCompressorsLoader {
+impl SiteCompressorsLoader {
     pub fn new(pool: Data<PgPool>) -> Self {
         Self { pool }
     }
 }
 
 #[async_trait::async_trait]
-impl Loader<Uuid> for FacilityCompressorsLoader {
+impl Loader<Uuid> for SiteCompressorsLoader {
     type Value = Vec<Compressor>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressors = sqlx::query_as!(
             Compressor,
-            "SELECT * FROM compressors WHERE facility_id = ANY($1)",
+            r#"
+            SELECT
+            id, site_id, fdc_rec_id, type as "type: _", controlled, name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM compressor
+            WHERE site_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)

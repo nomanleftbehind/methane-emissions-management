@@ -7,7 +7,10 @@ use std::fmt::Display;
 #[cfg_attr(
     not(target_arch = "wasm32"),
     derive(async_graphql::Enum, sqlx::Type),
-    sqlx(type_name = "facility_type", rename_all = "SCREAMING_SNAKE_CASE")
+    sqlx(
+        type_name = "pneumatic_device_type",
+        rename_all = "SCREAMING_SNAKE_CASE"
+    )
 )]
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]

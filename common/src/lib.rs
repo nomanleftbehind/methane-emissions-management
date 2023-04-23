@@ -3,10 +3,14 @@ use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use uuid::Uuid;
 
+mod compressor;
+mod month_methane_emission;
 mod pneumatic_device_type;
 mod site;
 mod user;
 
+pub use compressor::*;
+pub use month_methane_emission::*;
 pub use pneumatic_device_type::*;
 pub use site::*;
 pub use user::*;

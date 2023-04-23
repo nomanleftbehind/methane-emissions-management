@@ -7,7 +7,7 @@ use std::fmt::Display;
 #[cfg_attr(
     not(target_arch = "wasm32"),
     derive(async_graphql::Enum, sqlx::Type),
-    sqlx(type_name = "facility_type", rename_all = "SCREAMING_SNAKE_CASE")
+    sqlx(type_name = "site_type", rename_all = "SCREAMING_SNAKE_CASE")
 )]
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -25,7 +25,7 @@ impl Display for SiteType {
             SiteType::Battery => write!(f, "Battery"),
             SiteType::Satellite => write!(f, "Satellite"),
             SiteType::Well => write!(f, "Well"),
-            SiteType::GasPlant => write!(f, "GasPlant"),
+            SiteType::GasPlant => write!(f, "Gas Plant"),
             SiteType::Compressor => write!(f, "Compressor"),
         }
     }

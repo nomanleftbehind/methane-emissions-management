@@ -1,12 +1,12 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        compressor_loader::FacilityCompressorsLoader, controller_loader::FacilityControllersLoader,
-        gas_analysis_loader::GasAnalysesByFacilityLoader, tank_farm_loader::FacilityTankFarmLoader,
-        user_loader::UserLoader,
+        gas_analysis_loader::GasAnalysesByFacilityLoader,
+        month_methane_emission::MonthMethaneEmissionsByFacilityLoader, site::FacilitySitesLoader,
+        tank_farm_loader::FacilityTankFarmLoader, user::UserLoader,
     },
     models::{
-        compressor::Compressor, pneumatic_device::PneumaticDevice, GasAnalysis, TankFarm, User,
+        compressor::Compressor, site::Site, user::User, GasAnalysis, MonthMethaneEmission, TankFarm,
     },
 };
 use async_graphql::{
@@ -52,20 +52,10 @@ impl Facility {
         updated_by
     }
 
-    async fn pneumatic_devices(&self, ctx: &Context<'_>) -> Result<Vec<PneumaticDevice>, Error> {
-        let loader = ctx.get_loader::<DataLoader<FacilityControllersLoader>>();
-        let pneumatic_devices = loader.load_one(self.id).await?;
-        // Need to return empty vector if facility has no associated pneumatic devices
-        let result = pneumatic_devices.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
-    async fn compressors(&self, ctx: &Context<'_>) -> Result<Vec<Compressor>, Error> {
-        let loader = ctx.get_loader::<DataLoader<FacilityCompressorsLoader>>();
-        let compressors = loader.load_one(self.id).await?;
-        // Need to return empty vector if facility has no associated compressors
-        let result = compressors.unwrap_or(vec![]);
+    async fn sites(&self, ctx: &Context<'_>) -> Result<Vec<Site>, Error> {
+        let loader = ctx.get_loader::<DataLoader<FacilitySitesLoader>>();
+        let sites = loader.load_one(self.id).await?;
+        let result = sites.unwrap_or(vec![]);
 
         Ok(result)
     }
@@ -82,6 +72,17 @@ impl Facility {
         let gas_analyses = loader.load_one(self.id).await?;
         // Need to return empty vector if facility has no associated gas analyses
         let result = gas_analyses.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn month_methane_emissions(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<MonthMethaneEmission>, Error> {
+        let loader = ctx.get_loader::<DataLoader<MonthMethaneEmissionsByFacilityLoader>>();
+        let month_methane_emissions = loader.load_one(self.id).await?;
+        let result = month_methane_emissions.unwrap_or(vec![]);
 
         Ok(result)
     }

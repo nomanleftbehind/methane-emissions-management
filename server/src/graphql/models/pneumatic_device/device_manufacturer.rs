@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{pneumatic_device::PneumaticDevicesByManufacturerLoader, user::UserLoader},
-    models::{pneumatic_device::PneumaticDevice, User},
+    models::{pneumatic_device::PneumaticDevice, user::User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;
