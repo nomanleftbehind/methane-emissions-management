@@ -1,7 +1,7 @@
 use crate::graphql::models::user::User;
 use actix_web::web::Data;
 use async_graphql::{dataloader::*, *};
-use sqlx::PgPool;
+use sqlx::{query_as, PgPool};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -21,7 +21,7 @@ impl Loader<Uuid> for UserLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let users = sqlx::query_as!(
+        let users = query_as!(
             User,
             r#"SELECT id, email, password, first_name, last_name, role as "role: _" FROM "user" WHERE id = ANY($1)"#,
             keys

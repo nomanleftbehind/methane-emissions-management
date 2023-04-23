@@ -1,22 +1,19 @@
-use super::CompressorSeal;
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{compressor::CompressorSealLoader, user::UserLoader},
-    models::user::User,
+    dataloaders::{compressor::CompressorSealTestsBySurveyEquipmentLoader, user::UserLoader},
+    models::{compressor::CompressorSealTest, user::User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
-use chrono::{NaiveDate, NaiveDateTime};
+use chrono::NaiveDateTime;
 use sqlx::FromRow;
 use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct CompressorSealTest {
+pub struct SurveyEquipment {
     pub id: Uuid,
-    pub compressor_seal_id: Uuid,
-    pub date: NaiveDate,
-    pub rate: f64,
-    pub survey_equipment_id: Uuid,
+    pub make: String,
+    pub model: String,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -24,7 +21,7 @@ pub struct CompressorSealTest {
 }
 
 #[ComplexObject]
-impl CompressorSealTest {
+impl SurveyEquipment {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -39,10 +36,14 @@ impl CompressorSealTest {
         updated_by
     }
 
-    async fn compressor_seal(&self, ctx: &Context<'_>) -> Result<Option<CompressorSeal>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CompressorSealLoader>>();
-        let compressor_seal = loader.load_one(self.compressor_seal_id).await;
+    async fn compressor_seal_tests(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorSealTest>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorSealTestsBySurveyEquipmentLoader>>();
+        let compressor_seal_tests = loader.load_one(self.id).await?;
+        let result = compressor_seal_tests.unwrap_or(vec![]);
 
-        compressor_seal
+        Ok(result)
     }
 }

@@ -1,10 +1,11 @@
-use super::PneumaticDeviceChange;
+use super::{LevelControllerActuationFrequency, PneumaticDeviceChange};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         month_methane_emission::MonthMethaneEmissionsByEmissionSourceLoader,
         pneumatic_device::{
-            DeviceManufacturerLoader, PneumaticDeviceChangesByPneumaticDeviceLoader,
+            DeviceManufacturerLoader, LevelControllerActuationFrequenciesByLevelControllerLoader,
+            PneumaticDeviceChangesByPneumaticDeviceLoader,
             PneumaticDeviceMonthHoursByPneumaticDeviceLoader,
             PneumaticDeviceMonthMethaneEmissionOverridesByPneumaticDeviceLoader,
         },
@@ -27,6 +28,11 @@ use common::PneumaticDeviceType;
 use sqlx::FromRow;
 use uuid::Uuid;
 
+/// Pneumatic instrument: A pneumatic device, powered by pressurized gas, used for maintaining a process condition such as liquid level, pressure, or temperature. Includes positioners, pressure controllers, level controllers, temperature controllers, and transducers.
+///
+/// or
+///
+/// Pneumatic pump: A pneumatic device that uses pressurized gas to move a piston or diaphragm, which pumps liquids on the opposite side of the piston or diaphragm. Includes methanol and chemical injection pumps, but does not include energy exchange pumps.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
 pub struct PneumaticDevice {
@@ -79,6 +85,18 @@ impl PneumaticDevice {
         let loader = ctx.get_loader::<DataLoader<PneumaticDeviceChangesByPneumaticDeviceLoader>>();
         let pneumatic_device_changes = loader.load_one(self.id).await?;
         let result = pneumatic_device_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn level_controller_actuation_frequencies(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<LevelControllerActuationFrequency>, Error> {
+        let loader = ctx
+            .get_loader::<DataLoader<LevelControllerActuationFrequenciesByLevelControllerLoader>>();
+        let level_controller_actuation_frequencies = loader.load_one(self.id).await?;
+        let result = level_controller_actuation_frequencies.unwrap_or(vec![]);
 
         Ok(result)
     }

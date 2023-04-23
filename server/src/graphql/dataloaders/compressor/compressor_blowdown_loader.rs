@@ -1,8 +1,8 @@
-use crate::graphql::models::CompressorBlowdown;
+use crate::graphql::models::compressor::CompressorBlowdown;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
-use sqlx::PgPool;
+use sqlx::{query_as, PgPool};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -22,7 +22,7 @@ impl Loader<Uuid> for CompressorBlowdownLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let compressor_blowdowns = sqlx::query_as!(
+        let compressor_blowdowns = query_as!(
             CompressorBlowdown,
             "SELECT * FROM compressor_blowdown WHERE id = ANY($1)",
             keys
@@ -53,7 +53,7 @@ impl Loader<Uuid> for CreatedCompressorBlowdownsLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressor_blowdowns = sqlx::query_as!(
+        let mut compressor_blowdowns = query_as!(
             CompressorBlowdown,
             "SELECT * FROM compressor_blowdown WHERE created_by_id = ANY($1)",
             keys
@@ -90,7 +90,7 @@ impl Loader<Uuid> for UpdatedCompressorBlowdownsLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressor_blowdowns = sqlx::query_as!(
+        let mut compressor_blowdowns = query_as!(
             CompressorBlowdown,
             "SELECT * FROM compressor_blowdown WHERE updated_by_id = ANY($1)",
             keys
@@ -127,7 +127,7 @@ impl Loader<Uuid> for CompressorBlowdownsByCompressorLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressor_blowdowns = sqlx::query_as!(
+        let mut compressor_blowdowns = query_as!(
             CompressorBlowdown,
             "SELECT * FROM compressor_blowdown WHERE compressor_id = ANY($1)",
             keys

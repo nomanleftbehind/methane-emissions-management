@@ -1,22 +1,27 @@
-use super::CompressorSeal;
+use super::Tank;
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{compressor::CompressorSealLoader, user::UserLoader},
-    models::user::User,
+    dataloaders::{defined_vent_gas::tank::TankLoader, user::UserLoader},
+    models::User,
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
 use uuid::Uuid;
 
+/// Model representing user overrides of calculated monthly vented volumes from tanks.
+///
+/// Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::mutations::validators::MonthBeginningValidator).
+///
+/// Field `gas_volume` is in m³.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct CompressorSealTest {
+pub struct TankMonthMethaneEmissionOverride {
     pub id: Uuid,
-    pub compressor_seal_id: Uuid,
-    pub date: NaiveDate,
-    pub rate: f64,
-    pub survey_equipment_id: Uuid,
+    pub tank_id: Uuid,
+    pub month: NaiveDate,
+    pub gas_volume: f64,
+    pub comment: Option<String>,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -24,7 +29,7 @@ pub struct CompressorSealTest {
 }
 
 #[ComplexObject]
-impl CompressorSealTest {
+impl TankMonthMethaneEmissionOverride {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -39,10 +44,10 @@ impl CompressorSealTest {
         updated_by
     }
 
-    async fn compressor_seal(&self, ctx: &Context<'_>) -> Result<Option<CompressorSeal>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CompressorSealLoader>>();
-        let compressor_seal = loader.load_one(self.compressor_seal_id).await;
+    async fn tank(&self, ctx: &Context<'_>) -> Result<Option<Tank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<TankLoader>>();
+        let tank_farm = loader.load_one(self.tank_id).await;
 
-        compressor_seal
+        tank_farm
     }
 }

@@ -1,8 +1,8 @@
-use crate::graphql::models::CompressorMonthHours;
+use crate::graphql::models::compressor::CompressorMonthHours;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
-use sqlx::PgPool;
+use sqlx::{query_as, PgPool};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -22,7 +22,7 @@ impl Loader<Uuid> for CompressorMonthHoursLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let compressor_month_hours = sqlx::query_as!(
+        let compressor_month_hours = query_as!(
             CompressorMonthHours,
             "SELECT * FROM compressor_month_hours WHERE id = ANY($1)",
             keys
@@ -53,7 +53,7 @@ impl Loader<Uuid> for CreatedCompressorMonthHoursLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressor_month_hours_s = sqlx::query_as!(
+        let mut compressor_month_hours = query_as!(
             CompressorMonthHours,
             "SELECT * FROM compressor_month_hours WHERE created_by_id = ANY($1)",
             keys
@@ -61,17 +61,17 @@ impl Loader<Uuid> for CreatedCompressorMonthHoursLoader {
         .fetch_all(&**self.pool)
         .await?;
 
-        compressor_month_hours_s
+        compressor_month_hours
             .sort_by_key(|compressor_month_hours| compressor_month_hours.created_by_id);
 
-        let created_compressor_month_hours = compressor_month_hours_s
+        let compressor_month_hours = compressor_month_hours
             .into_iter()
             .group_by(|cf| cf.created_by_id)
             .into_iter()
             .map(|(created_by_id, group)| (created_by_id, group.collect()))
             .collect();
 
-        Ok(created_compressor_month_hours)
+        Ok(compressor_month_hours)
     }
 }
 
@@ -91,7 +91,7 @@ impl Loader<Uuid> for UpdatedCompressorMonthHoursLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressor_month_hours_s = sqlx::query_as!(
+        let mut compressor_month_hours = query_as!(
             CompressorMonthHours,
             "SELECT * FROM compressor_month_hours WHERE updated_by_id = ANY($1)",
             keys
@@ -99,17 +99,17 @@ impl Loader<Uuid> for UpdatedCompressorMonthHoursLoader {
         .fetch_all(&**self.pool)
         .await?;
 
-        compressor_month_hours_s
+        compressor_month_hours
             .sort_by_key(|compressor_month_hours| compressor_month_hours.updated_by_id);
 
-        let updated_compressor_month_hours = compressor_month_hours_s
+        let compressor_month_hours = compressor_month_hours
             .into_iter()
             .group_by(|compressor_month_hours| compressor_month_hours.updated_by_id)
             .into_iter()
             .map(|(updated_by_id, group)| (updated_by_id, group.collect()))
             .collect();
 
-        Ok(updated_compressor_month_hours)
+        Ok(compressor_month_hours)
     }
 }
 
@@ -129,7 +129,7 @@ impl Loader<Uuid> for CompressorMonthHoursByCompressorLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressor_month_hours_s = sqlx::query_as!(
+        let mut compressor_month_hours = sqlx::query_as!(
             CompressorMonthHours,
             "SELECT * FROM compressor_month_hours WHERE compressor_id = ANY($1)",
             keys
@@ -137,16 +137,16 @@ impl Loader<Uuid> for CompressorMonthHoursByCompressorLoader {
         .fetch_all(&**self.pool)
         .await?;
 
-        compressor_month_hours_s
+        compressor_month_hours
             .sort_by_key(|compressor_month_hours| compressor_month_hours.compressor_id);
 
-        let compressor_month_hours_by_compressor = compressor_month_hours_s
+        let compressor_month_hours = compressor_month_hours
             .into_iter()
             .group_by(|compressor_month_hours| compressor_month_hours.compressor_id)
             .into_iter()
             .map(|(compressor_id, group)| (compressor_id, group.collect()))
             .collect();
 
-        Ok(compressor_month_hours_by_compressor)
+        Ok(compressor_month_hours)
     }
 }

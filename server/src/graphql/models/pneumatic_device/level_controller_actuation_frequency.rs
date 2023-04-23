@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{tank_farm_loader::TankFarmLoader, user_loader::UserLoader},
-    models::{CalculationMethod, TankFarm, User},
+    dataloaders::{pneumatic_device::PneumaticDeviceLoader, user::UserLoader},
+    models::{pneumatic_device::PneumaticDevice, user::User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -10,16 +10,12 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct TankFarmChange {
+pub struct LevelControllerActuationFrequency {
     pub id: Uuid,
-    pub tank_farm_id: Uuid,
+    pub pneumatic_device_id: Uuid,
     pub date: NaiveDate,
-    pub ia: bool,
-    pub vru: bool,
-    pub api_density: f64,
-    pub temperature: f64,
-    pub pressure: f64,
-    pub calculation_method: CalculationMethod,
+    /// Time between actuations in minutes
+    pub actuation_frequency: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -27,7 +23,7 @@ pub struct TankFarmChange {
 }
 
 #[ComplexObject]
-impl TankFarmChange {
+impl LevelControllerActuationFrequency {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -42,10 +38,10 @@ impl TankFarmChange {
         updated_by
     }
 
-    async fn tank_farm(&self, ctx: &Context<'_>) -> Result<Option<TankFarm>, Error> {
-        let loader = ctx.get_loader::<DataLoader<TankFarmLoader>>();
-        let tank_farm = loader.load_one(self.tank_farm_id).await;
+    async fn level_controller(&self, ctx: &Context<'_>) -> Result<Option<PneumaticDevice>, Error> {
+        let loader = ctx.get_loader::<DataLoader<PneumaticDeviceLoader>>();
+        let level_controller = loader.load_one(self.pneumatic_device_id).await;
 
-        tank_farm
+        level_controller
     }
 }

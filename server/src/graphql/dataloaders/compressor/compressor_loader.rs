@@ -58,7 +58,7 @@ impl Loader<Uuid> for CreatedCompressorsLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressors = sqlx::query_as!(
+        let mut compressors = query_as!(
             Compressor,
             r#"
             SELECT
@@ -72,14 +72,14 @@ impl Loader<Uuid> for CreatedCompressorsLoader {
         .await?;
         compressors.sort_by_key(|compressor| compressor.created_by_id);
 
-        let created_compressors = compressors
+        let compressors = compressors
             .into_iter()
             .group_by(|compressor| compressor.created_by_id)
             .into_iter()
             .map(|(created_by_id, group)| (created_by_id, group.collect()))
             .collect();
 
-        Ok(created_compressors)
+        Ok(compressors)
     }
 }
 
@@ -99,7 +99,7 @@ impl Loader<Uuid> for UpdatedCompressorsLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressors = sqlx::query_as!(
+        let mut compressors = query_as!(
             Compressor,
             r#"
             SELECT
@@ -113,14 +113,14 @@ impl Loader<Uuid> for UpdatedCompressorsLoader {
         .await?;
         compressors.sort_by_key(|compressor| compressor.updated_by_id);
 
-        let updated_compressors = compressors
+        let compressors = compressors
             .into_iter()
             .group_by(|compressor| compressor.updated_by_id)
             .into_iter()
             .map(|(updated_by_id, group)| (updated_by_id, group.collect()))
             .collect();
 
-        Ok(updated_compressors)
+        Ok(compressors)
     }
 }
 
@@ -152,15 +152,15 @@ impl Loader<Uuid> for SiteCompressorsLoader {
         )
         .fetch_all(&**self.pool)
         .await?;
-        compressors.sort_by_key(|compressor| compressor.facility_id);
+        compressors.sort_by_key(|compressor| compressor.site_id);
 
-        let facility_compressors = compressors
+        let compressors = compressors
             .into_iter()
-            .group_by(|compressor| compressor.facility_id)
+            .group_by(|compressor| compressor.site_id)
             .into_iter()
-            .map(|(facility_id, group)| (facility_id, group.collect()))
+            .map(|(site_id, group)| (site_id, group.collect()))
             .collect();
 
-        Ok(facility_compressors)
+        Ok(compressors)
     }
 }

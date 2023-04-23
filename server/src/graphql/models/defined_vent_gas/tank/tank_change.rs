@@ -1,20 +1,27 @@
+use super::Tank;
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{tank_farm_loader::TankFarmLoader, user_loader::UserLoader},
-    models::{TankFarm, User},
+    dataloaders::{defined_vent_gas::tank::TankLoader, user::UserLoader},
+    models::User,
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
+use common::CalculationMethod;
 use sqlx::FromRow;
 use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct TankFarmMonthOilFlow {
+pub struct TankChange {
     pub id: Uuid,
-    pub tank_farm_id: Uuid,
-    pub month: NaiveDate,
-    pub oil: f64,
+    pub tank_id: Uuid,
+    pub date: NaiveDate,
+    pub ia: bool,
+    pub vru: bool,
+    pub api_density: f64,
+    pub temperature: f64,
+    pub pressure: f64,
+    pub calculation_method: CalculationMethod,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -22,7 +29,7 @@ pub struct TankFarmMonthOilFlow {
 }
 
 #[ComplexObject]
-impl TankFarmMonthOilFlow {
+impl TankChange {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -37,9 +44,9 @@ impl TankFarmMonthOilFlow {
         updated_by
     }
 
-    async fn tank_farm(&self, ctx: &Context<'_>) -> Result<Option<TankFarm>, Error> {
-        let loader = ctx.get_loader::<DataLoader<TankFarmLoader>>();
-        let tank_farm = loader.load_one(self.tank_farm_id).await;
+    async fn tank_farm(&self, ctx: &Context<'_>) -> Result<Option<Tank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<TankLoader>>();
+        let tank_farm = loader.load_one(self.tank_id).await;
 
         tank_farm
     }

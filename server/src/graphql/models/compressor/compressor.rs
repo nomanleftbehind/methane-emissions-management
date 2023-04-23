@@ -1,12 +1,10 @@
-use super::{
-    CompressorBlowdown, CompressorChange, CompressorMonthHours, CompressorMonthVentOverride,
-};
+use super::{CompressorBlowdown, CompressorMonthHours, CompressorSeal};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         compressor::{
-            CompressorBlowdownsByCompressorLoader, CompressorChangesByCompressorLoader,
-            CompressorMonthHoursByCompressorLoader, CompressorMonthVentOverridesByCompressorLoader,
+            CompressorBlowdownsByCompressorLoader, CompressorMonthHoursByCompressorLoader,
+            CompressorSealLoader,
         },
         site::SiteLoader,
         user::UserLoader,
@@ -29,6 +27,7 @@ pub struct Compressor {
     pub controlled: bool,
     pub name: String,
     pub serial_number: String,
+    pub power: f64,
     pub throw_count: Option<i32>,
     pub install_date: NaiveDate,
     pub remove_date: Option<NaiveDate>,
@@ -40,20 +39,14 @@ pub struct Compressor {
 
 #[ComplexObject]
 impl Compressor {
-    pub(in crate::graphql) async fn created_by(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Option<User>, Error> {
+    async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
 
         created_by
     }
 
-    pub(in crate::graphql) async fn updated_by(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Option<User>, Error> {
+    async fn updated_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let updated_by = loader.load_one(self.updated_by_id).await;
 
@@ -67,12 +60,11 @@ impl Compressor {
         site
     }
 
-    async fn compressor_changes(&self, ctx: &Context<'_>) -> Result<Vec<CompressorChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CompressorChangesByCompressorLoader>>();
-        let compressor_changes = loader.load_one(self.id).await?;
-        let result = compressor_changes.unwrap_or(vec![]);
+    async fn compressor_seal(&self, ctx: &Context<'_>) -> Result<Option<CompressorSeal>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorSealLoader>>();
+        let compressor_seal = loader.load_one(self.id).await;
 
-        Ok(result)
+        compressor_seal
     }
 
     async fn compressor_month_hours(

@@ -1,8 +1,8 @@
-use crate::graphql::models::GasAnalysis;
+use crate::graphql::models::gas_analysis::GasAnalysis;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
-use sqlx::PgPool;
+use sqlx::{query_as, PgPool};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -22,9 +22,9 @@ impl Loader<Uuid> for GasAnalysisLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let gas_analyses = sqlx::query_as!(
+        let gas_analyses = query_as!(
             GasAnalysis,
-            "SELECT * FROM gas_analyses WHERE id = ANY($1)",
+            "SELECT * FROM gas_analysis WHERE id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
@@ -53,9 +53,9 @@ impl Loader<Uuid> for CreatedGasAnalysesLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut gas_analyses = sqlx::query_as!(
+        let mut gas_analyses = query_as!(
             GasAnalysis,
-            "SELECT * FROM gas_analyses WHERE created_by_id = ANY($1)",
+            "SELECT * FROM gas_analysis WHERE created_by_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
@@ -63,14 +63,14 @@ impl Loader<Uuid> for CreatedGasAnalysesLoader {
 
         gas_analyses.sort_by_key(|gas_analysis| gas_analysis.created_by_id);
 
-        let created_gas_analyses = gas_analyses
+        let gas_analyses = gas_analyses
             .into_iter()
             .group_by(|gas_analysis| gas_analysis.created_by_id)
             .into_iter()
             .map(|(created_by_id, group)| (created_by_id, group.collect()))
             .collect();
 
-        Ok(created_gas_analyses)
+        Ok(gas_analyses)
     }
 }
 
@@ -90,9 +90,9 @@ impl Loader<Uuid> for UpdatedGasAnalysesLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut gas_analyses = sqlx::query_as!(
+        let mut gas_analyses = query_as!(
             GasAnalysis,
-            "SELECT * FROM gas_analyses WHERE updated_by_id = ANY($1)",
+            "SELECT * FROM gas_analysis WHERE updated_by_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
@@ -100,14 +100,14 @@ impl Loader<Uuid> for UpdatedGasAnalysesLoader {
 
         gas_analyses.sort_by_key(|gas_analysis| gas_analysis.updated_by_id);
 
-        let updated_gas_analyses = gas_analyses
+        let gas_analyses = gas_analyses
             .into_iter()
             .group_by(|gas_analysis| gas_analysis.updated_by_id)
             .into_iter()
             .map(|(updated_by_id, group)| (updated_by_id, group.collect()))
             .collect();
 
-        Ok(updated_gas_analyses)
+        Ok(gas_analyses)
     }
 }
 
@@ -127,9 +127,9 @@ impl Loader<Uuid> for GasAnalysesByFacilityLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut gas_analyses = sqlx::query_as!(
+        let mut gas_analyses = query_as!(
             GasAnalysis,
-            "SELECT * FROM gas_analyses WHERE facility_id = ANY($1)",
+            "SELECT * FROM gas_analysis WHERE facility_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
@@ -137,13 +137,13 @@ impl Loader<Uuid> for GasAnalysesByFacilityLoader {
 
         gas_analyses.sort_by_key(|gas_analysis| gas_analysis.facility_id);
 
-        let gas_analyses_by_facility = gas_analyses
+        let gas_analyses = gas_analyses
             .into_iter()
             .group_by(|gas_analysis| gas_analysis.facility_id)
             .into_iter()
             .map(|(facility_id, group)| (facility_id, group.collect()))
             .collect();
 
-        Ok(gas_analyses_by_facility)
+        Ok(gas_analyses)
     }
 }

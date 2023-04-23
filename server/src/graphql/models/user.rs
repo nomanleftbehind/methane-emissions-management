@@ -1,72 +1,59 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        compressor_blowdown_loader::{
-            CreatedCompressorBlowdownsLoader, UpdatedCompressorBlowdownsLoader,
+        compressor::{
+            CreatedCompressorBlowdownsLoader, CreatedCompressorMonthHoursLoader,
+            CreatedCompressorSealMonthMethaneEmissionOverridesLoader,
+            CreatedCompressorSealTestsLoader, CreatedCompressorSealsLoader,
+            CreatedCompressorsLoader, UpdatedCompressorBlowdownsLoader,
+            UpdatedCompressorMonthHoursLoader,
+            UpdatedCompressorSealMonthMethaneEmissionOverridesLoader,
+            UpdatedCompressorSealTestsLoader, UpdatedCompressorsLoader, UpdatedCompressorSealsLoader,
         },
-        compressor_change_loader::{
-            CreatedCompressorChangesLoader, UpdatedCompressorChangesLoader,
+        defined_vent_gas::tank::{
+            CreatedTankChangesLoader, CreatedTankEmissionFactorsCalculatedLoader,
+            CreatedTankMonthMethaneEmissionOverridesLoader, CreatedTankMonthOilFlowsLoader,
+            CreatedTanksLoader, UpdatedTankChangesLoader,
+            UpdatedTankEmissionFactorsCalculatedLoader,
+            UpdatedTankMonthMethaneEmissionOverridesLoader, UpdatedTankMonthOilFlowsLoader,
+            UpdatedTanksLoader,
         },
-        compressor_loader::{CreatedCompressorsLoader, UpdatedCompressorsLoader},
-        compressor_month_hours_loader::{
-            CreatedCompressorMonthHoursLoader, UpdatedCompressorMonthHoursLoader,
+        facility::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
+        gas_analysis::{
+            CreatedGasAnalysesLoader, CreatedGasAnalysisCalculatedParamsLoader,
+            UpdatedGasAnalysesLoader, UpdatedGasAnalysisCalculatedParamsLoader,
         },
-        compressor_month_vent_loader::{
-            CreatedCompressorMonthVentsLoader, UpdatedCompressorMonthVentsLoader,
+        month_methane_emission::{
+            CreatedMonthMethaneEmissionsLoader, UpdatedMonthMethaneEmissionsLoader,
         },
-        compressor_month_vent_override_loader::{
-            CreatedCompressorMonthVentOverridesLoader, UpdatedCompressorMonthVentOverridesLoader,
+        pneumatic_device::{
+            CreatedDeviceManufacturersLoader, CreatedPneumaticDeviceChangesLoader,
+            CreatedPneumaticDeviceMonthHoursLoader,
+            CreatedPneumaticDeviceMonthMethaneEmissionOverridesLoader,
+            CreatedPneumaticDevicesLoader, UpdatedDeviceManufacturersLoader,
+            UpdatedPneumaticDeviceChangesLoader, UpdatedPneumaticDeviceMonthHoursLoader,
+            UpdatedPneumaticDeviceMonthMethaneEmissionOverridesLoader,
+            UpdatedPneumaticDevicesLoader,
         },
-        controller_application_loader::{
-            CreatedControllerApplicationsLoader, UpdatedControllerApplicationsLoader,
-        },
-        controller_change_loader::{
-            CreatedControllerChangesLoader, UpdatedControllerChangesLoader,
-        },
-        controller_loader::{CreatedControllersLoader, UpdatedControllersLoader},
-        controller_manufacturer_loader::{
-            CreatedControllerManufacturersLoader, UpdatedControllerManufacturersLoader,
-        },
-        controller_month_hours_loader::{
-            CreatedControllerMonthHoursLoader, UpdatedControllerMonthHoursLoader,
-        },
-        controller_month_vent_loader::{
-            CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
-        },
-        controller_month_vent_override_loader::{
-            CreatedControllerMonthVentOverridesLoader, UpdatedControllerMonthVentOverridesLoader,
-        },
-        facility_loader::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
-        gas_analysis_calculated_param_loader::{
-            CreatedGasAnalysisCalculatedParamsLoader, UpdatedGasAnalysisCalculatedParamsLoader,
-        },
-        gas_analysis_loader::{CreatedGasAnalysesLoader, UpdatedGasAnalysesLoader},
-        tank_farm_change_loader::{CreatedTankFarmChangesLoader, UpdatedTankFarmChangesLoader},
-        tank_farm_loader::{CreatedTankFarmsLoader, UpdatedTankFarmsLoader},
-        tank_farm_month_oil_flow_loader::{
-            CreatedTankFarmMonthOilFlowsLoader, UpdatedTankFarmMonthOilFlowsLoader,
-        },
-        tank_farm_month_vent_loader::{
-            CreatedTankFarmMonthVentsLoader, UpdatedTankFarmMonthVentsLoader,
-        },
-        tank_farm_month_vent_override_loader::{
-            CreatedTankFarmMonthVentOverridesLoader, UpdatedTankFarmMonthVentOverridesLoader,
-        },
-        tank_farm_vent_factor_loader::{
-            CreatedTankFarmVentFactorsCalculatedLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
-        },
+        site::{CreatedSitesLoader, UpdatedSitesLoader},
     },
     models::{
-        compressor::Compressor,
+        compressor::{
+            Compressor, CompressorBlowdown, CompressorMonthHours, CompressorSeal,
+            CompressorSealMonthMethaneEmissionOverride, CompressorSealTest,
+        },
+        defined_vent_gas::tank::{
+            Tank, TankChange, TankEmissionFactorCalculated, TankMonthMethaneEmissionOverride,
+            TankMonthOilFlow,
+        },
+        facility::Facility,
+        gas_analysis::{GasAnalysis, GasAnalysisCalculatedParam},
         month_methane_emission::MonthMethaneEmission,
         pneumatic_device::{
-            ControllerMonthVentOverride, DeviceManufacturer, PneumaticDevice,
-            PneumaticDeviceChange, PneumaticDeviceMonthHours,
+            DeviceManufacturer, PneumaticDevice, PneumaticDeviceChange, PneumaticDeviceMonthHours,
+            PneumaticDeviceMonthMethaneEmissionOverride,
         },
-        CompressorBlowdown, CompressorChange, CompressorMonthHours, CompressorMonthVent,
-        CompressorMonthVentOverride, Facility, GasAnalysis, GasAnalysisCalculatedParam, TankFarm,
-        TankFarmChange, TankFarmMonthOilFlow, TankFarmMonthVent, TankFarmMonthVentOverride,
-        TankFarmVentFactorCalculated,
+        site::Site,
     },
 };
 use async_graphql::{
@@ -116,11 +103,27 @@ impl User {
         Ok(result)
     }
 
+    async fn created_sites(&self, ctx: &Context<'_>) -> Result<Vec<Site>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedSitesLoader>>();
+        let sites = loader.load_one(self.id).await?;
+        let result = sites.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_sites(&self, ctx: &Context<'_>) -> Result<Vec<Site>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedSitesLoader>>();
+        let sites = loader.load_one(self.id).await?;
+        let result = sites.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
     async fn created_pneumatic_devices(
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<PneumaticDevice>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedControllersLoader>>();
+        let loader = ctx.get_loader::<DataLoader<CreatedPneumaticDevicesLoader>>();
         let pneumatic_devices = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no created pneumatic devices
         let result = pneumatic_devices.unwrap_or(vec![]);
@@ -132,7 +135,7 @@ impl User {
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<PneumaticDevice>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedControllersLoader>>();
+        let loader = ctx.get_loader::<DataLoader<UpdatedPneumaticDevicesLoader>>();
         let pneumatic_devices = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no updated pneumatic devices
         let result = pneumatic_devices.unwrap_or(vec![]);
@@ -144,7 +147,7 @@ impl User {
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<DeviceManufacturer>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedControllerManufacturersLoader>>();
+        let loader = ctx.get_loader::<DataLoader<CreatedDeviceManufacturersLoader>>();
         let device_manufacturers = loader.load_one(self.id).await?;
         let result = device_manufacturers.unwrap_or(vec![]);
 
@@ -155,75 +158,77 @@ impl User {
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<DeviceManufacturer>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedControllerManufacturersLoader>>();
+        let loader = ctx.get_loader::<DataLoader<UpdatedDeviceManufacturersLoader>>();
         let device_manufacturers = loader.load_one(self.id).await?;
         let result = device_manufacturers.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_controller_changes(
+    async fn created_pneumatic_device_changes(
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<PneumaticDeviceChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedControllerChangesLoader>>();
-        let controller_changes = loader.load_one(self.id).await?;
-        let result = controller_changes.unwrap_or(vec![]);
+        let loader = ctx.get_loader::<DataLoader<CreatedPneumaticDeviceChangesLoader>>();
+        let pneumatic_device_changes = loader.load_one(self.id).await?;
+        let result = pneumatic_device_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_controller_changes(
+    async fn updated_pneumatic_device_changes(
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<PneumaticDeviceChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedControllerChangesLoader>>();
-        let controller_changes = loader.load_one(self.id).await?;
-        let result = controller_changes.unwrap_or(vec![]);
+        let loader = ctx.get_loader::<DataLoader<UpdatedPneumaticDeviceChangesLoader>>();
+        let pneumatic_device_changes = loader.load_one(self.id).await?;
+        let result = pneumatic_device_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_controller_month_hours(
+    async fn created_pneumatic_device_month_hours(
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<PneumaticDeviceMonthHours>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedControllerMonthHoursLoader>>();
-        let controller_month_hours = loader.load_one(self.id).await?;
-        let result = controller_month_hours.unwrap_or(vec![]);
+        let loader = ctx.get_loader::<DataLoader<CreatedPneumaticDeviceMonthHoursLoader>>();
+        let pneumatic_device_month_hours = loader.load_one(self.id).await?;
+        let result = pneumatic_device_month_hours.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_controller_month_hours(
+    async fn updated_pneumatic_device_month_hours(
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<PneumaticDeviceMonthHours>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedControllerMonthHoursLoader>>();
-        let controller_month_hours = loader.load_one(self.id).await?;
-        let result = controller_month_hours.unwrap_or(vec![]);
+        let loader = ctx.get_loader::<DataLoader<UpdatedPneumaticDeviceMonthHoursLoader>>();
+        let pneumatic_device_month_hours = loader.load_one(self.id).await?;
+        let result = pneumatic_device_month_hours.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_controller_month_vent_overrides(
+    async fn created_pneumatic_device_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerMonthVentOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedControllerMonthVentOverridesLoader>>();
-        let controller_month_vent_overrides = loader.load_one(self.id).await?;
-        let result = controller_month_vent_overrides.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticDeviceMonthMethaneEmissionOverride>, Error> {
+        let loader = ctx
+            .get_loader::<DataLoader<CreatedPneumaticDeviceMonthMethaneEmissionOverridesLoader>>();
+        let pneumatic_device_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = pneumatic_device_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_controller_month_vent_overrides(
+    async fn updated_pneumatic_device_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<ControllerMonthVentOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedControllerMonthVentOverridesLoader>>();
-        let controller_month_vent_overrides = loader.load_one(self.id).await?;
-        let result = controller_month_vent_overrides.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticDeviceMonthMethaneEmissionOverride>, Error> {
+        let loader = ctx
+            .get_loader::<DataLoader<UpdatedPneumaticDeviceMonthMethaneEmissionOverridesLoader>>();
+        let pneumatic_device_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = pneumatic_device_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }
@@ -232,9 +237,9 @@ impl User {
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<MonthMethaneEmission>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedControllerMonthVentsLoader>>();
-        let controller_month_vents = loader.load_one(self.id).await?;
-        let result = controller_month_vents.unwrap_or(vec![]);
+        let loader = ctx.get_loader::<DataLoader<CreatedMonthMethaneEmissionsLoader>>();
+        let month_methane_emissions = loader.load_one(self.id).await?;
+        let result = month_methane_emissions.unwrap_or(vec![]);
 
         Ok(result)
     }
@@ -243,9 +248,9 @@ impl User {
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<MonthMethaneEmission>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedControllerMonthVentsLoader>>();
-        let controller_month_vents = loader.load_one(self.id).await?;
-        let result = controller_month_vents.unwrap_or(vec![]);
+        let loader = ctx.get_loader::<DataLoader<UpdatedMonthMethaneEmissionsLoader>>();
+        let month_methane_emissions = loader.load_one(self.id).await?;
+        let result = month_methane_emissions.unwrap_or(vec![]);
 
         Ok(result)
     }
@@ -268,24 +273,46 @@ impl User {
         Ok(result)
     }
 
-    async fn created_compressor_changes(
+    async fn created_compressor_seals(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<CompressorChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedCompressorChangesLoader>>();
-        let compressor_changes = loader.load_one(self.id).await?;
-        let result = compressor_changes.unwrap_or(vec![]);
+    ) -> Result<Vec<CompressorSeal>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedCompressorSealsLoader>>();
+        let compressor_seals = loader.load_one(self.id).await?;
+        let result = compressor_seals.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_compressor_changes(
+    async fn updated_compressor_seals(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<CompressorChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorChangesLoader>>();
-        let compressor_changes = loader.load_one(self.id).await?;
-        let result = compressor_changes.unwrap_or(vec![]);
+    ) -> Result<Vec<CompressorSeal>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorSealsLoader>>();
+        let compressor_seals = loader.load_one(self.id).await?;
+        let result = compressor_seals.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_compressor_seal_changes(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorSealTest>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedCompressorSealTestsLoader>>();
+        let compressor_seal_tests = loader.load_one(self.id).await?;
+        let result = compressor_seal_tests.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_compressor_seal_changes(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorSealTest>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorSealTestsLoader>>();
+        let compressor_seal_tests = loader.load_one(self.id).await?;
+        let result = compressor_seal_tests.unwrap_or(vec![]);
 
         Ok(result)
     }

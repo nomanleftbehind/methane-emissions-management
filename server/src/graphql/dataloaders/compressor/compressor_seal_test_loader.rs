@@ -1,149 +1,190 @@
-use crate::graphql::models::CompressorChange;
+use crate::graphql::models::compressor::CompressorSealTest;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
-use sqlx::PgPool;
+use sqlx::{query_as, PgPool};
 use std::collections::HashMap;
 use uuid::Uuid;
 
-pub struct CreatedCompressorChangesLoader {
+pub struct CompressorSealTestLoader {
     pool: Data<PgPool>,
 }
 
-impl CreatedCompressorChangesLoader {
+impl CompressorSealTestLoader {
     pub fn new(pool: Data<PgPool>) -> Self {
         Self { pool }
     }
 }
 
 #[async_trait::async_trait]
-impl Loader<Uuid> for CreatedCompressorChangesLoader {
-    type Value = Vec<CompressorChange>;
+impl Loader<Uuid> for CompressorSealTestLoader {
+    type Value = CompressorSealTest;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressor_changes = sqlx::query_as!(
-            CompressorChange,
-            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, rate, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE created_by_id = ANY($1)"#,
-            keys
-        )
-        .fetch_all(&**self.pool)
-        .await?;
-
-        compressor_changes.sort_by_key(|compressor_change| compressor_change.created_by_id);
-
-        let created_compressor_changes = compressor_changes
-            .into_iter()
-            .group_by(|compressor_change| compressor_change.created_by_id)
-            .into_iter()
-            .map(|(created_by_id, group)| (created_by_id, group.collect()))
-            .collect();
-
-        Ok(created_compressor_changes)
-    }
-}
-
-pub struct UpdatedCompressorChangesLoader {
-    pool: Data<PgPool>,
-}
-
-impl UpdatedCompressorChangesLoader {
-    pub fn new(pool: Data<PgPool>) -> Self {
-        Self { pool }
-    }
-}
-
-#[async_trait::async_trait]
-impl Loader<Uuid> for UpdatedCompressorChangesLoader {
-    type Value = Vec<CompressorChange>;
-    type Error = async_graphql::Error;
-
-    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressor_changes = sqlx::query_as!(
-            CompressorChange,
-            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, rate, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE updated_by_id = ANY($1)"#,
-            keys
-        )
-        .fetch_all(&**self.pool)
-        .await?;
-
-        compressor_changes.sort_by_key(|compressor_change| compressor_change.updated_by_id);
-
-        let updated_compressor_changes = compressor_changes
-            .into_iter()
-            .group_by(|compressor_change| compressor_change.updated_by_id)
-            .into_iter()
-            .map(|(updated_by_id, group)| (updated_by_id, group.collect()))
-            .collect();
-
-        Ok(updated_compressor_changes)
-    }
-}
-
-pub struct CompressorChangeLoader {
-    pool: Data<PgPool>,
-}
-
-impl CompressorChangeLoader {
-    pub fn new(pool: Data<PgPool>) -> Self {
-        Self { pool }
-    }
-}
-
-#[async_trait::async_trait]
-impl Loader<Uuid> for CompressorChangeLoader {
-    type Value = CompressorChange;
-    type Error = async_graphql::Error;
-
-    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let compressor_changes = sqlx::query_as!(
-            CompressorChange,
-            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, rate, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE id = ANY($1)"#,
+        let compressor_seal_tests = query_as!(
+            CompressorSealTest,
+            r#"SELECT * FROM compressor_seal_test WHERE id = ANY($1)"#,
             keys
         )
         .fetch_all(&**self.pool)
         .await?
         .into_iter()
-        .map(|compressor_change| (compressor_change.id, compressor_change))
+        .map(|compressor_seal_test| (compressor_seal_test.id, compressor_seal_test))
         .collect();
 
-        Ok(compressor_changes)
+        Ok(compressor_seal_tests)
     }
 }
 
-pub struct CompressorChangesByCompressorLoader {
+pub struct CreatedCompressorSealTestsLoader {
     pool: Data<PgPool>,
 }
 
-impl CompressorChangesByCompressorLoader {
+impl CreatedCompressorSealTestsLoader {
     pub fn new(pool: Data<PgPool>) -> Self {
         Self { pool }
     }
 }
 
 #[async_trait::async_trait]
-impl Loader<Uuid> for CompressorChangesByCompressorLoader {
-    type Value = Vec<CompressorChange>;
+impl Loader<Uuid> for CreatedCompressorSealTestsLoader {
+    type Value = Vec<CompressorSealTest>;
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut compressor_changes = sqlx::query_as!(
-            CompressorChange,
-            r#"SELECT id, compressor_id, date, calculation_method as "calculation_method: _", number_of_throws, rate, created_by_id, created_at, updated_by_id, updated_at FROM compressor_changes WHERE compressor_id = ANY($1)"#,
+        let mut compressor_seal_tests = query_as!(
+            CompressorSealTest,
+            "SELECT * FROM compressor_seal_test WHERE created_by_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
         .await?;
 
-        compressor_changes.sort_by_key(|compressor_change| compressor_change.compressor_id);
+        compressor_seal_tests
+            .sort_by_key(|compressor_seal_test| compressor_seal_test.created_by_id);
 
-        let compressor_changes_by_compressor = compressor_changes
+        let compressor_seal_tests = compressor_seal_tests
             .into_iter()
-            .group_by(|compressor_change| compressor_change.compressor_id)
+            .group_by(|compressor_seal_test| compressor_seal_test.created_by_id)
             .into_iter()
-            .map(|(compressor_id, group)| (compressor_id, group.collect()))
+            .map(|(created_by_id, group)| (created_by_id, group.collect()))
             .collect();
 
-        Ok(compressor_changes_by_compressor)
+        Ok(compressor_seal_tests)
+    }
+}
+
+pub struct UpdatedCompressorSealTestsLoader {
+    pool: Data<PgPool>,
+}
+
+impl UpdatedCompressorSealTestsLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for UpdatedCompressorSealTestsLoader {
+    type Value = Vec<CompressorSealTest>;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let mut compressor_seal_tests = query_as!(
+            CompressorSealTest,
+            "SELECT * FROM compressor_seal_test WHERE updated_by_id = ANY($1)",
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?;
+
+        compressor_seal_tests
+            .sort_by_key(|compressor_seal_test| compressor_seal_test.updated_by_id);
+
+        let compressor_seal_tests = compressor_seal_tests
+            .into_iter()
+            .group_by(|compressor_seal_test| compressor_seal_test.updated_by_id)
+            .into_iter()
+            .map(|(updated_by_id, group)| (updated_by_id, group.collect()))
+            .collect();
+
+        Ok(compressor_seal_tests)
+    }
+}
+
+pub struct CompressorSealTestsByCompressorSealLoader {
+    pool: Data<PgPool>,
+}
+
+impl CompressorSealTestsByCompressorSealLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for CompressorSealTestsByCompressorSealLoader {
+    type Value = Vec<CompressorSealTest>;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let mut compressor_seal_tests = query_as!(
+            CompressorSealTest,
+            "SELECT * FROM compressor_seal_test WHERE compressor_seal_id = ANY($1)",
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?;
+
+        compressor_seal_tests
+            .sort_by_key(|compressor_seal_test| compressor_seal_test.compressor_seal_id);
+
+        let compressor_seal_tests = compressor_seal_tests
+            .into_iter()
+            .group_by(|compressor_seal_test| compressor_seal_test.compressor_seal_id)
+            .into_iter()
+            .map(|(compressor_seal_id, group)| (compressor_seal_id, group.collect()))
+            .collect();
+
+        Ok(compressor_seal_tests)
+    }
+}
+
+pub struct CompressorSealTestsBySurveyEquipmentLoader {
+    pool: Data<PgPool>,
+}
+
+impl CompressorSealTestsBySurveyEquipmentLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for CompressorSealTestsBySurveyEquipmentLoader {
+    type Value = Vec<CompressorSealTest>;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let mut compressor_seal_tests = query_as!(
+            CompressorSealTest,
+            "SELECT * FROM compressor_seal_test WHERE survey_equipment_id = ANY($1)",
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?;
+
+        compressor_seal_tests
+            .sort_by_key(|compressor_seal_test| compressor_seal_test.survey_equipment_id);
+
+        let compressor_seal_tests = compressor_seal_tests
+            .into_iter()
+            .group_by(|compressor_seal_test| compressor_seal_test.survey_equipment_id)
+            .into_iter()
+            .map(|(survey_equipment_id, group)| (survey_equipment_id, group.collect()))
+            .collect();
+
+        Ok(compressor_seal_tests)
     }
 }

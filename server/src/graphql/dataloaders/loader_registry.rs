@@ -1,89 +1,56 @@
 use super::{
-    compressor_blowdown_loader::{
-        CompressorBlowdownLoader, CompressorBlowdownsByCompressorLoader,
-        CreatedCompressorBlowdownsLoader, UpdatedCompressorBlowdownsLoader,
+    compressor::{
+        CompressorBlowdownLoader, CompressorBlowdownsByCompressorLoader, CompressorLoader,
+        CompressorMonthHoursByCompressorLoader, CompressorMonthHoursLoader, CompressorSealLoader,
+        CompressorSealMonthMethaneEmissionOverrideLoader,
+        CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader,
+        CompressorSealTestLoader, CompressorSealTestsByCompressorSealLoader,
+        CompressorSealTestsBySurveyEquipmentLoader, CreatedCompressorBlowdownsLoader,
+        CreatedCompressorMonthHoursLoader,
+        CreatedCompressorSealMonthMethaneEmissionOverridesLoader, CreatedCompressorSealTestsLoader,
+        CreatedCompressorSealsLoader, CreatedCompressorsLoader, SiteCompressorsLoader,
+        UpdatedCompressorBlowdownsLoader, UpdatedCompressorMonthHoursLoader,
+        UpdatedCompressorSealMonthMethaneEmissionOverridesLoader, UpdatedCompressorSealTestsLoader,
+        UpdatedCompressorSealsLoader, UpdatedCompressorsLoader,
     },
-    compressor_change_loader::{
-        CompressorChangeLoader, CompressorChangesByCompressorLoader,
-        CreatedCompressorChangesLoader, UpdatedCompressorChangesLoader,
+    defined_vent_gas::tank::{
+        CreatedTankChangesLoader, CreatedTankEmissionFactorsCalculatedLoader,
+        CreatedTankMonthMethaneEmissionOverridesLoader, CreatedTankMonthOilFlowsLoader,
+        CreatedTanksLoader, SiteTanksLoader, TankChangeLoader, TankChangesByTankLoader,
+        TankEmissionFactorCalculatedLoader, TankEmissionFactorsCalculatedByTankLoader, TankLoader,
+        TankMonthMethaneEmissionOverrideLoader, TankMonthMethaneEmissionOverridesByTankLoader,
+        TankMonthOilFlowLoader, TankMonthOilFlowsByTankLoader, UpdatedTankChangesLoader,
+        UpdatedTankEmissionFactorsCalculatedLoader, UpdatedTankMonthMethaneEmissionOverridesLoader,
+        UpdatedTankMonthOilFlowsLoader, UpdatedTanksLoader,
     },
-    compressor_loader::{
-        CompressorLoader, CreatedCompressorsLoader, FacilityCompressorsLoader,
-        UpdatedCompressorsLoader,
+    facility::{CreatedFacilitiesLoader, FacilityLoader, UpdatedFacilitiesLoader},
+    gas_analysis::{
+        CreatedGasAnalysesLoader, CreatedGasAnalysisCalculatedParamsLoader,
+        GasAnalysesByFacilityLoader, GasAnalysisCalculatedParamLoader, GasAnalysisLoader,
+        UpdatedGasAnalysesLoader, UpdatedGasAnalysisCalculatedParamsLoader,
     },
-    compressor_month_hours_loader::{
-        CompressorMonthHoursByCompressorLoader, CompressorMonthHoursLoader,
-        CreatedCompressorMonthHoursLoader, UpdatedCompressorMonthHoursLoader,
+    month_methane_emission::{
+        CreatedMonthMethaneEmissionsLoader, MonthMethaneEmissionLoader,
+        MonthMethaneEmissionsByEmissionSourceLoader, MonthMethaneEmissionsByFacilityLoader,
+        MonthMethaneEmissionsBySiteLoader, UpdatedMonthMethaneEmissionsLoader,
     },
-    compressor_month_vent_loader::{
-        CompressorMonthVentLoader, CompressorMonthVentsByCompressorLoader,
-        CreatedCompressorMonthVentsLoader, UpdatedCompressorMonthVentsLoader,
+    pneumatic_device::{
+        CreatedDeviceManufacturersLoader, CreatedLevelControllerActuationFrequenciesLoader,
+        CreatedPneumaticDeviceChangesLoader, CreatedPneumaticDeviceMonthHoursLoader,
+        CreatedPneumaticDeviceMonthMethaneEmissionOverridesLoader, CreatedPneumaticDevicesLoader,
+        DeviceManufacturerLoader, LevelControllerActuationFrequenciesByLevelControllerLoader,
+        LevelControllerActuationFrequencyLoader, PneumaticDeviceChangeLoader,
+        PneumaticDeviceChangesByPneumaticDeviceLoader, PneumaticDeviceLoader,
+        PneumaticDeviceMonthHoursByPneumaticDeviceLoader, PneumaticDeviceMonthHoursLoader,
+        PneumaticDeviceMonthMethaneEmissionOverrideLoader,
+        PneumaticDeviceMonthMethaneEmissionOverridesByPneumaticDeviceLoader,
+        PneumaticDevicesByManufacturerLoader, SitePneumaticDevicesLoader,
+        UpdatedDeviceManufacturersLoader, UpdatedLevelControllerActuationFrequenciesLoader,
+        UpdatedPneumaticDeviceChangesLoader, UpdatedPneumaticDeviceMonthHoursLoader,
+        UpdatedPneumaticDeviceMonthMethaneEmissionOverridesLoader, UpdatedPneumaticDevicesLoader,
     },
-    compressor_month_vent_override_loader::{
-        CompressorMonthVentOverrideLoader, CompressorMonthVentOverridesByCompressorLoader,
-        CreatedCompressorMonthVentOverridesLoader, UpdatedCompressorMonthVentOverridesLoader,
-    },
-    controller_application_loader::{
-        ControllerApplicationLoader, CreatedControllerApplicationsLoader,
-        UpdatedControllerApplicationsLoader,
-    },
-    controller_change_loader::{
-        ControllerChangeLoader, ControllerChangesByControllerLoader,
-        CreatedControllerChangesLoader, UpdatedControllerChangesLoader,
-    },
-    controller_loader::{
-        ControllerLoader, ControllersByApplicationLoader, ControllersByManufacturerLoader,
-        CreatedControllersLoader, FacilityControllersLoader, UpdatedControllersLoader,
-    },
-    controller_manufacturer_loader::{
-        ControllerManufacturerLoader, CreatedControllerManufacturersLoader,
-        UpdatedControllerManufacturersLoader,
-    },
-    controller_month_hours_loader::{
-        ControllerMonthHoursByControllerLoader, ControllerMonthHoursLoader,
-        CreatedControllerMonthHoursLoader, UpdatedControllerMonthHoursLoader,
-    },
-    controller_month_vent_loader::{
-        ControllerMonthVentLoader, ControllerMonthVentsByControllerLoader,
-        CreatedControllerMonthVentsLoader, UpdatedControllerMonthVentsLoader,
-    },
-    controller_month_vent_override_loader::{
-        ControllerMonthVentOverrideLoader, ControllerMonthVentOverridesByControllerLoader,
-        CreatedControllerMonthVentOverridesLoader, UpdatedControllerMonthVentOverridesLoader,
-    },
-    facility_loader::{CreatedFacilitiesLoader, FacilityLoader, UpdatedFacilitiesLoader},
-    gas_analysis_calculated_param_loader::{
-        CreatedGasAnalysisCalculatedParamsLoader, GasAnalysisCalculatedParamLoader,
-        UpdatedGasAnalysisCalculatedParamsLoader,
-    },
-    gas_analysis_loader::{
-        CreatedGasAnalysesLoader, GasAnalysesByFacilityLoader, GasAnalysisLoader,
-        UpdatedGasAnalysesLoader,
-    },
-    tank_farm_change_loader::{
-        CreatedTankFarmChangesLoader, TankFarmChangeLoader, TankFarmChangesByTankFarmLoader,
-        UpdatedTankFarmChangesLoader,
-    },
-    tank_farm_loader::{
-        CreatedTankFarmsLoader, FacilityTankFarmLoader, TankFarmLoader, UpdatedTankFarmsLoader,
-    },
-    tank_farm_month_oil_flow_loader::{
-        CreatedTankFarmMonthOilFlowsLoader, TankFarmMonthOilFlowLoader,
-        TankFarmMonthOilFlowsByTankFarmLoader, UpdatedTankFarmMonthOilFlowsLoader,
-    },
-    tank_farm_month_vent_loader::{
-        CreatedTankFarmMonthVentsLoader, TankFarmMonthVentLoader,
-        TankFarmMonthVentsByTankFarmLoader, UpdatedTankFarmMonthVentsLoader,
-    },
-    tank_farm_month_vent_override_loader::{
-        CreatedTankFarmMonthVentOverridesLoader, TankFarmMonthVentOverrideLoader,
-        TankFarmMonthVentOverridesByTankFarmLoader, UpdatedTankFarmMonthVentOverridesLoader,
-    },
-    tank_farm_vent_factor_loader::{
-        CreatedTankFarmVentFactorsCalculatedLoader, TankFarmVentFactorCalculatedLoader,
-        TankFarmVentFactorsCalculatedByTankFarmLoader, UpdatedTankFarmVentFactorsCalculatedLoader,
-    },
-    user_loader::UserLoader,
+    site::{CreatedSitesLoader, FacilitySitesLoader, SiteLoader, UpdatedSitesLoader},
+    user::UserLoader,
 };
 use actix_web::web::Data;
 use anymap::{any::Any, Map};
@@ -119,139 +86,179 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     let facilities_by_updater_id_loader =
         DataLoader::new(UpdatedFacilitiesLoader::new(pool.clone()), tokio::spawn);
 
-    // Controllers
-    let controller_by_id_loader =
-        DataLoader::new(ControllerLoader::new(pool.clone()), tokio::spawn);
-    let controllers_by_creator_id_loader =
-        DataLoader::new(CreatedControllersLoader::new(pool.clone()), tokio::spawn);
-    let controllers_by_updater_id_loader =
-        DataLoader::new(UpdatedControllersLoader::new(pool.clone()), tokio::spawn);
-    let controllers_by_facility_id_loader =
-        DataLoader::new(FacilityControllersLoader::new(pool.clone()), tokio::spawn);
-    let controllers_by_application_id_loader = DataLoader::new(
-        ControllersByApplicationLoader::new(pool.clone()),
+    // Site
+    let site_by_id_loader = DataLoader::new(SiteLoader::new(pool.clone()), tokio::spawn);
+    let sites_by_facility_id_loader =
+        DataLoader::new(FacilitySitesLoader::new(pool.clone()), tokio::spawn);
+    let sites_by_creator_id_loader =
+        DataLoader::new(CreatedSitesLoader::new(pool.clone()), tokio::spawn);
+    let sites_by_updater_id_loader =
+        DataLoader::new(UpdatedSitesLoader::new(pool.clone()), tokio::spawn);
+
+    // Pneumatic Device
+    let pneumatic_device_by_id_loader =
+        DataLoader::new(PneumaticDeviceLoader::new(pool.clone()), tokio::spawn);
+    let pneumatic_devices_by_site_id_loader =
+        DataLoader::new(SitePneumaticDevicesLoader::new(pool.clone()), tokio::spawn);
+    let pneumatic_devices_by_manufacturer_id_loader = DataLoader::new(
+        PneumaticDevicesByManufacturerLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controllers_by_manufacturer_id_loader = DataLoader::new(
-        ControllersByManufacturerLoader::new(pool.clone()),
+    let pneumatic_devices_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticDevicesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_devices_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticDevicesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Controller Applications
-    let controller_applications_by_creator_id_loader = DataLoader::new(
-        CreatedControllerApplicationsLoader::new(pool.clone()),
+    // Device Manufacturer
+    let device_manufacturer_by_id_loader =
+        DataLoader::new(DeviceManufacturerLoader::new(pool.clone()), tokio::spawn);
+    let device_manufacturers_by_creator_id_loader = DataLoader::new(
+        CreatedDeviceManufacturersLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_applications_by_updater_id_loader = DataLoader::new(
-        UpdatedControllerApplicationsLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let controller_application_by_id_loader =
-        DataLoader::new(ControllerApplicationLoader::new(pool.clone()), tokio::spawn);
-
-    // Controller Manufacturers
-    let controller_manufacturer_by_id_loader = DataLoader::new(
-        ControllerManufacturerLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let controller_manufacturers_by_creator_id_loader = DataLoader::new(
-        CreatedControllerManufacturersLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let controller_manufacturers_by_updater_id_loader = DataLoader::new(
-        UpdatedControllerManufacturersLoader::new(pool.clone()),
+    let device_manufacturers_by_updater_id_loader = DataLoader::new(
+        UpdatedDeviceManufacturersLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Controller Change
-    let controller_change_by_id_loader =
-        DataLoader::new(ControllerChangeLoader::new(pool.clone()), tokio::spawn);
-    let controller_changes_by_controller_id_loader = DataLoader::new(
-        ControllerChangesByControllerLoader::new(pool.clone()),
+    // Pneumatic Device Change
+    let pneumatic_device_change_by_id_loader =
+        DataLoader::new(PneumaticDeviceChangeLoader::new(pool.clone()), tokio::spawn);
+    let pneumatic_device_changes_by_pneumatic_device_id_loader = DataLoader::new(
+        PneumaticDeviceChangesByPneumaticDeviceLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_changes_by_creator_id_loader = DataLoader::new(
-        CreatedControllerChangesLoader::new(pool.clone()),
+    let pneumatic_device_changes_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticDeviceChangesLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_changes_by_updater_id_loader = DataLoader::new(
-        UpdatedControllerChangesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-
-    // Controller Month Hours
-    let controller_month_hours_by_id_loader =
-        DataLoader::new(ControllerMonthHoursLoader::new(pool.clone()), tokio::spawn);
-    let controller_month_hours_by_controller_id_loader = DataLoader::new(
-        ControllerMonthHoursByControllerLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let controller_month_hours_by_creator_id_loader = DataLoader::new(
-        CreatedControllerMonthHoursLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let controller_month_hours_by_updater_id_loader = DataLoader::new(
-        UpdatedControllerMonthHoursLoader::new(pool.clone()),
+    let pneumatic_device_changes_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticDeviceChangesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Controller Month Vent Override
-    let controller_month_vent_override_by_id_loader = DataLoader::new(
-        ControllerMonthVentOverrideLoader::new(pool.clone()),
+    // Level Controller Actuation Frequency
+    let level_controller_actuation_frequency_by_id_loader = DataLoader::new(
+        LevelControllerActuationFrequencyLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_month_vent_overrides_by_controller_id_loader = DataLoader::new(
-        ControllerMonthVentOverridesByControllerLoader::new(pool.clone()),
+    let level_controller_actuation_frequencies_by_level_controller_id_loader = DataLoader::new(
+        LevelControllerActuationFrequenciesByLevelControllerLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_month_vent_overrides_by_creator_id_loader = DataLoader::new(
-        CreatedControllerMonthVentOverridesLoader::new(pool.clone()),
+    let level_controller_actuation_frequencies_by_creator_id_loader = DataLoader::new(
+        CreatedLevelControllerActuationFrequenciesLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_month_vent_overrides_by_updater_id_loader = DataLoader::new(
-        UpdatedControllerMonthVentOverridesLoader::new(pool.clone()),
+    let level_controller_actuation_frequencies_by_updater_id_loader = DataLoader::new(
+        UpdatedLevelControllerActuationFrequenciesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Controller Month Vent
-    let controller_month_vent_by_id_loader =
-        DataLoader::new(ControllerMonthVentLoader::new(pool.clone()), tokio::spawn);
-    let controller_month_vents_by_controller_id_loader = DataLoader::new(
-        ControllerMonthVentsByControllerLoader::new(pool.clone()),
+    // Pneumatic Device Month Hours
+    let pneumatic_device_month_hours_by_id_loader = DataLoader::new(
+        PneumaticDeviceMonthHoursLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_month_vents_by_creator_id_loader = DataLoader::new(
-        CreatedControllerMonthVentsLoader::new(pool.clone()),
+    let pneumatic_device_month_hours_by_pneumatic_device_id_loader = DataLoader::new(
+        PneumaticDeviceMonthHoursByPneumaticDeviceLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let controller_month_vents_by_updater_id_loader = DataLoader::new(
-        UpdatedControllerMonthVentsLoader::new(pool.clone()),
+    let pneumatic_device_month_hours_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticDeviceMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_device_month_hours_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticDeviceMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Pneumatic Device Month Methane Emission Override
+    let pneumatic_device_month_methane_emission_override_by_id_loader = DataLoader::new(
+        PneumaticDeviceMonthMethaneEmissionOverrideLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_device_month_methane_emission_overrides_by_pneumatic_device_id_loader =
+        DataLoader::new(
+            PneumaticDeviceMonthMethaneEmissionOverridesByPneumaticDeviceLoader::new(pool.clone()),
+            tokio::spawn,
+        );
+    let pneumatic_device_month_methane_emission_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticDeviceMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_device_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticDeviceMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    //  Month Methane Emission
+    let month_methane_emission_by_id_loader =
+        DataLoader::new(MonthMethaneEmissionLoader::new(pool.clone()), tokio::spawn);
+    let month_methane_emissions_by_facility_id_loader = DataLoader::new(
+        MonthMethaneEmissionsByFacilityLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let month_methane_emissions_by_site_id_loader = DataLoader::new(
+        MonthMethaneEmissionsBySiteLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let month_methane_emissions_by_emission_source_id_loader = DataLoader::new(
+        MonthMethaneEmissionsByEmissionSourceLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let month_methane_emissions_by_creator_id_loader = DataLoader::new(
+        CreatedMonthMethaneEmissionsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let month_methane_emissions_by_updater_id_loader = DataLoader::new(
+        UpdatedMonthMethaneEmissionsLoader::new(pool.clone()),
         tokio::spawn,
     );
 
     // Compressor
     let compressor_by_id_loader =
         DataLoader::new(CompressorLoader::new(pool.clone()), tokio::spawn);
+    let compressors_by_site_id_loader =
+        DataLoader::new(SiteCompressorsLoader::new(pool.clone()), tokio::spawn);
     let compressors_by_creator_id_loader =
         DataLoader::new(CreatedCompressorsLoader::new(pool.clone()), tokio::spawn);
     let compressors_by_updater_id_loader =
         DataLoader::new(UpdatedCompressorsLoader::new(pool.clone()), tokio::spawn);
-    let compressors_by_facility_id_loader =
-        DataLoader::new(FacilityCompressorsLoader::new(pool.clone()), tokio::spawn);
 
-    // Compressor Change
-    let compressor_change_by_id_loader =
-        DataLoader::new(CompressorChangeLoader::new(pool.clone()), tokio::spawn);
-    let compressor_changes_by_compressor_id_loader = DataLoader::new(
-        CompressorChangesByCompressorLoader::new(pool.clone()),
+    // Compressor Seal
+    let compressor_seal_by_id_loader =
+        DataLoader::new(CompressorSealLoader::new(pool.clone()), tokio::spawn);
+    let compressor_seals_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorSealsLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let compressor_changes_by_creator_id_loader = DataLoader::new(
-        CreatedCompressorChangesLoader::new(pool.clone()),
+    let compressor_seals_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorSealsLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let compressor_changes_by_updater_id_loader = DataLoader::new(
-        UpdatedCompressorChangesLoader::new(pool.clone()),
+
+    // Compressor Seal Test
+    let compressor_seal_test_by_id_loader =
+        DataLoader::new(CompressorSealTestLoader::new(pool.clone()), tokio::spawn);
+    let compressor_seal_tests_by_compressor_seal_id_loader = DataLoader::new(
+        CompressorSealTestsByCompressorSealLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_seal_tests_by_survey_equipment_id_loader = DataLoader::new(
+        CompressorSealTestsBySurveyEquipmentLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_seal_tests_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorSealTestsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_seal_tests_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorSealTestsLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -287,130 +294,92 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Compressor Month Vent Override
-    let compressor_month_vent_override_by_id_loader = DataLoader::new(
-        CompressorMonthVentOverrideLoader::new(pool.clone()),
+    // Compressor Seal Month Methane Emission Override
+    let compressor_seal_month_methane_emission_override_by_id_loader = DataLoader::new(
+        CompressorSealMonthMethaneEmissionOverrideLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let compressor_month_vent_overrides_by_compressor_id_loader = DataLoader::new(
-        CompressorMonthVentOverridesByCompressorLoader::new(pool.clone()),
+    let compressor_seal_month_methane_emission_overrides_by_compressor_seal_id_loader =
+        DataLoader::new(
+            CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader::new(pool.clone()),
+            tokio::spawn,
+        );
+    let compressor_seal_month_methane_emission_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorSealMonthMethaneEmissionOverridesLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let compressor_month_vent_overrides_by_creator_id_loader = DataLoader::new(
-        CreatedCompressorMonthVentOverridesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let compressor_month_vent_overrides_by_updater_id_loader = DataLoader::new(
-        UpdatedCompressorMonthVentOverridesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-
-    // Compressor Month Vent
-    let compressor_month_vent_by_id_loader =
-        DataLoader::new(CompressorMonthVentLoader::new(pool.clone()), tokio::spawn);
-    let compressor_month_vents_by_compressor_id_loader = DataLoader::new(
-        CompressorMonthVentsByCompressorLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let compressor_month_vents_by_creator_id_loader = DataLoader::new(
-        CreatedCompressorMonthVentsLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let compressor_month_vents_by_updater_id_loader = DataLoader::new(
-        UpdatedCompressorMonthVentsLoader::new(pool.clone()),
+    let compressor_seal_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorSealMonthMethaneEmissionOverridesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Tank Farm
-    let tank_farm_by_id_loader = DataLoader::new(TankFarmLoader::new(pool.clone()), tokio::spawn);
-    let tank_farms_by_creator_id_loader =
-        DataLoader::new(CreatedTankFarmsLoader::new(pool.clone()), tokio::spawn);
-    let tank_farms_by_updater_id_loader =
-        DataLoader::new(UpdatedTankFarmsLoader::new(pool.clone()), tokio::spawn);
-    let tank_farm_by_facility_id_loader =
-        DataLoader::new(FacilityTankFarmLoader::new(pool.clone()), tokio::spawn);
+    // Tank
+    let tank_by_id_loader = DataLoader::new(TankLoader::new(pool.clone()), tokio::spawn);
+    let tank_by_site_id_loader = DataLoader::new(SiteTanksLoader::new(pool.clone()), tokio::spawn);
+    let tanks_by_creator_id_loader =
+        DataLoader::new(CreatedTanksLoader::new(pool.clone()), tokio::spawn);
+    let tanks_by_updater_id_loader =
+        DataLoader::new(UpdatedTanksLoader::new(pool.clone()), tokio::spawn);
 
-    // Tank Farm Change
-    let tank_farm_change_by_id_loader =
-        DataLoader::new(TankFarmChangeLoader::new(pool.clone()), tokio::spawn);
-    let tank_farm_changes_by_tank_farm_id_loader = DataLoader::new(
-        TankFarmChangesByTankFarmLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let tank_farm_changes_by_creator_id_loader = DataLoader::new(
-        CreatedTankFarmChangesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let tank_farm_changes_by_updater_id_loader = DataLoader::new(
-        UpdatedTankFarmChangesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
+    // Tank Change
+    let tank_change_by_id_loader =
+        DataLoader::new(TankChangeLoader::new(pool.clone()), tokio::spawn);
+    let tank_changes_by_tank_id_loader =
+        DataLoader::new(TankChangesByTankLoader::new(pool.clone()), tokio::spawn);
+    let tank_changes_by_creator_id_loader =
+        DataLoader::new(CreatedTankChangesLoader::new(pool.clone()), tokio::spawn);
+    let tank_changes_by_updater_id_loader =
+        DataLoader::new(UpdatedTankChangesLoader::new(pool.clone()), tokio::spawn);
 
-    // Tank Farm Month Oil Flow
-    let tank_farm_month_oil_flow_by_id_loader =
-        DataLoader::new(TankFarmMonthOilFlowLoader::new(pool.clone()), tokio::spawn);
-    let tank_farm_month_oil_flows_by_tank_farm_id_loader = DataLoader::new(
-        TankFarmMonthOilFlowsByTankFarmLoader::new(pool.clone()),
+    // Tank Month Oil Flow
+    let tank_month_oil_flow_by_id_loader =
+        DataLoader::new(TankMonthOilFlowLoader::new(pool.clone()), tokio::spawn);
+    let tank_month_oil_flows_by_tank_id_loader = DataLoader::new(
+        TankMonthOilFlowsByTankLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_farm_month_oil_flows_by_creator_id_loader = DataLoader::new(
-        CreatedTankFarmMonthOilFlowsLoader::new(pool.clone()),
+    let tank_month_oil_flows_by_creator_id_loader = DataLoader::new(
+        CreatedTankMonthOilFlowsLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_farm_month_oil_flows_by_updater_id_loader = DataLoader::new(
-        UpdatedTankFarmMonthOilFlowsLoader::new(pool.clone()),
+    let tank_month_oil_flows_by_updater_id_loader = DataLoader::new(
+        UpdatedTankMonthOilFlowsLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Tank Farm Vent Factor Calculated
-    let tank_farm_vent_factor_calculated_by_id_loader = DataLoader::new(
-        TankFarmVentFactorCalculatedLoader::new(pool.clone()),
+    // Tank Emission Factor Calculated
+    let tank_emission_factor_calculated_by_id_loader = DataLoader::new(
+        TankEmissionFactorCalculatedLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_farm_vent_factors_calculated_by_tank_farm_id_loader = DataLoader::new(
-        TankFarmVentFactorsCalculatedByTankFarmLoader::new(pool.clone()),
+    let tank_emission_factors_calculated_by_tank_id_loader = DataLoader::new(
+        TankEmissionFactorsCalculatedByTankLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_farm_vent_factors_calculated_by_creator_id_loader = DataLoader::new(
-        CreatedTankFarmVentFactorsCalculatedLoader::new(pool.clone()),
+    let tank_emission_factors_calculated_by_creator_id_loader = DataLoader::new(
+        CreatedTankEmissionFactorsCalculatedLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_farm_vent_factors_calculated_by_updater_id_loader = DataLoader::new(
-        UpdatedTankFarmVentFactorsCalculatedLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-
-    // Tank Farm Month Vent Override
-    let tank_farm_month_vent_override_by_id_loader = DataLoader::new(
-        TankFarmMonthVentOverrideLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let tank_farm_month_vent_overrides_by_tank_farm_id_loader = DataLoader::new(
-        TankFarmMonthVentOverridesByTankFarmLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let tank_farm_month_vent_overrides_by_creator_id_loader = DataLoader::new(
-        CreatedTankFarmMonthVentOverridesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let tank_farm_month_vent_overrides_by_updater_id_loader = DataLoader::new(
-        UpdatedTankFarmMonthVentOverridesLoader::new(pool.clone()),
+    let tank_emission_factors_calculated_by_updater_id_loader = DataLoader::new(
+        UpdatedTankEmissionFactorsCalculatedLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Tank Farm Month Vent
-    let tank_farm_month_vent_by_id_loader =
-        DataLoader::new(TankFarmMonthVentLoader::new(pool.clone()), tokio::spawn);
-    let tank_farm_month_vents_by_tank_farm_id_loader = DataLoader::new(
-        TankFarmMonthVentsByTankFarmLoader::new(pool.clone()),
+    // Tank Month Methane Emission Override
+    let tank_month_methane_emission_override_by_id_loader = DataLoader::new(
+        TankMonthMethaneEmissionOverrideLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_farm_month_vents_by_creator_id_loader = DataLoader::new(
-        CreatedTankFarmMonthVentsLoader::new(pool.clone()),
+    let tank_month_methane_emission_overrides_by_tank_id_loader = DataLoader::new(
+        TankMonthMethaneEmissionOverridesByTankLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_farm_month_vents_by_updater_id_loader = DataLoader::new(
-        UpdatedTankFarmMonthVentsLoader::new(pool.clone()),
+    let tank_month_methane_emission_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedTankMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let tank_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedTankMonthMethaneEmissionOverridesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -444,50 +413,45 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(facilities_by_creator_id_loader);
     loaders.insert(facilities_by_updater_id_loader);
 
-    loaders.insert(controller_by_id_loader);
-    loaders.insert(controllers_by_creator_id_loader);
-    loaders.insert(controllers_by_updater_id_loader);
-    loaders.insert(controllers_by_facility_id_loader);
-    loaders.insert(controllers_by_application_id_loader);
-    loaders.insert(controllers_by_manufacturer_id_loader);
+    loaders.insert(pneumatic_device_by_id_loader);
+    loaders.insert(pneumatic_devices_by_creator_id_loader);
+    loaders.insert(pneumatic_devices_by_updater_id_loader);
+    loaders.insert(pneumatic_devices_by_site_id_loader);
+    loaders.insert(pneumatic_devices_by_manufacturer_id_loader);
 
-    loaders.insert(controller_application_by_id_loader);
-    loaders.insert(controller_applications_by_creator_id_loader);
-    loaders.insert(controller_applications_by_updater_id_loader);
+    loaders.insert(device_manufacturer_by_id_loader);
+    loaders.insert(device_manufacturers_by_creator_id_loader);
+    loaders.insert(device_manufacturers_by_updater_id_loader);
 
-    loaders.insert(controller_manufacturer_by_id_loader);
-    loaders.insert(controller_manufacturers_by_creator_id_loader);
-    loaders.insert(controller_manufacturers_by_updater_id_loader);
+    loaders.insert(pneumatic_device_change_by_id_loader);
+    loaders.insert(pneumatic_device_changes_by_pneumatic_device_id_loader);
+    loaders.insert(pneumatic_device_changes_by_creator_id_loader);
+    loaders.insert(pneumatic_device_changes_by_updater_id_loader);
 
-    loaders.insert(controller_change_by_id_loader);
-    loaders.insert(controller_changes_by_controller_id_loader);
-    loaders.insert(controller_changes_by_creator_id_loader);
-    loaders.insert(controller_changes_by_updater_id_loader);
+    loaders.insert(pneumatic_device_month_hours_by_id_loader);
+    loaders.insert(pneumatic_device_month_hours_by_pneumatic_device_id_loader);
+    loaders.insert(pneumatic_device_month_hours_by_creator_id_loader);
+    loaders.insert(pneumatic_device_month_hours_by_updater_id_loader);
 
-    loaders.insert(controller_month_hours_by_id_loader);
-    loaders.insert(controller_month_hours_by_controller_id_loader);
-    loaders.insert(controller_month_hours_by_creator_id_loader);
-    loaders.insert(controller_month_hours_by_updater_id_loader);
+    loaders.insert(pneumatic_device_month_methane_emission_override_by_id_loader);
+    loaders.insert(pneumatic_device_month_methane_emission_overrides_by_pneumatic_device_id_loader);
+    loaders.insert(pneumatic_device_month_methane_emission_overrides_by_creator_id_loader);
+    loaders.insert(pneumatic_device_month_methane_emission_overrides_by_updater_id_loader);
 
-    loaders.insert(controller_month_vent_override_by_id_loader);
-    loaders.insert(controller_month_vent_overrides_by_controller_id_loader);
-    loaders.insert(controller_month_vent_overrides_by_creator_id_loader);
-    loaders.insert(controller_month_vent_overrides_by_updater_id_loader);
-
-    loaders.insert(controller_month_vent_by_id_loader);
-    loaders.insert(controller_month_vents_by_controller_id_loader);
-    loaders.insert(controller_month_vents_by_creator_id_loader);
-    loaders.insert(controller_month_vents_by_updater_id_loader);
+    loaders.insert(month_methane_emission_by_id_loader);
+    loaders.insert(month_methane_emissions_by_emission_source_id_loader);
+    loaders.insert(month_methane_emissions_by_creator_id_loader);
+    loaders.insert(month_methane_emissions_by_updater_id_loader);
 
     loaders.insert(compressor_by_id_loader);
     loaders.insert(compressors_by_creator_id_loader);
     loaders.insert(compressors_by_updater_id_loader);
-    loaders.insert(compressors_by_facility_id_loader);
+    loaders.insert(compressors_by_site_id_loader);
 
-    loaders.insert(compressor_change_by_id_loader);
-    loaders.insert(compressor_changes_by_compressor_id_loader);
-    loaders.insert(compressor_changes_by_creator_id_loader);
-    loaders.insert(compressor_changes_by_updater_id_loader);
+    loaders.insert(compressor_seal_test_by_id_loader);
+    loaders.insert(compressor_seal_tests_by_compressor_seal_id_loader);
+    loaders.insert(compressor_seal_tests_by_creator_id_loader);
+    loaders.insert(compressor_seal_tests_by_updater_id_loader);
 
     loaders.insert(compressor_month_hours_by_id_loader);
     loaders.insert(compressor_month_hours_by_compressor_id_loader);
@@ -499,45 +463,35 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_blowdowns_by_creator_id_loader);
     loaders.insert(compressor_blowdowns_by_updater_id_loader);
 
-    loaders.insert(compressor_month_vent_override_by_id_loader);
-    loaders.insert(compressor_month_vent_overrides_by_compressor_id_loader);
-    loaders.insert(compressor_month_vent_overrides_by_creator_id_loader);
-    loaders.insert(compressor_month_vent_overrides_by_updater_id_loader);
+    loaders.insert(compressor_seal_month_methane_emission_override_by_id_loader);
+    loaders.insert(compressor_seal_month_methane_emission_overrides_by_compressor_seal_id_loader);
+    loaders.insert(compressor_seal_month_methane_emission_overrides_by_creator_id_loader);
+    loaders.insert(compressor_seal_month_methane_emission_overrides_by_updater_id_loader);
 
-    loaders.insert(compressor_month_vent_by_id_loader);
-    loaders.insert(compressor_month_vents_by_compressor_id_loader);
-    loaders.insert(compressor_month_vents_by_creator_id_loader);
-    loaders.insert(compressor_month_vents_by_updater_id_loader);
+    loaders.insert(tank_by_id_loader);
+    loaders.insert(tanks_by_creator_id_loader);
+    loaders.insert(tanks_by_updater_id_loader);
+    loaders.insert(tank_by_site_id_loader);
 
-    loaders.insert(tank_farm_by_id_loader);
-    loaders.insert(tank_farms_by_creator_id_loader);
-    loaders.insert(tank_farms_by_updater_id_loader);
-    loaders.insert(tank_farm_by_facility_id_loader);
+    loaders.insert(tank_change_by_id_loader);
+    loaders.insert(tank_changes_by_tank_id_loader);
+    loaders.insert(tank_changes_by_creator_id_loader);
+    loaders.insert(tank_changes_by_updater_id_loader);
 
-    loaders.insert(tank_farm_change_by_id_loader);
-    loaders.insert(tank_farm_changes_by_tank_farm_id_loader);
-    loaders.insert(tank_farm_changes_by_creator_id_loader);
-    loaders.insert(tank_farm_changes_by_updater_id_loader);
+    loaders.insert(tank_month_oil_flow_by_id_loader);
+    loaders.insert(tank_month_oil_flows_by_tank_id_loader);
+    loaders.insert(tank_month_oil_flows_by_creator_id_loader);
+    loaders.insert(tank_month_oil_flows_by_updater_id_loader);
 
-    loaders.insert(tank_farm_month_oil_flow_by_id_loader);
-    loaders.insert(tank_farm_month_oil_flows_by_tank_farm_id_loader);
-    loaders.insert(tank_farm_month_oil_flows_by_creator_id_loader);
-    loaders.insert(tank_farm_month_oil_flows_by_updater_id_loader);
+    loaders.insert(tank_emission_factor_calculated_by_id_loader);
+    loaders.insert(tank_emission_factors_calculated_by_tank_id_loader);
+    loaders.insert(tank_emission_factors_calculated_by_creator_id_loader);
+    loaders.insert(tank_emission_factors_calculated_by_updater_id_loader);
 
-    loaders.insert(tank_farm_vent_factor_calculated_by_id_loader);
-    loaders.insert(tank_farm_vent_factors_calculated_by_tank_farm_id_loader);
-    loaders.insert(tank_farm_vent_factors_calculated_by_creator_id_loader);
-    loaders.insert(tank_farm_vent_factors_calculated_by_updater_id_loader);
-
-    loaders.insert(tank_farm_month_vent_override_by_id_loader);
-    loaders.insert(tank_farm_month_vent_overrides_by_tank_farm_id_loader);
-    loaders.insert(tank_farm_month_vent_overrides_by_creator_id_loader);
-    loaders.insert(tank_farm_month_vent_overrides_by_updater_id_loader);
-
-    loaders.insert(tank_farm_month_vent_by_id_loader);
-    loaders.insert(tank_farm_month_vents_by_tank_farm_id_loader);
-    loaders.insert(tank_farm_month_vents_by_creator_id_loader);
-    loaders.insert(tank_farm_month_vents_by_updater_id_loader);
+    loaders.insert(tank_month_methane_emission_override_by_id_loader);
+    loaders.insert(tank_month_methane_emission_overrides_by_tank_id_loader);
+    loaders.insert(tank_month_methane_emission_overrides_by_creator_id_loader);
+    loaders.insert(tank_month_methane_emission_overrides_by_updater_id_loader);
 
     loaders.insert(gas_analysis_by_id_loader);
     loaders.insert(gas_analyses_by_facility_id_loader);

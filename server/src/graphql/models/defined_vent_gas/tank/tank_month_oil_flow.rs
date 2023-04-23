@@ -1,26 +1,21 @@
+use super::Tank;
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{tank_farm_loader::TankFarmLoader, user_loader::UserLoader},
-    models::{TankFarm, User},
+    dataloaders::{defined_vent_gas::tank::TankLoader, user::UserLoader},
+    models::user::User,
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
 use uuid::Uuid;
 
-/// Model representing user overrides of calculated monthly vented volumes from tank farms.
-///
-/// Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::mutations::validators::MonthBeginningValidator).
-///
-/// Field `gas_volume` is in m³.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct TankFarmMonthVentOverride {
+pub struct TankMonthOilFlow {
     pub id: Uuid,
-    pub tank_farm_id: Uuid,
+    pub tank_id: Uuid,
     pub month: NaiveDate,
-    pub gas_volume: f64,
-    pub comment: Option<String>,
+    pub oil: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -28,7 +23,7 @@ pub struct TankFarmMonthVentOverride {
 }
 
 #[ComplexObject]
-impl TankFarmMonthVentOverride {
+impl TankMonthOilFlow {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -43,10 +38,10 @@ impl TankFarmMonthVentOverride {
         updated_by
     }
 
-    async fn tank_farm(&self, ctx: &Context<'_>) -> Result<Option<TankFarm>, Error> {
-        let loader = ctx.get_loader::<DataLoader<TankFarmLoader>>();
-        let tank_farm = loader.load_one(self.tank_farm_id).await;
+    async fn tank(&self, ctx: &Context<'_>) -> Result<Option<Tank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<TankLoader>>();
+        let tank = loader.load_one(self.tank_id).await;
 
-        tank_farm
+        tank
     }
 }

@@ -24,7 +24,12 @@ impl Loader<Uuid> for MonthMethaneEmissionLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let month_methane_emissions = query_as!(
             MonthMethaneEmission,
-            r#"SELECT id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at FROM month_methane_emission WHERE id = ANY($1)"#,
+            r#"
+            SELECT
+            id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            FROM month_methane_emission
+            WHERE id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -55,7 +60,12 @@ impl Loader<Uuid> for CreatedMonthMethaneEmissionsLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut month_methane_emissions = query_as!(
             MonthMethaneEmission,
-            r#"SELECT id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at FROM month_methane_emission WHERE created_by_id = ANY($1)"#,
+            r#"
+            SELECT
+            id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            FROM month_methane_emission
+            WHERE created_by_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -93,7 +103,12 @@ impl Loader<Uuid> for UpdatedMonthMethaneEmissionsLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut month_methane_emissions = query_as!(
             MonthMethaneEmission,
-            r#"SELECT id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at FROM month_methane_emission WHERE updated_by_id = ANY($1)"#,
+            r#"
+            SELECT
+            id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            FROM month_methane_emission
+            WHERE updated_by_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)

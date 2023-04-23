@@ -7,12 +7,14 @@ mod compressor;
 mod month_methane_emission;
 mod pneumatic_device_type;
 mod site;
+mod tank;
 mod user;
 
 pub use compressor::*;
 pub use month_methane_emission::*;
 pub use pneumatic_device_type::*;
 pub use site::*;
+pub use tank::*;
 pub use user::*;
 
 /// `FacilityType` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.

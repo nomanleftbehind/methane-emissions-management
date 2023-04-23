@@ -1,15 +1,14 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        compressor::SiteCompressorsLoader, facility::FacilityLoader,
-        gas_analysis_loader::GasAnalysesByFacilityLoader,
-        month_methane_emission::MonthMethaneEmissionsBySiteLoader,
-        pneumatic_device::SitePneumaticDevicesLoader, tank_farm_loader::FacilityTankFarmLoader,
-        user::UserLoader,
+        compressor::SiteCompressorsLoader, defined_vent_gas::tank::SiteTanksLoader,
+        facility::FacilityLoader, month_methane_emission::MonthMethaneEmissionsBySiteLoader,
+        pneumatic_device::SitePneumaticDevicesLoader, user::UserLoader,
     },
     models::{
-        compressor::Compressor, facility::Facility, pneumatic_device::PneumaticDevice, user::User,
-        GasAnalysis, MonthMethaneEmission, TankFarm,
+        compressor::Compressor, defined_vent_gas::tank::Tank, facility::Facility,
+        month_methane_emission::MonthMethaneEmission, pneumatic_device::PneumaticDevice,
+        user::User,
     },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
@@ -18,6 +17,7 @@ use common::SiteType;
 use sqlx::FromRow;
 use uuid::Uuid;
 
+/// The area defined by the boundaries of a surface lease for upstream oil and gas facilities and wells (pads counted as one lease).
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
 pub struct Site {
@@ -68,6 +68,14 @@ impl Site {
         let loader = ctx.get_loader::<DataLoader<SiteCompressorsLoader>>();
         let compressors = loader.load_one(self.id).await?;
         let result = compressors.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn tanks(&self, ctx: &Context<'_>) -> Result<Vec<Tank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<SiteTanksLoader>>();
+        let tanks = loader.load_one(self.id).await?;
+        let result = tanks.unwrap_or(vec![]);
 
         Ok(result)
     }

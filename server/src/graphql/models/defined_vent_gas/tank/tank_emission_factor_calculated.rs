@@ -1,21 +1,22 @@
+use super::Tank;
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{gas_analysis_loader::GasAnalysisLoader, user_loader::UserLoader},
-    models::{GasAnalysis, User},
+    dataloaders::{defined_vent_gas::tank::TankLoader, user::UserLoader},
+    models::User,
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
-use chrono::NaiveDateTime;
+use chrono::{NaiveDate, NaiveDateTime};
 use itertools::MultiUnzip;
 use sqlx::FromRow;
 use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct GasAnalysisCalculatedParam {
+pub struct TankEmissionFactorCalculated {
     pub id: Uuid,
-    pub gas_gravity: f64,
-    pub higher_heating_value: f64,
-    pub carbon_content: f64,
+    pub tank_id: Uuid,
+    pub date: NaiveDate,
+    pub emission_factor: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -23,7 +24,7 @@ pub struct GasAnalysisCalculatedParam {
 }
 
 #[ComplexObject]
-impl GasAnalysisCalculatedParam {
+impl TankEmissionFactorCalculated {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -38,54 +39,53 @@ impl GasAnalysisCalculatedParam {
         updated_by
     }
 
-    async fn gas_analysis(&self, ctx: &Context<'_>) -> Result<Option<GasAnalysis>, Error> {
-        let loader = ctx.get_loader::<DataLoader<GasAnalysisLoader>>();
-        let gas_analysis = loader.load_one(self.id).await;
+    async fn tank(&self, ctx: &Context<'_>) -> Result<Option<Tank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<TankLoader>>();
+        let tank_farm = loader.load_one(self.tank_id).await;
 
-        gas_analysis
+        tank_farm
     }
 }
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
-pub struct GasAnalysisCalculatedParamInterim {
-    pub id: Uuid,
-    pub gas_gravity: f64,
-    pub higher_heating_value: f64,
-    pub carbon_content: f64,
+pub struct TankFarmVentFactorCalculatedInterim {
+    pub tank_farm_id: Uuid,
+    pub date: NaiveDate,
+    pub vent_factor: f64,
 }
 
 #[derive(Debug)]
-pub struct GasAnalysisCalculatedParamInterimUnnestedRows {
+pub struct TankFarmVentFactorCalculatedInterimUnnestedRows {
     pub user_id: Uuid,
-    pub gas_analysis_calculated_params_interim: Vec<GasAnalysisCalculatedParamInterim>,
+    pub tank_farm_vent_factors_calculated_interim: Vec<TankFarmVentFactorCalculatedInterim>,
 }
 
 #[derive(Debug)]
-pub struct GasAnalysisCalculatedParamInterimNestedRows {
+pub struct TankFarmVentFactorCalculatedInterimNestedRows {
     pub id: Vec<Uuid>,
-    pub gas_gravity: Vec<f64>,
-    pub higher_heating_value: Vec<f64>,
-    pub carbon_content: Vec<f64>,
+    pub tank_farm_id: Vec<Uuid>,
+    pub date: Vec<NaiveDate>,
+    pub vent_factor: Vec<f64>,
     pub created_by_id: Vec<Uuid>,
     pub created_at: Vec<NaiveDateTime>,
     pub updated_by_id: Vec<Uuid>,
     pub updated_at: Vec<NaiveDateTime>,
 }
 
-impl From<GasAnalysisCalculatedParamInterimUnnestedRows>
-    for GasAnalysisCalculatedParamInterimNestedRows
+impl From<TankFarmVentFactorCalculatedInterimUnnestedRows>
+    for TankFarmVentFactorCalculatedInterimNestedRows
 {
     fn from(
-        GasAnalysisCalculatedParamInterimUnnestedRows {
+        TankFarmVentFactorCalculatedInterimUnnestedRows {
             user_id,
-            gas_analysis_calculated_params_interim,
-        }: GasAnalysisCalculatedParamInterimUnnestedRows,
+            tank_farm_vent_factors_calculated_interim,
+        }: TankFarmVentFactorCalculatedInterimUnnestedRows,
     ) -> Self {
         let (
             id,
-            gas_gravity,
-            higher_heating_value,
-            carbon_content,
+            tank_farm_id,
+            date,
+            vent_factor,
             created_by_id,
             created_at,
             updated_by_id,
@@ -99,14 +99,14 @@ impl From<GasAnalysisCalculatedParamInterimUnnestedRows>
             Vec<_>,
             Vec<_>,
             Vec<_>,
-        ) = gas_analysis_calculated_params_interim
+        ) = tank_farm_vent_factors_calculated_interim
             .into_iter()
-            .map(|gacp| {
+            .map(|cmvc| {
                 (
-                    gacp.id,
-                    gacp.gas_gravity,
-                    gacp.higher_heating_value,
-                    gacp.carbon_content,
+                    Uuid::new_v4(),
+                    cmvc.tank_farm_id,
+                    cmvc.date,
+                    cmvc.vent_factor,
                     user_id.clone(),
                     chrono::Utc::now().naive_utc(),
                     user_id.clone(),
@@ -115,11 +115,11 @@ impl From<GasAnalysisCalculatedParamInterimUnnestedRows>
             })
             .multiunzip();
 
-        GasAnalysisCalculatedParamInterimNestedRows {
+        TankFarmVentFactorCalculatedInterimNestedRows {
             id,
-            gas_gravity,
-            higher_heating_value,
-            carbon_content,
+            tank_farm_id,
+            date,
+            vent_factor,
             created_by_id,
             created_at,
             updated_by_id,

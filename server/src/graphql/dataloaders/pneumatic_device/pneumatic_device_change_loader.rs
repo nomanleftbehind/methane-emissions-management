@@ -128,7 +128,7 @@ impl Loader<Uuid> for PneumaticDeviceChangesByPneumaticDeviceLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut pneumatic_device_change = sqlx::query_as!(
+        let mut pneumatic_device_change = query_as!(
             PneumaticDeviceChange,
             "SELECT * FROM pneumatic_device_change WHERE pneumatic_device_id = ANY($1)",
             keys

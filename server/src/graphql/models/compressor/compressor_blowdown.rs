@@ -1,6 +1,6 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{compressor_loader::CompressorLoader, user_loader::UserLoader},
+    dataloaders::{compressor::CompressorLoader, user::UserLoader},
     models::{compressor::Compressor, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
@@ -13,9 +13,9 @@ use uuid::Uuid;
 #[graphql(complex)]
 pub struct CompressorBlowdown {
     pub id: Uuid,
+    pub compressor_id: Uuid,
     pub date: NaiveDate,
     pub gas_volume: f64,
-    pub compressor_id: Uuid,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,

@@ -6,6 +6,37 @@ use sqlx::{query_as, PgPool};
 use std::collections::HashMap;
 use uuid::Uuid;
 
+pub struct DeviceManufacturerLoader {
+    pool: Data<PgPool>,
+}
+
+impl DeviceManufacturerLoader {
+    pub fn new(pool: Data<PgPool>) -> Self {
+        Self { pool }
+    }
+}
+
+#[async_trait::async_trait]
+impl Loader<Uuid> for DeviceManufacturerLoader {
+    type Value = DeviceManufacturer;
+    type Error = async_graphql::Error;
+
+    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
+        let device_manufacturers = query_as!(
+            DeviceManufacturer,
+            "SELECT * FROM device_manufacturer WHERE id = ANY($1)",
+            keys
+        )
+        .fetch_all(&**self.pool)
+        .await?
+        .into_iter()
+        .map(|device_manufacturer| (device_manufacturer.id, device_manufacturer))
+        .collect();
+
+        Ok(device_manufacturers)
+    }
+}
+
 pub struct CreatedDeviceManufacturersLoader {
     pool: Data<PgPool>,
 }
@@ -75,37 +106,6 @@ impl Loader<Uuid> for UpdatedDeviceManufacturersLoader {
             .into_iter()
             .map(|(updated_by_id, group)| (updated_by_id, group.collect()))
             .collect();
-
-        Ok(device_manufacturers)
-    }
-}
-
-pub struct DeviceManufacturerLoader {
-    pool: Data<PgPool>,
-}
-
-impl DeviceManufacturerLoader {
-    pub fn new(pool: Data<PgPool>) -> Self {
-        Self { pool }
-    }
-}
-
-#[async_trait::async_trait]
-impl Loader<Uuid> for DeviceManufacturerLoader {
-    type Value = DeviceManufacturer;
-    type Error = async_graphql::Error;
-
-    async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let device_manufacturers = query_as!(
-            DeviceManufacturer,
-            "SELECT * FROM device_manufacturer WHERE id = ANY($1)",
-            keys
-        )
-        .fetch_all(&**self.pool)
-        .await?
-        .into_iter()
-        .map(|device_manufacturer| (device_manufacturer.id, device_manufacturer))
-        .collect();
 
         Ok(device_manufacturers)
     }

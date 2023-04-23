@@ -1,20 +1,15 @@
+use super::{CompressorSealMonthMethaneEmissionOverride, CompressorSealTest};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         compressor::{
-            CompressorBlowdownsByCompressorLoader, CompressorChangesByCompressorLoader,
-            CompressorMonthHoursByCompressorLoader, CompressorMonthVentOverridesByCompressorLoader,
+            CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader,
+            CompressorSealTestsByCompressorSealLoader,
         },
-        facility::FacilityLoader,
         month_methane_emission::MonthMethaneEmissionsByEmissionSourceLoader,
-        site::SiteLoader,
         user::UserLoader,
     },
-    models::{
-        facility::Facility, site::Site, user::User, CompressorBlowdown, CompressorChange,
-        CompressorMonthHours, CompressorMonthVent, CompressorMonthVentOverride,
-        MonthMethaneEmission,
-    },
+    models::{month_methane_emission::MonthMethaneEmission, user::User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;
@@ -50,13 +45,24 @@ impl CompressorSeal {
         updated_by
     }
 
+    async fn compressor_seal_tests(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorSealTest>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorSealTestsByCompressorSealLoader>>();
+        let compressor_month_vent_overrides = loader.load_one(self.id).await?;
+        let result = compressor_month_vent_overrides.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
     async fn compressor_seal_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<CompressorMonthVentOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CompressorMonthVentOverridesByCompressorLoader>>();
-        let compressor_month_vent_overrides = loader.load_one(self.id).await?;
-        let result = compressor_month_vent_overrides.unwrap_or(vec![]);
+    ) -> Result<Vec<CompressorSealMonthMethaneEmissionOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader>>();
+        let compressor_seal_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = compressor_seal_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

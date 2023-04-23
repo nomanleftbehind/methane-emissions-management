@@ -1,12 +1,13 @@
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        gas_analysis_loader::GasAnalysesByFacilityLoader,
+        gas_analysis::GasAnalysesByFacilityLoader,
         month_methane_emission::MonthMethaneEmissionsByFacilityLoader, site::FacilitySitesLoader,
-        tank_farm_loader::FacilityTankFarmLoader, user::UserLoader,
+        user::UserLoader,
     },
     models::{
-        compressor::Compressor, site::Site, user::User, GasAnalysis, MonthMethaneEmission, TankFarm,
+        gas_analysis::GasAnalysis, month_methane_emission::MonthMethaneEmission, site::Site,
+        user::User,
     },
 };
 use async_graphql::{
@@ -23,10 +24,12 @@ pub enum FacilityBy {
     Name(String),
 }
 
+/// Any building, structure, installation, equipment or appurtenance over which the Regulator has jurisdiction and that is connected to or associated with the recovery, development, production, handling, processing, treatment or disposal of hydrocarbon‑based resources, including synthetic coal gas and synthetic coal liquid, or any associated substances or wastes or the disposal of captured carbon dioxide.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
 pub struct Facility {
     pub id: Uuid,
+    /// As defined in Directive 047, a unique facility identification code, with 4 letters and 7 numbers (e.g., ABWP1234567), assigned by Petrinex to each facility.
     pub idpa: String,
     pub name: String,
     pub r#type: FacilityType,
@@ -60,17 +63,9 @@ impl Facility {
         Ok(result)
     }
 
-    async fn tank_farm(&self, ctx: &Context<'_>) -> Result<Option<TankFarm>, Error> {
-        let loader = ctx.get_loader::<DataLoader<FacilityTankFarmLoader>>();
-        let tank_farm = loader.load_one(self.id).await;
-
-        tank_farm
-    }
-
     async fn gas_analyses(&self, ctx: &Context<'_>) -> Result<Vec<GasAnalysis>, Error> {
         let loader = ctx.get_loader::<DataLoader<GasAnalysesByFacilityLoader>>();
         let gas_analyses = loader.load_one(self.id).await?;
-        // Need to return empty vector if facility has no associated gas analyses
         let result = gas_analyses.unwrap_or(vec![]);
 
         Ok(result)
