@@ -1,4 +1,4 @@
-use crate::graphql::models::{
+use crate::graphql::models::compressor::{
     CompressorMonthVent,
     CompressorMonthVentBy::{self, CompressorId, Month},
     CompressorMonthVentCalculated, CompressorMonthVentNestedRows, CompressorMonthVentUnnestedRows,
@@ -6,32 +6,6 @@ use crate::graphql::models::{
 use chrono::NaiveDate;
 use sqlx::{query_as, query_file, query_file_as, Error, PgPool};
 use uuid::Uuid;
-
-pub async fn select_compressor_month_vents(
-    pool: &PgPool,
-    by: CompressorMonthVentBy,
-) -> Result<Vec<CompressorMonthVent>, Error> {
-    match by {
-        CompressorId(id) => {
-            query_as!(
-                CompressorMonthVent,
-                "SELECT * FROM compressor_month_vent WHERE compressor_id = $1",
-                id
-            )
-            .fetch_all(pool)
-            .await
-        }
-        Month(month) => {
-            query_as!(
-                CompressorMonthVent,
-                "SELECT * FROM compressor_month_vent WHERE month = $1",
-                month
-            )
-            .fetch_all(pool)
-            .await
-        }
-    }
-}
 
 pub async fn insert_compressor_month_vents(
     pool: &PgPool,

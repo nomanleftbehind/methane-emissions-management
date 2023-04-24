@@ -6,6 +6,7 @@ use crate::graphql::{
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
 use common::{MethaneEmissionCategory, MethaneEmissionSource};
+// use itertools::Itertools;
 use itertools::MultiUnzip;
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -61,51 +62,63 @@ impl MonthMethaneEmission {
 }
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
-pub struct ControllerMonthVentCalculated {
+pub struct MonthMethaneEmissionCalculated {
+    pub facility_id: Uuid,
+    pub site_id: Uuid,
+    pub source: MethaneEmissionSource,
+    pub source_id: Uuid,
+    pub category: MethaneEmissionCategory,
     pub month: NaiveDate,
     pub gas_volume: f64,
     pub c1_volume: f64,
     pub co2_volume: f64,
-    pub controller_id: Uuid,
 }
 
 #[derive(Debug)]
-pub struct ControllerMonthVentUnnestedRows {
+pub struct MonthMethaneEmissionUnnestedRows {
     pub user_id: Uuid,
-    pub controller_month_vents_calculated: Vec<ControllerMonthVentCalculated>,
+    pub month_methane_emissions_calculated: Vec<MonthMethaneEmissionCalculated>,
 }
 
 #[derive(Debug)]
-pub struct ControllerMonthVentNestedRows {
+pub struct MonthMethaneEmissionNestedRows {
     pub id: Vec<Uuid>,
+    pub facility_id: Vec<Uuid>,
+    pub site_id: Vec<Uuid>,
+    pub source: Vec<MethaneEmissionSource>,
+    pub source_id: Vec<Uuid>,
+    pub category: Vec<MethaneEmissionCategory>,
     pub month: Vec<NaiveDate>,
     pub gas_volume: Vec<f64>,
     pub c1_volume: Vec<f64>,
     pub co2_volume: Vec<f64>,
-    pub controller_id: Vec<Uuid>,
-    pub created_by_id: Vec<Uuid>,
+    // pub created_by_id: Vec<Uuid>,
     pub created_at: Vec<NaiveDateTime>,
-    pub updated_by_id: Vec<Uuid>,
+    // pub updated_by_id: Vec<Uuid>,
     pub updated_at: Vec<NaiveDateTime>,
 }
 
-impl From<ControllerMonthVentUnnestedRows> for ControllerMonthVentNestedRows {
+impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
     fn from(
-        ControllerMonthVentUnnestedRows {
+        MonthMethaneEmissionUnnestedRows {
             user_id,
-            controller_month_vents_calculated,
-        }: ControllerMonthVentUnnestedRows,
+            month_methane_emissions_calculated,
+        }: MonthMethaneEmissionUnnestedRows,
     ) -> Self {
         let (
             id,
+            facility_id,
+            site_id,
+            source,
+            source_id,
+            category,
             month,
             gas_volume,
             c1_volume,
             co2_volume,
-            controller_id,
-            created_by_id,
+            // created_by_id,
             created_at,
-            updated_by_id,
+            // updated_by_id,
             updated_at,
         ): (
             Vec<_>,
@@ -118,34 +131,46 @@ impl From<ControllerMonthVentUnnestedRows> for ControllerMonthVentNestedRows {
             Vec<_>,
             Vec<_>,
             Vec<_>,
-        ) = controller_month_vents_calculated
+            Vec<_>,
+            Vec<_>,
+            // Vec<_>,
+            // Vec<_>,
+        ) = month_methane_emissions_calculated
             .into_iter()
             .map(|cmvc| {
                 (
                     Uuid::new_v4(),
+                    cmvc.facility_id,
+                    cmvc.site_id,
+                    cmvc.source,
+                    cmvc.source_id,
+                    cmvc.category,
                     cmvc.month,
                     cmvc.gas_volume,
                     cmvc.c1_volume,
                     cmvc.co2_volume,
-                    cmvc.controller_id,
-                    user_id.clone(),
+                    // user_id.clone(),
                     chrono::Utc::now().naive_utc(),
-                    user_id.clone(),
+                    // user_id.clone(),
                     chrono::Utc::now().naive_utc(),
                 )
             })
             .multiunzip();
 
-        ControllerMonthVentNestedRows {
+        MonthMethaneEmissionNestedRows {
             id,
+            facility_id,
+            site_id,
+            source,
+            source_id,
+            category,
             month,
             gas_volume,
             c1_volume,
             co2_volume,
-            controller_id,
-            created_by_id,
+            // created_by_id,
             created_at,
-            updated_by_id,
+            // updated_by_id,
             updated_at,
         }
     }

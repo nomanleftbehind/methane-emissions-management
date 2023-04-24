@@ -2,7 +2,7 @@ use crate::graphql::models::pneumatic_device::PneumaticDevice;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
-use sqlx::PgPool;
+use sqlx::{query_as, PgPool};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -22,9 +22,14 @@ impl Loader<Uuid> for PneumaticDeviceLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let pneumatic_devices = sqlx::query_as!(
+        let pneumatic_devices = query_as!(
             PneumaticDevice,
-            r#"SELECT id, site_id, type as "type: _", manufacturer_id, model, serial_number, created_by_id, created_at, updated_by_id, updated_at FROM pneumatic_device WHERE id = ANY($1)"#,
+            r#"
+            SELECT
+            id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM pneumatic_device
+            WHERE id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -53,9 +58,14 @@ impl Loader<Uuid> for CreatedPneumaticDevicesLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut pneumatic_devices = sqlx::query_as!(
+        let mut pneumatic_devices = query_as!(
             PneumaticDevice,
-            r#"SELECT id, site_id, type as "type: _", manufacturer_id, model, serial_number, created_by_id, created_at, updated_by_id, updated_at FROM pneumatic_device WHERE created_by_id = ANY($1)"#,
+            r#"
+            SELECT
+            id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM pneumatic_device
+            WHERE created_by_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -89,9 +99,14 @@ impl Loader<Uuid> for UpdatedPneumaticDevicesLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut pneumatic_devices = sqlx::query_as!(
+        let mut pneumatic_devices = query_as!(
             PneumaticDevice,
-            r#"SELECT id, site_id, type as "type: _", manufacturer_id, model, serial_number, created_by_id, created_at, updated_by_id, updated_at FROM pneumatic_device WHERE updated_by_id = ANY($1)"#,
+            r#"
+            SELECT
+            id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM pneumatic_device
+            WHERE updated_by_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -125,9 +140,14 @@ impl Loader<Uuid> for SitePneumaticDevicesLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut pneumatic_devices = sqlx::query_as!(
+        let mut pneumatic_devices = query_as!(
             PneumaticDevice,
-            r#"SELECT id, site_id, type as "type: _", manufacturer_id, model, serial_number, created_by_id, created_at, updated_by_id, updated_at FROM pneumatic_device WHERE site_id = ANY($1)"#,
+            r#"
+            SELECT
+            id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM pneumatic_device
+            WHERE site_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -161,9 +181,14 @@ impl Loader<Uuid> for PneumaticDevicesByManufacturerLoader {
     type Error = async_graphql::Error;
 
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
-        let mut pneumatic_devices = sqlx::query_as!(
+        let mut pneumatic_devices = query_as!(
             PneumaticDevice,
-            r#"SELECT id, site_id, type as "type: _", manufacturer_id, model, serial_number, created_by_id, created_at, updated_by_id, updated_at FROM pneumatic_device WHERE manufacturer_id = ANY($1)"#,
+            r#"
+            SELECT
+            id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM pneumatic_device
+            WHERE manufacturer_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)

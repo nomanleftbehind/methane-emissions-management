@@ -76,3 +76,8 @@ pub struct InsertEntryInput {
     pub controller: Option<InsertControllerInput>,
     pub compressor: Option<InsertCompressorInput>,
 }
+
+#[derive(InputObject, Debug)]
+pub struct MonthMethaneEmissionBySourceIdInput {
+    pub source_id: Uuid,
+}

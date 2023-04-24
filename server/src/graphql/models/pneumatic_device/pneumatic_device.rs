@@ -23,7 +23,7 @@ use crate::graphql::{
     },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
-use chrono::NaiveDateTime;
+use chrono::{NaiveDate, NaiveDateTime};
 use common::PneumaticDeviceType;
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -42,6 +42,8 @@ pub struct PneumaticDevice {
     pub manufacturer_id: Uuid,
     pub model: Option<String>,
     pub serial_number: Option<String>,
+    pub start_date: NaiveDate,
+    pub end_date: Option<NaiveDate>,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
