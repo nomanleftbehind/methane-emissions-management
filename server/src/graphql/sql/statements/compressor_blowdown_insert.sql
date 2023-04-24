@@ -38,7 +38,7 @@ FROM
     updated_by_id,
     updated_at
   )
-  INNER JOIN compressors cpr ON cpr.fdc_rec_id = cb.fdc_rec_id ON CONFLICT (compressor_id, date) DO
+  INNER JOIN compressor cpr ON cpr.fdc_rec_id = cb.fdc_rec_id ON CONFLICT (compressor_id, date) DO
 UPDATE
 SET
   gas_volume = EXCLUDED.gas_volume,

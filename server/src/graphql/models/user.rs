@@ -8,7 +8,8 @@ use crate::graphql::{
             CreatedCompressorsLoader, UpdatedCompressorBlowdownsLoader,
             UpdatedCompressorMonthHoursLoader,
             UpdatedCompressorSealMonthMethaneEmissionOverridesLoader,
-            UpdatedCompressorSealTestsLoader, UpdatedCompressorsLoader, UpdatedCompressorSealsLoader,
+            UpdatedCompressorSealTestsLoader, UpdatedCompressorSealsLoader,
+            UpdatedCompressorsLoader,
         },
         defined_vent_gas::tank::{
             CreatedTankChangesLoader, CreatedTankEmissionFactorsCalculatedLoader,
@@ -361,174 +362,126 @@ impl User {
         Ok(result)
     }
 
-    async fn created_compressor_month_vent_overrides(
+    async fn created_compressor_seal_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<CompressorMonthVentOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedCompressorMonthVentOverridesLoader>>();
-        let compressor_month_vent_overrides = loader.load_one(self.id).await?;
-        let result = compressor_month_vent_overrides.unwrap_or(vec![]);
+    ) -> Result<Vec<CompressorSealMonthMethaneEmissionOverride>, Error> {
+        let loader = ctx
+            .get_loader::<DataLoader<CreatedCompressorSealMonthMethaneEmissionOverridesLoader>>();
+        let compressor_seal_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = compressor_seal_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_compressor_month_vent_overrides(
+    async fn updated_compressor_seal_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<CompressorMonthVentOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorMonthVentOverridesLoader>>();
-        let compressor_month_vent_overrides = loader.load_one(self.id).await?;
-        let result = compressor_month_vent_overrides.unwrap_or(vec![]);
+    ) -> Result<Vec<CompressorSealMonthMethaneEmissionOverride>, Error> {
+        let loader = ctx
+            .get_loader::<DataLoader<UpdatedCompressorSealMonthMethaneEmissionOverridesLoader>>();
+        let compressor_seal_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = compressor_seal_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_compressor_month_vents(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<CompressorMonthVent>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedCompressorMonthVentsLoader>>();
-        let compressor_month_vents = loader.load_one(self.id).await?;
-        let result = compressor_month_vents.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
-    async fn updated_compressor_month_vents(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<CompressorMonthVent>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorMonthVentsLoader>>();
-        let compressor_month_vents = loader.load_one(self.id).await?;
-        let result = compressor_month_vents.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
-    async fn created_tank_farms(&self, ctx: &Context<'_>) -> Result<Vec<TankFarm>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmsLoader>>();
-        let tank_farms = loader.load_one(self.id).await?;
+    async fn created_tanks(&self, ctx: &Context<'_>) -> Result<Vec<Tank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTanksLoader>>();
+        let tanks = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no created tank farms
-        let result = tank_farms.unwrap_or(vec![]);
+        let result = tanks.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_tank_farms(&self, ctx: &Context<'_>) -> Result<Vec<TankFarm>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmsLoader>>();
-        let tank_farms = loader.load_one(self.id).await?;
+    async fn updated_tanks(&self, ctx: &Context<'_>) -> Result<Vec<Tank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTanksLoader>>();
+        let tanks = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no updated tank farms
-        let result = tank_farms.unwrap_or(vec![]);
+        let result = tanks.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_tank_farm_changes(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmChangesLoader>>();
-        let tank_farm_changes = loader.load_one(self.id).await?;
-        let result = tank_farm_changes.unwrap_or(vec![]);
+    async fn created_tank_changes(&self, ctx: &Context<'_>) -> Result<Vec<TankChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankChangesLoader>>();
+        let tank_changes = loader.load_one(self.id).await?;
+        let result = tank_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_tank_farm_changes(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmChangesLoader>>();
-        let tank_farm_changes = loader.load_one(self.id).await?;
-        let result = tank_farm_changes.unwrap_or(vec![]);
+    async fn updated_tank_changes(&self, ctx: &Context<'_>) -> Result<Vec<TankChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankChangesLoader>>();
+        let tank_changes = loader.load_one(self.id).await?;
+        let result = tank_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_tank_farm_month_oil_flows(
+    async fn created_tank_month_oil_flows(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmMonthOilFlow>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmMonthOilFlowsLoader>>();
-        let tank_farm_month_oil_flows = loader.load_one(self.id).await?;
-        let result = tank_farm_month_oil_flows.unwrap_or(vec![]);
+    ) -> Result<Vec<TankMonthOilFlow>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankMonthOilFlowsLoader>>();
+        let tank_month_oil_flows = loader.load_one(self.id).await?;
+        let result = tank_month_oil_flows.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_tank_farm_month_oil_flows(
+    async fn updated_tank_month_oil_flows(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmMonthOilFlow>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmMonthOilFlowsLoader>>();
-        let tank_farm_month_oil_flows = loader.load_one(self.id).await?;
-        let result = tank_farm_month_oil_flows.unwrap_or(vec![]);
+    ) -> Result<Vec<TankMonthOilFlow>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankMonthOilFlowsLoader>>();
+        let tank_month_oil_flows = loader.load_one(self.id).await?;
+        let result = tank_month_oil_flows.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_tank_farm_vent_factors_calculated(
+    async fn created_tank_emission_factors_calculated(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmVentFactorCalculated>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmVentFactorsCalculatedLoader>>();
-        let tank_farm_vent_factors_calculated = loader.load_one(self.id).await?;
-        let result = tank_farm_vent_factors_calculated.unwrap_or(vec![]);
+    ) -> Result<Vec<TankEmissionFactorCalculated>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankEmissionFactorsCalculatedLoader>>();
+        let tank_emission_factors_calculated = loader.load_one(self.id).await?;
+        let result = tank_emission_factors_calculated.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_tank_farm_vent_factors_calculated(
+    async fn updated_tank_emission_factors_calculated(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmVentFactorCalculated>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmVentFactorsCalculatedLoader>>();
-        let tank_farm_vent_factors_calculated = loader.load_one(self.id).await?;
-        let result = tank_farm_vent_factors_calculated.unwrap_or(vec![]);
+    ) -> Result<Vec<TankEmissionFactorCalculated>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankEmissionFactorsCalculatedLoader>>();
+        let tank_emission_factors_calculated = loader.load_one(self.id).await?;
+        let result = tank_emission_factors_calculated.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_tank_farm_month_vent_overrides(
+    async fn created_tank_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmMonthVentOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmMonthVentOverridesLoader>>();
-        let tank_farm_month_vent_overrides = loader.load_one(self.id).await?;
-        let result = tank_farm_month_vent_overrides.unwrap_or(vec![]);
+    ) -> Result<Vec<TankMonthMethaneEmissionOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedTankMonthMethaneEmissionOverridesLoader>>();
+        let tank_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = tank_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_tank_farm_month_vent_overrides(
+    async fn updated_tank_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmMonthVentOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmMonthVentOverridesLoader>>();
-        let tank_farm_month_vent_overrides = loader.load_one(self.id).await?;
-        let result = tank_farm_month_vent_overrides.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
-    async fn created_tank_farm_month_vents(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmMonthVent>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankFarmMonthVentsLoader>>();
-        let tank_farm_month_vents = loader.load_one(self.id).await?;
-        let result = tank_farm_month_vents.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
-    async fn updated_tank_farm_month_vents(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<TankFarmMonthVent>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankFarmMonthVentsLoader>>();
-        let tank_farm_month_vents = loader.load_one(self.id).await?;
-        let result = tank_farm_month_vents.unwrap_or(vec![]);
+    ) -> Result<Vec<TankMonthMethaneEmissionOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedTankMonthMethaneEmissionOverridesLoader>>();
+        let tank_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = tank_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

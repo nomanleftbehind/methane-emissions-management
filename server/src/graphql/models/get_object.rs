@@ -1,10 +1,11 @@
 use crate::graphql::models::{
     compressor::Compressor,
+    defined_vent_gas::tank::Tank,
+    month_methane_emission::MonthMethaneEmission,
     pneumatic_device::{
-        ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride, NonLevelController,
-        NonLevelControllerChange,
+        PneumaticDevice, PneumaticDeviceChange, PneumaticDeviceMonthHours,
+        PneumaticDeviceMonthMethaneEmissionOverride,
     },
-    TankFarm,
 };
 use async_graphql::SimpleObject;
 use sqlx::FromRow;
@@ -12,13 +13,14 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Debug)]
 pub struct GetObject {
-    pub controllers: Option<Vec<NonLevelController>>,
+    pub pneumatic_devices: Option<Vec<PneumaticDevice>>,
     pub compressors: Option<Vec<Compressor>>,
-    pub tank_farms: Option<Vec<TankFarm>>,
-    pub controller_changes: Option<Vec<NonLevelControllerChange>>,
-    pub controller_month_hours: Option<Vec<ControllerMonthHours>>,
-    pub controller_month_vent_override: Option<Vec<ControllerMonthVentOverride>>,
-    pub controller_month_vent: Option<Vec<ControllerMonthVent>>,
+    pub tanks: Option<Vec<Tank>>,
+    pub pneumatic_device_changes: Option<Vec<PneumaticDeviceChange>>,
+    pub pneumatic_device_month_hours: Option<Vec<PneumaticDeviceMonthHours>>,
+    pub pneumatic_device_month_methane_emission_overrides:
+        Option<Vec<PneumaticDeviceMonthMethaneEmissionOverride>>,
+    pub month_methane_emissions: Option<Vec<MonthMethaneEmission>>,
 }
 
 #[derive(SimpleObject, Debug, Clone, FromRow, PartialEq)]

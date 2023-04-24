@@ -50,6 +50,9 @@ use super::{
         UpdatedPneumaticDeviceMonthMethaneEmissionOverridesLoader, UpdatedPneumaticDevicesLoader,
     },
     site::{CreatedSitesLoader, FacilitySitesLoader, SiteLoader, UpdatedSitesLoader},
+    survey_equipment::{
+        CreatedSurveyEquipmentLoader, SurveyEquipmentLoader, UpdatedSurveyEquipmentLoader,
+    },
     user::UserLoader,
 };
 use actix_web::web::Data;
@@ -94,6 +97,18 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         DataLoader::new(CreatedSitesLoader::new(pool.clone()), tokio::spawn);
     let sites_by_updater_id_loader =
         DataLoader::new(UpdatedSitesLoader::new(pool.clone()), tokio::spawn);
+
+    // Survey Equipment
+    let survey_equipment_by_id_loader =
+        DataLoader::new(SurveyEquipmentLoader::new(pool.clone()), tokio::spawn);
+    let survey_equipment_by_creator_id_loader = DataLoader::new(
+        CreatedSurveyEquipmentLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let survey_equipment_by_updater_id_loader = DataLoader::new(
+        UpdatedSurveyEquipmentLoader::new(pool.clone()),
+        tokio::spawn,
+    );
 
     // Pneumatic Device
     let pneumatic_device_by_id_loader =
@@ -413,6 +428,15 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(facilities_by_creator_id_loader);
     loaders.insert(facilities_by_updater_id_loader);
 
+    loaders.insert(site_by_id_loader);
+    loaders.insert(sites_by_facility_id_loader);
+    loaders.insert(sites_by_creator_id_loader);
+    loaders.insert(sites_by_updater_id_loader);
+
+    loaders.insert(survey_equipment_by_id_loader);
+    loaders.insert(survey_equipment_by_creator_id_loader);
+    loaders.insert(survey_equipment_by_updater_id_loader);
+
     loaders.insert(pneumatic_device_by_id_loader);
     loaders.insert(pneumatic_devices_by_creator_id_loader);
     loaders.insert(pneumatic_devices_by_updater_id_loader);
@@ -427,6 +451,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(pneumatic_device_changes_by_pneumatic_device_id_loader);
     loaders.insert(pneumatic_device_changes_by_creator_id_loader);
     loaders.insert(pneumatic_device_changes_by_updater_id_loader);
+
+    loaders.insert(level_controller_actuation_frequency_by_id_loader);
+    loaders.insert(level_controller_actuation_frequencies_by_level_controller_id_loader);
+    loaders.insert(level_controller_actuation_frequencies_by_creator_id_loader);
+    loaders.insert(level_controller_actuation_frequencies_by_updater_id_loader);
 
     loaders.insert(pneumatic_device_month_hours_by_id_loader);
     loaders.insert(pneumatic_device_month_hours_by_pneumatic_device_id_loader);
