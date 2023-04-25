@@ -10,9 +10,9 @@ pub async fn id_selection(
     match variant {
         ControllerManufacturerId => {
             query_as!(
-            IdSelection,
-            "SELECT id, manufacturer as name FROM controller_manufacturers ORDER BY manufacturer"
-        )
+                IdSelection,
+                "SELECT id, manufacturer as name FROM device_manufacturer ORDER BY manufacturer"
+            )
             .fetch_all(pool)
             .await
         }
