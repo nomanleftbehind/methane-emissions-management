@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use sqlx::postgres::PgHasArrayType;
 use std::fmt::Display;
 
 /// `MethaneEmissionSource` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
@@ -16,6 +17,12 @@ pub enum MethaneEmissionSource {
     CompressorSeal,
     CompressorBlowdown,
     Tank,
+}
+
+impl PgHasArrayType for MethaneEmissionSource {
+    fn array_type_info() -> sqlx::postgres::PgTypeInfo {
+        sqlx::postgres::PgTypeInfo::with_name("_methane_emission_source")
+    }
 }
 
 impl Display for MethaneEmissionSource {
@@ -43,6 +50,12 @@ pub enum MethaneEmissionCategory {
     Routine,
     Nonroutine,
     Fugitive,
+}
+
+impl PgHasArrayType for MethaneEmissionCategory {
+    fn array_type_info() -> sqlx::postgres::PgTypeInfo {
+        sqlx::postgres::PgTypeInfo::with_name("_methane_emission_category")
+    }
 }
 
 impl Display for MethaneEmissionCategory {

@@ -1,9 +1,9 @@
 use self::{
     compressor_blowdown::CompressorBlowdownQuery, compressor_month_vent::CompressorMonthVentQuery,
     controller_application::ControllerApplicationQuery,
-    controller_manufacturer::ControllerManufacturerQuery,
-    controller_month_vent::ControllerMonthVentQuery, facility::FacilityQuery,
+    controller_manufacturer::ControllerManufacturerQuery, facility::FacilityQuery,
     get_object::GetObjectQuery, id_selection::IdSelectionQuery,
+    pneumatic_device_month_methane_emission::ControllerMonthVentQuery,
     tank_farm_month_vent::TankFarmMonthVentQuery, user::UserQuery,
 };
 use async_graphql::MergedObject;
@@ -12,10 +12,10 @@ mod compressor_blowdown;
 mod compressor_month_vent;
 mod controller_application;
 mod controller_manufacturer;
-mod controller_month_vent;
 mod facility;
 mod get_object;
 mod id_selection;
+mod pneumatic_device_month_methane_emission;
 mod tank_farm_month_vent;
 mod user;
 

@@ -75,10 +75,7 @@ pub struct MonthMethaneEmissionCalculated {
 }
 
 #[derive(Debug)]
-pub struct MonthMethaneEmissionUnnestedRows {
-    pub user_id: Uuid,
-    pub month_methane_emissions_calculated: Vec<MonthMethaneEmissionCalculated>,
-}
+pub struct MonthMethaneEmissionUnnestedRows(pub Vec<MonthMethaneEmissionCalculated>);
 
 #[derive(Debug)]
 pub struct MonthMethaneEmissionNestedRows {
@@ -92,18 +89,15 @@ pub struct MonthMethaneEmissionNestedRows {
     pub gas_volume: Vec<f64>,
     pub c1_volume: Vec<f64>,
     pub co2_volume: Vec<f64>,
-    // pub created_by_id: Vec<Uuid>,
     pub created_at: Vec<NaiveDateTime>,
+    // pub created_by_id: Vec<Uuid>,
     // pub updated_by_id: Vec<Uuid>,
-    pub updated_at: Vec<NaiveDateTime>,
+    // pub updated_at: Vec<NaiveDateTime>,
 }
 
 impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
     fn from(
-        MonthMethaneEmissionUnnestedRows {
-            user_id,
-            month_methane_emissions_calculated,
-        }: MonthMethaneEmissionUnnestedRows,
+        MonthMethaneEmissionUnnestedRows(month_methane_emissions_calculated): MonthMethaneEmissionUnnestedRows,
     ) -> Self {
         let (
             id,
@@ -116,10 +110,10 @@ impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
             gas_volume,
             c1_volume,
             co2_volume,
-            // created_by_id,
             created_at,
+            // created_by_id,
             // updated_by_id,
-            updated_at,
+            // updated_at,
         ): (
             Vec<_>,
             Vec<_>,
@@ -132,7 +126,7 @@ impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
             Vec<_>,
             Vec<_>,
             Vec<_>,
-            Vec<_>,
+            // Vec<_>,
             // Vec<_>,
             // Vec<_>,
         ) = month_methane_emissions_calculated
@@ -149,10 +143,10 @@ impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
                     cmvc.gas_volume,
                     cmvc.c1_volume,
                     cmvc.co2_volume,
-                    // user_id.clone(),
                     chrono::Utc::now().naive_utc(),
                     // user_id.clone(),
-                    chrono::Utc::now().naive_utc(),
+                    // user_id.clone(),
+                    // chrono::Utc::now().naive_utc(),
                 )
             })
             .multiunzip();
@@ -168,10 +162,10 @@ impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
             gas_volume,
             c1_volume,
             co2_volume,
-            // created_by_id,
             created_at,
+            // created_by_id,
             // updated_by_id,
-            updated_at,
+            // updated_at,
         }
     }
 }

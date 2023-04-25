@@ -1,8 +1,9 @@
 use crate::graphql::models::{
-    MonthMethaneEmission, MonthMethaneEmissionBySourceIdInput, MonthMethaneEmissionCalculated,
-    MonthMethaneEmissionNestedRows, MonthMethaneEmissionUnnestedRows,
+    FromToMonthInput, MonthMethaneEmission, MonthMethaneEmissionBySourceIdInput,
+    MonthMethaneEmissionCalculated, MonthMethaneEmissionNestedRows,
+    MonthMethaneEmissionUnnestedRows,
 };
-use chrono::NaiveDate;
+use common::{MethaneEmissionCategory, MethaneEmissionSource};
 use sqlx::{query_as, query_file, query_file_as, Error, PgPool};
 use uuid::Uuid;
 
@@ -23,17 +24,21 @@ pub async fn select_month_methane_emissions(
     .await
 }
 
-pub async fn insert_controller_month_vents(
+pub async fn insert_month_methane_emissions(
     pool: &PgPool,
     user_id: Uuid,
-    months: &[NaiveDate],
+    FromToMonthInput {
+        from_month,
+        to_month,
+    }: FromToMonthInput,
     c1: &f64,
     co2: &f64,
 ) -> Result<u64, Error> {
     let month_methane_emissions_calculated = query_file_as!(
         MonthMethaneEmissionCalculated,
-        "src/graphql/sql/statements/controller_month_vent_calculate.sql",
-        months,
+        "src/graphql/sql/statements/pneumatic_device_month_methane_emission_calculate.sql",
+        from_month,
+        to_month,
         c1,
         co2
     )
@@ -51,28 +56,26 @@ pub async fn insert_controller_month_vents(
         gas_volume,
         c1_volume,
         co2_volume,
-        // created_by_id,
         created_at,
+        // created_by_id,
         // updated_by_id,
-        updated_at,
-    } = MonthMethaneEmissionUnnestedRows {
-        user_id,
-        month_methane_emissions_calculated,
-    }
-    .into();
+        // updated_at,
+    } = MonthMethaneEmissionUnnestedRows(month_methane_emissions_calculated).into();
 
     let rows_inserted = query_file!(
-        "src/graphql/sql/statements/controller_month_vent_insert.sql",
+        "src/graphql/sql/statements/pneumatic_device_month_methane_emission_insert.sql",
         &id,
+        &facility_id,
+        &site_id,
+        &source as &[MethaneEmissionSource],
+        &source_id,
+        &category as &[MethaneEmissionCategory],
         &month,
         &gas_volume,
         &c1_volume,
         &co2_volume,
-        &controller_id,
-        &created_by_id,
         &created_at,
-        &updated_by_id,
-        &updated_at
+        user_id
     )
     .execute(pool)
     .await?

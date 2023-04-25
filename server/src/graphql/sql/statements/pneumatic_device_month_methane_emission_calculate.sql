@@ -1,15 +1,15 @@
 WITH allocate_month as (
 	SELECT
-		month_beginning :: date
+		month_beginning::date
 	FROM
-		generate_series('2023-02-01' :: date, '2023-03-01', '1 month') as month_beginning
+		generate_series($1::date, $2::date, '1 month') as month_beginning
 )
 SELECT
 	pdmme.facility_id,
-	pdmme.site_id,
-	'pneumatic_device' :: methane_emission_source as "source",
+	pdmme.site_id as "site_id!",
+	'pneumatic_device'::methane_emission_source as "source!: _",
 	pdmme.id as "source_id!",
-	'ROUTINE' :: methane_emission_category as category,
+	'ROUTINE'::methane_emission_category as "category!: _",
 	pdmme.month_beginning as "month!",
 	SUM(pdmme.gas_volume * pdmme.percent) as "gas_volume!",
 	SUM(pdmme.gas_volume * pdmme.c1 * pdmme.percent) as "c1_volume!",
@@ -39,8 +39,8 @@ FROM
 					pdmme.id,
 					pdmme.month_beginning,
 					pdmme.gas_volume,
-					COALESCE(ga.c1, 0.82) as c1,
-					COALESCE(ga.co2, 0.0067) as co2,
+					COALESCE(ga.c1, $3) as c1,
+					COALESCE(ga.co2, $4) as co2,
 					GREATEST(ga.from_date, pdmme.from_date) as from_date,
 					LEAST(ga.to_date, pdmme.to_date) as to_date,
 					EXTRACT(

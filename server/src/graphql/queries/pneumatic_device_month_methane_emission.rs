@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
     models::pneumatic_device::{ControllerMonthVent, ControllerMonthVentBy},
-    sql::select_controller_month_vents,
+    sql::select_month_methane_emissions,
 };
 use async_graphql::{Context, Error, Object};
 
@@ -17,7 +17,7 @@ impl ControllerMonthVentQuery {
     ) -> Result<Vec<ControllerMonthVent>, Error> {
         let pool = ctx.db_pool();
 
-        let controller_month_vents = select_controller_month_vents(pool, by)
+        let controller_month_vents = select_month_methane_emissions(pool, by)
             .await
             .map_err(Error::from);
 
