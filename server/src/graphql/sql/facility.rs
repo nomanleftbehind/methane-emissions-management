@@ -15,7 +15,7 @@ pub async fn query_facilities(
                 r#"
                 SELECT
                 id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
-                FROM facilities
+                FROM facility
                 WHERE name = $1
                 LIMIT $2
                 OFFSET $3
@@ -32,7 +32,7 @@ pub async fn query_facilities(
                 r#"
                 SELECT
                 id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
-                FROM facilities
+                FROM facility
                 WHERE type = $1
                 LIMIT $2
                 OFFSET $3
@@ -57,7 +57,7 @@ pub async fn query_all_facilities<'e, E: PgExecutor<'e>>(
             r#"
             SELECT
             id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
-            FROM facilities
+            FROM facility
             LIMIT $1
             OFFSET $2
             "#,
@@ -72,8 +72,8 @@ pub async fn query_all_facilities<'e, E: PgExecutor<'e>>(
             r#"
             SELECT
             id, idpa, name, type as "type: _", created_by_id, created_at, updated_by_id, updated_at
-            FROM facilities
-            WHERE id IN (SELECT facility_id FROM controllers)
+            FROM facility
+            WHERE id IN (SELECT facility_id FROM site)
             "#,
         )
         .fetch_all(executor)
