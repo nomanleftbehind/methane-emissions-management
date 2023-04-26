@@ -1,15 +1,17 @@
 use super::{
     compressor::{
-        CompressorBlowdownLoader, CompressorBlowdownsByCompressorLoader, CompressorLoader,
-        CompressorMonthHoursByCompressorLoader, CompressorMonthHoursLoader, CompressorSealLoader,
-        CompressorSealMonthMethaneEmissionOverrideLoader,
+        CompressorBlowdownLoader, CompressorBlowdownOverrideLoader,
+        CompressorBlowdownOverridesByCompressorLoader, CompressorBlowdownsByCompressorLoader,
+        CompressorLoader, CompressorMonthHoursByCompressorLoader, CompressorMonthHoursLoader,
+        CompressorSealLoader, CompressorSealMonthMethaneEmissionOverrideLoader,
         CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader,
         CompressorSealTestLoader, CompressorSealTestsByCompressorSealLoader,
-        CompressorSealTestsBySurveyEquipmentLoader, CreatedCompressorBlowdownsLoader,
-        CreatedCompressorMonthHoursLoader,
+        CompressorSealTestsBySurveyEquipmentLoader, CreatedCompressorBlowdownOverridesLoader,
+        CreatedCompressorBlowdownsLoader, CreatedCompressorMonthHoursLoader,
         CreatedCompressorSealMonthMethaneEmissionOverridesLoader, CreatedCompressorSealTestsLoader,
         CreatedCompressorSealsLoader, CreatedCompressorsLoader, SiteCompressorsLoader,
-        UpdatedCompressorBlowdownsLoader, UpdatedCompressorMonthHoursLoader,
+        UpdatedCompressorBlowdownOverridesLoader, UpdatedCompressorBlowdownsLoader,
+        UpdatedCompressorMonthHoursLoader,
         UpdatedCompressorSealMonthMethaneEmissionOverridesLoader, UpdatedCompressorSealTestsLoader,
         UpdatedCompressorSealsLoader, UpdatedCompressorsLoader,
     },
@@ -293,22 +295,6 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Compressor Blowdown
-    let compressor_blowdown_by_id_loader =
-        DataLoader::new(CompressorBlowdownLoader::new(pool.clone()), tokio::spawn);
-    let compressor_blowdowns_by_compressor_id_loader = DataLoader::new(
-        CompressorBlowdownsByCompressorLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let compressor_blowdowns_by_creator_id_loader = DataLoader::new(
-        CreatedCompressorBlowdownsLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let compressor_blowdowns_by_updater_id_loader = DataLoader::new(
-        UpdatedCompressorBlowdownsLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-
     // Compressor Seal Month Methane Emission Override
     let compressor_seal_month_methane_emission_override_by_id_loader = DataLoader::new(
         CompressorSealMonthMethaneEmissionOverrideLoader::new(pool.clone()),
@@ -325,6 +311,40 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
     let compressor_seal_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
         UpdatedCompressorSealMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Compressor Blowdown
+    let compressor_blowdown_by_id_loader =
+        DataLoader::new(CompressorBlowdownLoader::new(pool.clone()), tokio::spawn);
+    let compressor_blowdowns_by_compressor_id_loader = DataLoader::new(
+        CompressorBlowdownsByCompressorLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_blowdowns_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorBlowdownsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_blowdowns_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorBlowdownsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Compressor Blowdown Override
+    let compressor_blowdown_override_by_id_loader = DataLoader::new(
+        CompressorBlowdownOverrideLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_blowdown_overrides_by_compressor_id_loader = DataLoader::new(
+        CompressorBlowdownOverridesByCompressorLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_blowdown_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorBlowdownOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_blowdown_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorBlowdownOverridesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -468,6 +488,8 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(pneumatic_device_month_methane_emission_overrides_by_updater_id_loader);
 
     loaders.insert(month_methane_emission_by_id_loader);
+    loaders.insert(month_methane_emissions_by_facility_id_loader);
+    loaders.insert(month_methane_emissions_by_site_id_loader);
     loaders.insert(month_methane_emissions_by_emission_source_id_loader);
     loaders.insert(month_methane_emissions_by_creator_id_loader);
     loaders.insert(month_methane_emissions_by_updater_id_loader);
@@ -477,8 +499,13 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressors_by_updater_id_loader);
     loaders.insert(compressors_by_site_id_loader);
 
+    loaders.insert(compressor_seal_by_id_loader);
+    loaders.insert(compressor_seals_by_creator_id_loader);
+    loaders.insert(compressor_seals_by_updater_id_loader);
+
     loaders.insert(compressor_seal_test_by_id_loader);
     loaders.insert(compressor_seal_tests_by_compressor_seal_id_loader);
+    loaders.insert(compressor_seal_tests_by_survey_equipment_id_loader);
     loaders.insert(compressor_seal_tests_by_creator_id_loader);
     loaders.insert(compressor_seal_tests_by_updater_id_loader);
 
@@ -487,15 +514,20 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_month_hours_by_creator_id_loader);
     loaders.insert(compressor_month_hours_by_updater_id_loader);
 
+    loaders.insert(compressor_seal_month_methane_emission_override_by_id_loader);
+    loaders.insert(compressor_seal_month_methane_emission_overrides_by_compressor_seal_id_loader);
+    loaders.insert(compressor_seal_month_methane_emission_overrides_by_creator_id_loader);
+    loaders.insert(compressor_seal_month_methane_emission_overrides_by_updater_id_loader);
+
     loaders.insert(compressor_blowdown_by_id_loader);
     loaders.insert(compressor_blowdowns_by_compressor_id_loader);
     loaders.insert(compressor_blowdowns_by_creator_id_loader);
     loaders.insert(compressor_blowdowns_by_updater_id_loader);
 
-    loaders.insert(compressor_seal_month_methane_emission_override_by_id_loader);
-    loaders.insert(compressor_seal_month_methane_emission_overrides_by_compressor_seal_id_loader);
-    loaders.insert(compressor_seal_month_methane_emission_overrides_by_creator_id_loader);
-    loaders.insert(compressor_seal_month_methane_emission_overrides_by_updater_id_loader);
+    loaders.insert(compressor_blowdown_override_by_id_loader);
+    loaders.insert(compressor_blowdown_overrides_by_compressor_id_loader);
+    loaders.insert(compressor_blowdown_overrides_by_creator_id_loader);
+    loaders.insert(compressor_blowdown_overrides_by_updater_id_loader);
 
     loaders.insert(tank_by_id_loader);
     loaders.insert(tanks_by_creator_id_loader);

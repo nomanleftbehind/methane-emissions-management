@@ -1,10 +1,10 @@
-use super::{CompressorBlowdown, CompressorMonthHours, CompressorSeal};
+use super::{CompressorBlowdown, CompressorBlowdownOverride, CompressorMonthHours, CompressorSeal};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         compressor::{
-            CompressorBlowdownsByCompressorLoader, CompressorMonthHoursByCompressorLoader,
-            CompressorSealLoader,
+            CompressorBlowdownOverridesByCompressorLoader, CompressorBlowdownsByCompressorLoader,
+            CompressorMonthHoursByCompressorLoader, CompressorSealLoader,
         },
         site::SiteLoader,
         user::UserLoader,
@@ -85,6 +85,17 @@ impl Compressor {
         let loader = ctx.get_loader::<DataLoader<CompressorBlowdownsByCompressorLoader>>();
         let compressor_blowdowns = loader.load_one(self.id).await?;
         let result = compressor_blowdowns.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn compressor_blowdown_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorBlowdownOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorBlowdownOverridesByCompressorLoader>>();
+        let compressor_blowdown_overrides = loader.load_one(self.id).await?;
+        let result = compressor_blowdown_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

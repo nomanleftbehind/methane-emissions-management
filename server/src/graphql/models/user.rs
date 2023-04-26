@@ -2,11 +2,12 @@ use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         compressor::{
-            CreatedCompressorBlowdownsLoader, CreatedCompressorMonthHoursLoader,
+            CreatedCompressorBlowdownOverridesLoader, CreatedCompressorBlowdownsLoader,
+            CreatedCompressorMonthHoursLoader,
             CreatedCompressorSealMonthMethaneEmissionOverridesLoader,
             CreatedCompressorSealTestsLoader, CreatedCompressorSealsLoader,
-            CreatedCompressorsLoader, UpdatedCompressorBlowdownsLoader,
-            UpdatedCompressorMonthHoursLoader,
+            CreatedCompressorsLoader, UpdatedCompressorBlowdownOverridesLoader,
+            UpdatedCompressorBlowdownsLoader, UpdatedCompressorMonthHoursLoader,
             UpdatedCompressorSealMonthMethaneEmissionOverridesLoader,
             UpdatedCompressorSealTestsLoader, UpdatedCompressorSealsLoader,
             UpdatedCompressorsLoader,
@@ -40,8 +41,8 @@ use crate::graphql::{
     },
     models::{
         compressor::{
-            Compressor, CompressorBlowdown, CompressorMonthHours, CompressorSeal,
-            CompressorSealMonthMethaneEmissionOverride, CompressorSealTest,
+            Compressor, CompressorBlowdown, CompressorBlowdownOverride, CompressorMonthHours,
+            CompressorSeal, CompressorSealMonthMethaneEmissionOverride, CompressorSealTest,
         },
         defined_vent_gas::tank::{
             Tank, TankChange, TankEmissionFactorCalculated, TankMonthMethaneEmissionOverride,
@@ -358,6 +359,28 @@ impl User {
         let loader = ctx.get_loader::<DataLoader<UpdatedCompressorBlowdownsLoader>>();
         let compressor_blowdowns = loader.load_one(self.id).await?;
         let result = compressor_blowdowns.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_compressor_blowdown_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorBlowdownOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedCompressorBlowdownOverridesLoader>>();
+        let compressor_blowdown_overrides = loader.load_one(self.id).await?;
+        let result = compressor_blowdown_overrides.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_compressor_blowdown_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorBlowdownOverride>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedCompressorBlowdownOverridesLoader>>();
+        let compressor_blowdown_overrides = loader.load_one(self.id).await?;
+        let result = compressor_blowdown_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

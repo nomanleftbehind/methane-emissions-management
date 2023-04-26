@@ -87,6 +87,8 @@ CREATE TABLE "pneumatic_device" (
     "manufacturer_id" UUID NOT NULL,
     "model" TEXT,
     "serial_number" TEXT,
+    "start_date" DATE NOT NULL,
+    "end_date" DATE,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -176,8 +178,8 @@ CREATE TABLE "compressor" (
 -- CreateTable
 CREATE TABLE "compressor_seal" (
     "id" UUID NOT NULL,
-    "description" TEXT,
     "type" "seal_type" NOT NULL,
+    "description" TEXT,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -240,6 +242,21 @@ CREATE TABLE "compressor_blowdown" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "compressor_blowdown_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "compressor_blowdown_override" (
+    "id" UUID NOT NULL,
+    "compressor_id" UUID NOT NULL,
+    "date" DATE NOT NULL,
+    "gas_volume" DOUBLE PRECISION NOT NULL,
+    "comment" TEXT,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "compressor_blowdown_override_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -435,6 +452,9 @@ CREATE UNIQUE INDEX "compressor_month_hours_compressor_id_month_key" ON "compres
 CREATE UNIQUE INDEX "compressor_blowdown_compressor_id_date_key" ON "compressor_blowdown"("compressor_id", "date");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "compressor_blowdown_override_compressor_id_date_key" ON "compressor_blowdown_override"("compressor_id", "date");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "compressor_seal_month_methane_emission_override_compressor__key" ON "compressor_seal_month_methane_emission_override"("compressor_seal_id", "month");
 
 -- CreateIndex
@@ -577,6 +597,15 @@ ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_created_by
 
 -- AddForeignKey
 ALTER TABLE "compressor_blowdown" ADD CONSTRAINT "compressor_blowdown_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_blowdown_override" ADD CONSTRAINT "compressor_blowdown_override_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_blowdown_override" ADD CONSTRAINT "compressor_blowdown_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_blowdown_override" ADD CONSTRAINT "compressor_blowdown_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "compressor_seal_month_methane_emission_override" ADD CONSTRAINT "compressor_seal_month_methane_emission_override_compressor_fkey" FOREIGN KEY ("compressor_seal_id") REFERENCES "compressor_seal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

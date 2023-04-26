@@ -6,7 +6,6 @@ use crate::graphql::{
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
 use common::{MethaneEmissionCategory, MethaneEmissionSource};
-// use itertools::Itertools;
 use itertools::MultiUnzip;
 use sqlx::FromRow;
 use uuid::Uuid;
