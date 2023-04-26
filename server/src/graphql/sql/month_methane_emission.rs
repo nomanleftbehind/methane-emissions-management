@@ -71,9 +71,6 @@ pub async fn insert_month_methane_emissions(
         c1_volume,
         co2_volume,
         created_at,
-        // created_by_id,
-        // updated_by_id,
-        // updated_at,
     } = MonthMethaneEmissionUnnestedRows(pneumatic_device_month_methane_emissions_calculated)
         .into();
 

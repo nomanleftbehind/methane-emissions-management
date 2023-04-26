@@ -105,7 +105,7 @@ FROM
 															am.month_beginning
 														FROM
 															pneumatic_device pd
-															INNER JOIN allocate_month am ON am.month_beginning BETWEEN pd.start_date
+															INNER JOIN allocate_month am ON am.month_beginning BETWEEN DATE_TRUNC('month', pd.start_date)
 															AND COALESCE(pd.end_date, CURRENT_DATE)
 															AND (pd.id, am.month_beginning) NOT IN (
 																SELECT

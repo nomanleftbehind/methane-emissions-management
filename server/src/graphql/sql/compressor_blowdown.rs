@@ -95,15 +95,8 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
         fdc_rec_id,
         date,
         gas_volume,
-        created_by_id,
         created_at,
-        updated_by_id,
-        updated_at,
-    } = CompressorBlowdownInterimUnnestedRows {
-        user_id,
-        compressor_blowdown_interims: compressor_blowdown_interims_result?,
-    }
-    .into();
+    } = CompressorBlowdownInterimUnnestedRows(compressor_blowdown_interims_result?).into();
 
     let rows_inserted = query_file!(
         "src/graphql/sql/statements/compressor_blowdown_insert.sql",
@@ -111,10 +104,8 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
         &fdc_rec_id,
         &date,
         &gas_volume,
-        &created_by_id,
         &created_at,
-        &updated_by_id,
-        &updated_at
+        user_id
     )
     .execute(pool)
     .await?

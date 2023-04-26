@@ -91,10 +91,7 @@ impl From<MssqlCompressorBlowdownRows>
 }
 
 #[derive(Debug)]
-pub struct CompressorBlowdownInterimUnnestedRows {
-    pub user_id: Uuid,
-    pub compressor_blowdown_interims: Vec<CompressorBlowdownInterim>,
-}
+pub struct CompressorBlowdownInterimUnnestedRows(pub Vec<CompressorBlowdownInterim>);
 
 #[derive(Debug)]
 pub struct CompressorBlowdownInterimNestedRows {
@@ -102,32 +99,14 @@ pub struct CompressorBlowdownInterimNestedRows {
     pub fdc_rec_id: Vec<String>,
     pub date: Vec<NaiveDate>,
     pub gas_volume: Vec<f64>,
-    pub created_by_id: Vec<Uuid>,
     pub created_at: Vec<NaiveDateTime>,
-    pub updated_by_id: Vec<Uuid>,
-    pub updated_at: Vec<NaiveDateTime>,
 }
 
 impl From<CompressorBlowdownInterimUnnestedRows> for CompressorBlowdownInterimNestedRows {
     fn from(
-        CompressorBlowdownInterimUnnestedRows {
-            user_id,
-            compressor_blowdown_interims,
-        }: CompressorBlowdownInterimUnnestedRows,
+        CompressorBlowdownInterimUnnestedRows(compressor_blowdown_interims): CompressorBlowdownInterimUnnestedRows,
     ) -> Self {
-        let (
-            id,
-            fdc_rec_id,
-            date,
-            gas_volume,
-            created_by_id,
-            created_at,
-            updated_by_id,
-            updated_at,
-        ): (
-            Vec<_>,
-            Vec<_>,
-            Vec<_>,
+        let (id, fdc_rec_id, date, gas_volume, created_at): (
             Vec<_>,
             Vec<_>,
             Vec<_>,
@@ -141,9 +120,6 @@ impl From<CompressorBlowdownInterimUnnestedRows> for CompressorBlowdownInterimNe
                     cmvc.fdc_rec_id,
                     cmvc.date,
                     cmvc.gas_volume,
-                    user_id.clone(),
-                    chrono::Utc::now().naive_utc(),
-                    user_id.clone(),
                     chrono::Utc::now().naive_utc(),
                 )
             })
@@ -154,10 +130,7 @@ impl From<CompressorBlowdownInterimUnnestedRows> for CompressorBlowdownInterimNe
             fdc_rec_id,
             date,
             gas_volume,
-            created_by_id,
             created_at,
-            updated_by_id,
-            updated_at,
         }
     }
 }
