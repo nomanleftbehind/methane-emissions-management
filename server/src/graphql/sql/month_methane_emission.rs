@@ -34,7 +34,7 @@ pub async fn insert_month_methane_emissions(
     c1: &f64,
     co2: &f64,
 ) -> Result<u64, Error> {
-    let month_methane_emissions_calculated = query_file_as!(
+    let mut pneumatic_device_month_methane_emissions_calculated = query_file_as!(
         MonthMethaneEmissionCalculated,
         "src/graphql/sql/statements/pneumatic_device_month_methane_emission_calculate.sql",
         from_month,
@@ -44,6 +44,20 @@ pub async fn insert_month_methane_emissions(
     )
     .fetch_all(pool)
     .await?;
+
+    let mut compressor_seal_month_methane_emissions_calculated = query_file_as!(
+        MonthMethaneEmissionCalculated,
+        "src/graphql/sql/statements/compressor_seal_month_methane_emission_calculate.sql",
+        from_month,
+        to_month,
+        c1,
+        co2
+    )
+    .fetch_all(pool)
+    .await?;
+
+    pneumatic_device_month_methane_emissions_calculated
+        .append(&mut compressor_seal_month_methane_emissions_calculated);
 
     let MonthMethaneEmissionNestedRows {
         id,
@@ -60,10 +74,11 @@ pub async fn insert_month_methane_emissions(
         // created_by_id,
         // updated_by_id,
         // updated_at,
-    } = MonthMethaneEmissionUnnestedRows(month_methane_emissions_calculated).into();
+    } = MonthMethaneEmissionUnnestedRows(pneumatic_device_month_methane_emissions_calculated)
+        .into();
 
     let rows_inserted = query_file!(
-        "src/graphql/sql/statements/pneumatic_device_month_methane_emission_insert.sql",
+        "src/graphql/sql/statements/month_methane_emission_insert.sql",
         &id,
         &facility_id,
         &site_id,

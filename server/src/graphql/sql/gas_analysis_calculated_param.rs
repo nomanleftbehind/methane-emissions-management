@@ -1,4 +1,4 @@
-use crate::graphql::models::{
+use crate::graphql::models::gas_analysis::{
     GasAnalysisCalculatedParamInterim, GasAnalysisCalculatedParamInterimNestedRows,
     GasAnalysisCalculatedParamInterimUnnestedRows,
 };

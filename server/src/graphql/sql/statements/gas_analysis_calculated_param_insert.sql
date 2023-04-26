@@ -1,5 +1,5 @@
 INSERT INTO
-  gas_analysis_calculated_params(
+  gas_analysis_calculated_param(
     id,
     gas_gravity,
     higher_heating_value,

@@ -10,4 +10,4 @@ SELECT
     ga.co2 + ga.c1 + ga.c2 * 2 + ga.c3 * 3 + ga.c4_i * 4 + ga.c4_n * 4 + ga.c5_i * 5 + ga.c5_n * 5 + ga.c6 * 6 + ga.c7_plus * 7
   ) * 12.01 / 23.645 as "carbon_content!"
 FROM
-  gas_analyses ga
+  gas_analysis ga

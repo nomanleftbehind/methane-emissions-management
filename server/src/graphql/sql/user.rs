@@ -36,7 +36,7 @@ pub async fn query_user_controllers<'e, E: PgExecutor<'e>>(
 ) -> Result<Vec<PneumaticDevice>, sqlx::Error> {
     let controllers = sqlx::query_as!(
         PneumaticDevice,
-        r#"SELECT id, site_id, type as "type: _", manufacturer_id, model, serial_number, created_by_id, created_at, updated_by_id, updated_at FROM pneumatic_device WHERE created_by_id = $1 LIMIT $2 OFFSET $3"#,
+        r#"SELECT id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at FROM pneumatic_device WHERE created_by_id = $1 LIMIT $2 OFFSET $3"#,
         user_id,
         limit,
         offset

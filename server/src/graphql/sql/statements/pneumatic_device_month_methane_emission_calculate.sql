@@ -107,8 +107,7 @@ FROM
 															pneumatic_device pd
 															INNER JOIN allocate_month am ON am.month_beginning BETWEEN pd.start_date
 															AND COALESCE(pd.end_date, CURRENT_DATE)
-														WHERE
-															(pd.id, am.month_beginning) NOT IN (
+															AND (pd.id, am.month_beginning) NOT IN (
 																SELECT
 																	pdmmeo.pneumatic_device_id,
 																	pdmmeo.month
@@ -134,7 +133,15 @@ FROM
 																	CURRENT_DATE
 																)
 															) + INTERVAL '1 month - 1 day' as month_join_end,
-															date as from_date,
+															-- If first device change, from_date has to be first of the month because there is no carryover from previous change.
+															CASE
+																WHEN ROW_NUMBER() OVER (
+																	PARTITION BY pneumatic_device_id
+																	ORDER BY
+																		date
+																) = 1 THEN DATE_TRUNC('month', date)::date
+																ELSE date
+															END as from_date,
 															COALESCE(
 																LEAD(date) OVER (
 																	PARTITION BY pneumatic_device_id
@@ -168,7 +175,7 @@ FROM
 								FROM
 									pneumatic_device_month_methane_emission_override pdmmeo
 									INNER JOIN pneumatic_device pd ON pd.id = pdmmeo.pneumatic_device_id
-									AND pdmmeo.month BETWEEN pd.start_date
+									AND pdmmeo.month BETWEEN DATE_TRUNC('month', pd.start_date)
 									AND COALESCE(pd.end_date, CURRENT_DATE)
 									AND pdmmeo.month IN (
 										SELECT
