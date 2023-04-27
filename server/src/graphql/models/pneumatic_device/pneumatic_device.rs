@@ -2,7 +2,7 @@ use super::{LevelControllerActuationFrequency, PneumaticDeviceChange};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        month_methane_emission::MonthMethaneEmissionsByEmissionSourceLoader,
+        month_methane_emission::MonthMethaneEmissionsBySourceTableLoader,
         pneumatic_device::{
             DeviceManufacturerLoader, LevelControllerActuationFrequenciesByLevelControllerLoader,
             PneumaticDeviceChangesByPneumaticDeviceLoader,
@@ -130,7 +130,7 @@ impl PneumaticDevice {
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<MonthMethaneEmission>, Error> {
-        let loader = ctx.get_loader::<DataLoader<MonthMethaneEmissionsByEmissionSourceLoader>>();
+        let loader = ctx.get_loader::<DataLoader<MonthMethaneEmissionsBySourceTableLoader>>();
         let controller_month_vents = loader.load_one(self.id).await?;
         let result = controller_month_vents.unwrap_or(vec![]);
 

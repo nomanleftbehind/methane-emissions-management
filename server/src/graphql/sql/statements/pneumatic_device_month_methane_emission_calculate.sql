@@ -7,9 +7,10 @@ WITH allocate_month as (
 SELECT
 	pdmme.facility_id,
 	pdmme.site_id as "site_id!",
-	'pneumatic_device'::methane_emission_source as "source!: _",
-	pdmme.id as "source_id!",
+	'pneumatic_device'::methane_emission_source_table as "source_table!: _",
+	pdmme.id as "source_table_id!",
 	'ROUTINE'::methane_emission_category as "category!: _",
+	'PNEUMATIC_DEVICE'::methane_emission_source as "source!: _",
 	pdmme.month_beginning as "month!",
 	SUM(pdmme.gas_volume * pdmme.percent) as "gas_volume!",
 	SUM(pdmme.gas_volume * pdmme.c1 * pdmme.percent) as "c1_volume!",

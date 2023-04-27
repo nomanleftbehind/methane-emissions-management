@@ -3,9 +3,10 @@ INSERT INTO
         id,
 		facility_id,
 		site_id,
-		source,
-		source_id,
+		source_table,
+		source_table_id,
 		category,
+		source,
         month,
         gas_volume,
         c1_volume,
@@ -17,23 +18,24 @@ INSERT INTO
     )
 SELECT
     *,
-	$12::uuid,
-	$12::uuid
+	$13::uuid,
+	$13::uuid
 FROM
     UNNEST(
         $1::uuid[],
 		$2::uuid[],
 		$3::uuid[],
-		$4::methane_emission_source[],
+		$4::methane_emission_source_table[],
 		$5::uuid[],
 		$6::methane_emission_category[],
-        $7::date[],
-        $8::double precision[],
+		$7::methane_emission_source[],
+        $8::date[],
         $9::double precision[],
         $10::double precision[],
-        $11::timestamp without time zone[],
-        $11::timestamp without time zone[]
-    ) ON CONFLICT (source_id, category, month) DO
+        $11::double precision[],
+        $12::timestamp without time zone[],
+        $12::timestamp without time zone[]
+    ) ON CONFLICT (source_table_id, category, source, month) DO
 UPDATE
 SET
     gas_volume = EXCLUDED.gas_volume,

@@ -1,9 +1,13 @@
-use super::{CompressorBlowdown, CompressorBlowdownOverride, CompressorMonthHours, CompressorSeal};
+use super::{
+    CompressorBlowdown, CompressorBlowdownOverride, CompressorControlledCharacterization,
+    CompressorMonthHours, CompressorSeal,
+};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         compressor::{
             CompressorBlowdownOverridesByCompressorLoader, CompressorBlowdownsByCompressorLoader,
+            CompressorControlledCharacterizationsByCompressorLoader,
             CompressorMonthHoursByCompressorLoader, CompressorSealLoader,
         },
         site::SiteLoader,
@@ -24,7 +28,6 @@ pub struct Compressor {
     pub site_id: Uuid,
     pub fdc_rec_id: String,
     pub r#type: CompressorType,
-    pub controlled: bool,
     pub name: String,
     pub serial_number: String,
     pub power: f64,
@@ -65,6 +68,18 @@ impl Compressor {
         let compressor_seal = loader.load_one(self.id).await;
 
         compressor_seal
+    }
+
+    async fn compressor_controlled_characterizations(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorControlledCharacterization>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<CompressorControlledCharacterizationsByCompressorLoader>>();
+        let compressor_controlled_characterizations = loader.load_one(self.id).await?;
+        let result = compressor_controlled_characterizations.unwrap_or(vec![]);
+
+        Ok(result)
     }
 
     async fn compressor_month_hours(

@@ -5,7 +5,7 @@ use crate::graphql::{
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
-use common::{MethaneEmissionCategory, MethaneEmissionSource};
+use common::{MethaneEmissionCategory, MethaneEmissionSource, MethaneEmissionSourceTable};
 use itertools::MultiUnzip;
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -16,9 +16,10 @@ pub struct MonthMethaneEmission {
     pub id: Uuid,
     pub facility_id: Uuid,
     pub site_id: Uuid,
-    pub source: MethaneEmissionSource,
-    pub source_id: Uuid,
+    pub source_table: MethaneEmissionSourceTable,
+    pub source_table_id: Uuid,
     pub category: MethaneEmissionCategory,
+    pub source: MethaneEmissionSource,
     pub month: NaiveDate,
     pub gas_volume: f64,
     pub c1_volume: f64,
@@ -64,9 +65,10 @@ impl MonthMethaneEmission {
 pub struct MonthMethaneEmissionCalculated {
     pub facility_id: Uuid,
     pub site_id: Uuid,
-    pub source: MethaneEmissionSource,
-    pub source_id: Uuid,
+    pub source_table: MethaneEmissionSourceTable,
+    pub source_table_id: Uuid,
     pub category: MethaneEmissionCategory,
+    pub source: MethaneEmissionSource,
     pub month: NaiveDate,
     pub gas_volume: f64,
     pub c1_volume: f64,
@@ -81,17 +83,15 @@ pub struct MonthMethaneEmissionNestedRows {
     pub id: Vec<Uuid>,
     pub facility_id: Vec<Uuid>,
     pub site_id: Vec<Uuid>,
-    pub source: Vec<MethaneEmissionSource>,
-    pub source_id: Vec<Uuid>,
+    pub source_table: Vec<MethaneEmissionSourceTable>,
+    pub source_table_id: Vec<Uuid>,
     pub category: Vec<MethaneEmissionCategory>,
+    pub source: Vec<MethaneEmissionSource>,
     pub month: Vec<NaiveDate>,
     pub gas_volume: Vec<f64>,
     pub c1_volume: Vec<f64>,
     pub co2_volume: Vec<f64>,
     pub created_at: Vec<NaiveDateTime>,
-    // pub created_by_id: Vec<Uuid>,
-    // pub updated_by_id: Vec<Uuid>,
-    // pub updated_at: Vec<NaiveDateTime>,
 }
 
 impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
@@ -102,17 +102,15 @@ impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
             id,
             facility_id,
             site_id,
-            source,
-            source_id,
+            source_table,
+            source_table_id,
             category,
+            source,
             month,
             gas_volume,
             c1_volume,
             co2_volume,
             created_at,
-            // created_by_id,
-            // updated_by_id,
-            // updated_at,
         ): (
             Vec<_>,
             Vec<_>,
@@ -125,9 +123,7 @@ impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
             Vec<_>,
             Vec<_>,
             Vec<_>,
-            // Vec<_>,
-            // Vec<_>,
-            // Vec<_>,
+            Vec<_>,
         ) = month_methane_emissions_calculated
             .into_iter()
             .map(|cmvc| {
@@ -135,17 +131,15 @@ impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
                     Uuid::new_v4(),
                     cmvc.facility_id,
                     cmvc.site_id,
-                    cmvc.source,
-                    cmvc.source_id,
+                    cmvc.source_table,
+                    cmvc.source_table_id,
                     cmvc.category,
+                    cmvc.source,
                     cmvc.month,
                     cmvc.gas_volume,
                     cmvc.c1_volume,
                     cmvc.co2_volume,
                     chrono::Utc::now().naive_utc(),
-                    // user_id.clone(),
-                    // user_id.clone(),
-                    // chrono::Utc::now().naive_utc(),
                 )
             })
             .multiunzip();
@@ -154,17 +148,15 @@ impl From<MonthMethaneEmissionUnnestedRows> for MonthMethaneEmissionNestedRows {
             id,
             facility_id,
             site_id,
-            source,
-            source_id,
+            source_table,
+            source_table_id,
             category,
+            source,
             month,
             gas_volume,
             c1_volume,
             co2_volume,
             created_at,
-            // created_by_id,
-            // updated_by_id,
-            // updated_at,
         }
     }
 }

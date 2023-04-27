@@ -26,7 +26,7 @@ impl Loader<Uuid> for CompressorLoader {
             Compressor,
             r#"
             SELECT
-            id, site_id, fdc_rec_id, type as "type: _", controlled, name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
+            id, site_id, fdc_rec_id, type as "type: _", name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor
             WHERE id = ANY($1)
             "#,
@@ -62,7 +62,7 @@ impl Loader<Uuid> for CreatedCompressorsLoader {
             Compressor,
             r#"
             SELECT
-            id, site_id, fdc_rec_id, type as "type: _", controlled, name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
+            id, site_id, fdc_rec_id, type as "type: _", name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor
             WHERE created_by_id = ANY($1)
             "#,
@@ -103,7 +103,7 @@ impl Loader<Uuid> for UpdatedCompressorsLoader {
             Compressor,
             r#"
             SELECT
-            id, site_id, fdc_rec_id, type as "type: _", controlled, name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
+            id, site_id, fdc_rec_id, type as "type: _", name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor
             WHERE updated_by_id = ANY($1)
             "#,
@@ -144,7 +144,7 @@ impl Loader<Uuid> for SiteCompressorsLoader {
             Compressor,
             r#"
             SELECT
-            id, site_id, fdc_rec_id, type as "type: _", controlled, name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
+            id, site_id, fdc_rec_id, type as "type: _", name, serial_number, power, throw_count, install_date, remove_date, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor
             WHERE site_id = ANY($1)
             "#,

@@ -6,7 +6,7 @@ use crate::graphql::{
             CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader,
             CompressorSealTestsByCompressorSealLoader,
         },
-        month_methane_emission::MonthMethaneEmissionsByEmissionSourceLoader,
+        month_methane_emission::MonthMethaneEmissionsBySourceTableLoader,
         user::UserLoader,
     },
     models::{month_methane_emission::MonthMethaneEmission, user::User},
@@ -71,7 +71,7 @@ impl CompressorSeal {
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<MonthMethaneEmission>, Error> {
-        let loader = ctx.get_loader::<DataLoader<MonthMethaneEmissionsByEmissionSourceLoader>>();
+        let loader = ctx.get_loader::<DataLoader<MonthMethaneEmissionsBySourceTableLoader>>();
         let controller_month_vents = loader.load_one(self.id).await?;
         let result = controller_month_vents.unwrap_or(vec![]);
 

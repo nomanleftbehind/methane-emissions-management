@@ -8,7 +8,7 @@ use crate::graphql::{
             TankChangesByTankLoader, TankEmissionFactorsCalculatedByTankLoader,
             TankMonthMethaneEmissionOverridesByTankLoader, TankMonthOilFlowsByTankLoader,
         },
-        month_methane_emission::MonthMethaneEmissionsByEmissionSourceLoader,
+        month_methane_emission::MonthMethaneEmissionsBySourceTableLoader,
         site::SiteLoader,
         user::UserLoader,
     },
@@ -98,7 +98,7 @@ impl Tank {
         &self,
         ctx: &Context<'_>,
     ) -> Result<Vec<MonthMethaneEmission>, Error> {
-        let loader = ctx.get_loader::<DataLoader<MonthMethaneEmissionsByEmissionSourceLoader>>();
+        let loader = ctx.get_loader::<DataLoader<MonthMethaneEmissionsBySourceTableLoader>>();
         let month_methane_emissions = loader.load_one(self.id).await?;
         let result = month_methane_emissions.unwrap_or(vec![]);
 

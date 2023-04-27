@@ -26,7 +26,7 @@ impl Loader<Uuid> for MonthMethaneEmissionLoader {
             MonthMethaneEmission,
             r#"
             SELECT
-            id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
             FROM month_methane_emission
             WHERE id = ANY($1)
             "#,
@@ -62,7 +62,7 @@ impl Loader<Uuid> for CreatedMonthMethaneEmissionsLoader {
             MonthMethaneEmission,
             r#"
             SELECT
-            id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
             FROM month_methane_emission
             WHERE created_by_id = ANY($1)
             "#,
@@ -105,7 +105,7 @@ impl Loader<Uuid> for UpdatedMonthMethaneEmissionsLoader {
             MonthMethaneEmission,
             r#"
             SELECT
-            id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
             FROM month_methane_emission
             WHERE updated_by_id = ANY($1)
             "#,
@@ -148,7 +148,7 @@ impl Loader<Uuid> for MonthMethaneEmissionsByFacilityLoader {
             MonthMethaneEmission,
             r#"
             SELECT
-            id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
             FROM month_methane_emission
             WHERE facility_id = ANY($1)
             "#,
@@ -191,7 +191,7 @@ impl Loader<Uuid> for MonthMethaneEmissionsBySiteLoader {
             MonthMethaneEmission,
             r#"
             SELECT
-            id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
             FROM month_methane_emission
             WHERE site_id = ANY($1)
             "#,
@@ -214,18 +214,18 @@ impl Loader<Uuid> for MonthMethaneEmissionsBySiteLoader {
     }
 }
 
-pub struct MonthMethaneEmissionsByEmissionSourceLoader {
+pub struct MonthMethaneEmissionsBySourceTableLoader {
     pool: Data<PgPool>,
 }
 
-impl MonthMethaneEmissionsByEmissionSourceLoader {
+impl MonthMethaneEmissionsBySourceTableLoader {
     pub fn new(pool: Data<PgPool>) -> Self {
         Self { pool }
     }
 }
 
 #[async_trait::async_trait]
-impl Loader<Uuid> for MonthMethaneEmissionsByEmissionSourceLoader {
+impl Loader<Uuid> for MonthMethaneEmissionsBySourceTableLoader {
     type Value = Vec<MonthMethaneEmission>;
     type Error = async_graphql::Error;
 
@@ -234,9 +234,9 @@ impl Loader<Uuid> for MonthMethaneEmissionsByEmissionSourceLoader {
             MonthMethaneEmission,
             r#"
             SELECT
-            id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
             FROM month_methane_emission
-            WHERE source_id = ANY($1)
+            WHERE source_table_id = ANY($1)
             "#,
             keys
         )
@@ -244,13 +244,13 @@ impl Loader<Uuid> for MonthMethaneEmissionsByEmissionSourceLoader {
         .await?;
 
         month_methane_emissions
-            .sort_by_key(|month_methane_emission| month_methane_emission.source_id);
+            .sort_by_key(|month_methane_emission| month_methane_emission.source_table_id);
 
         let month_methane_emissions = month_methane_emissions
             .into_iter()
-            .group_by(|month_methane_emission| month_methane_emission.source_id)
+            .group_by(|month_methane_emission| month_methane_emission.source_table_id)
             .into_iter()
-            .map(|(source_id, group)| (source_id, group.collect()))
+            .map(|(source_table_id, group)| (source_table_id, group.collect()))
             .collect();
 
         Ok(month_methane_emissions)

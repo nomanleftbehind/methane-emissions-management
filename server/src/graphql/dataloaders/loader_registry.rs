@@ -2,16 +2,19 @@ use super::{
     compressor::{
         CompressorBlowdownLoader, CompressorBlowdownOverrideLoader,
         CompressorBlowdownOverridesByCompressorLoader, CompressorBlowdownsByCompressorLoader,
-        CompressorLoader, CompressorMonthHoursByCompressorLoader, CompressorMonthHoursLoader,
-        CompressorSealLoader, CompressorSealMonthMethaneEmissionOverrideLoader,
+        CompressorControlledCharacterizationLoader,
+        CompressorControlledCharacterizationsByCompressorLoader, CompressorLoader,
+        CompressorMonthHoursByCompressorLoader, CompressorMonthHoursLoader, CompressorSealLoader,
+        CompressorSealMonthMethaneEmissionOverrideLoader,
         CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader,
         CompressorSealTestLoader, CompressorSealTestsByCompressorSealLoader,
         CompressorSealTestsBySurveyEquipmentLoader, CreatedCompressorBlowdownOverridesLoader,
-        CreatedCompressorBlowdownsLoader, CreatedCompressorMonthHoursLoader,
+        CreatedCompressorBlowdownsLoader, CreatedCompressorControlledCharacterizationsLoader,
+        CreatedCompressorMonthHoursLoader,
         CreatedCompressorSealMonthMethaneEmissionOverridesLoader, CreatedCompressorSealTestsLoader,
         CreatedCompressorSealsLoader, CreatedCompressorsLoader, SiteCompressorsLoader,
         UpdatedCompressorBlowdownOverridesLoader, UpdatedCompressorBlowdownsLoader,
-        UpdatedCompressorMonthHoursLoader,
+        UpdatedCompressorControlledCharacterizationsLoader, UpdatedCompressorMonthHoursLoader,
         UpdatedCompressorSealMonthMethaneEmissionOverridesLoader, UpdatedCompressorSealTestsLoader,
         UpdatedCompressorSealsLoader, UpdatedCompressorsLoader,
     },
@@ -33,8 +36,8 @@ use super::{
     },
     month_methane_emission::{
         CreatedMonthMethaneEmissionsLoader, MonthMethaneEmissionLoader,
-        MonthMethaneEmissionsByEmissionSourceLoader, MonthMethaneEmissionsByFacilityLoader,
-        MonthMethaneEmissionsBySiteLoader, UpdatedMonthMethaneEmissionsLoader,
+        MonthMethaneEmissionsByFacilityLoader, MonthMethaneEmissionsBySiteLoader,
+        MonthMethaneEmissionsBySourceTableLoader, UpdatedMonthMethaneEmissionsLoader,
     },
     pneumatic_device::{
         CreatedDeviceManufacturersLoader, CreatedLevelControllerActuationFrequenciesLoader,
@@ -224,8 +227,8 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         MonthMethaneEmissionsBySiteLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let month_methane_emissions_by_emission_source_id_loader = DataLoader::new(
-        MonthMethaneEmissionsByEmissionSourceLoader::new(pool.clone()),
+    let month_methane_emissions_by_source_table_id_loader = DataLoader::new(
+        MonthMethaneEmissionsBySourceTableLoader::new(pool.clone()),
         tokio::spawn,
     );
     let month_methane_emissions_by_creator_id_loader = DataLoader::new(
@@ -276,6 +279,24 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
     let compressor_seal_tests_by_updater_id_loader = DataLoader::new(
         UpdatedCompressorSealTestsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Compressor Month Hours
+    let compressor_controlled_characterization_by_id_loader = DataLoader::new(
+        CompressorControlledCharacterizationLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_controlled_characterizations_by_compressor_id_loader = DataLoader::new(
+        CompressorControlledCharacterizationsByCompressorLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_controlled_characterizations_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorControlledCharacterizationsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_controlled_characterizations_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorControlledCharacterizationsLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -490,7 +511,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(month_methane_emission_by_id_loader);
     loaders.insert(month_methane_emissions_by_facility_id_loader);
     loaders.insert(month_methane_emissions_by_site_id_loader);
-    loaders.insert(month_methane_emissions_by_emission_source_id_loader);
+    loaders.insert(month_methane_emissions_by_source_table_id_loader);
     loaders.insert(month_methane_emissions_by_creator_id_loader);
     loaders.insert(month_methane_emissions_by_updater_id_loader);
 
@@ -508,6 +529,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_seal_tests_by_survey_equipment_id_loader);
     loaders.insert(compressor_seal_tests_by_creator_id_loader);
     loaders.insert(compressor_seal_tests_by_updater_id_loader);
+
+    loaders.insert(compressor_controlled_characterization_by_id_loader);
+    loaders.insert(compressor_controlled_characterizations_by_compressor_id_loader);
+    loaders.insert(compressor_controlled_characterizations_by_creator_id_loader);
+    loaders.insert(compressor_controlled_characterizations_by_updater_id_loader);
 
     loaders.insert(compressor_month_hours_by_id_loader);
     loaders.insert(compressor_month_hours_by_compressor_id_loader);

@@ -3,7 +3,7 @@ use crate::graphql::models::{
     MonthMethaneEmissionCalculated, MonthMethaneEmissionNestedRows,
     MonthMethaneEmissionUnnestedRows,
 };
-use common::{MethaneEmissionCategory, MethaneEmissionSource};
+use common::{MethaneEmissionCategory, MethaneEmissionSource, MethaneEmissionSourceTable};
 use sqlx::{query_as, query_file, query_file_as, Error, PgPool};
 use uuid::Uuid;
 
@@ -14,9 +14,9 @@ pub async fn select_month_methane_emissions(
     query_as!(MonthMethaneEmission,
         r#"
         SELECT
-        id, facility_id, site_id, source as "source: _", source_id, category as "category: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+        id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
         FROM month_methane_emission
-        WHERE source_id = $1
+        WHERE source_table_id = $1
         "#,
         by.source_id
     )
@@ -45,27 +45,42 @@ pub async fn insert_month_methane_emissions(
     .fetch_all(pool)
     .await?;
 
-    let mut compressor_seal_month_methane_emissions_calculated = query_file_as!(
-        MonthMethaneEmissionCalculated,
-        "src/graphql/sql/statements/compressor_seal_month_methane_emission_calculate.sql",
-        from_month,
-        to_month,
-        c1,
-        co2
-    )
-    .fetch_all(pool)
-    .await?;
+    // let mut compressor_seal_month_methane_emissions_calculated = query_file_as!(
+    //     MonthMethaneEmissionCalculated,
+    //     "src/graphql/sql/statements/compressor_seal_month_methane_emission_calculate.sql",
+    //     from_month,
+    //     to_month,
+    //     c1,
+    //     co2
+    // )
+    // .fetch_all(pool)
+    // .await?;
 
-    pneumatic_device_month_methane_emissions_calculated
-        .append(&mut compressor_seal_month_methane_emissions_calculated);
+    // let mut compressor_blowdown_month_methane_emissions_calculated = query_file_as!(
+    //     MonthMethaneEmissionCalculated,
+    //     "src/graphql/sql/statements/compressor_blowdown_month_methane_emission_calculate.sql",
+    //     from_month,
+    //     to_month,
+    //     c1,
+    //     co2
+    // )
+    // .fetch_all(pool)
+    // .await?;
+
+    // pneumatic_device_month_methane_emissions_calculated
+    //     .append(&mut compressor_seal_month_methane_emissions_calculated);
+
+    // pneumatic_device_month_methane_emissions_calculated
+    //     .append(&mut compressor_blowdown_month_methane_emissions_calculated);
 
     let MonthMethaneEmissionNestedRows {
         id,
         facility_id,
         site_id,
-        source,
-        source_id,
+        source_table,
+        source_table_id,
         category,
+        source,
         month,
         gas_volume,
         c1_volume,
@@ -79,9 +94,10 @@ pub async fn insert_month_methane_emissions(
         &id,
         &facility_id,
         &site_id,
-        &source as &[MethaneEmissionSource],
-        &source_id,
+        &source_table as &[MethaneEmissionSourceTable],
+        &source_table_id,
         &category as &[MethaneEmissionCategory],
+        &source as &[MethaneEmissionSource],
         &month,
         &gas_volume,
         &c1_volume,
