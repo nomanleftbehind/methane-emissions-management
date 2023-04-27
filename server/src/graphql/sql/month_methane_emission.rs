@@ -45,16 +45,16 @@ pub async fn insert_month_methane_emissions(
     .fetch_all(pool)
     .await?;
 
-    // let mut compressor_seal_month_methane_emissions_calculated = query_file_as!(
-    //     MonthMethaneEmissionCalculated,
-    //     "src/graphql/sql/statements/compressor_seal_month_methane_emission_calculate.sql",
-    //     from_month,
-    //     to_month,
-    //     c1,
-    //     co2
-    // )
-    // .fetch_all(pool)
-    // .await?;
+    let mut compressor_seal_month_methane_emissions_calculated = query_file_as!(
+        MonthMethaneEmissionCalculated,
+        "src/graphql/sql/statements/compressor_seal_month_methane_emission_calculate.sql",
+        from_month,
+        to_month,
+        c1,
+        co2
+    )
+    .fetch_all(pool)
+    .await?;
 
     // let mut compressor_blowdown_month_methane_emissions_calculated = query_file_as!(
     //     MonthMethaneEmissionCalculated,
@@ -67,8 +67,8 @@ pub async fn insert_month_methane_emissions(
     // .fetch_all(pool)
     // .await?;
 
-    // pneumatic_device_month_methane_emissions_calculated
-    //     .append(&mut compressor_seal_month_methane_emissions_calculated);
+    pneumatic_device_month_methane_emissions_calculated
+        .append(&mut compressor_seal_month_methane_emissions_calculated);
 
     // pneumatic_device_month_methane_emissions_calculated
     //     .append(&mut compressor_blowdown_month_methane_emissions_calculated);
