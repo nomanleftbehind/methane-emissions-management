@@ -33,7 +33,7 @@ FROM
 			csmme.month_beginning,
 			csmme.controlled_characterization,
 			SUM(csmme.gas_volume * csmme.percent) as gas_volume,
-			SUM(csmme.gas_volume * csmme.c1 * csmme.percent) as c1_volume,
+			SUM(csmme.c1_volume * csmme.percent) as c1_volume,
 			SUM(csmme.gas_volume * csmme.co2 * csmme.percent) as co2_volume
 		FROM
 			(
@@ -44,8 +44,8 @@ FROM
 					csmme.month_beginning,
 					csmme.from_date,
 					csmme.to_date,
-					csmme.gas_volume,
-					csmme.c1,
+					COALESCE(csmme.gas_volume, csmme.c1_volume / csmme.c1) as gas_volume,
+					COALESCE(csmme.c1_volume, csmme.gas_volume * csmme.c1) as c1_volume,
 					csmme.co2,
 					csmme.controlled_characterization,
 					EXTRACT(
@@ -63,6 +63,7 @@ FROM
 							csmme.id,
 							csmme.month_beginning,
 							csmme.gas_volume,
+							csmme.c1_volume,
 							COALESCE(ga.c1, $3) as c1,
 							COALESCE(ga.co2, $4) as co2,
 							csmme.controlled_characterization,
@@ -84,6 +85,7 @@ FROM
 									csmme.from_date,
 									csmme.to_date,
 									csmme.gas_volume * csmme.percent as gas_volume,
+									csmme.c1_volume * csmme.percent as c1_volume,
 									csmme.controlled_characterization
 								FROM
 									(
@@ -94,6 +96,7 @@ FROM
 											csmme.from_date,
 											csmme.to_date,
 											csmme.gas_volume,
+											csmme.c1_volume,
 											csmme.controlled_characterization,
 											EXTRACT(
 												DAY
@@ -109,6 +112,7 @@ FROM
 													csmme.site_id,
 													csmme.month_beginning,
 													csmme.gas_volume,
+													csmme.c1_volume,
 													COALESCE(ccc.controlled_characterization, 'UNCONTROLLED') as controlled_characterization,
 													GREATEST(ccc.from_date, csmme.from_date) as from_date,
 													LEAST(ccc.to_date, csmme.to_date) as to_date,
@@ -131,7 +135,8 @@ FROM
 																	csmme.month_beginning,
 																	csmme.from_date,
 																	csmme.to_date,
-																	csmme.hours_on * csmme.rate * csmme.percent as gas_volume
+																	NULL::double precision as gas_volume,
+																	csmme.hours_on * csmme.rate * csmme.percent as c1_volume
 																FROM
 																	(
 																		SELECT
@@ -241,7 +246,8 @@ FROM
 																	csmmeo.month as month_beginning,
 																	csmmeo.month as from_date,
 																	csmmeo.month + INTERVAL '1 month - 1 day' as to_date,
-																	csmmeo.gas_volume
+																	csmmeo.gas_volume,
+																	NULL::double precision as c1_volume
 																FROM
 																	compressor_seal_month_methane_emission_override csmmeo -- Unlike earlier example where override was joined on compressor seal, where it could have seemingly been joined on compressor, here it is joined on compressor because existence of override entry guarantees existence of compressor seal.
 																	INNER JOIN compressor cpr ON cpr.id = csmmeo.compressor_seal_id
