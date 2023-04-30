@@ -7,9 +7,10 @@ WITH allocate_month as (
 SELECT
   cbmme.facility_id,
   cbmme.site_id as "site_id!",
-  'compressor_blowdown'::methane_emission_source as "source!: _",
-  cbmme.id as "source_id!",
+  'compressor_blowdown'::methane_emission_source_table as "source_table!: _",
+  cbmme.id as "source_table_id!",
   'NONROUTINE'::methane_emission_category as "category!: _",
+  'UNPLANNED'::methane_emission_source as "source!: _",
   cbmme.month_beginning as "month!",
   SUM(cbmme.gas_volume) as "gas_volume!",
   SUM(cbmme.gas_volume * cbmme.c1) as "c1_volume!",
