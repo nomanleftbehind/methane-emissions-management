@@ -3,11 +3,11 @@ use crate::graphql::{
     dataloaders::{
         compressor::SiteCompressorsLoader, defined_vent_gas::tank::SiteTanksLoader,
         facility::FacilityLoader, month_methane_emission::MonthMethaneEmissionsBySiteLoader,
-        pneumatic_device::SitePneumaticDevicesLoader, user::UserLoader,
+        pneumatic_device::SiteNonLevelControllersLoader, user::UserLoader,
     },
     models::{
         compressor::Compressor, defined_vent_gas::tank::Tank, facility::Facility,
-        month_methane_emission::MonthMethaneEmission, pneumatic_device::PneumaticDevice,
+        month_methane_emission::MonthMethaneEmission, pneumatic_device::NonLevelController,
         user::User,
     },
 };
@@ -56,10 +56,13 @@ impl Site {
         facility
     }
 
-    async fn pneumatic_devices(&self, ctx: &Context<'_>) -> Result<Vec<PneumaticDevice>, Error> {
-        let loader = ctx.get_loader::<DataLoader<SitePneumaticDevicesLoader>>();
-        let pneumatic_devices = loader.load_one(self.id).await?;
-        let result = pneumatic_devices.unwrap_or(vec![]);
+    async fn non_level_controllers(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<NonLevelController>, Error> {
+        let loader = ctx.get_loader::<DataLoader<SiteNonLevelControllersLoader>>();
+        let non_level_controllers = loader.load_one(self.id).await?;
+        let result = non_level_controllers.unwrap_or(vec![]);
 
         Ok(result)
     }

@@ -29,13 +29,13 @@ use crate::graphql::{
             CreatedMonthMethaneEmissionsLoader, UpdatedMonthMethaneEmissionsLoader,
         },
         pneumatic_device::{
-            CreatedDeviceManufacturersLoader, CreatedPneumaticDeviceChangesLoader,
-            CreatedPneumaticDeviceMonthHoursLoader,
-            CreatedPneumaticDeviceMonthMethaneEmissionOverridesLoader,
-            CreatedPneumaticDevicesLoader, UpdatedDeviceManufacturersLoader,
-            UpdatedPneumaticDeviceChangesLoader, UpdatedPneumaticDeviceMonthHoursLoader,
-            UpdatedPneumaticDeviceMonthMethaneEmissionOverridesLoader,
-            UpdatedPneumaticDevicesLoader,
+            CreatedDeviceManufacturersLoader, CreatedNonLevelControllerChangesLoader,
+            CreatedNonLevelControllerMonthHoursLoader,
+            CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+            CreatedNonLevelControllersLoader, UpdatedDeviceManufacturersLoader,
+            UpdatedNonLevelControllerChangesLoader, UpdatedNonLevelControllerMonthHoursLoader,
+            UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+            UpdatedNonLevelControllersLoader,
         },
         site::{CreatedSitesLoader, UpdatedSitesLoader},
     },
@@ -52,8 +52,8 @@ use crate::graphql::{
         gas_analysis::{GasAnalysis, GasAnalysisCalculatedParam},
         month_methane_emission::MonthMethaneEmission,
         pneumatic_device::{
-            DeviceManufacturer, PneumaticDevice, PneumaticDeviceChange, PneumaticDeviceMonthHours,
-            PneumaticDeviceMonthMethaneEmissionOverride,
+            DeviceManufacturer, NonLevelController, NonLevelControllerChange,
+            NonLevelControllerMonthHours, NonLevelControllerMonthMethaneEmissionOverride,
         },
         site::Site,
     },
@@ -124,8 +124,8 @@ impl User {
     async fn created_pneumatic_devices(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDevice>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedPneumaticDevicesLoader>>();
+    ) -> Result<Vec<NonLevelController>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedNonLevelControllersLoader>>();
         let pneumatic_devices = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no created pneumatic devices
         let result = pneumatic_devices.unwrap_or(vec![]);
@@ -136,8 +136,8 @@ impl User {
     async fn updated_pneumatic_devices(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDevice>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedPneumaticDevicesLoader>>();
+    ) -> Result<Vec<NonLevelController>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedNonLevelControllersLoader>>();
         let pneumatic_devices = loader.load_one(self.id).await?;
         // Need to return empty vector if user has no updated pneumatic devices
         let result = pneumatic_devices.unwrap_or(vec![]);
@@ -170,8 +170,8 @@ impl User {
     async fn created_pneumatic_device_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDeviceChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedPneumaticDeviceChangesLoader>>();
+    ) -> Result<Vec<NonLevelControllerChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedNonLevelControllerChangesLoader>>();
         let pneumatic_device_changes = loader.load_one(self.id).await?;
         let result = pneumatic_device_changes.unwrap_or(vec![]);
 
@@ -181,8 +181,8 @@ impl User {
     async fn updated_pneumatic_device_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDeviceChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedPneumaticDeviceChangesLoader>>();
+    ) -> Result<Vec<NonLevelControllerChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedNonLevelControllerChangesLoader>>();
         let pneumatic_device_changes = loader.load_one(self.id).await?;
         let result = pneumatic_device_changes.unwrap_or(vec![]);
 
@@ -192,8 +192,8 @@ impl User {
     async fn created_pneumatic_device_month_hours(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDeviceMonthHours>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedPneumaticDeviceMonthHoursLoader>>();
+    ) -> Result<Vec<NonLevelControllerMonthHours>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedNonLevelControllerMonthHoursLoader>>();
         let pneumatic_device_month_hours = loader.load_one(self.id).await?;
         let result = pneumatic_device_month_hours.unwrap_or(vec![]);
 
@@ -203,8 +203,8 @@ impl User {
     async fn updated_pneumatic_device_month_hours(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDeviceMonthHours>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedPneumaticDeviceMonthHoursLoader>>();
+    ) -> Result<Vec<NonLevelControllerMonthHours>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedNonLevelControllerMonthHoursLoader>>();
         let pneumatic_device_month_hours = loader.load_one(self.id).await?;
         let result = pneumatic_device_month_hours.unwrap_or(vec![]);
 
@@ -214,9 +214,10 @@ impl User {
     async fn created_pneumatic_device_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDeviceMonthMethaneEmissionOverride>, Error> {
+    ) -> Result<Vec<NonLevelControllerMonthMethaneEmissionOverride>, Error> {
         let loader = ctx
-            .get_loader::<DataLoader<CreatedPneumaticDeviceMonthMethaneEmissionOverridesLoader>>();
+            .get_loader::<DataLoader<CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader>>(
+            );
         let pneumatic_device_month_methane_emission_overrides = loader.load_one(self.id).await?;
         let result = pneumatic_device_month_methane_emission_overrides.unwrap_or(vec![]);
 
@@ -226,9 +227,10 @@ impl User {
     async fn updated_pneumatic_device_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDeviceMonthMethaneEmissionOverride>, Error> {
+    ) -> Result<Vec<NonLevelControllerMonthMethaneEmissionOverride>, Error> {
         let loader = ctx
-            .get_loader::<DataLoader<UpdatedPneumaticDeviceMonthMethaneEmissionOverridesLoader>>();
+            .get_loader::<DataLoader<UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader>>(
+            );
         let pneumatic_device_month_methane_emission_overrides = loader.load_one(self.id).await?;
         let result = pneumatic_device_month_methane_emission_overrides.unwrap_or(vec![]);
 

@@ -1,6 +1,6 @@
 mod compressor_blowdown;
 // mod compressor_month_vent;
-mod pneumatic_device;
+mod non_level_controller;
 // mod controller_application;
 // mod controller_manufacturer;
 // mod delete_entry;
@@ -17,7 +17,7 @@ mod user;
 
 pub(in crate::graphql) use compressor_blowdown::*;
 // pub(in crate::graphql) use compressor_month_vent::*;
-pub(in crate::graphql) use pneumatic_device::*;
+pub(in crate::graphql) use non_level_controller::*;
 // pub use controller_application::*;
 // pub(in crate::graphql) use controller_manufacturer::*;
 // pub(in crate::graphql) use delete_entry::*;

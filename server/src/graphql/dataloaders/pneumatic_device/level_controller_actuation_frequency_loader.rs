@@ -141,23 +141,23 @@ impl Loader<Uuid> for LevelControllerActuationFrequenciesByLevelControllerLoader
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut level_controller_actuation_frequency = query_as!(
             LevelControllerActuationFrequency,
-            "SELECT * FROM level_controller_actuation_frequency WHERE pneumatic_device_id = ANY($1)",
+            "SELECT * FROM level_controller_actuation_frequency WHERE level_controller_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
         .await?;
 
         level_controller_actuation_frequency.sort_by_key(|level_controller_actuation_frequency| {
-            level_controller_actuation_frequency.pneumatic_device_id
+            level_controller_actuation_frequency.level_controller_id
         });
 
         let level_controller_actuation_frequencies = level_controller_actuation_frequency
             .into_iter()
             .group_by(|level_controller_actuation_frequency| {
-                level_controller_actuation_frequency.pneumatic_device_id
+                level_controller_actuation_frequency.level_controller_id
             })
             .into_iter()
-            .map(|(pneumatic_device_id, group)| (pneumatic_device_id, group.collect()))
+            .map(|(level_controller_id, group)| (level_controller_id, group.collect()))
             .collect();
 
         Ok(level_controller_actuation_frequencies)

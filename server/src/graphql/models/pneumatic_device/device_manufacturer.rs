@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{pneumatic_device::PneumaticDevicesByManufacturerLoader, user::UserLoader},
-    models::{pneumatic_device::PneumaticDevice, user::User},
+    dataloaders::{pneumatic_device::NonLevelControllersByManufacturerLoader, user::UserLoader},
+    models::{pneumatic_device::NonLevelController, user::User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;
@@ -35,10 +35,13 @@ impl DeviceManufacturer {
         updated_by
     }
 
-    async fn pneumatic_devices(&self, ctx: &Context<'_>) -> Result<Vec<PneumaticDevice>, Error> {
-        let loader = ctx.get_loader::<DataLoader<PneumaticDevicesByManufacturerLoader>>();
-        let pneumatic_devices = loader.load_one(self.id).await?;
-        let result = pneumatic_devices.unwrap_or(vec![]);
+    async fn non_level_controllers(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<NonLevelController>, Error> {
+        let loader = ctx.get_loader::<DataLoader<NonLevelControllersByManufacturerLoader>>();
+        let non_level_controllers = loader.load_one(self.id).await?;
+        let result = non_level_controllers.unwrap_or(vec![]);
 
         Ok(result)
     }

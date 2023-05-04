@@ -15,7 +15,6 @@ use std::fmt::Display;
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum PneumaticDeviceType {
-    LevelController,
     PressureController,
     TemperatureController,
     Switch,
@@ -28,7 +27,6 @@ pub enum PneumaticDeviceType {
 impl Display for PneumaticDeviceType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            PneumaticDeviceType::LevelController => write!(f, "Level Controller"),
             PneumaticDeviceType::PressureController => write!(f, "Pressure Controller"),
             PneumaticDeviceType::TemperatureController => write!(f, "Temperature Controller"),
             PneumaticDeviceType::Switch => write!(f, "Switch"),

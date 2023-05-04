@@ -41,18 +41,20 @@ use super::{
     },
     pneumatic_device::{
         CreatedDeviceManufacturersLoader, CreatedLevelControllerActuationFrequenciesLoader,
-        CreatedPneumaticDeviceChangesLoader, CreatedPneumaticDeviceMonthHoursLoader,
-        CreatedPneumaticDeviceMonthMethaneEmissionOverridesLoader, CreatedPneumaticDevicesLoader,
-        DeviceManufacturerLoader, LevelControllerActuationFrequenciesByLevelControllerLoader,
-        LevelControllerActuationFrequencyLoader, PneumaticDeviceChangeLoader,
-        PneumaticDeviceChangesByPneumaticDeviceLoader, PneumaticDeviceLoader,
-        PneumaticDeviceMonthHoursByPneumaticDeviceLoader, PneumaticDeviceMonthHoursLoader,
-        PneumaticDeviceMonthMethaneEmissionOverrideLoader,
-        PneumaticDeviceMonthMethaneEmissionOverridesByPneumaticDeviceLoader,
-        PneumaticDevicesByManufacturerLoader, SitePneumaticDevicesLoader,
+        CreatedNonLevelControllerChangesLoader, CreatedNonLevelControllerMonthHoursLoader,
+        CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+        CreatedNonLevelControllersLoader, DeviceManufacturerLoader,
+        LevelControllerActuationFrequenciesByLevelControllerLoader,
+        LevelControllerActuationFrequencyLoader, NonLevelControllerChangeLoader,
+        NonLevelControllerChangesByNonLevelControllerLoader, NonLevelControllerLoader,
+        NonLevelControllerMonthHoursByNonLevelControllerLoader, NonLevelControllerMonthHoursLoader,
+        NonLevelControllerMonthMethaneEmissionOverrideLoader,
+        NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
+        NonLevelControllersByManufacturerLoader, SiteNonLevelControllersLoader,
         UpdatedDeviceManufacturersLoader, UpdatedLevelControllerActuationFrequenciesLoader,
-        UpdatedPneumaticDeviceChangesLoader, UpdatedPneumaticDeviceMonthHoursLoader,
-        UpdatedPneumaticDeviceMonthMethaneEmissionOverridesLoader, UpdatedPneumaticDevicesLoader,
+        UpdatedNonLevelControllerChangesLoader, UpdatedNonLevelControllerMonthHoursLoader,
+        UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+        UpdatedNonLevelControllersLoader,
     },
     site::{CreatedSitesLoader, FacilitySitesLoader, SiteLoader, UpdatedSitesLoader},
     survey_equipment::{
@@ -115,21 +117,23 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Pneumatic Device
-    let pneumatic_device_by_id_loader =
-        DataLoader::new(PneumaticDeviceLoader::new(pool.clone()), tokio::spawn);
-    let pneumatic_devices_by_site_id_loader =
-        DataLoader::new(SitePneumaticDevicesLoader::new(pool.clone()), tokio::spawn);
-    let pneumatic_devices_by_manufacturer_id_loader = DataLoader::new(
-        PneumaticDevicesByManufacturerLoader::new(pool.clone()),
+    // Non-Level Controller
+    let non_level_controller_by_id_loader =
+        DataLoader::new(NonLevelControllerLoader::new(pool.clone()), tokio::spawn);
+    let non_level_controllers_by_site_id_loader = DataLoader::new(
+        SiteNonLevelControllersLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let pneumatic_devices_by_creator_id_loader = DataLoader::new(
-        CreatedPneumaticDevicesLoader::new(pool.clone()),
+    let non_level_controllers_by_manufacturer_id_loader = DataLoader::new(
+        NonLevelControllersByManufacturerLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let pneumatic_devices_by_updater_id_loader = DataLoader::new(
-        UpdatedPneumaticDevicesLoader::new(pool.clone()),
+    let non_level_controllers_by_creator_id_loader = DataLoader::new(
+        CreatedNonLevelControllersLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let non_level_controllers_by_updater_id_loader = DataLoader::new(
+        UpdatedNonLevelControllersLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -146,18 +150,20 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
 
     // Pneumatic Device Change
-    let pneumatic_device_change_by_id_loader =
-        DataLoader::new(PneumaticDeviceChangeLoader::new(pool.clone()), tokio::spawn);
-    let pneumatic_device_changes_by_pneumatic_device_id_loader = DataLoader::new(
-        PneumaticDeviceChangesByPneumaticDeviceLoader::new(pool.clone()),
+    let non_level_controller_change_by_id_loader = DataLoader::new(
+        NonLevelControllerChangeLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let pneumatic_device_changes_by_creator_id_loader = DataLoader::new(
-        CreatedPneumaticDeviceChangesLoader::new(pool.clone()),
+    let non_level_controller_changes_by_non_level_controller_id_loader = DataLoader::new(
+        NonLevelControllerChangesByNonLevelControllerLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let pneumatic_device_changes_by_updater_id_loader = DataLoader::new(
-        UpdatedPneumaticDeviceChangesLoader::new(pool.clone()),
+    let non_level_controller_changes_by_creator_id_loader = DataLoader::new(
+        CreatedNonLevelControllerChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let non_level_controller_changes_by_updater_id_loader = DataLoader::new(
+        UpdatedNonLevelControllerChangesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -180,41 +186,45 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
 
     // Pneumatic Device Month Hours
-    let pneumatic_device_month_hours_by_id_loader = DataLoader::new(
-        PneumaticDeviceMonthHoursLoader::new(pool.clone()),
+    let non_level_controller_month_hours_by_id_loader = DataLoader::new(
+        NonLevelControllerMonthHoursLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let pneumatic_device_month_hours_by_pneumatic_device_id_loader = DataLoader::new(
-        PneumaticDeviceMonthHoursByPneumaticDeviceLoader::new(pool.clone()),
+    let non_level_controller_month_hours_by_non_level_controller_id_loader = DataLoader::new(
+        NonLevelControllerMonthHoursByNonLevelControllerLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let pneumatic_device_month_hours_by_creator_id_loader = DataLoader::new(
-        CreatedPneumaticDeviceMonthHoursLoader::new(pool.clone()),
+    let non_level_controller_month_hours_by_creator_id_loader = DataLoader::new(
+        CreatedNonLevelControllerMonthHoursLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let pneumatic_device_month_hours_by_updater_id_loader = DataLoader::new(
-        UpdatedPneumaticDeviceMonthHoursLoader::new(pool.clone()),
+    let non_level_controller_month_hours_by_updater_id_loader = DataLoader::new(
+        UpdatedNonLevelControllerMonthHoursLoader::new(pool.clone()),
         tokio::spawn,
     );
 
     // Pneumatic Device Month Methane Emission Override
-    let pneumatic_device_month_methane_emission_override_by_id_loader = DataLoader::new(
-        PneumaticDeviceMonthMethaneEmissionOverrideLoader::new(pool.clone()),
+    let non_level_controller_month_methane_emission_override_by_id_loader = DataLoader::new(
+        NonLevelControllerMonthMethaneEmissionOverrideLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let pneumatic_device_month_methane_emission_overrides_by_pneumatic_device_id_loader =
+    let non_level_controller_month_methane_emission_overrides_by_non_level_controller_id_loader =
         DataLoader::new(
-            PneumaticDeviceMonthMethaneEmissionOverridesByPneumaticDeviceLoader::new(pool.clone()),
+            NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader::new(
+                pool.clone(),
+            ),
             tokio::spawn,
         );
-    let pneumatic_device_month_methane_emission_overrides_by_creator_id_loader = DataLoader::new(
-        CreatedPneumaticDeviceMonthMethaneEmissionOverridesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let pneumatic_device_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
-        UpdatedPneumaticDeviceMonthMethaneEmissionOverridesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
+    let non_level_controller_month_methane_emission_overrides_by_creator_id_loader =
+        DataLoader::new(
+            CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+            tokio::spawn,
+        );
+    let non_level_controller_month_methane_emission_overrides_by_updater_id_loader =
+        DataLoader::new(
+            UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+            tokio::spawn,
+        );
 
     //  Month Methane Emission
     let month_methane_emission_by_id_loader =
@@ -478,35 +488,37 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(survey_equipment_by_creator_id_loader);
     loaders.insert(survey_equipment_by_updater_id_loader);
 
-    loaders.insert(pneumatic_device_by_id_loader);
-    loaders.insert(pneumatic_devices_by_creator_id_loader);
-    loaders.insert(pneumatic_devices_by_updater_id_loader);
-    loaders.insert(pneumatic_devices_by_site_id_loader);
-    loaders.insert(pneumatic_devices_by_manufacturer_id_loader);
+    loaders.insert(non_level_controller_by_id_loader);
+    loaders.insert(non_level_controllers_by_creator_id_loader);
+    loaders.insert(non_level_controllers_by_updater_id_loader);
+    loaders.insert(non_level_controllers_by_site_id_loader);
+    loaders.insert(non_level_controllers_by_manufacturer_id_loader);
 
     loaders.insert(device_manufacturer_by_id_loader);
     loaders.insert(device_manufacturers_by_creator_id_loader);
     loaders.insert(device_manufacturers_by_updater_id_loader);
 
-    loaders.insert(pneumatic_device_change_by_id_loader);
-    loaders.insert(pneumatic_device_changes_by_pneumatic_device_id_loader);
-    loaders.insert(pneumatic_device_changes_by_creator_id_loader);
-    loaders.insert(pneumatic_device_changes_by_updater_id_loader);
+    loaders.insert(non_level_controller_change_by_id_loader);
+    loaders.insert(non_level_controller_changes_by_non_level_controller_id_loader);
+    loaders.insert(non_level_controller_changes_by_creator_id_loader);
+    loaders.insert(non_level_controller_changes_by_updater_id_loader);
 
     loaders.insert(level_controller_actuation_frequency_by_id_loader);
     loaders.insert(level_controller_actuation_frequencies_by_level_controller_id_loader);
     loaders.insert(level_controller_actuation_frequencies_by_creator_id_loader);
     loaders.insert(level_controller_actuation_frequencies_by_updater_id_loader);
 
-    loaders.insert(pneumatic_device_month_hours_by_id_loader);
-    loaders.insert(pneumatic_device_month_hours_by_pneumatic_device_id_loader);
-    loaders.insert(pneumatic_device_month_hours_by_creator_id_loader);
-    loaders.insert(pneumatic_device_month_hours_by_updater_id_loader);
+    loaders.insert(non_level_controller_month_hours_by_id_loader);
+    loaders.insert(non_level_controller_month_hours_by_non_level_controller_id_loader);
+    loaders.insert(non_level_controller_month_hours_by_creator_id_loader);
+    loaders.insert(non_level_controller_month_hours_by_updater_id_loader);
 
-    loaders.insert(pneumatic_device_month_methane_emission_override_by_id_loader);
-    loaders.insert(pneumatic_device_month_methane_emission_overrides_by_pneumatic_device_id_loader);
-    loaders.insert(pneumatic_device_month_methane_emission_overrides_by_creator_id_loader);
-    loaders.insert(pneumatic_device_month_methane_emission_overrides_by_updater_id_loader);
+    loaders.insert(non_level_controller_month_methane_emission_override_by_id_loader);
+    loaders.insert(
+        non_level_controller_month_methane_emission_overrides_by_non_level_controller_id_loader,
+    );
+    loaders.insert(non_level_controller_month_methane_emission_overrides_by_creator_id_loader);
+    loaders.insert(non_level_controller_month_methane_emission_overrides_by_updater_id_loader);
 
     loaders.insert(month_methane_emission_by_id_loader);
     loaders.insert(month_methane_emissions_by_facility_id_loader);

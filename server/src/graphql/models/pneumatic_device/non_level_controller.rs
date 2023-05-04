@@ -1,13 +1,13 @@
-use super::{LevelControllerActuationFrequency, PneumaticDeviceChange};
+use super::{LevelControllerActuationFrequency, NonLevelControllerChange};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         month_methane_emission::MonthMethaneEmissionsBySourceTableLoader,
         pneumatic_device::{
             DeviceManufacturerLoader, LevelControllerActuationFrequenciesByLevelControllerLoader,
-            PneumaticDeviceChangesByPneumaticDeviceLoader,
-            PneumaticDeviceMonthHoursByPneumaticDeviceLoader,
-            PneumaticDeviceMonthMethaneEmissionOverridesByPneumaticDeviceLoader,
+            NonLevelControllerChangesByNonLevelControllerLoader,
+            NonLevelControllerMonthHoursByNonLevelControllerLoader,
+            NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
         },
         site::SiteLoader,
         user::UserLoader,
@@ -15,8 +15,8 @@ use crate::graphql::{
     models::{
         month_methane_emission::MonthMethaneEmission,
         pneumatic_device::{
-            DeviceManufacturer, PneumaticDeviceMonthHours,
-            PneumaticDeviceMonthMethaneEmissionOverride,
+            DeviceManufacturer, NonLevelControllerMonthHours,
+            NonLevelControllerMonthMethaneEmissionOverride,
         },
         site::Site,
         user::User,
@@ -35,7 +35,7 @@ use uuid::Uuid;
 /// Pneumatic pump: A pneumatic device that uses pressurized gas to move a piston or diaphragm, which pumps liquids on the opposite side of the piston or diaphragm. Includes methanol and chemical injection pumps, but does not include energy exchange pumps.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct PneumaticDevice {
+pub struct NonLevelController {
     pub id: Uuid,
     pub site_id: Uuid,
     pub r#type: PneumaticDeviceType,
@@ -51,7 +51,7 @@ pub struct PneumaticDevice {
 }
 
 #[ComplexObject]
-impl PneumaticDevice {
+impl NonLevelController {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -80,13 +80,14 @@ impl PneumaticDevice {
         manufacturer
     }
 
-    async fn pneumatic_device_changes(
+    async fn non_level_controller_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDeviceChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<PneumaticDeviceChangesByPneumaticDeviceLoader>>();
-        let pneumatic_device_changes = loader.load_one(self.id).await?;
-        let result = pneumatic_device_changes.unwrap_or(vec![]);
+    ) -> Result<Vec<NonLevelControllerChange>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<NonLevelControllerChangesByNonLevelControllerLoader>>();
+        let non_level_controller_changes = loader.load_one(self.id).await?;
+        let result = non_level_controller_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
@@ -103,14 +104,14 @@ impl PneumaticDevice {
         Ok(result)
     }
 
-    async fn pneumatic_device_month_hours(
+    async fn non_level_controller_month_hours(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDeviceMonthHours>, Error> {
+    ) -> Result<Vec<NonLevelControllerMonthHours>, Error> {
         let loader =
-            ctx.get_loader::<DataLoader<PneumaticDeviceMonthHoursByPneumaticDeviceLoader>>();
-        let pneumatic_device_month_hours = loader.load_one(self.id).await?;
-        let result = pneumatic_device_month_hours.unwrap_or(vec![]);
+            ctx.get_loader::<DataLoader<NonLevelControllerMonthHoursByNonLevelControllerLoader>>();
+        let non_level_controller_month_hours = loader.load_one(self.id).await?;
+        let result = non_level_controller_month_hours.unwrap_or(vec![]);
 
         Ok(result)
     }
@@ -118,8 +119,11 @@ impl PneumaticDevice {
     async fn pneumatic_device_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticDeviceMonthMethaneEmissionOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<PneumaticDeviceMonthMethaneEmissionOverridesByPneumaticDeviceLoader>>();
+    ) -> Result<Vec<NonLevelControllerMonthMethaneEmissionOverride>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<
+                NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
+            >>();
         let pneumatic_device_month_methane_emission_overrides = loader.load_one(self.id).await?;
         let result = pneumatic_device_month_methane_emission_overrides.unwrap_or(vec![]);
 

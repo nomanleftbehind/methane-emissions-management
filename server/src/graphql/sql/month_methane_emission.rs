@@ -36,7 +36,7 @@ pub async fn insert_month_methane_emissions(
 ) -> Result<u64, Error> {
     let mut pneumatic_device_month_methane_emissions_calculated = query_file_as!(
         MonthMethaneEmissionCalculated,
-        "src/graphql/sql/statements/pneumatic_device_month_methane_emission_calculate.sql",
+        "src/graphql/sql/statements/non_level_controller_month_methane_emission_calculate.sql",
         from_month,
         to_month,
         c1,

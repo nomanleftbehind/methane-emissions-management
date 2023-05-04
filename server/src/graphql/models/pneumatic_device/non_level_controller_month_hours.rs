@@ -1,7 +1,7 @@
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{pneumatic_device::PneumaticDeviceLoader, user::UserLoader},
-    models::{pneumatic_device::PneumaticDevice, user::User},
+    dataloaders::{pneumatic_device::NonLevelControllerLoader, user::UserLoader},
+    models::{pneumatic_device::NonLevelController, user::User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -10,11 +10,11 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct PneumaticDeviceChange {
+pub struct NonLevelControllerMonthHours {
     pub id: Uuid,
-    pub pneumatic_device_id: Uuid,
-    pub date: NaiveDate,
-    pub rate: f64,
+    pub non_level_controller_id: Uuid,
+    pub month: NaiveDate,
+    pub hours_on: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -22,7 +22,7 @@ pub struct PneumaticDeviceChange {
 }
 
 #[ComplexObject]
-impl PneumaticDeviceChange {
+impl NonLevelControllerMonthHours {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -37,10 +37,13 @@ impl PneumaticDeviceChange {
         updated_by
     }
 
-    async fn pneumatic_device(&self, ctx: &Context<'_>) -> Result<Option<PneumaticDevice>, Error> {
-        let loader = ctx.get_loader::<DataLoader<PneumaticDeviceLoader>>();
-        let pneumatic_device = loader.load_one(self.pneumatic_device_id).await;
+    async fn non_level_controller(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Option<NonLevelController>, Error> {
+        let loader = ctx.get_loader::<DataLoader<NonLevelControllerLoader>>();
+        let non_level_controller = loader.load_one(self.non_level_controller_id).await;
 
-        pneumatic_device
+        non_level_controller
     }
 }
