@@ -1,4 +1,4 @@
-use crate::graphql::models::pneumatic_device::NonLevelControllerMonthMethaneEmissionOverride;
+use crate::graphql::models::pneumatic_device::non_level_controller::NonLevelControllerMonthMethaneEmissionOverride;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
@@ -24,7 +24,7 @@ impl Loader<Uuid> for NonLevelControllerMonthMethaneEmissionOverrideLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let non_level_controller_month_methane_emission_overrides = query_as!(
             NonLevelControllerMonthMethaneEmissionOverride,
-            r#"SELECT * FROM non_level_controller_month_methane_emission_override WHERE id = ANY($1)"#,
+            "SELECT * FROM non_level_controller_month_methane_emission_override WHERE id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
@@ -60,7 +60,7 @@ impl Loader<Uuid> for CreatedNonLevelControllerMonthMethaneEmissionOverridesLoad
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut non_level_controller_month_methane_emission_overrides = query_as!(
             NonLevelControllerMonthMethaneEmissionOverride,
-            r#"SELECT * FROM non_level_controller_month_methane_emission_override WHERE created_by_id = ANY($1)"#,
+            "SELECT * FROM non_level_controller_month_methane_emission_override WHERE created_by_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
@@ -104,7 +104,7 @@ impl Loader<Uuid> for UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoad
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut non_level_controller_month_methane_emission_overrides = query_as!(
             NonLevelControllerMonthMethaneEmissionOverride,
-            r#"SELECT * FROM non_level_controller_month_methane_emission_override WHERE updated_by_id = ANY($1)"#,
+            "SELECT * FROM non_level_controller_month_methane_emission_override WHERE updated_by_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)
@@ -148,7 +148,7 @@ impl Loader<Uuid> for NonLevelControllerMonthMethaneEmissionOverridesByNonLevelC
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut non_level_controller_month_methane_emission_overrides = query_as!(
             NonLevelControllerMonthMethaneEmissionOverride,
-            r#"SELECT * FROM non_level_controller_month_methane_emission_override WHERE non_level_controller_id = ANY($1)"#,
+            "SELECT * FROM non_level_controller_month_methane_emission_override WHERE non_level_controller_id = ANY($1)",
             keys
         )
         .fetch_all(&**self.pool)

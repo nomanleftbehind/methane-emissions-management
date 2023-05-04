@@ -11,7 +11,7 @@ use uuid::Uuid;
 
 /// Model representing user overrides of calculated monthly vented volumes from tanks.
 ///
-/// Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::mutations::validators::MonthBeginningValidator).
+/// Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::models::validators::MonthBeginningValidator).
 ///
 /// Field `gas_volume` is in m³.
 #[derive(SimpleObject, Clone, FromRow, Debug)]

@@ -1,11 +1,10 @@
+use super::pneumatic_device::non_level_controller::{
+    NonLevelController, NonLevelControllerChange, NonLevelControllerMonthHours,
+    NonLevelControllerMonthMethaneEmissionOverride,
+};
 use crate::graphql::models::{
-    compressor::Compressor,
-    defined_vent_gas::tank::Tank,
+    compressor::Compressor, defined_vent_gas::tank::Tank,
     month_methane_emission::MonthMethaneEmission,
-    pneumatic_device::{
-        NonLevelController, NonLevelControllerChange, NonLevelControllerMonthHours,
-        NonLevelControllerMonthMethaneEmissionOverride,
-    },
 };
 use async_graphql::SimpleObject;
 use sqlx::FromRow;

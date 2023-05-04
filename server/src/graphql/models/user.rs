@@ -1,3 +1,10 @@
+use super::pneumatic_device::{
+    non_level_controller::{
+        NonLevelController, NonLevelControllerChange, NonLevelControllerMonthHours,
+        NonLevelControllerMonthMethaneEmissionOverride,
+    },
+    DeviceManufacturer,
+};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
@@ -29,13 +36,15 @@ use crate::graphql::{
             CreatedMonthMethaneEmissionsLoader, UpdatedMonthMethaneEmissionsLoader,
         },
         pneumatic_device::{
-            CreatedDeviceManufacturersLoader, CreatedNonLevelControllerChangesLoader,
-            CreatedNonLevelControllerMonthHoursLoader,
-            CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
-            CreatedNonLevelControllersLoader, UpdatedDeviceManufacturersLoader,
-            UpdatedNonLevelControllerChangesLoader, UpdatedNonLevelControllerMonthHoursLoader,
-            UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
-            UpdatedNonLevelControllersLoader,
+            non_level_controller::{
+                CreatedNonLevelControllerChangesLoader, CreatedNonLevelControllerMonthHoursLoader,
+                CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+                CreatedNonLevelControllersLoader, UpdatedNonLevelControllerChangesLoader,
+                UpdatedNonLevelControllerMonthHoursLoader,
+                UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+                UpdatedNonLevelControllersLoader,
+            },
+            CreatedDeviceManufacturersLoader, UpdatedDeviceManufacturersLoader,
         },
         site::{CreatedSitesLoader, UpdatedSitesLoader},
     },
@@ -51,10 +60,6 @@ use crate::graphql::{
         facility::Facility,
         gas_analysis::{GasAnalysis, GasAnalysisCalculatedParam},
         month_methane_emission::MonthMethaneEmission,
-        pneumatic_device::{
-            DeviceManufacturer, NonLevelController, NonLevelControllerChange,
-            NonLevelControllerMonthHours, NonLevelControllerMonthMethaneEmissionOverride,
-        },
         site::Site,
     },
 };

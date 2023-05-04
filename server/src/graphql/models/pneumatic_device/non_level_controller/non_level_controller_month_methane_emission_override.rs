@@ -1,7 +1,9 @@
+use super::{super::super::user::User, NonLevelController};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{pneumatic_device::NonLevelControllerLoader, user::UserLoader},
-    models::{pneumatic_device::NonLevelController, user::User},
+    dataloaders::{
+        pneumatic_device::non_level_controller::NonLevelControllerLoader, user::UserLoader,
+    },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -10,7 +12,7 @@ use uuid::Uuid;
 
 /// Model representing user overrides of calculated monthly methane emission volumes from pneumatic devices.
 ///
-/// Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::mutations::validators::MonthBeginningValidator).
+/// Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::models::validators::MonthBeginningValidator).
 ///
 /// Field `gas_volume` is in m³.
 #[derive(SimpleObject, Clone, FromRow, Debug)]

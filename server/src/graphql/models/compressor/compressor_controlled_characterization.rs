@@ -9,6 +9,8 @@ use common::ControlledCharacterization;
 use sqlx::FromRow;
 use uuid::Uuid;
 
+
+/// Object representing changes to controlled or uncontrolled characterization of compressor as defined in [`AER Directive 060 section 8.11`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=88).
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
 pub struct CompressorControlledCharacterization {

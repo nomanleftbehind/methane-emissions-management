@@ -1,44 +1,39 @@
-use super::{LevelControllerActuationFrequency, NonLevelControllerChange};
+use super::{
+    super::{
+        super::{month_methane_emission::MonthMethaneEmission, site::Site, user::User},
+        DeviceManufacturer,
+    },
+    LevelControllerActuationFrequency, LevelControllerChange,
+};
+use super::{LevelControllerMonthHours, LevelControllerMonthMethaneEmissionOverride};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         month_methane_emission::MonthMethaneEmissionsBySourceTableLoader,
         pneumatic_device::{
-            DeviceManufacturerLoader, LevelControllerActuationFrequenciesByLevelControllerLoader,
-            NonLevelControllerChangesByNonLevelControllerLoader,
-            NonLevelControllerMonthHoursByNonLevelControllerLoader,
-            NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
+            level_controller::{
+                LevelControllerActuationFrequenciesByLevelControllerLoader,
+                LevelControllerChangesByLevelControllerLoader,
+                LevelControllerMonthHoursByLevelControllerLoader,
+                LevelControllerMonthMethaneEmissionOverridesByLevelControllerLoader,
+            },
+            DeviceManufacturerLoader,
         },
         site::SiteLoader,
         user::UserLoader,
     },
-    models::{
-        month_methane_emission::MonthMethaneEmission,
-        pneumatic_device::{
-            DeviceManufacturer, NonLevelControllerMonthHours,
-            NonLevelControllerMonthMethaneEmissionOverride,
-        },
-        site::Site,
-        user::User,
-    },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
-use common::PneumaticDeviceType;
 use sqlx::FromRow;
 use uuid::Uuid;
 
-/// Pneumatic instrument: A pneumatic device, powered by pressurized gas, used for maintaining a process condition such as liquid level, pressure, or temperature. Includes positioners, pressure controllers, level controllers, temperature controllers, and transducers.
-///
-/// or
-///
-/// Pneumatic pump: A pneumatic device that uses pressurized gas to move a piston or diaphragm, which pumps liquids on the opposite side of the piston or diaphragm. Includes methanol and chemical injection pumps, but does not include energy exchange pumps.
+/// A pneumatic device, powered by pressurized gas, used for maintaining liquid level.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct NonLevelController {
+pub struct LevelController {
     pub id: Uuid,
     pub site_id: Uuid,
-    pub r#type: PneumaticDeviceType,
     pub manufacturer_id: Uuid,
     pub model: Option<String>,
     pub serial_number: Option<String>,
@@ -51,7 +46,7 @@ pub struct NonLevelController {
 }
 
 #[ComplexObject]
-impl NonLevelController {
+impl LevelController {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -80,18 +75,6 @@ impl NonLevelController {
         manufacturer
     }
 
-    async fn non_level_controller_changes(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerChange>, Error> {
-        let loader =
-            ctx.get_loader::<DataLoader<NonLevelControllerChangesByNonLevelControllerLoader>>();
-        let non_level_controller_changes = loader.load_one(self.id).await?;
-        let result = non_level_controller_changes.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
     async fn level_controller_actuation_frequencies(
         &self,
         ctx: &Context<'_>,
@@ -104,28 +87,39 @@ impl NonLevelController {
         Ok(result)
     }
 
-    async fn non_level_controller_month_hours(
+    async fn level_controller_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerMonthHours>, Error> {
-        let loader =
-            ctx.get_loader::<DataLoader<NonLevelControllerMonthHoursByNonLevelControllerLoader>>();
-        let non_level_controller_month_hours = loader.load_one(self.id).await?;
-        let result = non_level_controller_month_hours.unwrap_or(vec![]);
+    ) -> Result<Vec<LevelControllerChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<LevelControllerChangesByLevelControllerLoader>>();
+        let level_controller_changes = loader.load_one(self.id).await?;
+        let result = level_controller_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn pneumatic_device_month_methane_emission_overrides(
+    async fn level_controller_month_hours(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerMonthMethaneEmissionOverride>, Error> {
+    ) -> Result<Vec<LevelControllerMonthHours>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<LevelControllerMonthHoursByLevelControllerLoader>>();
+        let level_controller_month_hours = loader.load_one(self.id).await?;
+        let result = level_controller_month_hours.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn level_controller_month_methane_emission_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<LevelControllerMonthMethaneEmissionOverride>, Error> {
         let loader =
             ctx.get_loader::<DataLoader<
-                NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
+                LevelControllerMonthMethaneEmissionOverridesByLevelControllerLoader,
             >>();
-        let pneumatic_device_month_methane_emission_overrides = loader.load_one(self.id).await?;
-        let result = pneumatic_device_month_methane_emission_overrides.unwrap_or(vec![]);
+        let level_controller_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = level_controller_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

@@ -1,23 +1,23 @@
+use super::{super::super::user::User, LevelController};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{compressor::CompressorLoader, user::UserLoader},
-    models::{compressor::Compressor, user::User},
+    dataloaders::{pneumatic_device::level_controller::LevelControllerLoader, user::UserLoader},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
 use uuid::Uuid;
 
-/// Model representing user overrides of calculated monthly methane emission volumes from compressor seals.
+/// Model representing user overrides of calculated monthly methane emission volumes from level controllers.
 ///
 /// Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::models::validators::MonthBeginningValidator).
 ///
 /// Field `gas_volume` is in m³.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct CompressorSealMonthMethaneEmissionOverride {
+pub struct LevelControllerMonthMethaneEmissionOverride {
     pub id: Uuid,
-    pub compressor_seal_id: Uuid,
+    pub level_controller_id: Uuid,
     pub month: NaiveDate,
     pub gas_volume: f64,
     pub comment: Option<String>,
@@ -28,7 +28,7 @@ pub struct CompressorSealMonthMethaneEmissionOverride {
 }
 
 #[ComplexObject]
-impl CompressorSealMonthMethaneEmissionOverride {
+impl LevelControllerMonthMethaneEmissionOverride {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -43,10 +43,10 @@ impl CompressorSealMonthMethaneEmissionOverride {
         updated_by
     }
 
-    async fn compressor(&self, ctx: &Context<'_>) -> Result<Option<Compressor>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CompressorLoader>>();
-        let compressor = loader.load_one(self.compressor_seal_id).await;
+    async fn level_controller(&self, ctx: &Context<'_>) -> Result<Option<LevelController>, Error> {
+        let loader = ctx.get_loader::<DataLoader<LevelControllerLoader>>();
+        let level_controller = loader.load_one(self.level_controller_id).await;
 
-        compressor
+        level_controller
     }
 }

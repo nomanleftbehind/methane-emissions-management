@@ -11,14 +11,23 @@ SELECT
 	csmme.id as "source_table_id!",
 	CASE
 		WHEN csmme.controlled_characterization = 'UNCONTROLLED' THEN 'ROUTINE'::methane_emission_category
-		ELSE 'NONROUTINE'::methane_emission_category
+		ELSE CASE
+			WHEN cpr.type = 'RECIPROCATING' THEN -- AER Directive 060 section 8.6.2.1 and AER Manual 015 section 4.5
+			'FUGITIVE'::methane_emission_category
+			ELSE 'NONROUTINE'::methane_emission_category
+		END
 	END as "category!: _",
 	CASE
 		WHEN csmme.controlled_characterization = 'UNCONTROLLED' THEN CASE
 			WHEN cpr.type IN ('RECIPROCATING', 'CENTRIFUGAL') THEN 'COMPRESSOR_SEAL'::methane_emission_source
-			ELSE 'DEFINED_VENT_GAS'::methane_emission_source
+			ELSE -- AER Manual 015 section 4.5
+			'DEFINED_VENT_GAS'::methane_emission_source
 		END
-		ELSE 'PLANNED'::methane_emission_source
+		ELSE CASE
+			WHEN cpr.type = 'RECIPROCATING' THEN -- AER Directive 060 section 8.6.2.1 and AER Manual 015 section 4.5
+			'FUGITIVE'::methane_emission_source
+			ELSE 'PLANNED'::methane_emission_source
+		END
 	END as "source!: _",
 	csmme.month_beginning as "month!",
 	csmme.gas_volume as "gas_volume!",

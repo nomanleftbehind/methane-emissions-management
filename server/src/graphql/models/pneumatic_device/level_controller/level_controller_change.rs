@@ -1,7 +1,7 @@
+use super::{super::super::user::User, LevelController};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{pneumatic_device::NonLevelControllerLoader, user::UserLoader},
-    models::{pneumatic_device::NonLevelController, user::User},
+    dataloaders::{pneumatic_device::level_controller::LevelControllerLoader, user::UserLoader},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -10,11 +10,11 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct NonLevelControllerMonthHours {
+pub struct LevelControllerChange {
     pub id: Uuid,
-    pub non_level_controller_id: Uuid,
-    pub month: NaiveDate,
-    pub hours_on: f64,
+    pub level_controller_id: Uuid,
+    pub date: NaiveDate,
+    pub rate: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -22,7 +22,7 @@ pub struct NonLevelControllerMonthHours {
 }
 
 #[ComplexObject]
-impl NonLevelControllerMonthHours {
+impl LevelControllerChange {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -37,13 +37,10 @@ impl NonLevelControllerMonthHours {
         updated_by
     }
 
-    async fn non_level_controller(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Option<NonLevelController>, Error> {
-        let loader = ctx.get_loader::<DataLoader<NonLevelControllerLoader>>();
-        let non_level_controller = loader.load_one(self.non_level_controller_id).await;
+    async fn level_controller(&self, ctx: &Context<'_>) -> Result<Option<LevelController>, Error> {
+        let loader = ctx.get_loader::<DataLoader<LevelControllerLoader>>();
+        let level_controller = loader.load_one(self.level_controller_id).await;
 
-        non_level_controller
+        level_controller
     }
 }

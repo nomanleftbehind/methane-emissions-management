@@ -55,6 +55,8 @@ impl Display for CompressorType {
     }
 }
 
+/// Type used to abstract [`AER Manual 015 section 1.1.2`](https://static.aer.ca/prd/documents/manuals/Manual015.pdf#page=10).
+///
 /// `ControlledCharacterization` is a database defined enum, so we have to provide matching Rust type and `Display` trait implementation.
 ///
 /// It is defined in common library so it can be used by both server and client.

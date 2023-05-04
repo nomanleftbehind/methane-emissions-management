@@ -1,4 +1,4 @@
-use crate::graphql::models::pneumatic_device::NonLevelControllerMonthHours;
+use crate::graphql::models::pneumatic_device::non_level_controller::NonLevelControllerMonthHours;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;

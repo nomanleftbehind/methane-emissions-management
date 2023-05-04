@@ -1,7 +1,9 @@
+use super::{super::super::user::User, NonLevelController};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{pneumatic_device::NonLevelControllerLoader, user::UserLoader},
-    models::{pneumatic_device::NonLevelController, user::User},
+    dataloaders::{
+        pneumatic_device::non_level_controller::NonLevelControllerLoader, user::UserLoader,
+    },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -10,12 +12,11 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct LevelControllerActuationFrequency {
+pub struct NonLevelControllerChange {
     pub id: Uuid,
-    pub level_controller_id: Uuid,
+    pub non_level_controller_id: Uuid,
     pub date: NaiveDate,
-    /// Time between actuations in minutes
-    pub actuation_frequency: f64,
+    pub rate: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -23,7 +24,7 @@ pub struct LevelControllerActuationFrequency {
 }
 
 #[ComplexObject]
-impl LevelControllerActuationFrequency {
+impl NonLevelControllerChange {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -38,13 +39,13 @@ impl LevelControllerActuationFrequency {
         updated_by
     }
 
-    async fn level_controller(
+    async fn non_level_controller(
         &self,
         ctx: &Context<'_>,
     ) -> Result<Option<NonLevelController>, Error> {
         let loader = ctx.get_loader::<DataLoader<NonLevelControllerLoader>>();
-        let level_controller = loader.load_one(self.level_controller_id).await;
+        let non_level_controller = loader.load_one(self.non_level_controller_id).await;
 
-        level_controller
+        non_level_controller
     }
 }

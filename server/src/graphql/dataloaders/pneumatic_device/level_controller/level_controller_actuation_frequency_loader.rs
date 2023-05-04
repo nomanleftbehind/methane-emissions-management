@@ -1,4 +1,4 @@
-use crate::graphql::models::pneumatic_device::LevelControllerActuationFrequency;
+use crate::graphql::models::pneumatic_device::level_controller::LevelControllerActuationFrequency;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;

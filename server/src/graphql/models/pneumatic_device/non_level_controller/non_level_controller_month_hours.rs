@@ -1,23 +1,22 @@
-use super::CompressorSeal;
+use super::{super::super::user::User, NonLevelController};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{compressor::CompressorSealLoader, user::UserLoader},
-    models::user::User,
+    dataloaders::{
+        pneumatic_device::non_level_controller::NonLevelControllerLoader, user::UserLoader,
+    },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
 use uuid::Uuid;
 
-/// Object representing requirement in [`AER Directive 060 section 8.6.2.1`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=75).
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct CompressorSealTest {
+pub struct NonLevelControllerMonthHours {
     pub id: Uuid,
-    pub compressor_seal_id: Uuid,
-    pub date: NaiveDate,
-    pub rate: f64,
-    pub survey_equipment_id: Uuid,
+    pub non_level_controller_id: Uuid,
+    pub month: NaiveDate,
+    pub hours_on: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -25,7 +24,7 @@ pub struct CompressorSealTest {
 }
 
 #[ComplexObject]
-impl CompressorSealTest {
+impl NonLevelControllerMonthHours {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -40,10 +39,13 @@ impl CompressorSealTest {
         updated_by
     }
 
-    async fn compressor_seal(&self, ctx: &Context<'_>) -> Result<Option<CompressorSeal>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CompressorSealLoader>>();
-        let compressor_seal = loader.load_one(self.compressor_seal_id).await;
+    async fn non_level_controller(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Option<NonLevelController>, Error> {
+        let loader = ctx.get_loader::<DataLoader<NonLevelControllerLoader>>();
+        let non_level_controller = loader.load_one(self.non_level_controller_id).await;
 
-        compressor_seal
+        non_level_controller
     }
 }

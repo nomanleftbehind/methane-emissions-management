@@ -40,21 +40,39 @@ use super::{
         MonthMethaneEmissionsBySourceTableLoader, UpdatedMonthMethaneEmissionsLoader,
     },
     pneumatic_device::{
-        CreatedDeviceManufacturersLoader, CreatedLevelControllerActuationFrequenciesLoader,
-        CreatedNonLevelControllerChangesLoader, CreatedNonLevelControllerMonthHoursLoader,
-        CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
-        CreatedNonLevelControllersLoader, DeviceManufacturerLoader,
-        LevelControllerActuationFrequenciesByLevelControllerLoader,
-        LevelControllerActuationFrequencyLoader, NonLevelControllerChangeLoader,
-        NonLevelControllerChangesByNonLevelControllerLoader, NonLevelControllerLoader,
-        NonLevelControllerMonthHoursByNonLevelControllerLoader, NonLevelControllerMonthHoursLoader,
-        NonLevelControllerMonthMethaneEmissionOverrideLoader,
-        NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
-        NonLevelControllersByManufacturerLoader, SiteNonLevelControllersLoader,
-        UpdatedDeviceManufacturersLoader, UpdatedLevelControllerActuationFrequenciesLoader,
-        UpdatedNonLevelControllerChangesLoader, UpdatedNonLevelControllerMonthHoursLoader,
-        UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
-        UpdatedNonLevelControllersLoader,
+        level_controller::{
+            CreatedLevelControllerActuationFrequenciesLoader, CreatedLevelControllerChangesLoader,
+            CreatedLevelControllerMonthHoursLoader,
+            CreatedLevelControllerMonthMethaneEmissionOverridesLoader,
+            CreatedLevelControllersLoader,
+            LevelControllerActuationFrequenciesByLevelControllerLoader,
+            LevelControllerActuationFrequencyLoader, LevelControllerChangeLoader,
+            LevelControllerChangesByLevelControllerLoader, LevelControllerLoader,
+            LevelControllerMonthHoursByLevelControllerLoader, LevelControllerMonthHoursLoader,
+            LevelControllerMonthMethaneEmissionOverrideLoader,
+            LevelControllerMonthMethaneEmissionOverridesByLevelControllerLoader,
+            LevelControllersByManufacturerLoader, SiteLevelControllersLoader,
+            UpdatedLevelControllerActuationFrequenciesLoader, UpdatedLevelControllerChangesLoader,
+            UpdatedLevelControllerMonthHoursLoader,
+            UpdatedLevelControllerMonthMethaneEmissionOverridesLoader,
+            UpdatedLevelControllersLoader,
+        },
+        non_level_controller::{
+            CreatedNonLevelControllerChangesLoader, CreatedNonLevelControllerMonthHoursLoader,
+            CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+            CreatedNonLevelControllersLoader, NonLevelControllerChangeLoader,
+            NonLevelControllerChangesByNonLevelControllerLoader, NonLevelControllerLoader,
+            NonLevelControllerMonthHoursByNonLevelControllerLoader,
+            NonLevelControllerMonthHoursLoader,
+            NonLevelControllerMonthMethaneEmissionOverrideLoader,
+            NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
+            NonLevelControllersByManufacturerLoader, SiteNonLevelControllersLoader,
+            UpdatedNonLevelControllerChangesLoader, UpdatedNonLevelControllerMonthHoursLoader,
+            UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+            UpdatedNonLevelControllersLoader,
+        },
+        CreatedDeviceManufacturersLoader, DeviceManufacturerLoader,
+        UpdatedDeviceManufacturersLoader,
     },
     site::{CreatedSitesLoader, FacilitySitesLoader, SiteLoader, UpdatedSitesLoader},
     survey_equipment::{
@@ -149,7 +167,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Pneumatic Device Change
+    // Non-Level Controller Change
     let non_level_controller_change_by_id_loader = DataLoader::new(
         NonLevelControllerChangeLoader::new(pool.clone()),
         tokio::spawn,
@@ -167,25 +185,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Level Controller Actuation Frequency
-    let level_controller_actuation_frequency_by_id_loader = DataLoader::new(
-        LevelControllerActuationFrequencyLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let level_controller_actuation_frequencies_by_level_controller_id_loader = DataLoader::new(
-        LevelControllerActuationFrequenciesByLevelControllerLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let level_controller_actuation_frequencies_by_creator_id_loader = DataLoader::new(
-        CreatedLevelControllerActuationFrequenciesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let level_controller_actuation_frequencies_by_updater_id_loader = DataLoader::new(
-        UpdatedLevelControllerActuationFrequenciesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-
-    // Pneumatic Device Month Hours
+    // Non-Level Controller Month Hours
     let non_level_controller_month_hours_by_id_loader = DataLoader::new(
         NonLevelControllerMonthHoursLoader::new(pool.clone()),
         tokio::spawn,
@@ -203,7 +203,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Pneumatic Device Month Methane Emission Override
+    // Non-Level Controller Month Methane Emission Override
     let non_level_controller_month_methane_emission_override_by_id_loader = DataLoader::new(
         NonLevelControllerMonthMethaneEmissionOverrideLoader::new(pool.clone()),
         tokio::spawn,
@@ -225,6 +225,95 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
             UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader::new(pool.clone()),
             tokio::spawn,
         );
+
+    // Level Controller
+    let level_controller_by_id_loader =
+        DataLoader::new(LevelControllerLoader::new(pool.clone()), tokio::spawn);
+    let level_controllers_by_site_id_loader =
+        DataLoader::new(SiteLevelControllersLoader::new(pool.clone()), tokio::spawn);
+    let level_controllers_by_manufacturer_id_loader = DataLoader::new(
+        LevelControllersByManufacturerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controllers_by_creator_id_loader = DataLoader::new(
+        CreatedLevelControllersLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controllers_by_updater_id_loader = DataLoader::new(
+        UpdatedLevelControllersLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Level Controller Actuation Frequency
+    let level_controller_actuation_frequency_by_id_loader = DataLoader::new(
+        LevelControllerActuationFrequencyLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_actuation_frequencies_by_level_controller_id_loader = DataLoader::new(
+        LevelControllerActuationFrequenciesByLevelControllerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_actuation_frequencies_by_creator_id_loader = DataLoader::new(
+        CreatedLevelControllerActuationFrequenciesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_actuation_frequencies_by_updater_id_loader = DataLoader::new(
+        UpdatedLevelControllerActuationFrequenciesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Level Controller Change
+    let level_controller_change_by_id_loader =
+        DataLoader::new(LevelControllerChangeLoader::new(pool.clone()), tokio::spawn);
+    let level_controller_changes_by_level_controller_id_loader = DataLoader::new(
+        LevelControllerChangesByLevelControllerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_changes_by_creator_id_loader = DataLoader::new(
+        CreatedLevelControllerChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_changes_by_updater_id_loader = DataLoader::new(
+        UpdatedLevelControllerChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Level Controller Month Hours
+    let level_controller_month_hours_by_id_loader = DataLoader::new(
+        LevelControllerMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_month_hours_by_level_controller_id_loader = DataLoader::new(
+        LevelControllerMonthHoursByLevelControllerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_month_hours_by_creator_id_loader = DataLoader::new(
+        CreatedLevelControllerMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_month_hours_by_updater_id_loader = DataLoader::new(
+        UpdatedLevelControllerMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Level Controller Month Methane Emission Override
+    let level_controller_month_methane_emission_override_by_id_loader = DataLoader::new(
+        LevelControllerMonthMethaneEmissionOverrideLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_month_methane_emission_overrides_by_level_controller_id_loader =
+        DataLoader::new(
+            LevelControllerMonthMethaneEmissionOverridesByLevelControllerLoader::new(pool.clone()),
+            tokio::spawn,
+        );
+    let level_controller_month_methane_emission_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedLevelControllerMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedLevelControllerMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
 
     //  Month Methane Emission
     let month_methane_emission_by_id_loader =
@@ -503,11 +592,6 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(non_level_controller_changes_by_creator_id_loader);
     loaders.insert(non_level_controller_changes_by_updater_id_loader);
 
-    loaders.insert(level_controller_actuation_frequency_by_id_loader);
-    loaders.insert(level_controller_actuation_frequencies_by_level_controller_id_loader);
-    loaders.insert(level_controller_actuation_frequencies_by_creator_id_loader);
-    loaders.insert(level_controller_actuation_frequencies_by_updater_id_loader);
-
     loaders.insert(non_level_controller_month_hours_by_id_loader);
     loaders.insert(non_level_controller_month_hours_by_non_level_controller_id_loader);
     loaders.insert(non_level_controller_month_hours_by_creator_id_loader);
@@ -519,6 +603,32 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
     loaders.insert(non_level_controller_month_methane_emission_overrides_by_creator_id_loader);
     loaders.insert(non_level_controller_month_methane_emission_overrides_by_updater_id_loader);
+
+    loaders.insert(level_controller_by_id_loader);
+    loaders.insert(level_controllers_by_creator_id_loader);
+    loaders.insert(level_controllers_by_updater_id_loader);
+    loaders.insert(level_controllers_by_site_id_loader);
+    loaders.insert(level_controllers_by_manufacturer_id_loader);
+
+    loaders.insert(level_controller_actuation_frequency_by_id_loader);
+    loaders.insert(level_controller_actuation_frequencies_by_level_controller_id_loader);
+    loaders.insert(level_controller_actuation_frequencies_by_creator_id_loader);
+    loaders.insert(level_controller_actuation_frequencies_by_updater_id_loader);
+
+    loaders.insert(level_controller_change_by_id_loader);
+    loaders.insert(level_controller_changes_by_level_controller_id_loader);
+    loaders.insert(level_controller_changes_by_creator_id_loader);
+    loaders.insert(level_controller_changes_by_updater_id_loader);
+
+    loaders.insert(level_controller_month_hours_by_id_loader);
+    loaders.insert(level_controller_month_hours_by_level_controller_id_loader);
+    loaders.insert(level_controller_month_hours_by_creator_id_loader);
+    loaders.insert(level_controller_month_hours_by_updater_id_loader);
+
+    loaders.insert(level_controller_month_methane_emission_override_by_id_loader);
+    loaders.insert(level_controller_month_methane_emission_overrides_by_level_controller_id_loader);
+    loaders.insert(level_controller_month_methane_emission_overrides_by_creator_id_loader);
+    loaders.insert(level_controller_month_methane_emission_overrides_by_updater_id_loader);
 
     loaders.insert(month_methane_emission_by_id_loader);
     loaders.insert(month_methane_emissions_by_facility_id_loader);

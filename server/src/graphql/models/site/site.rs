@@ -1,14 +1,25 @@
+use super::super::{
+    compressor::Compressor,
+    defined_vent_gas::tank::Tank,
+    facility::Facility,
+    month_methane_emission::MonthMethaneEmission,
+    pneumatic_device::{
+        level_controller::LevelController, non_level_controller::NonLevelController,
+    },
+    user::User,
+};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        compressor::SiteCompressorsLoader, defined_vent_gas::tank::SiteTanksLoader,
-        facility::FacilityLoader, month_methane_emission::MonthMethaneEmissionsBySiteLoader,
-        pneumatic_device::SiteNonLevelControllersLoader, user::UserLoader,
-    },
-    models::{
-        compressor::Compressor, defined_vent_gas::tank::Tank, facility::Facility,
-        month_methane_emission::MonthMethaneEmission, pneumatic_device::NonLevelController,
-        user::User,
+        compressor::SiteCompressorsLoader,
+        defined_vent_gas::tank::SiteTanksLoader,
+        facility::FacilityLoader,
+        month_methane_emission::MonthMethaneEmissionsBySiteLoader,
+        pneumatic_device::{
+            level_controller::SiteLevelControllersLoader,
+            non_level_controller::SiteNonLevelControllersLoader,
+        },
+        user::UserLoader,
     },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
@@ -63,6 +74,14 @@ impl Site {
         let loader = ctx.get_loader::<DataLoader<SiteNonLevelControllersLoader>>();
         let non_level_controllers = loader.load_one(self.id).await?;
         let result = non_level_controllers.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn level_controllers(&self, ctx: &Context<'_>) -> Result<Vec<LevelController>, Error> {
+        let loader = ctx.get_loader::<DataLoader<SiteLevelControllersLoader>>();
+        let level_controllers = loader.load_one(self.id).await?;
+        let result = level_controllers.unwrap_or(vec![]);
 
         Ok(result)
     }

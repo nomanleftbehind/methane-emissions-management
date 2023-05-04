@@ -1,4 +1,4 @@
-use crate::graphql::models::pneumatic_device::NonLevelControllerChange;
+use crate::graphql::models::pneumatic_device::non_level_controller::NonLevelControllerChange;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
