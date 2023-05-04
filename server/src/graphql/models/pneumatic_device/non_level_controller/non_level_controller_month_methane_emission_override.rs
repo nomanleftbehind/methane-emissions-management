@@ -10,7 +10,7 @@ use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
 use uuid::Uuid;
 
-/// Model representing user overrides of calculated monthly methane emission volumes from pneumatic devices.
+/// Model representing user overrides of calculated monthly methane emission volumes from non-level controllers.
 ///
 /// Field `month` is a [`NaiveDate`](chrono::NaiveDate), which must be first day of the month. This is impossible to enforce on database level, but is instead guaranteed through [`MonthBeginningValidator`](crate::graphql::models::validators::MonthBeginningValidator).
 ///

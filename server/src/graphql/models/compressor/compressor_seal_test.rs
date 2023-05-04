@@ -10,12 +10,15 @@ use sqlx::FromRow;
 use uuid::Uuid;
 
 /// Object representing requirement in [`AER Directive 060 section 8.6.2.1`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=75).
+///
+/// Rate represents methane leak expressed in standard cubic feet per hour.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
 pub struct CompressorSealTest {
     pub id: Uuid,
     pub compressor_seal_id: Uuid,
     pub date: NaiveDate,
+    /// standard cubic feet per hour of methane
     pub rate: f64,
     pub survey_equipment_id: Uuid,
     pub created_by_id: Uuid,
