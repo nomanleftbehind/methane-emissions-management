@@ -6,6 +6,7 @@ use crate::graphql::{
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
+use common::CompressorSealTestingPoint;
 use sqlx::FromRow;
 use uuid::Uuid;
 
@@ -20,6 +21,7 @@ pub struct CompressorSealTest {
     pub date: NaiveDate,
     /// standard cubic feet per hour of methane
     pub rate: f64,
+    pub testing_point: CompressorSealTestingPoint,
     pub survey_equipment_id: Uuid,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,

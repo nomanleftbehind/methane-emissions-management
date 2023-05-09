@@ -24,7 +24,12 @@ impl Loader<Uuid> for CompressorSealTestLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let compressor_seal_tests = query_as!(
             CompressorSealTest,
-            r#"SELECT * FROM compressor_seal_test WHERE id = ANY($1)"#,
+            r#"
+            SELECT
+            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            FROM compressor_seal_test
+            WHERE id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -55,7 +60,12 @@ impl Loader<Uuid> for CreatedCompressorSealTestsLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressor_seal_tests = query_as!(
             CompressorSealTest,
-            "SELECT * FROM compressor_seal_test WHERE created_by_id = ANY($1)",
+            r#"
+            SELECT
+            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            FROM compressor_seal_test
+            WHERE created_by_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -93,7 +103,12 @@ impl Loader<Uuid> for UpdatedCompressorSealTestsLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressor_seal_tests = query_as!(
             CompressorSealTest,
-            "SELECT * FROM compressor_seal_test WHERE updated_by_id = ANY($1)",
+            r#"
+            SELECT
+            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            FROM compressor_seal_test
+            WHERE updated_by_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -131,7 +146,12 @@ impl Loader<Uuid> for CompressorSealTestsByCompressorSealLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressor_seal_tests = query_as!(
             CompressorSealTest,
-            "SELECT * FROM compressor_seal_test WHERE compressor_seal_id = ANY($1)",
+            r#"
+            SELECT
+            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            FROM compressor_seal_test
+            WHERE compressor_seal_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
@@ -169,7 +189,12 @@ impl Loader<Uuid> for CompressorSealTestsBySurveyEquipmentLoader {
     async fn load(&self, keys: &[Uuid]) -> Result<HashMap<Uuid, Self::Value>, Self::Error> {
         let mut compressor_seal_tests = query_as!(
             CompressorSealTest,
-            "SELECT * FROM compressor_seal_test WHERE survey_equipment_id = ANY($1)",
+            r#"
+            SELECT
+            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            FROM compressor_seal_test
+            WHERE survey_equipment_id = ANY($1)
+            "#,
             keys
         )
         .fetch_all(&**self.pool)
