@@ -20,6 +20,9 @@ CREATE TYPE "controlled_characterization" AS ENUM ('CONTROLLED', 'UNCONTROLLED')
 CREATE TYPE "seal_type" AS ENUM ('RODPACKING', 'DRY', 'WET');
 
 -- CreateEnum
+CREATE TYPE "compressor_seal_testing_point" AS ENUM ('PISTON_ROD_PACKING', 'DISTANCE_PIECE', 'CRANKCASE', 'DRIVE_SHAFT_AND_COMPRESSOR_CASE_INTERFACE');
+
+-- CreateEnum
 CREATE TYPE "calculation_method" AS ENUM ('EQUATION', 'MEASURED');
 
 -- CreateEnum
@@ -272,6 +275,7 @@ CREATE TABLE "compressor_seal_test" (
     "compressor_seal_id" UUID NOT NULL,
     "date" DATE NOT NULL,
     "rate" DOUBLE PRECISION NOT NULL,
+    "testing_point" "compressor_seal_testing_point" NOT NULL,
     "survey_equipment_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -533,7 +537,7 @@ CREATE UNIQUE INDEX "compressor_serial_number_key" ON "compressor"("serial_numbe
 CREATE UNIQUE INDEX "survey_equipment_make_model_key" ON "survey_equipment"("make", "model");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "compressor_seal_test_compressor_seal_id_date_key" ON "compressor_seal_test"("compressor_seal_id", "date");
+CREATE UNIQUE INDEX "compressor_seal_test_compressor_seal_id_date_testing_point_key" ON "compressor_seal_test"("compressor_seal_id", "date", "testing_point");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "compressor_controlled_characterization_compressor_id_date_key" ON "compressor_controlled_characterization"("compressor_id", "date");

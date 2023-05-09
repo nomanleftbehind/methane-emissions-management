@@ -19,6 +19,7 @@ pub struct CompressorSealMonthMethaneEmissionOverride {
     pub id: Uuid,
     pub compressor_seal_id: Uuid,
     pub month: NaiveDate,
+    /// m³ per month of natural gas
     pub gas_volume: f64,
     pub comment: Option<String>,
     pub created_by_id: Uuid,
