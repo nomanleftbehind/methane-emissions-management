@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
-/// `MethaneEmissionSourceTable` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
-///
-/// It is defined in common library so it can be used by both server and client.
+/// `month_methane_emission` table doesn't have a foreign key constraint for `source_table_id` column because a value from that column could be refering to a column from multiple tables. This type represents a table it is refering to.
 #[cfg_attr(
     not(target_arch = "wasm32"),
     derive(async_graphql::Enum, sqlx::Type),
@@ -38,9 +36,41 @@ impl Display for MethaneEmissionSourceTable {
     }
 }
 
-/// `MethaneEmissionSource` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
-///
-/// It is defined in common library so it can be used by both server and client.
+/// Type representing top level categorization of methane emission sources as illustrated in AER Directive 060 [`Section 8, Figure 10`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=71).
+#[cfg_attr(
+    not(target_arch = "wasm32"),
+    derive(async_graphql::Enum, sqlx::Type),
+    sqlx(
+        type_name = "methane_emission_category",
+        rename_all = "SCREAMING_SNAKE_CASE"
+    )
+)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum MethaneEmissionCategory {
+    Routine,
+    Nonroutine,
+    Fugitive,
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+impl sqlx::postgres::PgHasArrayType for MethaneEmissionCategory {
+    fn array_type_info() -> sqlx::postgres::PgTypeInfo {
+        sqlx::postgres::PgTypeInfo::with_name("_methane_emission_category")
+    }
+}
+
+impl Display for MethaneEmissionCategory {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            MethaneEmissionCategory::Routine => write!(f, "Routine"),
+            MethaneEmissionCategory::Nonroutine => write!(f, "Nonroutine"),
+            MethaneEmissionCategory::Fugitive => write!(f, "Fugitive"),
+        }
+    }
+}
+
+/// Type representing lowest level categorization of methane emission sources as illustrated in AER Directive 060 [`Section 8, Figure 10`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=71).
 #[cfg_attr(
     not(target_arch = "wasm32"),
     derive(async_graphql::Enum, sqlx::Type),
@@ -78,42 +108,6 @@ impl Display for MethaneEmissionSource {
             MethaneEmissionSource::Planned => write!(f, "Planned"),
             MethaneEmissionSource::Unplanned => write!(f, "Unplanned"),
             MethaneEmissionSource::Fugitive => write!(f, "Fugitive"),
-        }
-    }
-}
-
-/// `MethaneEmissionCategory` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
-///
-/// It is defined in common library so it can be used by both server and client.
-#[cfg_attr(
-    not(target_arch = "wasm32"),
-    derive(async_graphql::Enum, sqlx::Type),
-    sqlx(
-        type_name = "methane_emission_category",
-        rename_all = "SCREAMING_SNAKE_CASE"
-    )
-)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum MethaneEmissionCategory {
-    Routine,
-    Nonroutine,
-    Fugitive,
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-impl sqlx::postgres::PgHasArrayType for MethaneEmissionCategory {
-    fn array_type_info() -> sqlx::postgres::PgTypeInfo {
-        sqlx::postgres::PgTypeInfo::with_name("_methane_emission_category")
-    }
-}
-
-impl Display for MethaneEmissionCategory {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            MethaneEmissionCategory::Routine => write!(f, "Routine"),
-            MethaneEmissionCategory::Nonroutine => write!(f, "Nonroutine"),
-            MethaneEmissionCategory::Fugitive => write!(f, "Fugitive"),
         }
     }
 }

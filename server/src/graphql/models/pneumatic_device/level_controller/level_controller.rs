@@ -28,7 +28,7 @@ use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
 use uuid::Uuid;
 
-/// A pneumatic device, powered by pressurized gas, used for maintaining liquid level.
+/// A pneumatic device, powered by pressurized gas, used for maintaining liquid level as defined in AER Directive 060 [`Appendix 2`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=98).
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
 pub struct LevelController {
