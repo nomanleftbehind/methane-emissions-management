@@ -3,7 +3,7 @@ use super::pneumatic_device::non_level_controller::{
     NonLevelControllerMonthMethaneEmissionOverride,
 };
 use crate::graphql::models::{
-    compressor::Compressor, defined_vent_gas::tank::Tank,
+    compressor::Compressor, defined_vent_gas::storage_tank::StorageTank,
     month_methane_emission::MonthMethaneEmission,
 };
 use async_graphql::SimpleObject;
@@ -14,7 +14,7 @@ use uuid::Uuid;
 pub struct GetObject {
     pub non_level_controllers: Option<Vec<NonLevelController>>,
     pub compressors: Option<Vec<Compressor>>,
-    pub tanks: Option<Vec<Tank>>,
+    pub storage_tanks: Option<Vec<StorageTank>>,
     pub non_level_controller_changes: Option<Vec<NonLevelControllerChange>>,
     pub non_level_controller_month_hours: Option<Vec<NonLevelControllerMonthHours>>,
     pub non_level_controller_month_methane_emission_overrides:

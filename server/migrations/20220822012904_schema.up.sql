@@ -8,7 +8,7 @@ CREATE TYPE "facility_type" AS ENUM ('TM', 'WT', 'CT', 'DS', 'GS', 'MS', 'GP', '
 CREATE TYPE "site_type" AS ENUM ('BATTERY', 'SATELLITE', 'WELL', 'GAS_PLANT', 'COMPRESSOR');
 
 -- CreateEnum
-CREATE TYPE "pneumatic_device_type" AS ENUM ('PRESSURE_CONTROLLER', 'TEMPERATURE_CONTROLLER', 'SWITCH', 'TRANSDUCER', 'POSITIONER', 'PNEUMATIC_PUMP', 'GENERIC_PNEUMATIC_INSTRUMENT');
+CREATE TYPE "non_level_controller_type" AS ENUM ('PRESSURE_CONTROLLER', 'TEMPERATURE_CONTROLLER', 'SWITCH', 'TRANSDUCER', 'POSITIONER', 'PNEUMATIC_PUMP', 'GENERIC_PNEUMATIC_INSTRUMENT');
 
 -- CreateEnum
 CREATE TYPE "compressor_type" AS ENUM ('RECIPROCATING', 'CENTRIFUGAL', 'SCREW', 'SCROLL');
@@ -29,7 +29,7 @@ CREATE TYPE "calculation_method" AS ENUM ('EQUATION', 'MEASURED');
 CREATE TYPE "methane_emission_source" AS ENUM ('PNEUMATIC_DEVICE', 'COMPRESSOR_SEAL', 'GLYCOL_DEHYDRATOR', 'DEFINED_VENT_GAS', 'PLANNED', 'UNPLANNED', 'FUGITIVE');
 
 -- CreateEnum
-CREATE TYPE "methane_emission_source_table" AS ENUM ('non_level_controller', 'level_controller', 'compressor_seal', 'compressor_blowdown', 'tank');
+CREATE TYPE "methane_emission_source_table" AS ENUM ('non_level_controller', 'level_controller', 'compressor_seal', 'compressor_blowdown', 'storage_tank');
 
 -- CreateEnum
 CREATE TYPE "methane_emission_category" AS ENUM ('ROUTINE', 'NONROUTINE', 'FUGITIVE');
@@ -92,7 +92,7 @@ CREATE TABLE "device_manufacturer" (
 CREATE TABLE "non_level_controller" (
     "id" UUID NOT NULL,
     "site_id" UUID NOT NULL,
-    "type" "pneumatic_device_type" NOT NULL,
+    "type" "non_level_controller_type" NOT NULL,
     "manufacturer_id" UUID NOT NULL,
     "model" TEXT,
     "serial_number" TEXT,
@@ -359,7 +359,7 @@ CREATE TABLE "compressor_seal_month_methane_emission_override" (
 );
 
 -- CreateTable
-CREATE TABLE "tank" (
+CREATE TABLE "storage_tank" (
     "id" UUID NOT NULL,
     "site_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
@@ -367,16 +367,15 @@ CREATE TABLE "tank" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "tank_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "storage_tank_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "tank_change" (
+CREATE TABLE "storage_tank_change" (
     "id" UUID NOT NULL,
-    "tank_id" UUID NOT NULL,
+    "storage_tank_id" UUID NOT NULL,
     "date" DATE NOT NULL,
     "ia" BOOLEAN NOT NULL,
-    "vru" BOOLEAN NOT NULL,
     "api_density" DOUBLE PRECISION NOT NULL,
     "temperature" DOUBLE PRECISION NOT NULL,
     "pressure" DOUBLE PRECISION NOT NULL,
@@ -386,41 +385,56 @@ CREATE TABLE "tank_change" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "tank_change_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "storage_tank_change_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "tank_emission_factor_calculated" (
+CREATE TABLE "storage_tank_controlled_characterization" (
     "id" UUID NOT NULL,
-    "tank_id" UUID NOT NULL,
+    "storage_tank_id" UUID NOT NULL,
     "date" DATE NOT NULL,
-    "emission_factor" DOUBLE PRECISION NOT NULL,
+    "controlled_characterization" "controlled_characterization" NOT NULL,
+    "comment" TEXT,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "tank_emission_factor_calculated_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "storage_tank_controlled_characterization_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "tank_month_oil_flow" (
+CREATE TABLE "storage_tank_gas_in_solution_factor_calculated" (
     "id" UUID NOT NULL,
-    "tank_id" UUID NOT NULL,
+    "storage_tank_id" UUID NOT NULL,
+    "date" DATE NOT NULL,
+    "gis_factor" DOUBLE PRECISION NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "storage_tank_gas_in_solution_factor_calculated_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "storage_tank_month_liquid_hydrocarbon_entering" (
+    "id" UUID NOT NULL,
+    "storage_tank_id" UUID NOT NULL,
     "month" DATE NOT NULL,
-    "oil" DOUBLE PRECISION NOT NULL,
+    "liquid_hydrocarbon_volume" DOUBLE PRECISION NOT NULL,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "tank_month_oil_flow_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "storage_tank_month_liquid_hydrocarbon_entering_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "tank_month_methane_emission_override" (
+CREATE TABLE "storage_tank_month_methane_emission_override" (
     "id" UUID NOT NULL,
-    "tank_id" UUID NOT NULL,
+    "storage_tank_id" UUID NOT NULL,
     "month" DATE NOT NULL,
     "gas_volume" DOUBLE PRECISION NOT NULL,
     "comment" TEXT,
@@ -429,7 +443,7 @@ CREATE TABLE "tank_month_methane_emission_override" (
     "updated_by_id" UUID NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "tank_month_methane_emission_override_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "storage_tank_month_methane_emission_override_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -555,16 +569,19 @@ CREATE UNIQUE INDEX "compressor_blowdown_override_compressor_id_date_key" ON "co
 CREATE UNIQUE INDEX "compressor_seal_month_methane_emission_override_compressor__key" ON "compressor_seal_month_methane_emission_override"("compressor_seal_id", "month");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tank_change_tank_id_date_key" ON "tank_change"("tank_id", "date");
+CREATE UNIQUE INDEX "storage_tank_change_storage_tank_id_date_key" ON "storage_tank_change"("storage_tank_id", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tank_emission_factor_calculated_tank_id_date_key" ON "tank_emission_factor_calculated"("tank_id", "date");
+CREATE UNIQUE INDEX "storage_tank_controlled_characterization_storage_tank_id_da_key" ON "storage_tank_controlled_characterization"("storage_tank_id", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tank_month_oil_flow_tank_id_month_key" ON "tank_month_oil_flow"("tank_id", "month");
+CREATE UNIQUE INDEX "storage_tank_gas_in_solution_factor_calculated_storage_tank_key" ON "storage_tank_gas_in_solution_factor_calculated"("storage_tank_id", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tank_month_methane_emission_override_tank_id_month_key" ON "tank_month_methane_emission_override"("tank_id", "month");
+CREATE UNIQUE INDEX "storage_tank_month_liquid_hydrocarbon_entering_storage_tank_key" ON "storage_tank_month_liquid_hydrocarbon_entering"("storage_tank_id", "month");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "storage_tank_month_methane_emission_override_storage_tank_i_key" ON "storage_tank_month_methane_emission_override"("storage_tank_id", "month");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "gas_analysis_facility_id_date_key" ON "gas_analysis"("facility_id", "date");
@@ -762,49 +779,58 @@ ALTER TABLE "compressor_seal_month_methane_emission_override" ADD CONSTRAINT "co
 ALTER TABLE "compressor_seal_month_methane_emission_override" ADD CONSTRAINT "compressor_seal_month_methane_emission_override_updated_by_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank" ADD CONSTRAINT "tank_site_id_fkey" FOREIGN KEY ("site_id") REFERENCES "site"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank" ADD CONSTRAINT "storage_tank_site_id_fkey" FOREIGN KEY ("site_id") REFERENCES "site"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank" ADD CONSTRAINT "tank_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank" ADD CONSTRAINT "storage_tank_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank" ADD CONSTRAINT "tank_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank" ADD CONSTRAINT "storage_tank_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_change" ADD CONSTRAINT "tank_change_tank_id_fkey" FOREIGN KEY ("tank_id") REFERENCES "tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_change" ADD CONSTRAINT "storage_tank_change_storage_tank_id_fkey" FOREIGN KEY ("storage_tank_id") REFERENCES "storage_tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_change" ADD CONSTRAINT "tank_change_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_change" ADD CONSTRAINT "storage_tank_change_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_change" ADD CONSTRAINT "tank_change_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_change" ADD CONSTRAINT "storage_tank_change_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_emission_factor_calculated" ADD CONSTRAINT "tank_emission_factor_calculated_tank_id_fkey" FOREIGN KEY ("tank_id") REFERENCES "tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_controlled_characterization" ADD CONSTRAINT "storage_tank_controlled_characterization_storage_tank_id_fkey" FOREIGN KEY ("storage_tank_id") REFERENCES "storage_tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_emission_factor_calculated" ADD CONSTRAINT "tank_emission_factor_calculated_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_controlled_characterization" ADD CONSTRAINT "storage_tank_controlled_characterization_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_emission_factor_calculated" ADD CONSTRAINT "tank_emission_factor_calculated_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_controlled_characterization" ADD CONSTRAINT "storage_tank_controlled_characterization_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_month_oil_flow" ADD CONSTRAINT "tank_month_oil_flow_tank_id_fkey" FOREIGN KEY ("tank_id") REFERENCES "tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_gas_in_solution_factor_calculated" ADD CONSTRAINT "storage_tank_gas_in_solution_factor_calculated_storage_tan_fkey" FOREIGN KEY ("storage_tank_id") REFERENCES "storage_tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_month_oil_flow" ADD CONSTRAINT "tank_month_oil_flow_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_gas_in_solution_factor_calculated" ADD CONSTRAINT "storage_tank_gas_in_solution_factor_calculated_created_by__fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_month_oil_flow" ADD CONSTRAINT "tank_month_oil_flow_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_gas_in_solution_factor_calculated" ADD CONSTRAINT "storage_tank_gas_in_solution_factor_calculated_updated_by__fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_month_methane_emission_override" ADD CONSTRAINT "tank_month_methane_emission_override_tank_id_fkey" FOREIGN KEY ("tank_id") REFERENCES "tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_month_liquid_hydrocarbon_entering" ADD CONSTRAINT "storage_tank_month_liquid_hydrocarbon_entering_storage_tan_fkey" FOREIGN KEY ("storage_tank_id") REFERENCES "storage_tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_month_methane_emission_override" ADD CONSTRAINT "tank_month_methane_emission_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_month_liquid_hydrocarbon_entering" ADD CONSTRAINT "storage_tank_month_liquid_hydrocarbon_entering_created_by__fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tank_month_methane_emission_override" ADD CONSTRAINT "tank_month_methane_emission_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "storage_tank_month_liquid_hydrocarbon_entering" ADD CONSTRAINT "storage_tank_month_liquid_hydrocarbon_entering_updated_by__fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_month_methane_emission_override" ADD CONSTRAINT "storage_tank_month_methane_emission_override_storage_tank__fkey" FOREIGN KEY ("storage_tank_id") REFERENCES "storage_tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_month_methane_emission_override" ADD CONSTRAINT "storage_tank_month_methane_emission_override_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_month_methane_emission_override" ADD CONSTRAINT "storage_tank_month_methane_emission_override_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "gas_analysis" ADD CONSTRAINT "gas_analysis_facility_id_fkey" FOREIGN KEY ("facility_id") REFERENCES "facility"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

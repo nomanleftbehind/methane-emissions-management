@@ -1,1 +1,1 @@
-pub mod tank;
+pub mod storage_tank;

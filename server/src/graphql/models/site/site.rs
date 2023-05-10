@@ -1,6 +1,6 @@
 use super::super::{
     compressor::Compressor,
-    defined_vent_gas::tank::Tank,
+    defined_vent_gas::storage_tank::StorageTank,
     facility::Facility,
     month_methane_emission::MonthMethaneEmission,
     pneumatic_device::{
@@ -12,7 +12,7 @@ use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         compressor::SiteCompressorsLoader,
-        defined_vent_gas::tank::SiteTanksLoader,
+        defined_vent_gas::storage_tank::SiteStorageTanksLoader,
         facility::FacilityLoader,
         month_methane_emission::MonthMethaneEmissionsBySiteLoader,
         pneumatic_device::{
@@ -94,10 +94,10 @@ impl Site {
         Ok(result)
     }
 
-    async fn tanks(&self, ctx: &Context<'_>) -> Result<Vec<Tank>, Error> {
-        let loader = ctx.get_loader::<DataLoader<SiteTanksLoader>>();
-        let tanks = loader.load_one(self.id).await?;
-        let result = tanks.unwrap_or(vec![]);
+    async fn storage_tanks(&self, ctx: &Context<'_>) -> Result<Vec<StorageTank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<SiteStorageTanksLoader>>();
+        let storage_tanks = loader.load_one(self.id).await?;
+        let result = storage_tanks.unwrap_or(vec![]);
 
         Ok(result)
     }

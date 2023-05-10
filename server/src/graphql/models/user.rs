@@ -19,13 +19,15 @@ use crate::graphql::{
             UpdatedCompressorSealTestsLoader, UpdatedCompressorSealsLoader,
             UpdatedCompressorsLoader,
         },
-        defined_vent_gas::tank::{
-            CreatedTankChangesLoader, CreatedTankEmissionFactorsCalculatedLoader,
-            CreatedTankMonthMethaneEmissionOverridesLoader, CreatedTankMonthOilFlowsLoader,
-            CreatedTanksLoader, UpdatedTankChangesLoader,
-            UpdatedTankEmissionFactorsCalculatedLoader,
-            UpdatedTankMonthMethaneEmissionOverridesLoader, UpdatedTankMonthOilFlowsLoader,
-            UpdatedTanksLoader,
+        defined_vent_gas::storage_tank::{
+            CreatedStorageTankChangesLoader,
+            CreatedStorageTankGasInSolutionFactorsCalculatedLoader,
+            CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
+            CreatedStorageTankMonthMethaneEmissionOverridesLoader, CreatedStorageTanksLoader,
+            UpdatedStorageTankChangesLoader,
+            UpdatedStorageTankGasInSolutionFactorsCalculatedLoader,
+            UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
+            UpdatedStorageTankMonthMethaneEmissionOverridesLoader, UpdatedStorageTanksLoader,
         },
         facility::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
         gas_analysis::{
@@ -53,9 +55,9 @@ use crate::graphql::{
             Compressor, CompressorBlowdown, CompressorBlowdownOverride, CompressorMonthHours,
             CompressorSeal, CompressorSealMonthMethaneEmissionOverride, CompressorSealTest,
         },
-        defined_vent_gas::tank::{
-            Tank, TankChange, TankEmissionFactorCalculated, TankMonthMethaneEmissionOverride,
-            TankMonthOilFlow,
+        defined_vent_gas::storage_tank::{
+            StorageTank, StorageTankChange, StorageTankGasInSolutionFactorCalculated,
+            StorageTankMonthLiquidHydrocarbonEntering, StorageTankMonthMethaneEmissionOverride,
         },
         facility::Facility,
         gas_analysis::{GasAnalysis, GasAnalysisCalculatedParam},
@@ -416,102 +418,114 @@ impl User {
         Ok(result)
     }
 
-    async fn created_tanks(&self, ctx: &Context<'_>) -> Result<Vec<Tank>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTanksLoader>>();
-        let tanks = loader.load_one(self.id).await?;
-        // Need to return empty vector if user has no created tank farms
-        let result = tanks.unwrap_or(vec![]);
+    async fn created_storage_tanks(&self, ctx: &Context<'_>) -> Result<Vec<StorageTank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedStorageTanksLoader>>();
+        let storage_tanks = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no created storage_tank farms
+        let result = storage_tanks.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_tanks(&self, ctx: &Context<'_>) -> Result<Vec<Tank>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTanksLoader>>();
-        let tanks = loader.load_one(self.id).await?;
-        // Need to return empty vector if user has no updated tank farms
-        let result = tanks.unwrap_or(vec![]);
+    async fn updated_storage_tanks(&self, ctx: &Context<'_>) -> Result<Vec<StorageTank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedStorageTanksLoader>>();
+        let storage_tanks = loader.load_one(self.id).await?;
+        // Need to return empty vector if user has no updated storage_tank farms
+        let result = storage_tanks.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_tank_changes(&self, ctx: &Context<'_>) -> Result<Vec<TankChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankChangesLoader>>();
-        let tank_changes = loader.load_one(self.id).await?;
-        let result = tank_changes.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
-    async fn updated_tank_changes(&self, ctx: &Context<'_>) -> Result<Vec<TankChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankChangesLoader>>();
-        let tank_changes = loader.load_one(self.id).await?;
-        let result = tank_changes.unwrap_or(vec![]);
-
-        Ok(result)
-    }
-
-    async fn created_tank_month_oil_flows(
+    async fn created_storage_tank_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankMonthOilFlow>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankMonthOilFlowsLoader>>();
-        let tank_month_oil_flows = loader.load_one(self.id).await?;
-        let result = tank_month_oil_flows.unwrap_or(vec![]);
+    ) -> Result<Vec<StorageTankChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedStorageTankChangesLoader>>();
+        let storage_tank_changes = loader.load_one(self.id).await?;
+        let result = storage_tank_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_tank_month_oil_flows(
+    async fn updated_storage_tank_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankMonthOilFlow>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankMonthOilFlowsLoader>>();
-        let tank_month_oil_flows = loader.load_one(self.id).await?;
-        let result = tank_month_oil_flows.unwrap_or(vec![]);
+    ) -> Result<Vec<StorageTankChange>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedStorageTankChangesLoader>>();
+        let storage_tank_changes = loader.load_one(self.id).await?;
+        let result = storage_tank_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_tank_emission_factors_calculated(
+    async fn created_storage_tank_month_liquid_hydrocarbon_entering(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankEmissionFactorCalculated>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankEmissionFactorsCalculatedLoader>>();
-        let tank_emission_factors_calculated = loader.load_one(self.id).await?;
-        let result = tank_emission_factors_calculated.unwrap_or(vec![]);
+    ) -> Result<Vec<StorageTankMonthLiquidHydrocarbonEntering>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader>>();
+        let storage_tank_month_liquid_hydrocarbon_entering = loader.load_one(self.id).await?;
+        let result = storage_tank_month_liquid_hydrocarbon_entering.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_tank_emission_factors_calculated(
+    async fn updated_storage_tank_month_liquid_hydrocarbon_entering(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankEmissionFactorCalculated>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankEmissionFactorsCalculatedLoader>>();
-        let tank_emission_factors_calculated = loader.load_one(self.id).await?;
-        let result = tank_emission_factors_calculated.unwrap_or(vec![]);
+    ) -> Result<Vec<StorageTankMonthLiquidHydrocarbonEntering>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader>>();
+        let storage_tank_month_liquid_hydrocarbon_entering = loader.load_one(self.id).await?;
+        let result = storage_tank_month_liquid_hydrocarbon_entering.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn created_tank_month_methane_emission_overrides(
+    async fn created_storage_tank_gas_in_solution_factors_calculated(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankMonthMethaneEmissionOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedTankMonthMethaneEmissionOverridesLoader>>();
-        let tank_month_methane_emission_overrides = loader.load_one(self.id).await?;
-        let result = tank_month_methane_emission_overrides.unwrap_or(vec![]);
+    ) -> Result<Vec<StorageTankGasInSolutionFactorCalculated>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<CreatedStorageTankGasInSolutionFactorsCalculatedLoader>>();
+        let storage_tank_gas_in_solution_factors_calculated = loader.load_one(self.id).await?;
+        let result = storage_tank_gas_in_solution_factors_calculated.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_tank_month_methane_emission_overrides(
+    async fn updated_storage_tank_gas_in_solution_factors_calculated(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<TankMonthMethaneEmissionOverride>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedTankMonthMethaneEmissionOverridesLoader>>();
-        let tank_month_methane_emission_overrides = loader.load_one(self.id).await?;
-        let result = tank_month_methane_emission_overrides.unwrap_or(vec![]);
+    ) -> Result<Vec<StorageTankGasInSolutionFactorCalculated>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<UpdatedStorageTankGasInSolutionFactorsCalculatedLoader>>();
+        let storage_tank_gas_in_solution_factors_calculated = loader.load_one(self.id).await?;
+        let result = storage_tank_gas_in_solution_factors_calculated.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn created_storage_tank_month_methane_emission_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<StorageTankMonthMethaneEmissionOverride>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<CreatedStorageTankMonthMethaneEmissionOverridesLoader>>();
+        let storage_tank_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = storage_tank_month_methane_emission_overrides.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn updated_storage_tank_month_methane_emission_overrides(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<StorageTankMonthMethaneEmissionOverride>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<UpdatedStorageTankMonthMethaneEmissionOverridesLoader>>();
+        let storage_tank_month_methane_emission_overrides = loader.load_one(self.id).await?;
+        let result = storage_tank_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

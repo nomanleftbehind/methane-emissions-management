@@ -1,7 +1,7 @@
-use super::Tank;
+use super::StorageTank;
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{defined_vent_gas::tank::TankLoader, user::UserLoader},
+    dataloaders::{defined_vent_gas::storage_tank::StorageTankLoader, user::UserLoader},
     models::User,
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
@@ -12,11 +12,11 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct TankEmissionFactorCalculated {
+pub struct StorageTankGasInSolutionFactorCalculated {
     pub id: Uuid,
-    pub tank_id: Uuid,
+    pub storage_tank_id: Uuid,
     pub date: NaiveDate,
-    pub emission_factor: f64,
+    pub gis_factor: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -24,7 +24,7 @@ pub struct TankEmissionFactorCalculated {
 }
 
 #[ComplexObject]
-impl TankEmissionFactorCalculated {
+impl StorageTankGasInSolutionFactorCalculated {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -39,31 +39,32 @@ impl TankEmissionFactorCalculated {
         updated_by
     }
 
-    async fn tank(&self, ctx: &Context<'_>) -> Result<Option<Tank>, Error> {
-        let loader = ctx.get_loader::<DataLoader<TankLoader>>();
-        let tank_farm = loader.load_one(self.tank_id).await;
+    async fn storage_tank(&self, ctx: &Context<'_>) -> Result<Option<StorageTank>, Error> {
+        let loader = ctx.get_loader::<DataLoader<StorageTankLoader>>();
+        let storage_tank_farm = loader.load_one(self.storage_tank_id).await;
 
-        tank_farm
+        storage_tank_farm
     }
 }
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
-pub struct TankFarmVentFactorCalculatedInterim {
-    pub tank_farm_id: Uuid,
+pub struct StorageTankFarmVentFactorCalculatedInterim {
+    pub storage_tank_farm_id: Uuid,
     pub date: NaiveDate,
     pub vent_factor: f64,
 }
 
 #[derive(Debug)]
-pub struct TankFarmVentFactorCalculatedInterimUnnestedRows {
+pub struct StorageTankFarmVentFactorCalculatedInterimUnnestedRows {
     pub user_id: Uuid,
-    pub tank_farm_vent_factors_calculated_interim: Vec<TankFarmVentFactorCalculatedInterim>,
+    pub storage_tank_farm_vent_factors_calculated_interim:
+        Vec<StorageTankFarmVentFactorCalculatedInterim>,
 }
 
 #[derive(Debug)]
-pub struct TankFarmVentFactorCalculatedInterimNestedRows {
+pub struct StorageTankFarmVentFactorCalculatedInterimNestedRows {
     pub id: Vec<Uuid>,
-    pub tank_farm_id: Vec<Uuid>,
+    pub storage_tank_farm_id: Vec<Uuid>,
     pub date: Vec<NaiveDate>,
     pub vent_factor: Vec<f64>,
     pub created_by_id: Vec<Uuid>,
@@ -72,18 +73,18 @@ pub struct TankFarmVentFactorCalculatedInterimNestedRows {
     pub updated_at: Vec<NaiveDateTime>,
 }
 
-impl From<TankFarmVentFactorCalculatedInterimUnnestedRows>
-    for TankFarmVentFactorCalculatedInterimNestedRows
+impl From<StorageTankFarmVentFactorCalculatedInterimUnnestedRows>
+    for StorageTankFarmVentFactorCalculatedInterimNestedRows
 {
     fn from(
-        TankFarmVentFactorCalculatedInterimUnnestedRows {
+        StorageTankFarmVentFactorCalculatedInterimUnnestedRows {
             user_id,
-            tank_farm_vent_factors_calculated_interim,
-        }: TankFarmVentFactorCalculatedInterimUnnestedRows,
+            storage_tank_farm_vent_factors_calculated_interim,
+        }: StorageTankFarmVentFactorCalculatedInterimUnnestedRows,
     ) -> Self {
         let (
             id,
-            tank_farm_id,
+            storage_tank_farm_id,
             date,
             vent_factor,
             created_by_id,
@@ -99,12 +100,12 @@ impl From<TankFarmVentFactorCalculatedInterimUnnestedRows>
             Vec<_>,
             Vec<_>,
             Vec<_>,
-        ) = tank_farm_vent_factors_calculated_interim
+        ) = storage_tank_farm_vent_factors_calculated_interim
             .into_iter()
             .map(|cmvc| {
                 (
                     Uuid::new_v4(),
-                    cmvc.tank_farm_id,
+                    cmvc.storage_tank_farm_id,
                     cmvc.date,
                     cmvc.vent_factor,
                     user_id.clone(),
@@ -115,9 +116,9 @@ impl From<TankFarmVentFactorCalculatedInterimUnnestedRows>
             })
             .multiunzip();
 
-        TankFarmVentFactorCalculatedInterimNestedRows {
+        StorageTankFarmVentFactorCalculatedInterimNestedRows {
             id,
-            tank_farm_id,
+            storage_tank_farm_id,
             date,
             vent_factor,
             created_by_id,

@@ -18,15 +18,20 @@ use super::{
         UpdatedCompressorSealMonthMethaneEmissionOverridesLoader, UpdatedCompressorSealTestsLoader,
         UpdatedCompressorSealsLoader, UpdatedCompressorsLoader,
     },
-    defined_vent_gas::tank::{
-        CreatedTankChangesLoader, CreatedTankEmissionFactorsCalculatedLoader,
-        CreatedTankMonthMethaneEmissionOverridesLoader, CreatedTankMonthOilFlowsLoader,
-        CreatedTanksLoader, SiteTanksLoader, TankChangeLoader, TankChangesByTankLoader,
-        TankEmissionFactorCalculatedLoader, TankEmissionFactorsCalculatedByTankLoader, TankLoader,
-        TankMonthMethaneEmissionOverrideLoader, TankMonthMethaneEmissionOverridesByTankLoader,
-        TankMonthOilFlowLoader, TankMonthOilFlowsByTankLoader, UpdatedTankChangesLoader,
-        UpdatedTankEmissionFactorsCalculatedLoader, UpdatedTankMonthMethaneEmissionOverridesLoader,
-        UpdatedTankMonthOilFlowsLoader, UpdatedTanksLoader,
+    defined_vent_gas::storage_tank::{
+        CreatedStorageTankChangesLoader, CreatedStorageTankGasInSolutionFactorsCalculatedLoader,
+        CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
+        CreatedStorageTankMonthMethaneEmissionOverridesLoader, CreatedStorageTanksLoader,
+        SiteStorageTanksLoader, StorageTankChangeLoader, StorageTankChangesByStorageTankLoader,
+        StorageTankGasInSolutionFactorCalculatedLoader,
+        StorageTankGasInSolutionFactorsCalculatedByStorageTankLoader, StorageTankLoader,
+        StorageTankMonthLiquidHydrocarbonEnteringByStorageTankLoader,
+        StorageTankMonthLiquidHydrocarbonEnteringLoader,
+        StorageTankMonthMethaneEmissionOverrideLoader,
+        StorageTankMonthMethaneEmissionOverridesByStorageTankLoader,
+        UpdatedStorageTankChangesLoader, UpdatedStorageTankGasInSolutionFactorsCalculatedLoader,
+        UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
+        UpdatedStorageTankMonthMethaneEmissionOverridesLoader, UpdatedStorageTanksLoader,
     },
     facility::{CreatedFacilitiesLoader, FacilityLoader, UpdatedFacilitiesLoader},
     gas_analysis::{
@@ -468,73 +473,83 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Tank
-    let tank_by_id_loader = DataLoader::new(TankLoader::new(pool.clone()), tokio::spawn);
-    let tank_by_site_id_loader = DataLoader::new(SiteTanksLoader::new(pool.clone()), tokio::spawn);
-    let tanks_by_creator_id_loader =
-        DataLoader::new(CreatedTanksLoader::new(pool.clone()), tokio::spawn);
-    let tanks_by_updater_id_loader =
-        DataLoader::new(UpdatedTanksLoader::new(pool.clone()), tokio::spawn);
+    // Storage Tank
+    let storage_tank_by_id_loader =
+        DataLoader::new(StorageTankLoader::new(pool.clone()), tokio::spawn);
+    let storage_tank_by_site_id_loader =
+        DataLoader::new(SiteStorageTanksLoader::new(pool.clone()), tokio::spawn);
+    let storage_tanks_by_creator_id_loader =
+        DataLoader::new(CreatedStorageTanksLoader::new(pool.clone()), tokio::spawn);
+    let storage_tanks_by_updater_id_loader =
+        DataLoader::new(UpdatedStorageTanksLoader::new(pool.clone()), tokio::spawn);
 
-    // Tank Change
-    let tank_change_by_id_loader =
-        DataLoader::new(TankChangeLoader::new(pool.clone()), tokio::spawn);
-    let tank_changes_by_tank_id_loader =
-        DataLoader::new(TankChangesByTankLoader::new(pool.clone()), tokio::spawn);
-    let tank_changes_by_creator_id_loader =
-        DataLoader::new(CreatedTankChangesLoader::new(pool.clone()), tokio::spawn);
-    let tank_changes_by_updater_id_loader =
-        DataLoader::new(UpdatedTankChangesLoader::new(pool.clone()), tokio::spawn);
-
-    // Tank Month Oil Flow
-    let tank_month_oil_flow_by_id_loader =
-        DataLoader::new(TankMonthOilFlowLoader::new(pool.clone()), tokio::spawn);
-    let tank_month_oil_flows_by_tank_id_loader = DataLoader::new(
-        TankMonthOilFlowsByTankLoader::new(pool.clone()),
+    // Storage Tank Change
+    let storage_tank_change_by_id_loader =
+        DataLoader::new(StorageTankChangeLoader::new(pool.clone()), tokio::spawn);
+    let storage_tank_changes_by_storage_tank_id_loader = DataLoader::new(
+        StorageTankChangesByStorageTankLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_month_oil_flows_by_creator_id_loader = DataLoader::new(
-        CreatedTankMonthOilFlowsLoader::new(pool.clone()),
+    let storage_tank_changes_by_creator_id_loader = DataLoader::new(
+        CreatedStorageTankChangesLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_month_oil_flows_by_updater_id_loader = DataLoader::new(
-        UpdatedTankMonthOilFlowsLoader::new(pool.clone()),
+    let storage_tank_changes_by_updater_id_loader = DataLoader::new(
+        UpdatedStorageTankChangesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Tank Emission Factor Calculated
-    let tank_emission_factor_calculated_by_id_loader = DataLoader::new(
-        TankEmissionFactorCalculatedLoader::new(pool.clone()),
+    // Storage Tank Month Oil Flow
+    let storage_tank_month_liquid_hydrocarbon_entering_by_id_loader = DataLoader::new(
+        StorageTankMonthLiquidHydrocarbonEnteringLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_emission_factors_calculated_by_tank_id_loader = DataLoader::new(
-        TankEmissionFactorsCalculatedByTankLoader::new(pool.clone()),
+    let storage_tank_month_liquid_hydrocarbon_entering_by_storage_tank_id_loader = DataLoader::new(
+        StorageTankMonthLiquidHydrocarbonEnteringByStorageTankLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_emission_factors_calculated_by_creator_id_loader = DataLoader::new(
-        CreatedTankEmissionFactorsCalculatedLoader::new(pool.clone()),
+    let storage_tank_month_liquid_hydrocarbon_entering_by_creator_id_loader = DataLoader::new(
+        CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_emission_factors_calculated_by_updater_id_loader = DataLoader::new(
-        UpdatedTankEmissionFactorsCalculatedLoader::new(pool.clone()),
+    let storage_tank_month_liquid_hydrocarbon_entering_by_updater_id_loader = DataLoader::new(
+        UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Tank Month Methane Emission Override
-    let tank_month_methane_emission_override_by_id_loader = DataLoader::new(
-        TankMonthMethaneEmissionOverrideLoader::new(pool.clone()),
+    // Storage Tank Emission Factor Calculated
+    let storage_tank_gas_in_solution_factor_calculated_by_id_loader = DataLoader::new(
+        StorageTankGasInSolutionFactorCalculatedLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_month_methane_emission_overrides_by_tank_id_loader = DataLoader::new(
-        TankMonthMethaneEmissionOverridesByTankLoader::new(pool.clone()),
+    let storage_tank_gas_in_solution_factors_calculated_by_storage_tank_id_loader = DataLoader::new(
+        StorageTankGasInSolutionFactorsCalculatedByStorageTankLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_month_methane_emission_overrides_by_creator_id_loader = DataLoader::new(
-        CreatedTankMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+    let storage_tank_gas_in_solution_factors_calculated_by_creator_id_loader = DataLoader::new(
+        CreatedStorageTankGasInSolutionFactorsCalculatedLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let tank_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
-        UpdatedTankMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+    let storage_tank_gas_in_solution_factors_calculated_by_updater_id_loader = DataLoader::new(
+        UpdatedStorageTankGasInSolutionFactorsCalculatedLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Storage Tank Month Methane Emission Override
+    let storage_tank_month_methane_emission_override_by_id_loader = DataLoader::new(
+        StorageTankMonthMethaneEmissionOverrideLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let storage_tank_month_methane_emission_overrides_by_storage_tank_id_loader = DataLoader::new(
+        StorageTankMonthMethaneEmissionOverridesByStorageTankLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let storage_tank_month_methane_emission_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedStorageTankMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let storage_tank_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedStorageTankMonthMethaneEmissionOverridesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -677,30 +692,30 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_blowdown_overrides_by_creator_id_loader);
     loaders.insert(compressor_blowdown_overrides_by_updater_id_loader);
 
-    loaders.insert(tank_by_id_loader);
-    loaders.insert(tanks_by_creator_id_loader);
-    loaders.insert(tanks_by_updater_id_loader);
-    loaders.insert(tank_by_site_id_loader);
+    loaders.insert(storage_tank_by_id_loader);
+    loaders.insert(storage_tanks_by_creator_id_loader);
+    loaders.insert(storage_tanks_by_updater_id_loader);
+    loaders.insert(storage_tank_by_site_id_loader);
 
-    loaders.insert(tank_change_by_id_loader);
-    loaders.insert(tank_changes_by_tank_id_loader);
-    loaders.insert(tank_changes_by_creator_id_loader);
-    loaders.insert(tank_changes_by_updater_id_loader);
+    loaders.insert(storage_tank_change_by_id_loader);
+    loaders.insert(storage_tank_changes_by_storage_tank_id_loader);
+    loaders.insert(storage_tank_changes_by_creator_id_loader);
+    loaders.insert(storage_tank_changes_by_updater_id_loader);
 
-    loaders.insert(tank_month_oil_flow_by_id_loader);
-    loaders.insert(tank_month_oil_flows_by_tank_id_loader);
-    loaders.insert(tank_month_oil_flows_by_creator_id_loader);
-    loaders.insert(tank_month_oil_flows_by_updater_id_loader);
+    loaders.insert(storage_tank_month_liquid_hydrocarbon_entering_by_id_loader);
+    loaders.insert(storage_tank_month_liquid_hydrocarbon_entering_by_storage_tank_id_loader);
+    loaders.insert(storage_tank_month_liquid_hydrocarbon_entering_by_creator_id_loader);
+    loaders.insert(storage_tank_month_liquid_hydrocarbon_entering_by_updater_id_loader);
 
-    loaders.insert(tank_emission_factor_calculated_by_id_loader);
-    loaders.insert(tank_emission_factors_calculated_by_tank_id_loader);
-    loaders.insert(tank_emission_factors_calculated_by_creator_id_loader);
-    loaders.insert(tank_emission_factors_calculated_by_updater_id_loader);
+    loaders.insert(storage_tank_gas_in_solution_factor_calculated_by_id_loader);
+    loaders.insert(storage_tank_gas_in_solution_factors_calculated_by_storage_tank_id_loader);
+    loaders.insert(storage_tank_gas_in_solution_factors_calculated_by_creator_id_loader);
+    loaders.insert(storage_tank_gas_in_solution_factors_calculated_by_updater_id_loader);
 
-    loaders.insert(tank_month_methane_emission_override_by_id_loader);
-    loaders.insert(tank_month_methane_emission_overrides_by_tank_id_loader);
-    loaders.insert(tank_month_methane_emission_overrides_by_creator_id_loader);
-    loaders.insert(tank_month_methane_emission_overrides_by_updater_id_loader);
+    loaders.insert(storage_tank_month_methane_emission_override_by_id_loader);
+    loaders.insert(storage_tank_month_methane_emission_overrides_by_storage_tank_id_loader);
+    loaders.insert(storage_tank_month_methane_emission_overrides_by_creator_id_loader);
+    loaders.insert(storage_tank_month_methane_emission_overrides_by_updater_id_loader);
 
     loaders.insert(gas_analysis_by_id_loader);
     loaders.insert(gas_analyses_by_facility_id_loader);
