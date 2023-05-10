@@ -5,14 +5,14 @@ use uuid::Uuid;
 
 mod compressor;
 mod month_methane_emission;
-mod pneumatic_device_type;
+mod non_level_controller;
 mod site;
 mod tank;
 mod user;
 
 pub use compressor::*;
 pub use month_methane_emission::*;
-pub use pneumatic_device_type::*;
+pub use non_level_controller::*;
 pub use site::*;
 pub use tank::*;
 pub use user::*;

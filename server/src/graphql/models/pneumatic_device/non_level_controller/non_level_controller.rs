@@ -24,7 +24,7 @@ use crate::graphql::{
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
-use common::PneumaticDeviceType;
+use common::NonLevelControllerType;
 use sqlx::FromRow;
 use uuid::Uuid;
 
@@ -34,7 +34,7 @@ use uuid::Uuid;
 pub struct NonLevelController {
     pub id: Uuid,
     pub site_id: Uuid,
-    pub r#type: PneumaticDeviceType,
+    pub r#type: NonLevelControllerType,
     pub manufacturer_id: Uuid,
     pub model: Option<String>,
     pub serial_number: Option<String>,

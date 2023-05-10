@@ -1,5 +1,5 @@
 use crate::graphql::models::InsertPneumaticDeviceInput;
-use common::PneumaticDeviceType;
+use common::NonLevelControllerType;
 use sqlx::{query, Error, PgPool};
 use uuid::Uuid;
 
@@ -21,7 +21,7 @@ pub async fn insert_non_level_controller(
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
         Uuid::new_v4(),
         site_id,
-        r#type as PneumaticDeviceType,
+        r#type as NonLevelControllerType,
         manufacturer_id,
         model,
         serial_number,
