@@ -1,6 +1,9 @@
-use crate::graphql::models::gas_analysis::{
-    GasAnalysisCalculatedParamInterim, GasAnalysisCalculatedParamInterimNestedRows,
-    GasAnalysisCalculatedParamInterimUnnestedRows,
+use crate::graphql::models::{
+    gas_analysis::{
+        GasAnalysisCalculatedParamInterim, GasAnalysisCalculatedParamInterimNestedRows,
+        GasAnalysisCalculatedParamInterimUnnestedRows,
+    },
+    input::FromToMonthInput,
 };
 use sqlx::{query_file, query_file_as, Error, PgPool};
 use uuid::Uuid;
@@ -8,10 +11,16 @@ use uuid::Uuid;
 pub async fn insert_gas_analysis_calculated_param(
     pool: &PgPool,
     user_id: Uuid,
+    FromToMonthInput {
+        from_month,
+        to_month,
+    }: FromToMonthInput,
 ) -> Result<u64, Error> {
     let gas_analysis_calculated_param_interim = query_file_as!(
         GasAnalysisCalculatedParamInterim,
-        "src/graphql/sql/statements/gas_analysis_calculated_param_calculate.sql"
+        "src/graphql/sql/statements/gas_analysis_calculated_param_calculate.sql",
+        from_month,
+        to_month
     )
     .fetch_all(pool)
     .await?;

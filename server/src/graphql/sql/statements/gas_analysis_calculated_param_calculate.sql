@@ -10,4 +10,35 @@ SELECT
     ga.co2 + ga.c1 + ga.c2 * 2 + ga.c3 * 3 + ga.c4_i * 4 + ga.c4_n * 4 + ga.c5_i * 5 + ga.c5_n * 5 + ga.c6 * 6 + ga.c7_plus * 7
   ) * 12.01 / 23.645 as "carbon_content!"
 FROM
-  gas_analysis ga
+  (
+    SELECT
+      id,
+      date as from_date,
+      COALESCE(
+        LEAD(date) OVER (
+          PARTITION BY facility_id
+          ORDER BY
+            date
+        ) - INTERVAL '1 day',
+        CURRENT_DATE
+      )::date as to_date,
+      h2,
+      he,
+      n2,
+      co2,
+      h2s,
+      c1,
+      c2,
+      c3,
+      c4_i,
+      c4_n,
+      c5_i,
+      c5_n,
+      c6,
+      c7_plus
+    FROM
+      gas_analysis
+  ) ga
+WHERE
+  ga.from_date <= $1
+  AND ga.to_date >= $2
