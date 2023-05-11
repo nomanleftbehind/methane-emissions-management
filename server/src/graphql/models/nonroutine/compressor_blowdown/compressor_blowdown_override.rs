@@ -1,21 +1,21 @@
-use super::super::{routine::compressor_seal::CompressorSealTest, user::User};
+use super::super::super::{routine::compressor_seal::Compressor, user::User};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{
-        routine::compressor_seal::CompressorSealTestsBySurveyEquipmentLoader, user::UserLoader,
-    },
+    dataloaders::{routine::compressor_seal::CompressorLoader, user::UserLoader},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
-use chrono::NaiveDateTime;
+use chrono::{NaiveDate, NaiveDateTime};
 use sqlx::FromRow;
 use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct SurveyEquipment {
+pub struct CompressorBlowdownOverride {
     pub id: Uuid,
-    pub make: String,
-    pub model: String,
+    pub compressor_id: Uuid,
+    pub date: NaiveDate,
+    pub gas_volume: f64,
+    pub comment: Option<String>,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
     pub updated_by_id: Uuid,
@@ -23,7 +23,7 @@ pub struct SurveyEquipment {
 }
 
 #[ComplexObject]
-impl SurveyEquipment {
+impl CompressorBlowdownOverride {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -38,14 +38,10 @@ impl SurveyEquipment {
         updated_by
     }
 
-    async fn compressor_seal_tests(
-        &self,
-        ctx: &Context<'_>,
-    ) -> Result<Vec<CompressorSealTest>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CompressorSealTestsBySurveyEquipmentLoader>>();
-        let compressor_seal_tests = loader.load_one(self.id).await?;
-        let result = compressor_seal_tests.unwrap_or(vec![]);
+    async fn compressor(&self, ctx: &Context<'_>) -> Result<Option<Compressor>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorLoader>>();
+        let compressor = loader.load_one(self.compressor_id).await;
 
-        Ok(result)
+        compressor
     }
 }

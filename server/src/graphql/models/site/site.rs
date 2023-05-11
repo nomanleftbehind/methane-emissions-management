@@ -1,23 +1,27 @@
 use super::super::{
-    compressor::Compressor,
-    defined_vent_gas::storage_tank::StorageTank,
     facility::Facility,
     month_methane_emission::MonthMethaneEmission,
-    pneumatic_device::{
-        level_controller::LevelController, non_level_controller::NonLevelController,
+    routine::{
+        compressor_seal::Compressor,
+        defined_vent_gas::storage_tank::StorageTank,
+        pneumatic_device::{
+            level_controller::LevelController, non_level_controller::NonLevelController,
+        },
     },
     user::User,
 };
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        compressor::SiteCompressorsLoader,
-        defined_vent_gas::storage_tank::SiteStorageTanksLoader,
         facility::FacilityLoader,
         month_methane_emission::MonthMethaneEmissionsBySiteLoader,
-        pneumatic_device::{
-            level_controller::SiteLevelControllersLoader,
-            non_level_controller::SiteNonLevelControllersLoader,
+        routine::{
+            compressor_seal::SiteCompressorsLoader,
+            defined_vent_gas::storage_tank::SiteStorageTanksLoader,
+            pneumatic_device::{
+                level_controller::SiteLevelControllersLoader,
+                non_level_controller::SiteNonLevelControllersLoader,
+            },
         },
         user::UserLoader,
     },

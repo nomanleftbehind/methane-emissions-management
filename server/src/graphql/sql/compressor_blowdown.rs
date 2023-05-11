@@ -1,10 +1,10 @@
 use crate::{
     graphql::models::{
-        compressor::{
+        input::FromToMonthInput,
+        nonroutine::compressor_blowdown::{
             CompressorBlowdown, CompressorBlowdownInterim, CompressorBlowdownInterimNestedRows,
             CompressorBlowdownInterimUnnestedRows, MssqlCompressorBlowdownRows,
         },
-        input::FromToMonthInput,
     },
     MssqlFdcClient,
 };

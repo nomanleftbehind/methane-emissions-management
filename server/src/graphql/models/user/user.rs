@@ -1,34 +1,30 @@
-use super::super::pneumatic_device::{
-    non_level_controller::{
-        NonLevelController, NonLevelControllerChange, NonLevelControllerMonthHours,
-        NonLevelControllerMonthMethaneEmissionOverride,
+use super::super::{
+    facility::Facility,
+    gas_analysis::{GasAnalysis, GasAnalysisCalculatedParam},
+    month_methane_emission::MonthMethaneEmission,
+    nonroutine::compressor_blowdown::{CompressorBlowdown, CompressorBlowdownOverride},
+    routine::{
+        compressor_seal::{
+            Compressor, CompressorMonthHours, CompressorSeal,
+            CompressorSealMonthMethaneEmissionOverride, CompressorSealTest,
+        },
+        defined_vent_gas::storage_tank::{
+            StorageTank, StorageTankChange, StorageTankGasInSolutionFactorCalculated,
+            StorageTankMonthLiquidHydrocarbonEntering, StorageTankMonthMethaneEmissionOverride,
+        },
+        pneumatic_device::{
+            non_level_controller::{
+                NonLevelController, NonLevelControllerChange, NonLevelControllerMonthHours,
+                NonLevelControllerMonthMethaneEmissionOverride,
+            },
+            DeviceManufacturer,
+        },
     },
-    DeviceManufacturer,
+    site::Site,
 };
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        compressor::{
-            CreatedCompressorBlowdownOverridesLoader, CreatedCompressorBlowdownsLoader,
-            CreatedCompressorMonthHoursLoader,
-            CreatedCompressorSealMonthMethaneEmissionOverridesLoader,
-            CreatedCompressorSealTestsLoader, CreatedCompressorSealsLoader,
-            CreatedCompressorsLoader, UpdatedCompressorBlowdownOverridesLoader,
-            UpdatedCompressorBlowdownsLoader, UpdatedCompressorMonthHoursLoader,
-            UpdatedCompressorSealMonthMethaneEmissionOverridesLoader,
-            UpdatedCompressorSealTestsLoader, UpdatedCompressorSealsLoader,
-            UpdatedCompressorsLoader,
-        },
-        defined_vent_gas::storage_tank::{
-            CreatedStorageTankChangesLoader,
-            CreatedStorageTankGasInSolutionFactorsCalculatedLoader,
-            CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
-            CreatedStorageTankMonthMethaneEmissionOverridesLoader, CreatedStorageTanksLoader,
-            UpdatedStorageTankChangesLoader,
-            UpdatedStorageTankGasInSolutionFactorsCalculatedLoader,
-            UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
-            UpdatedStorageTankMonthMethaneEmissionOverridesLoader, UpdatedStorageTanksLoader,
-        },
         facility::{CreatedFacilitiesLoader, UpdatedFacilitiesLoader},
         gas_analysis::{
             CreatedGasAnalysesLoader, CreatedGasAnalysisCalculatedParamsLoader,
@@ -37,32 +33,44 @@ use crate::graphql::{
         month_methane_emission::{
             CreatedMonthMethaneEmissionsLoader, UpdatedMonthMethaneEmissionsLoader,
         },
-        pneumatic_device::{
-            non_level_controller::{
-                CreatedNonLevelControllerChangesLoader, CreatedNonLevelControllerMonthHoursLoader,
-                CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
-                CreatedNonLevelControllersLoader, UpdatedNonLevelControllerChangesLoader,
-                UpdatedNonLevelControllerMonthHoursLoader,
-                UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
-                UpdatedNonLevelControllersLoader,
+        nonroutine::compressor_blowdown::{
+            CreatedCompressorBlowdownOverridesLoader, CreatedCompressorBlowdownsLoader,
+            UpdatedCompressorBlowdownOverridesLoader, UpdatedCompressorBlowdownsLoader,
+        },
+        routine::{
+            compressor_seal::{
+                CreatedCompressorMonthHoursLoader,
+                CreatedCompressorSealMonthMethaneEmissionOverridesLoader,
+                CreatedCompressorSealTestsLoader, CreatedCompressorSealsLoader,
+                CreatedCompressorsLoader, UpdatedCompressorMonthHoursLoader,
+                UpdatedCompressorSealMonthMethaneEmissionOverridesLoader,
+                UpdatedCompressorSealTestsLoader, UpdatedCompressorSealsLoader,
+                UpdatedCompressorsLoader,
             },
-            CreatedDeviceManufacturersLoader, UpdatedDeviceManufacturersLoader,
+            defined_vent_gas::storage_tank::{
+                CreatedStorageTankChangesLoader,
+                CreatedStorageTankGasInSolutionFactorsCalculatedLoader,
+                CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
+                CreatedStorageTankMonthMethaneEmissionOverridesLoader, CreatedStorageTanksLoader,
+                UpdatedStorageTankChangesLoader,
+                UpdatedStorageTankGasInSolutionFactorsCalculatedLoader,
+                UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
+                UpdatedStorageTankMonthMethaneEmissionOverridesLoader, UpdatedStorageTanksLoader,
+            },
+            pneumatic_device::{
+                non_level_controller::{
+                    CreatedNonLevelControllerChangesLoader,
+                    CreatedNonLevelControllerMonthHoursLoader,
+                    CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+                    CreatedNonLevelControllersLoader, UpdatedNonLevelControllerChangesLoader,
+                    UpdatedNonLevelControllerMonthHoursLoader,
+                    UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
+                    UpdatedNonLevelControllersLoader,
+                },
+                CreatedDeviceManufacturersLoader, UpdatedDeviceManufacturersLoader,
+            },
         },
         site::{CreatedSitesLoader, UpdatedSitesLoader},
-    },
-    models::{
-        compressor::{
-            Compressor, CompressorBlowdown, CompressorBlowdownOverride, CompressorMonthHours,
-            CompressorSeal, CompressorSealMonthMethaneEmissionOverride, CompressorSealTest,
-        },
-        defined_vent_gas::storage_tank::{
-            StorageTank, StorageTankChange, StorageTankGasInSolutionFactorCalculated,
-            StorageTankMonthLiquidHydrocarbonEntering, StorageTankMonthMethaneEmissionOverride,
-        },
-        facility::Facility,
-        gas_analysis::{GasAnalysis, GasAnalysisCalculatedParam},
-        month_methane_emission::MonthMethaneEmission,
-        site::Site,
     },
 };
 use async_graphql::{

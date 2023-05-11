@@ -1,5 +1,5 @@
 use crate::graphql::models::{
-    pneumatic_device::non_level_controller::NonLevelController,
+    routine::pneumatic_device::non_level_controller::NonLevelController,
     user::{User, UserBy},
 };
 use sqlx::PgExecutor;

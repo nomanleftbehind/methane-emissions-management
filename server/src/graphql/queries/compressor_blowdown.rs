@@ -1,5 +1,6 @@
 use crate::graphql::{
-    context::ContextExt, models::compressor::CompressorBlowdown, sql::select_compressor_blowdowns,
+    context::ContextExt, models::nonroutine::compressor_blowdown::CompressorBlowdown,
+    sql::select_compressor_blowdowns,
 };
 use async_graphql::{Context, Error, Object};
 use uuid::Uuid;
