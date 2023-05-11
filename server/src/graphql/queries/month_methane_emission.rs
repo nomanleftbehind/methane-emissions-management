@@ -1,6 +1,6 @@
 use crate::graphql::{
     context::ContextExt,
-    models::{MonthMethaneEmission, MonthMethaneEmissionBySourceIdInput},
+    models::{month_methane_emission::MonthMethaneEmission, MonthMethaneEmissionBySourceIdInput},
     // models::pneumatic_device::{ControllerMonthVent, ControllerMonthVentBy},
     sql,
 };

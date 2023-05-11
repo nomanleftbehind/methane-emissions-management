@@ -1,4 +1,4 @@
-use crate::graphql::models::MonthMethaneEmission;
+use crate::graphql::models::month_methane_emission::MonthMethaneEmission;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
