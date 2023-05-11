@@ -1,4 +1,4 @@
-use crate::graphql::models::{Facility, FacilityBy, LimitOffsetInput};
+use crate::graphql::models::facility::{Facility, FacilityBy, LimitOffsetInput};
 use common::FacilityType;
 use sqlx::{PgExecutor, PgPool};
 

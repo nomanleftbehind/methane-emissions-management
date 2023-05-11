@@ -1,9 +1,9 @@
 use crate::graphql::models::{
+    input::{FromToMonthInput, MonthMethaneEmissionBySourceIdInput},
     month_methane_emission::{
         MonthMethaneEmission, MonthMethaneEmissionCalculated, MonthMethaneEmissionNestedRows,
         MonthMethaneEmissionUnnestedRows,
     },
-    FromToMonthInput, MonthMethaneEmissionBySourceIdInput,
 };
 use common::{MethaneEmissionCategory, MethaneEmissionSource, MethaneEmissionSourceTable};
 use sqlx::{query_as, query_file, query_file_as, Error, PgPool};

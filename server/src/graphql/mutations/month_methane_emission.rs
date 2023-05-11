@@ -1,6 +1,6 @@
 use crate::{
     configuration::DefaultGasParams,
-    graphql::{context::ContextExt, models::FromToMonthInput, sql},
+    graphql::{context::ContextExt, models::input::FromToMonthInput, sql},
 };
 use async_graphql::{Context, Error, Object};
 

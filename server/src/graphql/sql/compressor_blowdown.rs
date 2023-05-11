@@ -4,7 +4,7 @@ use crate::{
             CompressorBlowdown, CompressorBlowdownInterim, CompressorBlowdownInterimNestedRows,
             CompressorBlowdownInterimUnnestedRows, MssqlCompressorBlowdownRows,
         },
-        FromToMonthInput,
+        input::FromToMonthInput,
     },
     MssqlFdcClient,
 };

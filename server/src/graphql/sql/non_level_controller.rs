@@ -1,4 +1,4 @@
-use crate::graphql::models::InsertPneumaticDeviceInput;
+use crate::graphql::models::input::InsertPneumaticDeviceInput;
 use common::NonLevelControllerType;
 use sqlx::{query, Error, PgPool};
 use uuid::Uuid;

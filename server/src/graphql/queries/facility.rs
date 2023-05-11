@@ -2,7 +2,7 @@ use async_graphql::{Context, Error, Object};
 
 use crate::graphql::{
     context::ContextExt,
-    models::{Facility, FacilityBy, LimitOffsetInput},
+    models::facility::{Facility, FacilityBy, LimitOffsetInput},
     sql::{query_all_facilities, query_facilities},
 };
 

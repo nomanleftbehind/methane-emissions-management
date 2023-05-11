@@ -1,4 +1,4 @@
-use crate::graphql::models::Facility;
+use crate::graphql::models::facility::Facility;
 use actix_web::web::Data;
 use async_graphql::dataloader::Loader;
 use itertools::Itertools;
