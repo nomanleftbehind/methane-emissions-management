@@ -1,4 +1,5 @@
 use super::{
+    super::super::{month_methane_emission::MonthMethaneEmission, site::Site, user::User},
     StorageTankChange, StorageTankGasInSolutionFactorCalculated,
     StorageTankMonthLiquidHydrocarbonEntering, StorageTankMonthMethaneEmissionOverride,
 };
@@ -15,7 +16,6 @@ use crate::graphql::{
         site::SiteLoader,
         user::UserLoader,
     },
-    models::{site::Site, MonthMethaneEmission, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;

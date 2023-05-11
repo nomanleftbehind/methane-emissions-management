@@ -1,6 +1,6 @@
 use crate::graphql::{
     context::ContextExt,
-    models::{User, UserBy},
+    models::user::{User, UserBy},
     sql::{query_all_users, query_user, query_user_by_id},
 };
 use async_graphql::{Context, Error, Object};

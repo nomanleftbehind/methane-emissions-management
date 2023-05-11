@@ -1,5 +1,6 @@
 use crate::graphql::models::{
-    pneumatic_device::non_level_controller::NonLevelController, User, UserBy,
+    pneumatic_device::non_level_controller::NonLevelController,
+    user::{User, UserBy},
 };
 use sqlx::PgExecutor;
 use uuid::Uuid;

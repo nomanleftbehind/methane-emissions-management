@@ -1,8 +1,7 @@
-use super::StorageTank;
+use super::{super::super::user::User, StorageTank};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{defined_vent_gas::storage_tank::StorageTankLoader, user::UserLoader},
-    models::User,
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};

@@ -1,10 +1,12 @@
-use super::GasAnalysisCalculatedParam;
+use super::{
+    super::{facility::Facility, user::User},
+    GasAnalysisCalculatedParam,
+};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         facility::FacilityLoader, gas_analysis::GasAnalysisCalculatedParamLoader, user::UserLoader,
     },
-    models::{Facility, User},
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};

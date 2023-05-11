@@ -1,8 +1,7 @@
-use super::GasAnalysis;
+use super::{super::user::User, GasAnalysis};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{gas_analysis::GasAnalysisLoader, user::UserLoader},
-    models::User,
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::NaiveDateTime;
