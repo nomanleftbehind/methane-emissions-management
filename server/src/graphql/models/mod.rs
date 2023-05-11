@@ -9,7 +9,6 @@ pub mod pneumatic_device;
 pub mod site;
 pub mod survey_equipment;
 pub mod user;
-mod validators;
+pub mod validator;
 
 pub use get_object::*;
-pub use validators::*;

@@ -1,4 +1,4 @@
-use crate::graphql::models::MonthBeginningValidator;
+use super::super::validator::MonthBeginningValidator;
 use async_graphql::InputObject;
 use chrono::{NaiveDate, NaiveDateTime};
 use common::{DeleteEntryVariant, GetObjectVariant, NonLevelControllerType, UpdateFieldVariant};
