@@ -5,11 +5,11 @@ use crate::graphql::models::gas_analysis::{
 use sqlx::{query_file, query_file_as, Error, PgPool};
 use uuid::Uuid;
 
-pub async fn insert_gas_analysis_calculated_params(
+pub async fn insert_gas_analysis_calculated_param(
     pool: &PgPool,
     user_id: Uuid,
 ) -> Result<u64, Error> {
-    let gas_analysis_calculated_params_interim = query_file_as!(
+    let gas_analysis_calculated_param_interim = query_file_as!(
         GasAnalysisCalculatedParamInterim,
         "src/graphql/sql/statements/gas_analysis_calculated_param_calculate.sql"
     )
@@ -21,15 +21,8 @@ pub async fn insert_gas_analysis_calculated_params(
         gas_gravity,
         higher_heating_value,
         carbon_content,
-        created_by_id,
         created_at,
-        updated_by_id,
-        updated_at,
-    } = GasAnalysisCalculatedParamInterimUnnestedRows {
-        user_id,
-        gas_analysis_calculated_params_interim,
-    }
-    .into();
+    } = GasAnalysisCalculatedParamInterimUnnestedRows(gas_analysis_calculated_param_interim).into();
 
     let rows_inserted = query_file!(
         "src/graphql/sql/statements/gas_analysis_calculated_param_insert.sql",
@@ -37,10 +30,8 @@ pub async fn insert_gas_analysis_calculated_params(
         &gas_gravity,
         &higher_heating_value,
         &carbon_content,
-        &created_by_id,
         &created_at,
-        &updated_by_id,
-        &updated_at
+        user_id
     )
     .execute(pool)
     .await?

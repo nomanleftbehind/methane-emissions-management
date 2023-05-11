@@ -55,10 +55,9 @@ pub struct GasAnalysisCalculatedParamInterim {
 }
 
 #[derive(Debug)]
-pub struct GasAnalysisCalculatedParamInterimUnnestedRows {
-    pub user_id: Uuid,
-    pub gas_analysis_calculated_params_interim: Vec<GasAnalysisCalculatedParamInterim>,
-}
+pub struct GasAnalysisCalculatedParamInterimUnnestedRows(
+    pub Vec<GasAnalysisCalculatedParamInterim>,
+);
 
 #[derive(Debug)]
 pub struct GasAnalysisCalculatedParamInterimNestedRows {
@@ -66,34 +65,16 @@ pub struct GasAnalysisCalculatedParamInterimNestedRows {
     pub gas_gravity: Vec<f64>,
     pub higher_heating_value: Vec<f64>,
     pub carbon_content: Vec<f64>,
-    pub created_by_id: Vec<Uuid>,
     pub created_at: Vec<NaiveDateTime>,
-    pub updated_by_id: Vec<Uuid>,
-    pub updated_at: Vec<NaiveDateTime>,
 }
 
 impl From<GasAnalysisCalculatedParamInterimUnnestedRows>
     for GasAnalysisCalculatedParamInterimNestedRows
 {
     fn from(
-        GasAnalysisCalculatedParamInterimUnnestedRows {
-            user_id,
-            gas_analysis_calculated_params_interim,
-        }: GasAnalysisCalculatedParamInterimUnnestedRows,
+        GasAnalysisCalculatedParamInterimUnnestedRows(gas_analysis_calculated_params_interim): GasAnalysisCalculatedParamInterimUnnestedRows,
     ) -> Self {
-        let (
-            id,
-            gas_gravity,
-            higher_heating_value,
-            carbon_content,
-            created_by_id,
-            created_at,
-            updated_by_id,
-            updated_at,
-        ): (
-            Vec<_>,
-            Vec<_>,
-            Vec<_>,
+        let (id, gas_gravity, higher_heating_value, carbon_content, created_at): (
             Vec<_>,
             Vec<_>,
             Vec<_>,
@@ -107,9 +88,6 @@ impl From<GasAnalysisCalculatedParamInterimUnnestedRows>
                     gacp.gas_gravity,
                     gacp.higher_heating_value,
                     gacp.carbon_content,
-                    user_id.clone(),
-                    chrono::Utc::now().naive_utc(),
-                    user_id.clone(),
                     chrono::Utc::now().naive_utc(),
                 )
             })
@@ -120,10 +98,7 @@ impl From<GasAnalysisCalculatedParamInterimUnnestedRows>
             gas_gravity,
             higher_heating_value,
             carbon_content,
-            created_by_id,
             created_at,
-            updated_by_id,
-            updated_at,
         }
     }
 }

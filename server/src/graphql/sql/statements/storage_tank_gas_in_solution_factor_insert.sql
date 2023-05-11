@@ -1,9 +1,9 @@
 INSERT INTO
-  gas_analysis_calculated_param(
+  storage_tank_gas_in_solution_factor_calculated(
     id,
-    gas_gravity,
-    higher_heating_value,
-    carbon_content,
+    storage_tank_id,
+    date,
+    gis_factor,
     created_at,
     updated_at,
     created_by_id,
@@ -11,21 +11,19 @@ INSERT INTO
   )
 SELECT
   *,
-  $6,
-  $6
+  $6::uuid,
+  $6::uuid
 FROM
   UNNEST(
     $1::uuid[],
-    $2::double precision[],
-    $3::double precision[],
+    $2::uuid[],
+    $3::date[],
     $4::double precision[],
     $5::timestamp without time zone[],
     $5::timestamp without time zone[]
-  ) ON CONFLICT (id) DO
+  ) ON CONFLICT (storage_tank_id, date) DO
 UPDATE
 SET
-  gas_gravity = EXCLUDED.gas_gravity,
-  higher_heating_value = EXCLUDED.higher_heating_value,
-  carbon_content = EXCLUDED.carbon_content,
+  gis_factor = EXCLUDED.gis_factor,
   updated_by_id = EXCLUDED.updated_by_id,
   updated_at = EXCLUDED.updated_at;

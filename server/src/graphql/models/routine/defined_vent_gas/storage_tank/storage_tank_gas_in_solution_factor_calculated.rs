@@ -40,90 +40,66 @@ impl StorageTankGasInSolutionFactorCalculated {
 
     async fn storage_tank(&self, ctx: &Context<'_>) -> Result<Option<StorageTank>, Error> {
         let loader = ctx.get_loader::<DataLoader<StorageTankLoader>>();
-        let storage_tank_farm = loader.load_one(self.storage_tank_id).await;
+        let storage_tank = loader.load_one(self.storage_tank_id).await;
 
-        storage_tank_farm
+        storage_tank
     }
 }
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
-pub struct StorageTankFarmVentFactorCalculatedInterim {
-    pub storage_tank_farm_id: Uuid,
+pub struct StorageTankGasInSolutionFactorCalculatedInterim {
+    pub storage_tank_id: Uuid,
     pub date: NaiveDate,
-    pub vent_factor: f64,
+    pub gis_factor: f64,
 }
 
 #[derive(Debug)]
-pub struct StorageTankFarmVentFactorCalculatedInterimUnnestedRows {
-    pub user_id: Uuid,
-    pub storage_tank_farm_vent_factors_calculated_interim:
-        Vec<StorageTankFarmVentFactorCalculatedInterim>,
-}
+pub struct StorageTankGasInSolutionFactorCalculatedInterimUnnestedRows(
+    pub Vec<StorageTankGasInSolutionFactorCalculatedInterim>,
+);
 
 #[derive(Debug)]
-pub struct StorageTankFarmVentFactorCalculatedInterimNestedRows {
+pub struct StorageTankGasInSolutionFactorCalculatedInterimNestedRows {
     pub id: Vec<Uuid>,
-    pub storage_tank_farm_id: Vec<Uuid>,
+    pub storage_tank_id: Vec<Uuid>,
     pub date: Vec<NaiveDate>,
-    pub vent_factor: Vec<f64>,
-    pub created_by_id: Vec<Uuid>,
+    pub gis_factor: Vec<f64>,
     pub created_at: Vec<NaiveDateTime>,
-    pub updated_by_id: Vec<Uuid>,
-    pub updated_at: Vec<NaiveDateTime>,
 }
 
-impl From<StorageTankFarmVentFactorCalculatedInterimUnnestedRows>
-    for StorageTankFarmVentFactorCalculatedInterimNestedRows
+impl From<StorageTankGasInSolutionFactorCalculatedInterimUnnestedRows>
+    for StorageTankGasInSolutionFactorCalculatedInterimNestedRows
 {
     fn from(
-        StorageTankFarmVentFactorCalculatedInterimUnnestedRows {
-            user_id,
-            storage_tank_farm_vent_factors_calculated_interim,
-        }: StorageTankFarmVentFactorCalculatedInterimUnnestedRows,
+        StorageTankGasInSolutionFactorCalculatedInterimUnnestedRows(
+            storage_tank_gas_in_solution_factors_calculated_interim,
+        ): StorageTankGasInSolutionFactorCalculatedInterimUnnestedRows,
     ) -> Self {
-        let (
-            id,
-            storage_tank_farm_id,
-            date,
-            vent_factor,
-            created_by_id,
-            created_at,
-            updated_by_id,
-            updated_at,
-        ): (
+        let (id, storage_tank_id, date, gis_factor, created_at): (
             Vec<_>,
             Vec<_>,
             Vec<_>,
             Vec<_>,
             Vec<_>,
-            Vec<_>,
-            Vec<_>,
-            Vec<_>,
-        ) = storage_tank_farm_vent_factors_calculated_interim
+        ) = storage_tank_gas_in_solution_factors_calculated_interim
             .into_iter()
             .map(|cmvc| {
                 (
                     Uuid::new_v4(),
-                    cmvc.storage_tank_farm_id,
+                    cmvc.storage_tank_id,
                     cmvc.date,
-                    cmvc.vent_factor,
-                    user_id.clone(),
-                    chrono::Utc::now().naive_utc(),
-                    user_id.clone(),
+                    cmvc.gis_factor,
                     chrono::Utc::now().naive_utc(),
                 )
             })
             .multiunzip();
 
-        StorageTankFarmVentFactorCalculatedInterimNestedRows {
+        StorageTankGasInSolutionFactorCalculatedInterimNestedRows {
             id,
-            storage_tank_farm_id,
+            storage_tank_id,
             date,
-            vent_factor,
-            created_by_id,
+            gis_factor,
             created_at,
-            updated_by_id,
-            updated_at,
         }
     }
 }
