@@ -14,7 +14,7 @@ pub async fn insert_gas_analysis_calculated_param(
     FromToMonthInput {
         from_month,
         to_month,
-    }: FromToMonthInput,
+    }: &FromToMonthInput,
 ) -> Result<u64, Error> {
     let gas_analysis_calculated_param_interim = query_file_as!(
         GasAnalysisCalculatedParamInterim,

@@ -1,6 +1,10 @@
 use crate::{
     configuration::DefaultGasParams,
-    graphql::{context::ContextExt, sql::routine::defined_vent_gas::storage_tank},
+    graphql::{
+        context::ContextExt,
+        models::{input::FromToMonthInput, validator::MonthRangeValidator},
+        sql::{gas_analysis, routine::defined_vent_gas::storage_tank},
+    },
 };
 use async_graphql::{Context, Error, Object};
 
@@ -12,15 +16,22 @@ impl StorageTankGasInSolutionFactorCalculatedMutation {
     async fn insert_storage_tank_gas_in_solution_factor_calculated(
         &self,
         ctx: &Context<'_>,
+        #[graphql(validator(custom = "MonthRangeValidator::new(12)"))]
+        month_range: FromToMonthInput,
     ) -> Result<u64, Error> {
         let pool = ctx.db_pool();
         let cookie = ctx.get_cookie()?;
         let user_id = ctx.get_session_manager()?.user_id(cookie).await?;
         let DefaultGasParams { gas_gravity, .. } = ctx.get_default_gas_params();
 
+        gas_analysis::insert_gas_analysis_calculated_param(pool, user_id, &month_range)
+            .await
+            .map_err(Error::from)?;
+
         let rows_inserted = storage_tank::insert_storage_tank_gas_in_solution_factor_calculated(
             pool,
             user_id,
+            &month_range,
             gas_gravity,
         )
         .await

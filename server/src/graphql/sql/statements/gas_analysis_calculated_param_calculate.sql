@@ -40,5 +40,5 @@ FROM
       gas_analysis
   ) ga
 WHERE
-  ga.from_date <= $1
-  AND ga.to_date >= $2
+  ga.from_date <= $2
+  AND ga.to_date >= $1
