@@ -7,6 +7,7 @@ mod compressor;
 mod month_methane_emission;
 mod non_level_controller;
 mod site;
+mod storage_tank;
 mod tank;
 mod user;
 
@@ -14,6 +15,7 @@ pub use compressor::*;
 pub use month_methane_emission::*;
 pub use non_level_controller::*;
 pub use site::*;
+pub use storage_tank::*;
 pub use tank::*;
 pub use user::*;
 

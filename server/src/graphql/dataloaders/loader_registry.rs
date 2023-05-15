@@ -35,12 +35,14 @@ use super::{
             UpdatedCompressorsLoader,
         },
         defined_vent_gas::storage_tank::{
-            CreatedStorageTankChangesLoader, CreatedStorageTankControlledCharacterizationsLoader,
+            CreatedStorageTankChangesLoader, CreatedStorageTankControlDeviceInactivitiesLoader,
+            CreatedStorageTankControlledCharacterizationsLoader,
             CreatedStorageTankGasInSolutionFactorsCalculatedLoader,
             CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
             CreatedStorageTankMonthMethaneEmissionOverridesLoader, CreatedStorageTanksLoader,
             SiteStorageTanksLoader, StorageTankChangeLoader, StorageTankChangesByStorageTankLoader,
-            StorageTankControlledCharacterizationLoader,
+            StorageTankControlDeviceInactivitiesByStorageTankControlledCharacterizationLoader,
+            StorageTankControlDeviceInactivityLoader, StorageTankControlledCharacterizationLoader,
             StorageTankControlledCharacterizationsByStorageTankLoader,
             StorageTankGasInSolutionFactorCalculatedLoader,
             StorageTankGasInSolutionFactorsCalculatedByStorageTankLoader, StorageTankLoader,
@@ -48,7 +50,8 @@ use super::{
             StorageTankMonthLiquidHydrocarbonEnteringLoader,
             StorageTankMonthMethaneEmissionOverrideLoader,
             StorageTankMonthMethaneEmissionOverridesByStorageTankLoader,
-            UpdatedStorageTankChangesLoader, UpdatedStorageTankControlledCharacterizationsLoader,
+            UpdatedStorageTankChangesLoader, UpdatedStorageTankControlDeviceInactivitiesLoader,
+            UpdatedStorageTankControlledCharacterizationsLoader,
             UpdatedStorageTankGasInSolutionFactorsCalculatedLoader,
             UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
             UpdatedStorageTankMonthMethaneEmissionOverridesLoader, UpdatedStorageTanksLoader,
@@ -527,6 +530,27 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Storage Tank Control Device Inactivity
+    let storage_tank_control_device_inactivity_by_id_loader = DataLoader::new(
+        StorageTankControlDeviceInactivityLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let storage_tank_control_device_inactivities_by_storage_tank_controlled_characterization_id_loader =
+        DataLoader::new(
+            StorageTankControlDeviceInactivitiesByStorageTankControlledCharacterizationLoader::new(
+                pool.clone(),
+            ),
+            tokio::spawn,
+        );
+    let storage_tank_control_device_inactivities_by_creator_id_loader = DataLoader::new(
+        CreatedStorageTankControlDeviceInactivitiesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let storage_tank_control_device_inactivities_by_updater_id_loader = DataLoader::new(
+        UpdatedStorageTankControlDeviceInactivitiesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Storage Tank Month Oil Flow
     let storage_tank_month_liquid_hydrocarbon_entering_by_id_loader = DataLoader::new(
         StorageTankMonthLiquidHydrocarbonEnteringLoader::new(pool.clone()),
@@ -734,6 +758,11 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(storage_tank_controlled_characterizations_by_storage_tank_id_loader);
     loaders.insert(storage_tank_controlled_characterizations_by_creator_id_loader);
     loaders.insert(storage_tank_controlled_characterizations_by_updater_id_loader);
+
+    loaders.insert(storage_tank_control_device_inactivity_by_id_loader);
+    loaders.insert(storage_tank_control_device_inactivities_by_storage_tank_controlled_characterization_id_loader);
+    loaders.insert(storage_tank_control_device_inactivities_by_creator_id_loader);
+    loaders.insert(storage_tank_control_device_inactivities_by_updater_id_loader);
 
     loaders.insert(storage_tank_month_liquid_hydrocarbon_entering_by_id_loader);
     loaders.insert(storage_tank_month_liquid_hydrocarbon_entering_by_storage_tank_id_loader);

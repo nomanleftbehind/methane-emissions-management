@@ -1,11 +1,17 @@
-use super::{super::super::super::user::User, StorageTank};
+use super::{super::super::super::user::User, StorageTank, StorageTankControlDeviceInactivity};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{routine::defined_vent_gas::storage_tank::StorageTankLoader, user::UserLoader},
+    dataloaders::{
+        routine::defined_vent_gas::storage_tank::{
+            StorageTankControlDeviceInactivitiesByStorageTankControlledCharacterizationLoader,
+            StorageTankLoader,
+        },
+        user::UserLoader,
+    },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
-use common::ControlledCharacterization;
+use common::ControlDevice;
 use sqlx::FromRow;
 use uuid::Uuid;
 
@@ -14,8 +20,9 @@ use uuid::Uuid;
 pub struct StorageTankControlledCharacterization {
     pub id: Uuid,
     pub storage_tank_id: Uuid,
-    pub date: NaiveDate,
-    pub controlled_characterization: ControlledCharacterization,
+    pub start_date: NaiveDate,
+    pub end_date: Option<NaiveDate>,
+    pub control_device: ControlDevice,
     pub comment: Option<String>,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
@@ -44,5 +51,18 @@ impl StorageTankControlledCharacterization {
         let storage_tank = loader.load_one(self.storage_tank_id).await;
 
         storage_tank
+    }
+
+    async fn storage_tank_control_device_inactivities(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<StorageTankControlDeviceInactivity>, Error> {
+        let loader = ctx.get_loader::<DataLoader<
+            StorageTankControlDeviceInactivitiesByStorageTankControlledCharacterizationLoader,
+        >>();
+        let storage_tank_control_device_inactivities = loader.load_one(self.id).await?;
+        let result = storage_tank_control_device_inactivities.unwrap_or(vec![]);
+
+        Ok(result)
     }
 }

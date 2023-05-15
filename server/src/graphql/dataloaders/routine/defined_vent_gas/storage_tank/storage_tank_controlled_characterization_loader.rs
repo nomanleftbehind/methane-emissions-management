@@ -26,7 +26,7 @@ impl Loader<Uuid> for StorageTankControlledCharacterizationLoader {
             StorageTankControlledCharacterization,
             r#"
             SELECT
-            id, storage_tank_id, date, controlled_characterization as "controlled_characterization: _", comment, created_by_id, created_at, updated_by_id, updated_at
+            id, storage_tank_id, start_date, end_date, control_device as "control_device: _", comment, created_by_id, created_at, updated_by_id, updated_at
             FROM storage_tank_controlled_characterization
             WHERE id = ANY($1)
             "#,
@@ -62,7 +62,7 @@ impl Loader<Uuid> for CreatedStorageTankControlledCharacterizationsLoader {
             StorageTankControlledCharacterization,
             r#"
             SELECT
-            id, storage_tank_id, date, controlled_characterization as "controlled_characterization: _", comment, created_by_id, created_at, updated_by_id, updated_at
+            id, storage_tank_id, start_date, end_date, control_device as "control_device: _", comment, created_by_id, created_at, updated_by_id, updated_at
             FROM storage_tank_controlled_characterization
             WHERE created_by_id = ANY($1)
             "#,
@@ -110,7 +110,7 @@ impl Loader<Uuid> for UpdatedStorageTankControlledCharacterizationsLoader {
             StorageTankControlledCharacterization,
             r#"
             SELECT
-            id, storage_tank_id, date, controlled_characterization as "controlled_characterization: _", comment, created_by_id, created_at, updated_by_id, updated_at
+            id, storage_tank_id, start_date, end_date, control_device as "control_device: _", comment, created_by_id, created_at, updated_by_id, updated_at
             FROM storage_tank_controlled_characterization
             WHERE updated_by_id = ANY($1)
             "#,
@@ -158,7 +158,7 @@ impl Loader<Uuid> for StorageTankControlledCharacterizationsByStorageTankLoader 
             StorageTankControlledCharacterization,
             r#"
             SELECT
-            id, storage_tank_id, date, controlled_characterization as "controlled_characterization: _", comment, created_by_id, created_at, updated_by_id, updated_at
+            id, storage_tank_id, start_date, end_date, control_device as "control_device: _", comment, created_by_id, created_at, updated_by_id, updated_at
             FROM storage_tank_controlled_characterization
             WHERE storage_tank_id = ANY($1)
             "#,

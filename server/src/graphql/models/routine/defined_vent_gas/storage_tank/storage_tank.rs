@@ -1,7 +1,8 @@
 use super::{
     super::super::super::{month_methane_emission::MonthMethaneEmission, site::Site, user::User},
-    StorageTankChange, StorageTankGasInSolutionFactorCalculated,
-    StorageTankMonthLiquidHydrocarbonEntering, StorageTankMonthMethaneEmissionOverride,
+    StorageTankChange, StorageTankControlledCharacterization,
+    StorageTankGasInSolutionFactorCalculated, StorageTankMonthLiquidHydrocarbonEntering,
+    StorageTankMonthMethaneEmissionOverride,
 };
 use crate::graphql::{
     context::ContextExt,
@@ -9,6 +10,7 @@ use crate::graphql::{
         month_methane_emission::MonthMethaneEmissionsBySourceTableLoader,
         routine::defined_vent_gas::storage_tank::{
             StorageTankChangesByStorageTankLoader,
+            StorageTankControlledCharacterizationsByStorageTankLoader,
             StorageTankGasInSolutionFactorsCalculatedByStorageTankLoader,
             StorageTankMonthLiquidHydrocarbonEnteringByStorageTankLoader,
             StorageTankMonthMethaneEmissionOverridesByStorageTankLoader,
@@ -65,6 +67,18 @@ impl StorageTank {
         let loader = ctx.get_loader::<DataLoader<StorageTankChangesByStorageTankLoader>>();
         let storage_tank_changes = loader.load_one(self.id).await?;
         let result = storage_tank_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn storage_tank_controlled_characterizations(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<StorageTankControlledCharacterization>, Error> {
+        let loader = ctx
+            .get_loader::<DataLoader<StorageTankControlledCharacterizationsByStorageTankLoader>>();
+        let storage_tank_controlled_characterizations = loader.load_one(self.id).await?;
+        let result = storage_tank_controlled_characterizations.unwrap_or(vec![]);
 
         Ok(result)
     }
