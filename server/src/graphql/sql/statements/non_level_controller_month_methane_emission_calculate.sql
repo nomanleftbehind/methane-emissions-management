@@ -96,8 +96,8 @@ FROM
 														'days',
 														nlc.month_beginning + INTERVAL '1 month - 1 day'
 													) as days_in_month,
-													COALESCE(cmh.hours_on, 0) hours_on,
-													COALESCE(nlcc.rate, 0) rate
+													COALESCE(cmh.hours_on, 0) as hours_on,
+													COALESCE(nlcc.rate, 0) as rate
 												FROM
 													(
 														SELECT
