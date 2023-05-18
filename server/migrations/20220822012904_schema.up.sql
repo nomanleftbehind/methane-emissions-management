@@ -17,10 +17,19 @@ CREATE TYPE "compressor_type" AS ENUM ('RECIPROCATING', 'CENTRIFUGAL', 'SCREW', 
 CREATE TYPE "controlled_characterization" AS ENUM ('CONTROLLED', 'UNCONTROLLED');
 
 -- CreateEnum
+CREATE TYPE "control_device" AS ENUM ('FLARE', 'VAPOUR_RECOVERY_UNIT');
+
+-- CreateEnum
+CREATE TYPE "control_device_inactivity_reason" AS ENUM ('PLANNED_MAINTENANCE', 'UNPLANNED_MAINTENANCE', 'MALFUNCTION');
+
+-- CreateEnum
 CREATE TYPE "seal_type" AS ENUM ('RODPACKING', 'DRY', 'WET');
 
 -- CreateEnum
 CREATE TYPE "compressor_seal_testing_point" AS ENUM ('PISTON_ROD_PACKING', 'DISTANCE_PIECE', 'CRANKCASE', 'DRIVE_SHAFT_AND_COMPRESSOR_CASE_INTERFACE');
+
+-- CreateEnum
+CREATE TYPE "storage_tank_survey_point" AS ENUM ('THIEF_HATCH', 'LEVEL_GAUGE_SEAL', 'ROOF');
 
 -- CreateEnum
 CREATE TYPE "calculation_method" AS ENUM ('EQUATION', 'MEASURED');
@@ -362,6 +371,8 @@ CREATE TABLE "compressor_seal_month_methane_emission_override" (
 CREATE TABLE "storage_tank" (
     "id" UUID NOT NULL,
     "site_id" UUID NOT NULL,
+    "start_date" DATE NOT NULL,
+    "end_date" DATE,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by_id" UUID NOT NULL,
@@ -392,8 +403,9 @@ CREATE TABLE "storage_tank_change" (
 CREATE TABLE "storage_tank_controlled_characterization" (
     "id" UUID NOT NULL,
     "storage_tank_id" UUID NOT NULL,
-    "date" DATE NOT NULL,
-    "controlled_characterization" "controlled_characterization" NOT NULL,
+    "start_date" DATE NOT NULL,
+    "end_date" DATE,
+    "control_device" "control_device" NOT NULL,
     "comment" TEXT,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -401,6 +413,40 @@ CREATE TABLE "storage_tank_controlled_characterization" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "storage_tank_controlled_characterization_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "storage_tank_control_device_inactivity" (
+    "id" UUID NOT NULL,
+    "storage_tank_controlled_characterization_id" UUID NOT NULL,
+    "start_date" DATE NOT NULL,
+    "end_date" DATE,
+    "reason" "control_device_inactivity_reason" NOT NULL,
+    "comment" TEXT,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "storage_tank_control_device_inactivity_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "storage_tank_emission_survey" (
+    "id" UUID NOT NULL,
+    "storage_tank_id" UUID NOT NULL,
+    "start_date" DATE NOT NULL,
+    "end_date" DATE,
+    "rate" DOUBLE PRECISION NOT NULL,
+    "survey_point" "storage_tank_survey_point" NOT NULL,
+    "leak_duration" DOUBLE PRECISION,
+    "survey_equipment_id" UUID NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "storage_tank_emission_survey_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -572,7 +618,13 @@ CREATE UNIQUE INDEX "compressor_seal_month_methane_emission_override_compressor_
 CREATE UNIQUE INDEX "storage_tank_change_storage_tank_id_date_key" ON "storage_tank_change"("storage_tank_id", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "storage_tank_controlled_characterization_storage_tank_id_da_key" ON "storage_tank_controlled_characterization"("storage_tank_id", "date");
+CREATE UNIQUE INDEX "storage_tank_controlled_characterization_storage_tank_id_st_key" ON "storage_tank_controlled_characterization"("storage_tank_id", "start_date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "storage_tank_control_device_inactivity_storage_tank_control_key" ON "storage_tank_control_device_inactivity"("storage_tank_controlled_characterization_id", "start_date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "storage_tank_emission_survey_storage_tank_id_start_date_sur_key" ON "storage_tank_emission_survey"("storage_tank_id", "start_date", "survey_point");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "storage_tank_gas_in_solution_factor_calculated_storage_tank_key" ON "storage_tank_gas_in_solution_factor_calculated"("storage_tank_id", "date");
@@ -804,6 +856,27 @@ ALTER TABLE "storage_tank_controlled_characterization" ADD CONSTRAINT "storage_t
 
 -- AddForeignKey
 ALTER TABLE "storage_tank_controlled_characterization" ADD CONSTRAINT "storage_tank_controlled_characterization_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_control_device_inactivity" ADD CONSTRAINT "storage_tank_control_device_inactivity_storage_tank_contro_fkey" FOREIGN KEY ("storage_tank_controlled_characterization_id") REFERENCES "storage_tank_controlled_characterization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_control_device_inactivity" ADD CONSTRAINT "storage_tank_control_device_inactivity_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_control_device_inactivity" ADD CONSTRAINT "storage_tank_control_device_inactivity_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_emission_survey" ADD CONSTRAINT "storage_tank_emission_survey_storage_tank_id_fkey" FOREIGN KEY ("storage_tank_id") REFERENCES "storage_tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_emission_survey" ADD CONSTRAINT "storage_tank_emission_survey_survey_equipment_id_fkey" FOREIGN KEY ("survey_equipment_id") REFERENCES "survey_equipment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_emission_survey" ADD CONSTRAINT "storage_tank_emission_survey_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "storage_tank_emission_survey" ADD CONSTRAINT "storage_tank_emission_survey_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "storage_tank_gas_in_solution_factor_calculated" ADD CONSTRAINT "storage_tank_gas_in_solution_factor_calculated_storage_tan_fkey" FOREIGN KEY ("storage_tank_id") REFERENCES "storage_tank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

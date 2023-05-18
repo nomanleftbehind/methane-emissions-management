@@ -261,6 +261,114 @@ UNION ALL
 	)
 ),
 
+storage_tank_emission_survey_adjusted_dates as (
+	SELECT 
+		stes.id,
+		stes.storage_tank_id,
+		stes.start_date,
+		stes.end_date,
+		stes.survey_point,
+		LEAST(EXTRACT(DAY FROM (stes.end_date + INTERVAL '1 day' - stes.start_date))*24, stes.leak_duration) * stes.rate / 35.3147 as c1_volume,
+		(stes.end_date + INTERVAL '1 day')::date as start_date_fill,
+		(LEAD(stes.start_date) OVER (PARTITION BY stes.storage_tank_id, stes.survey_point
+									ORDER BY stes.start_date
+										) - INTERVAL '1 day')::date as end_date_fill
+		
+		
+		FROM (
+		SELECT
+								stes.id,
+								stes.storage_tank_id,
+								stes.start_date,
+								GREATEST(LEAST(stes.end_date, stes.end_date_potential), stes.start_date) as end_date,
+								stes.rate,
+								stes.survey_point,
+								stes.leak_duration
+
+								FROM (
+									
+								SELECT
+									
+								stes.id,
+								stes.storage_tank_id,
+								stes.start_date,
+								stes.end_date,
+								stes.rate,
+								stes.survey_point,
+								stes.leak_duration,
+								COALESCE((LEAD(stes.start_date) OVER (
+											PARTITION BY stes.storage_tank_id, stes.survey_point
+											ORDER BY stes.start_date
+										) - INTERVAL '1 day')::date, CURRENT_DATE) as end_date_potential
+									
+
+
+								FROM storage_tank_emission_survey stes
+								) stes
+								) stes
+
+		
+	),
+	
+storage_tank_emission_survey_filled_date_gaps as (
+	
+	SELECT
+
+	stes.id,
+	stes.storage_tank_id,
+	stes.start_date,
+	stes.end_date,
+	stes.c1_volume,
+	stes.survey_point
+
+	FROM storage_tank_emission_survey_adjusted_dates stes
+
+	UNION ALL
+
+	SELECT
+
+	NULL as id,
+	stes.storage_tank_id,
+	stes.start_date_fill as start_date,
+	stes.end_date_fill as end_date,
+	0 as c1_volume,
+	stes.survey_point
+
+	FROM storage_tank_emission_survey_adjusted_dates stes
+
+	WHERE NOT stes.start_date_fill > stes.end_date_fill
+	
+UNION ALL
+	
+	SELECT
+
+	NULL as id,
+	stes.storage_tank_id,
+	stes.start_date,
+	stes.end_date,
+	0 as c1_volume,
+	stes.survey_point
+
+	FROM (
+
+	SELECT
+
+	stes.storage_tank_id,
+	stes.survey_point,
+	DATE_TRUNC('month', MIN(stes.start_date))::date as start_date,
+	(MIN(stes.start_date) - INTERVAL '1 day')::date as end_date
+
+	FROM
+		storage_tank_emission_survey_adjusted_dates stes
+
+	GROUP BY stes.storage_tank_id, stes.survey_point
+		) stes
+	WHERE (stes.storage_tank_id, stes.start_date, stes.survey_point) NOT IN (
+		SELECT stes.storage_tank_id, stes.start_date, stes.survey_point
+		FROM storage_tank_emission_survey_adjusted_dates stes
+	)
+),
+
 gas_analysis_filled_date_gaps as (
 	SELECT
 	ga.facility_id,
