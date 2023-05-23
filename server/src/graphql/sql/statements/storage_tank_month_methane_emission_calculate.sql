@@ -259,6 +259,34 @@ UNION ALL
 		SELECT stcc.storage_tank_id, stcc.start_date
 		FROM storage_tank_controlled_characterization_adjusted_dates stcc
 	)
+
+	UNION ALL
+	
+	SELECT
+
+	NULL as id,
+	stcc.storage_tank_id,
+	stcc.start_date,
+	stcc.end_date,
+	NULL as control_device
+
+	FROM (
+
+	SELECT
+
+	stcc.storage_tank_id,
+	(MAX(stcc.end_date) + INTERVAL '1 day')::date as start_date,
+	CURRENT_DATE as end_date
+
+	FROM
+		storage_tank_controlled_characterization_adjusted_dates stcc
+
+	GROUP BY stcc.storage_tank_id
+		) stcc
+	WHERE (stcc.storage_tank_id, stcc.end_date) NOT IN (
+		SELECT stcc.storage_tank_id, stcc.end_date
+		FROM storage_tank_controlled_characterization_adjusted_dates stcc
+	)
 ),
 
 storage_tank_emission_survey_adjusted_dates as (
