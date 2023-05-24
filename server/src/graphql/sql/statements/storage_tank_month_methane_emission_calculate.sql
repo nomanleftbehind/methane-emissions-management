@@ -452,6 +452,19 @@ SELECT
 	stmme.facility_id,
 	stmme.site_id,
 	stmme.id,
+	stmme.month_beginning,
+	COALESCE(stmme.category, 'FUGITIVE') as category,
+	COALESCE(stmme.source, 'FUGITIVE') as source,
+	CASE WHEN stmme.category IS NULL THEN stmme.emission_survey_gas_volume ELSE stmme.gas_volume + stmme.emission_survey_gas_volume END as gas_volume,
+	CASE WHEN stmme.category IS NULL THEN stmme.emission_survey_c1_volume ELSE stmme.c1_volume + stmme.emission_survey_c1_volume END as c1_volume,
+	CASE WHEN stmme.category IS NULL THEN stmme.emission_survey_co2_volume ELSE stmme.co2_volume + stmme.emission_survey_co2_volume END as co2_volume
+	
+	FROM (
+
+SELECT
+	stmme.facility_id,
+	stmme.site_id,
+	stmme.id,
 	CASE
 		WHEN stmme.control_device IS NULL THEN 'ROUTINE'::methane_emission_category
 		ELSE CASE
@@ -473,7 +486,10 @@ SELECT
 	stmme.month_beginning,
 	stmme.gas_volume,
 	stmme.c1_volume,
-	stmme.co2_volume
+	stmme.co2_volume,
+	stmme.emission_survey_gas_volume,
+	stmme.emission_survey_c1_volume,
+	stmme.emission_survey_co2_volume
 FROM
 	(
 
@@ -485,9 +501,47 @@ SELECT
 	stmme.month_beginning,
 	stmme.control_device,
 	stmme.reason,
-	SUM(stmme.gas_volume * stmme.percent) as gas_volume,
-	SUM(stmme.gas_volume * stmme.c1 * stmme.percent) as c1_volume,
-	SUM(stmme.gas_volume * stmme.co2 * stmme.percent) as co2_volume
+	SUM(stmme.gas_volume) as gas_volume,
+	SUM(stmme.c1_volume) as c1_volume,
+	SUM(stmme.co2_volume) as co2_volume,
+	SUM(stmme.emission_survey_gas_volume) as emission_survey_gas_volume,
+	SUM(stmme.emission_survey_c1_volume) as emission_survey_c1_volume,
+	SUM(stmme.emission_survey_co2_volume) as emission_survey_co2_volume
+FROM
+	(
+SELECT
+
+	stmme.facility_id,
+	stmme.site_id,
+	stmme.id,
+	stmme.month_beginning,
+	stmme.control_device,
+	stmme.reason,
+	stmme.gas_volume,
+	stmme.c1_volume,
+	stmme.co2_volume,
+	stmme.emission_survey_c1_volume / stmme.c1 as emission_survey_gas_volume,
+	stmme.emission_survey_c1_volume,
+	(stmme.emission_survey_c1_volume / stmme.c1) * stmme.co2 as emission_survey_co2_volume
+	
+	FROM (
+
+SELECT
+	stmme.facility_id,
+	stmme.site_id,
+	stmme.id,
+	stmme.month_beginning,
+	stmme.control_device,
+	stmme.reason,
+	stmme.c1,
+	stmme.co2,
+	stmme.from_date,
+	stmme.to_date,
+	MAX(stmme.gas_volume * stmme.percent) as gas_volume,
+	MAX(stmme.gas_volume * stmme.c1 * stmme.percent) as c1_volume,
+	MAX(stmme.gas_volume * stmme.co2 * stmme.percent) as co2_volume,
+	COALESCE(SUM(stes.c1_volume), 0) as emission_survey_c1_volume
+
 FROM
 	(
 		SELECT
@@ -500,6 +554,8 @@ FROM
 			stmme.co2,
 			stmme.control_device,
 			stmme.reason,
+			stmme.from_date,
+			stmme.to_date,
 			EXTRACT(
 				DAY
 				FROM
@@ -578,6 +634,7 @@ FROM
 							) as days_in_period
 						FROM
 							(
+
 						SELECT
 							stmme.*
 						FROM
@@ -620,7 +677,7 @@ FROM
 														st.month_beginning + INTERVAL '1 month - 1 day'
 													) as days_in_month,
 													COALESCE(stmlhe.liquid_hydrocarbon_volume, 0) as liquid_hydrocarbon_volume,
-													COALESCE(stgisf.gis_factor, 0) as gis_factor
+													COALESCE(stgisf.gis_factor, 0.9475) as gis_factor
 												FROM
 													(
 														SELECT
@@ -646,42 +703,40 @@ FROM
 													AND stmlhe.month = st.month_beginning
 													LEFT OUTER JOIN (
 														SELECT
-															storage_tank_id,
-															DATE_TRUNC('month', date) as month_join_beginning,
-															DATE_TRUNC(
-																'month',
-																COALESCE(
-																	LEAD(date) OVER (
-																		PARTITION BY storage_tank_id
-																		ORDER BY
-																			date
-																	) - INTERVAL '1 day',
-																	CURRENT_DATE
-																)
-															) + INTERVAL '1 month - 1 day' as month_join_end,
-															-- If first GIS factor, from_date has to be first of the month because there is no carryover from previous GIS factor.
-															CASE
-																WHEN ROW_NUMBER() OVER (
-																	PARTITION BY storage_tank_id
-																	ORDER BY
-																		date
-																) = 1 THEN DATE_TRUNC('month', date)::date
-																ELSE date
-															END as from_date,
-															COALESCE(
-																LEAD(date) OVER (
-																	PARTITION BY storage_tank_id
-																	ORDER BY
-																		date
-																) - INTERVAL '1 day',
-																CURRENT_DATE
-															)::date as to_date,
-															gis_factor
-														FROM
-															storage_tank_gas_in_solution_factor_calculated
+														stgisf.storage_tank_id,
+														stgisf.date as from_date,
+														COALESCE((LEAD(stgisf.date) OVER (PARTITION BY stgisf.storage_tank_id
+																ORDER BY stgisf.date) - INTERVAL '1 day')::date, CURRENT_DATE) as to_date,
+														stgisf.gis_factor
+
+													FROM storage_tank_gas_in_solution_factor_calculated stgisf
+
+													UNION ALL
+
+													SELECT
+
+														stgisf.storage_tank_id,
+														stgisf.from_date,
+														stgisf.to_date,
+														NULL as gis_factor
+
+														FROM (
+
+													SELECT
+														stgisf.storage_tank_id,
+														DATE_TRUNC('month', MIN(stgisf.date))::date as from_date,
+														(MIN(stgisf.date) - INTERVAL '1 day')::date as to_date
+
+														FROM storage_tank_gas_in_solution_factor_calculated stgisf
+														GROUP BY stgisf.storage_tank_id
+															) stgisf
+														WHERE (stgisf.storage_tank_id, stgisf.from_date) NOT IN (
+															SELECT stgisf.storage_tank_id, stgisf.date
+															FROM storage_tank_gas_in_solution_factor_calculated stgisf
+															)
 													) stgisf ON stgisf.storage_tank_id = st.id
-													AND st.month_beginning BETWEEN stgisf.month_join_beginning
-													AND stgisf.month_join_end
+													AND st.month_beginning <= stgisf.to_date
+													AND (st.month_beginning + INTERVAL '1 month - 1 day')::date >= stgisf.from_date
 											) stmme
 									) stmme
 							) stmme
@@ -735,6 +790,98 @@ FROM
 					AND ga.to_date >= stmme.from_date
 					ORDER BY stmme.id, stmme.from_date, ga.from_date
 			) stmme
+		) stmme
+		LEFT OUTER JOIN (
+			SELECT
+
+			stes.storage_tank_id,
+			stes.date,
+			SUM(stes.c1_volume) as c1_volume
+
+			FROM (
+
+			SELECT
+
+			stes.storage_tank_id,
+			stes.date,
+			24 * stes.rate * stes.percent as c1_volume
+
+			FROM (
+
+			SELECT
+
+			stes.storage_tank_id,
+			stes.date,
+			stes.rate,
+			stes.leak_duration / stes.max_leak_duration as percent
+
+			FROM (
+
+			SELECT
+
+			stes.storage_tank_id,
+			stes.date,
+			stes.rate,
+			LEAST(stes.max_leak_duration, stes.leak_duration) as leak_duration,
+			stes.max_leak_duration
+
+			FROM (
+
+			SELECT
+
+			stes.storage_tank_id,
+			stes.start_date,
+			stes.end_date,
+			stes.rate,
+			stes.leak_duration,
+			stes.min_start_date,
+			stes.max_end_date,
+			EXTRACT(DAY FROM (stes.end_date + INTERVAL '1 day' - stes.start_date))*24 as max_leak_duration,
+			generate_series(stes.min_start_date, stes.max_end_date, '1 day')::date as date
+
+			FROM (
+
+				SELECT
+
+				stes.*,
+				GREATEST(stes.start_date, '2023-03-01') as min_start_date,
+				LEAST(stes.end_date, '2023-04-01'::date + INTERVAL '1 month - 1 day')::date as max_end_date
+
+				FROM (
+				SELECT
+
+				stes.storage_tank_id,
+				stes.start_date,
+				COALESCE(stes.end_date, CURRENT_DATE) as end_date,
+				stes.rate,
+				stes.leak_duration
+
+				FROM storage_tank_emission_survey stes
+				WHERE stes.start_date <= ('2023-04-01'::date + INTERVAL '1 month - 1 day') AND COALESCE(stes.end_date, CURRENT_DATE) >= '2023-03-01'
+			) stes
+				) stes
+				) stes
+				) stes
+				) stes
+				) stes
+			GROUP BY
+			stes.storage_tank_id,
+			stes.date
+
+			ORDER BY stes.date
+		) stes ON stes.storage_tank_id = stmme.id AND stes.date BETWEEN stmme.from_date AND stmme.to_date
+		GROUP BY
+		stmme.facility_id,
+		stmme.site_id,
+		stmme.id,
+		stmme.month_beginning,
+		stmme.control_device,
+		stmme.reason,
+		stmme.c1,
+		stmme.co2,
+		stmme.from_date,
+		stmme.to_date
+		) stmme
 	) stmme
 GROUP BY
 	stmme.facility_id,
@@ -743,6 +890,7 @@ GROUP BY
 	stmme.month_beginning,
 	stmme.control_device,
 	stmme.reason
+	) stmme
 	) stmme
 ) stmme
 GROUP BY
