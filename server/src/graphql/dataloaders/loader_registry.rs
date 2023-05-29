@@ -37,6 +37,7 @@ use super::{
         defined_vent_gas::storage_tank::{
             CreatedStorageTankChangesLoader, CreatedStorageTankControlDeviceInactivitiesLoader,
             CreatedStorageTankControlledCharacterizationsLoader,
+            CreatedStorageTankEmissionSurveysLoader,
             CreatedStorageTankGasInSolutionFactorsCalculatedLoader,
             CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
             CreatedStorageTankMonthMethaneEmissionOverridesLoader, CreatedStorageTanksLoader,
@@ -44,6 +45,8 @@ use super::{
             StorageTankControlDeviceInactivitiesByStorageTankControlledCharacterizationLoader,
             StorageTankControlDeviceInactivityLoader, StorageTankControlledCharacterizationLoader,
             StorageTankControlledCharacterizationsByStorageTankLoader,
+            StorageTankEmissionSurveyLoader, StorageTankEmissionSurveysByStorageTankLoader,
+            StorageTankEmissionSurveysBySurveyEquipmentLoader,
             StorageTankGasInSolutionFactorCalculatedLoader,
             StorageTankGasInSolutionFactorsCalculatedByStorageTankLoader, StorageTankLoader,
             StorageTankMonthLiquidHydrocarbonEnteringByStorageTankLoader,
@@ -52,6 +55,7 @@ use super::{
             StorageTankMonthMethaneEmissionOverridesByStorageTankLoader,
             UpdatedStorageTankChangesLoader, UpdatedStorageTankControlDeviceInactivitiesLoader,
             UpdatedStorageTankControlledCharacterizationsLoader,
+            UpdatedStorageTankEmissionSurveysLoader,
             UpdatedStorageTankGasInSolutionFactorsCalculatedLoader,
             UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader,
             UpdatedStorageTankMonthMethaneEmissionOverridesLoader, UpdatedStorageTanksLoader,
@@ -569,7 +573,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Storage Tank Emission Factor Calculated
+    // Storage Tank Gas In Solution Factor Calculated
     let storage_tank_gas_in_solution_factor_calculated_by_id_loader = DataLoader::new(
         StorageTankGasInSolutionFactorCalculatedLoader::new(pool.clone()),
         tokio::spawn,
@@ -584,6 +588,28 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
     let storage_tank_gas_in_solution_factors_calculated_by_updater_id_loader = DataLoader::new(
         UpdatedStorageTankGasInSolutionFactorsCalculatedLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Storage Tank Emission Survey
+    let storage_tank_emission_survey_by_id_loader = DataLoader::new(
+        StorageTankEmissionSurveyLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let storage_tank_emission_surveys_by_storage_tank_id_loader = DataLoader::new(
+        StorageTankEmissionSurveysByStorageTankLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let storage_tank_emission_surveys_by_survey_equipment_id_loader = DataLoader::new(
+        StorageTankEmissionSurveysBySurveyEquipmentLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let storage_tank_emission_surveys_by_creator_id_loader = DataLoader::new(
+        CreatedStorageTankEmissionSurveysLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let storage_tank_emission_surveys_by_updater_id_loader = DataLoader::new(
+        UpdatedStorageTankEmissionSurveysLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -773,6 +799,12 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(storage_tank_gas_in_solution_factors_calculated_by_storage_tank_id_loader);
     loaders.insert(storage_tank_gas_in_solution_factors_calculated_by_creator_id_loader);
     loaders.insert(storage_tank_gas_in_solution_factors_calculated_by_updater_id_loader);
+
+    loaders.insert(storage_tank_emission_survey_by_id_loader);
+    loaders.insert(storage_tank_emission_surveys_by_storage_tank_id_loader);
+    loaders.insert(storage_tank_emission_surveys_by_survey_equipment_id_loader);
+    loaders.insert(storage_tank_emission_surveys_by_creator_id_loader);
+    loaders.insert(storage_tank_emission_surveys_by_updater_id_loader);
 
     loaders.insert(storage_tank_month_methane_emission_override_by_id_loader);
     loaders.insert(storage_tank_month_methane_emission_overrides_by_storage_tank_id_loader);

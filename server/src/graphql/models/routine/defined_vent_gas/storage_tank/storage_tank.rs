@@ -1,6 +1,6 @@
 use super::{
     super::super::super::{month_methane_emission::MonthMethaneEmission, site::Site, user::User},
-    StorageTankChange, StorageTankControlledCharacterization,
+    StorageTankChange, StorageTankControlledCharacterization, StorageTankEmissionSurvey,
     StorageTankGasInSolutionFactorCalculated, StorageTankMonthLiquidHydrocarbonEntering,
     StorageTankMonthMethaneEmissionOverride,
 };
@@ -11,6 +11,7 @@ use crate::graphql::{
         routine::defined_vent_gas::storage_tank::{
             StorageTankChangesByStorageTankLoader,
             StorageTankControlledCharacterizationsByStorageTankLoader,
+            StorageTankEmissionSurveysByStorageTankLoader,
             StorageTankGasInSolutionFactorsCalculatedByStorageTankLoader,
             StorageTankMonthLiquidHydrocarbonEnteringByStorageTankLoader,
             StorageTankMonthMethaneEmissionOverridesByStorageTankLoader,
@@ -105,6 +106,17 @@ impl StorageTank {
             );
         let storage_tank_gas_in_solution_factors_calculated = loader.load_one(self.id).await?;
         let result = storage_tank_gas_in_solution_factors_calculated.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn storage_tank_emission_surveys(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<StorageTankEmissionSurvey>, Error> {
+        let loader = ctx.get_loader::<DataLoader<StorageTankEmissionSurveysByStorageTankLoader>>();
+        let storage_tank_emission_surveys = loader.load_one(self.id).await?;
+        let result = storage_tank_emission_surveys.unwrap_or(vec![]);
 
         Ok(result)
     }

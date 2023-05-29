@@ -1,8 +1,18 @@
-use super::super::{routine::compressor_seal::CompressorSealTest, user::User};
+use super::super::{
+    routine::{
+        compressor_seal::CompressorSealTest,
+        defined_vent_gas::storage_tank::StorageTankEmissionSurvey,
+    },
+    user::User,
+};
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        routine::compressor_seal::CompressorSealTestsBySurveyEquipmentLoader, user::UserLoader,
+        routine::{
+            compressor_seal::CompressorSealTestsBySurveyEquipmentLoader,
+            defined_vent_gas::storage_tank::StorageTankEmissionSurveysBySurveyEquipmentLoader,
+        },
+        user::UserLoader,
     },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
@@ -45,6 +55,18 @@ impl SurveyEquipment {
         let loader = ctx.get_loader::<DataLoader<CompressorSealTestsBySurveyEquipmentLoader>>();
         let compressor_seal_tests = loader.load_one(self.id).await?;
         let result = compressor_seal_tests.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn storage_tank_emission_surveys(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<StorageTankEmissionSurvey>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<StorageTankEmissionSurveysBySurveyEquipmentLoader>>();
+        let storage_tank_emission_surveys = loader.load_one(self.id).await?;
+        let result = storage_tank_emission_surveys.unwrap_or(vec![]);
 
         Ok(result)
     }
