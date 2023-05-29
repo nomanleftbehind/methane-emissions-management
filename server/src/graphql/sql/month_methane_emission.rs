@@ -80,11 +80,26 @@ pub async fn insert_month_methane_emissions(
     .fetch_all(pool)
     .await?;
 
+    let mut storage_tank_month_methane_emissions_calculated = query_file_as!(
+        MonthMethaneEmissionCalculated,
+        "src/graphql/sql/statements/storage_tank_month_methane_emission_calculate.sql",
+        from_month,
+        to_month,
+        c1,
+        co2,
+        0.9475
+    )
+    .fetch_all(pool)
+    .await?;
+
     non_level_controller_month_methane_emissions_calculated
         .append(&mut level_controller_month_methane_emissions_calculated);
 
     non_level_controller_month_methane_emissions_calculated
         .append(&mut compressor_seal_month_methane_emissions_calculated);
+
+    non_level_controller_month_methane_emissions_calculated
+        .append(&mut storage_tank_month_methane_emissions_calculated);
 
     non_level_controller_month_methane_emissions_calculated
         .append(&mut compressor_blowdown_month_methane_emissions_calculated);

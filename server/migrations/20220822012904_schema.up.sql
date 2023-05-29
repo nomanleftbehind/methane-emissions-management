@@ -29,9 +29,6 @@ CREATE TYPE "seal_type" AS ENUM ('RODPACKING', 'DRY', 'WET');
 CREATE TYPE "compressor_seal_testing_point" AS ENUM ('PISTON_ROD_PACKING', 'DISTANCE_PIECE', 'CRANKCASE', 'DRIVE_SHAFT_AND_COMPRESSOR_CASE_INTERFACE');
 
 -- CreateEnum
-CREATE TYPE "storage_tank_survey_point" AS ENUM ('THIEF_HATCH', 'LEVEL_GAUGE_SEAL', 'ROOF');
-
--- CreateEnum
 CREATE TYPE "calculation_method" AS ENUM ('EQUATION', 'MEASURED');
 
 -- CreateEnum
@@ -282,7 +279,8 @@ CREATE TABLE "survey_equipment" (
 CREATE TABLE "compressor_seal_test" (
     "id" UUID NOT NULL,
     "compressor_seal_id" UUID NOT NULL,
-    "date" DATE NOT NULL,
+    "start_date" DATE NOT NULL,
+    "end_date" DATE,
     "rate" DOUBLE PRECISION NOT NULL,
     "testing_point" "compressor_seal_testing_point" NOT NULL,
     "survey_equipment_id" UUID NOT NULL,
@@ -298,8 +296,9 @@ CREATE TABLE "compressor_seal_test" (
 CREATE TABLE "compressor_controlled_characterization" (
     "id" UUID NOT NULL,
     "compressor_id" UUID NOT NULL,
-    "date" DATE NOT NULL,
-    "controlled_characterization" "controlled_characterization" NOT NULL,
+    "start_date" DATE NOT NULL,
+    "end_date" DATE,
+    "control_device" "control_device" NOT NULL,
     "comment" TEXT,
     "created_by_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -307,6 +306,40 @@ CREATE TABLE "compressor_controlled_characterization" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "compressor_controlled_characterization_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "compressor_control_device_inactivity" (
+    "id" UUID NOT NULL,
+    "storage_tank_controlled_characterization_id" UUID NOT NULL,
+    "start_date" DATE NOT NULL,
+    "end_date" DATE,
+    "reason" "control_device_inactivity_reason" NOT NULL,
+    "comment" TEXT,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "compressor_control_device_inactivity_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "compressor_emission_survey" (
+    "id" UUID NOT NULL,
+    "compressor_id" UUID NOT NULL,
+    "start_date" DATE NOT NULL,
+    "end_date" DATE,
+    "rate" DOUBLE PRECISION NOT NULL,
+    "survey_point" TEXT NOT NULL,
+    "leak_duration" DOUBLE PRECISION,
+    "survey_equipment_id" UUID NOT NULL,
+    "created_by_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by_id" UUID NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "compressor_emission_survey_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -438,7 +471,7 @@ CREATE TABLE "storage_tank_emission_survey" (
     "start_date" DATE NOT NULL,
     "end_date" DATE,
     "rate" DOUBLE PRECISION NOT NULL,
-    "survey_point" "storage_tank_survey_point" NOT NULL,
+    "survey_point" TEXT NOT NULL,
     "leak_duration" DOUBLE PRECISION,
     "survey_equipment_id" UUID NOT NULL,
     "created_by_id" UUID NOT NULL,
@@ -597,10 +630,13 @@ CREATE UNIQUE INDEX "compressor_serial_number_key" ON "compressor"("serial_numbe
 CREATE UNIQUE INDEX "survey_equipment_make_model_key" ON "survey_equipment"("make", "model");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "compressor_seal_test_compressor_seal_id_date_testing_point_key" ON "compressor_seal_test"("compressor_seal_id", "date", "testing_point");
+CREATE UNIQUE INDEX "compressor_seal_test_compressor_seal_id_start_date_testing__key" ON "compressor_seal_test"("compressor_seal_id", "start_date", "testing_point");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "compressor_controlled_characterization_compressor_id_date_key" ON "compressor_controlled_characterization"("compressor_id", "date");
+CREATE UNIQUE INDEX "compressor_controlled_characterization_compressor_id_start__key" ON "compressor_controlled_characterization"("compressor_id", "start_date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "compressor_control_device_inactivity_storage_tank_controlle_key" ON "compressor_control_device_inactivity"("storage_tank_controlled_characterization_id", "start_date");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "compressor_month_hours_compressor_id_month_key" ON "compressor_month_hours"("compressor_id", "month");
@@ -622,9 +658,6 @@ CREATE UNIQUE INDEX "storage_tank_controlled_characterization_storage_tank_id_st
 
 -- CreateIndex
 CREATE UNIQUE INDEX "storage_tank_control_device_inactivity_storage_tank_control_key" ON "storage_tank_control_device_inactivity"("storage_tank_controlled_characterization_id", "start_date");
-
--- CreateIndex
-CREATE UNIQUE INDEX "storage_tank_emission_survey_storage_tank_id_start_date_sur_key" ON "storage_tank_emission_survey"("storage_tank_id", "start_date", "survey_point");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "storage_tank_gas_in_solution_factor_calculated_storage_tank_key" ON "storage_tank_gas_in_solution_factor_calculated"("storage_tank_id", "date");
@@ -793,6 +826,27 @@ ALTER TABLE "compressor_controlled_characterization" ADD CONSTRAINT "compressor_
 
 -- AddForeignKey
 ALTER TABLE "compressor_controlled_characterization" ADD CONSTRAINT "compressor_controlled_characterization_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_control_device_inactivity" ADD CONSTRAINT "compressor_control_device_inactivity_storage_tank_controll_fkey" FOREIGN KEY ("storage_tank_controlled_characterization_id") REFERENCES "compressor_controlled_characterization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_control_device_inactivity" ADD CONSTRAINT "compressor_control_device_inactivity_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_control_device_inactivity" ADD CONSTRAINT "compressor_control_device_inactivity_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_emission_survey" ADD CONSTRAINT "compressor_emission_survey_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_emission_survey" ADD CONSTRAINT "compressor_emission_survey_survey_equipment_id_fkey" FOREIGN KEY ("survey_equipment_id") REFERENCES "survey_equipment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_emission_survey" ADD CONSTRAINT "compressor_emission_survey_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "compressor_emission_survey" ADD CONSTRAINT "compressor_emission_survey_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "compressor_month_hours" ADD CONSTRAINT "compressor_month_hours_compressor_id_fkey" FOREIGN KEY ("compressor_id") REFERENCES "compressor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
