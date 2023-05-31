@@ -1,6 +1,6 @@
 use super::super::{
     routine::{
-        compressor_seal::CompressorSealTest,
+        compressor_seal::{CompressorEmissionSurvey, CompressorSealTest},
         defined_vent_gas::storage_tank::StorageTankEmissionSurvey,
     },
     user::User,
@@ -9,7 +9,10 @@ use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         routine::{
-            compressor_seal::CompressorSealTestsBySurveyEquipmentLoader,
+            compressor_seal::{
+                CompressorEmissionSurveysBySurveyEquipmentLoader,
+                CompressorSealTestsBySurveyEquipmentLoader,
+            },
             defined_vent_gas::storage_tank::StorageTankEmissionSurveysBySurveyEquipmentLoader,
         },
         user::UserLoader,
@@ -55,6 +58,18 @@ impl SurveyEquipment {
         let loader = ctx.get_loader::<DataLoader<CompressorSealTestsBySurveyEquipmentLoader>>();
         let compressor_seal_tests = loader.load_one(self.id).await?;
         let result = compressor_seal_tests.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn compressor_emission_surveys(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorEmissionSurvey>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<CompressorEmissionSurveysBySurveyEquipmentLoader>>();
+        let compressor_emission_surveys = loader.load_one(self.id).await?;
+        let result = compressor_emission_surveys.unwrap_or(vec![]);
 
         Ok(result)
     }

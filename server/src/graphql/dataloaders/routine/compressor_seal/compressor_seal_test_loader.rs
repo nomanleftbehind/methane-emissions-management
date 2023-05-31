@@ -26,7 +26,7 @@ impl Loader<Uuid> for CompressorSealTestLoader {
             CompressorSealTest,
             r#"
             SELECT
-            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            id, compressor_seal_id, start_date, end_date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor_seal_test
             WHERE id = ANY($1)
             "#,
@@ -62,7 +62,7 @@ impl Loader<Uuid> for CreatedCompressorSealTestsLoader {
             CompressorSealTest,
             r#"
             SELECT
-            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            id, compressor_seal_id, start_date, end_date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor_seal_test
             WHERE created_by_id = ANY($1)
             "#,
@@ -105,7 +105,7 @@ impl Loader<Uuid> for UpdatedCompressorSealTestsLoader {
             CompressorSealTest,
             r#"
             SELECT
-            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            id, compressor_seal_id, start_date, end_date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor_seal_test
             WHERE updated_by_id = ANY($1)
             "#,
@@ -148,7 +148,7 @@ impl Loader<Uuid> for CompressorSealTestsByCompressorSealLoader {
             CompressorSealTest,
             r#"
             SELECT
-            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            id, compressor_seal_id, start_date, end_date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor_seal_test
             WHERE compressor_seal_id = ANY($1)
             "#,
@@ -191,7 +191,7 @@ impl Loader<Uuid> for CompressorSealTestsBySurveyEquipmentLoader {
             CompressorSealTest,
             r#"
             SELECT
-            id, compressor_seal_id, date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
+            id, compressor_seal_id, start_date, end_date, rate, testing_point as "testing_point: _", survey_equipment_id, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor_seal_test
             WHERE survey_equipment_id = ANY($1)
             "#,

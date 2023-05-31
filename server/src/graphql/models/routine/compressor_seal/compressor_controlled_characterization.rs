@@ -5,7 +5,7 @@ use crate::graphql::{
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
-use common::ControlledCharacterization;
+use common::ControlDevice;
 use sqlx::FromRow;
 use uuid::Uuid;
 
@@ -15,8 +15,9 @@ use uuid::Uuid;
 pub struct CompressorControlledCharacterization {
     pub id: Uuid,
     pub compressor_id: Uuid,
-    pub date: NaiveDate,
-    pub controlled_characterization: ControlledCharacterization,
+    pub start_date: NaiveDate,
+    pub end_date: Option<NaiveDate>,
+    pub control_device: ControlDevice,
     pub comment: Option<String>,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,

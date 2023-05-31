@@ -19,17 +19,21 @@ use super::{
     routine::{
         compressor_seal::{
             CompressorControlledCharacterizationLoader,
-            CompressorControlledCharacterizationsByCompressorLoader, CompressorLoader,
+            CompressorControlledCharacterizationsByCompressorLoader,
+            CompressorEmissionSurveyLoader, CompressorEmissionSurveysByCompressorLoader,
+            CompressorEmissionSurveysBySurveyEquipmentLoader, CompressorLoader,
             CompressorMonthHoursByCompressorLoader, CompressorMonthHoursLoader,
             CompressorSealLoader, CompressorSealMonthMethaneEmissionOverrideLoader,
             CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader,
             CompressorSealTestLoader, CompressorSealTestsByCompressorSealLoader,
             CompressorSealTestsBySurveyEquipmentLoader,
-            CreatedCompressorControlledCharacterizationsLoader, CreatedCompressorMonthHoursLoader,
+            CreatedCompressorControlledCharacterizationsLoader,
+            CreatedCompressorEmissionSurveysLoader, CreatedCompressorMonthHoursLoader,
             CreatedCompressorSealMonthMethaneEmissionOverridesLoader,
             CreatedCompressorSealTestsLoader, CreatedCompressorSealsLoader,
             CreatedCompressorsLoader, SiteCompressorsLoader,
-            UpdatedCompressorControlledCharacterizationsLoader, UpdatedCompressorMonthHoursLoader,
+            UpdatedCompressorControlledCharacterizationsLoader,
+            UpdatedCompressorEmissionSurveysLoader, UpdatedCompressorMonthHoursLoader,
             UpdatedCompressorSealMonthMethaneEmissionOverridesLoader,
             UpdatedCompressorSealTestsLoader, UpdatedCompressorSealsLoader,
             UpdatedCompressorsLoader,
@@ -403,6 +407,28 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Compressor Emission Survey
+    let compressor_emission_survey_by_id_loader = DataLoader::new(
+        CompressorEmissionSurveyLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_emission_surveys_by_compressor_id_loader = DataLoader::new(
+        CompressorEmissionSurveysByCompressorLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_emission_surveys_by_survey_equipment_id_loader = DataLoader::new(
+        CompressorEmissionSurveysBySurveyEquipmentLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_emission_surveys_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorEmissionSurveysLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_emission_surveys_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorEmissionSurveysLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Compressor Month Hours
     let compressor_controlled_characterization_by_id_loader = DataLoader::new(
         CompressorControlledCharacterizationLoader::new(pool.clone()),
@@ -493,7 +519,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     // Storage Tank
     let storage_tank_by_id_loader =
         DataLoader::new(StorageTankLoader::new(pool.clone()), tokio::spawn);
-    let storage_tank_by_site_id_loader =
+    let storage_tanks_by_site_id_loader =
         DataLoader::new(SiteStorageTanksLoader::new(pool.clone()), tokio::spawn);
     let storage_tanks_by_creator_id_loader =
         DataLoader::new(CreatedStorageTanksLoader::new(pool.clone()), tokio::spawn);
@@ -745,6 +771,12 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_seal_tests_by_creator_id_loader);
     loaders.insert(compressor_seal_tests_by_updater_id_loader);
 
+    loaders.insert(compressor_emission_survey_by_id_loader);
+    loaders.insert(compressor_emission_surveys_by_compressor_id_loader);
+    loaders.insert(compressor_emission_surveys_by_survey_equipment_id_loader);
+    loaders.insert(compressor_emission_surveys_by_creator_id_loader);
+    loaders.insert(compressor_emission_surveys_by_updater_id_loader);
+
     loaders.insert(compressor_controlled_characterization_by_id_loader);
     loaders.insert(compressor_controlled_characterizations_by_compressor_id_loader);
     loaders.insert(compressor_controlled_characterizations_by_creator_id_loader);
@@ -773,7 +805,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(storage_tank_by_id_loader);
     loaders.insert(storage_tanks_by_creator_id_loader);
     loaders.insert(storage_tanks_by_updater_id_loader);
-    loaders.insert(storage_tank_by_site_id_loader);
+    loaders.insert(storage_tanks_by_site_id_loader);
 
     loaders.insert(storage_tank_change_by_id_loader);
     loaders.insert(storage_tank_changes_by_storage_tank_id_loader);

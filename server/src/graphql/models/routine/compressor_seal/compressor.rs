@@ -2,7 +2,8 @@ use super::{
     super::super::nonroutine::compressor_blowdown::{
         CompressorBlowdown, CompressorBlowdownOverride,
     },
-    CompressorControlledCharacterization, CompressorMonthHours, CompressorSeal,
+    CompressorControlledCharacterization, CompressorEmissionSurvey, CompressorMonthHours,
+    CompressorSeal,
 };
 use crate::graphql::{
     context::ContextExt,
@@ -12,7 +13,8 @@ use crate::graphql::{
         },
         routine::compressor_seal::{
             CompressorControlledCharacterizationsByCompressorLoader,
-            CompressorMonthHoursByCompressorLoader, CompressorSealLoader,
+            CompressorEmissionSurveysByCompressorLoader, CompressorMonthHoursByCompressorLoader,
+            CompressorSealLoader,
         },
         site::SiteLoader,
         user::UserLoader,
@@ -93,6 +95,17 @@ impl Compressor {
         let loader = ctx.get_loader::<DataLoader<CompressorMonthHoursByCompressorLoader>>();
         let compressor_month_hours = loader.load_one(self.id).await?;
         let result = compressor_month_hours.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn compressor_emission_surveys(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorEmissionSurvey>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorEmissionSurveysByCompressorLoader>>();
+        let compressor_emission_surveys = loader.load_one(self.id).await?;
+        let result = compressor_emission_surveys.unwrap_or(vec![]);
 
         Ok(result)
     }

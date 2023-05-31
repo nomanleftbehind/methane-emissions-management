@@ -1,33 +1,30 @@
 use super::{
     super::super::{survey_equipment::SurveyEquipment, user::User},
-    CompressorSeal,
+    Compressor,
 };
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
-        routine::compressor_seal::CompressorSealLoader, survey_equipment::SurveyEquipmentLoader,
+        routine::compressor_seal::CompressorLoader, survey_equipment::SurveyEquipmentLoader,
         user::UserLoader,
     },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
-use common::CompressorSealTestingPoint;
 use sqlx::FromRow;
 use uuid::Uuid;
 
-/// Object representing requirement in [`AER Directive 060 section 8.6.2.1`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=75).
-///
-/// Rate represents methane leak expressed in standard cubic feet per hour.
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct CompressorSealTest {
+pub struct CompressorEmissionSurvey {
     pub id: Uuid,
-    pub compressor_seal_id: Uuid,
+    pub compressor_id: Uuid,
     pub start_date: NaiveDate,
     pub end_date: Option<NaiveDate>,
     /// standard cubic feet per hour of methane
     pub rate: f64,
-    pub testing_point: CompressorSealTestingPoint,
+    pub survey_point: String,
+    pub leak_duration: Option<f64>,
     pub survey_equipment_id: Uuid,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,
@@ -36,7 +33,7 @@ pub struct CompressorSealTest {
 }
 
 #[ComplexObject]
-impl CompressorSealTest {
+impl CompressorEmissionSurvey {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -51,11 +48,11 @@ impl CompressorSealTest {
         updated_by
     }
 
-    async fn compressor_seal(&self, ctx: &Context<'_>) -> Result<Option<CompressorSeal>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CompressorSealLoader>>();
-        let compressor_seal = loader.load_one(self.compressor_seal_id).await;
+    async fn compressor(&self, ctx: &Context<'_>) -> Result<Option<Compressor>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CompressorLoader>>();
+        let compressor = loader.load_one(self.compressor_id).await;
 
-        compressor_seal
+        compressor
     }
 
     async fn survey_equipment(&self, ctx: &Context<'_>) -> Result<Option<SurveyEquipment>, Error> {

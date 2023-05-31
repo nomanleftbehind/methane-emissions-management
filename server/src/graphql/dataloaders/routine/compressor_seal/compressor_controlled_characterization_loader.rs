@@ -26,7 +26,7 @@ impl Loader<Uuid> for CompressorControlledCharacterizationLoader {
             CompressorControlledCharacterization,
             r#"
             SELECT
-            id, compressor_id, date, controlled_characterization as "controlled_characterization: _", comment, created_by_id, created_at, updated_by_id, updated_at
+            id, compressor_id, start_date, end_date, control_device as "control_device: _", comment, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor_controlled_characterization
             WHERE id = ANY($1)
             "#,
@@ -62,7 +62,7 @@ impl Loader<Uuid> for CreatedCompressorControlledCharacterizationsLoader {
             CompressorControlledCharacterization,
             r#"
             SELECT
-            id, compressor_id, date, controlled_characterization as "controlled_characterization: _", comment, created_by_id, created_at, updated_by_id, updated_at
+            id, compressor_id, start_date, end_date, control_device as "control_device: _", comment, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor_controlled_characterization
             WHERE created_by_id = ANY($1)
             "#,
@@ -108,7 +108,7 @@ impl Loader<Uuid> for UpdatedCompressorControlledCharacterizationsLoader {
             CompressorControlledCharacterization,
             r#"
             SELECT
-            id, compressor_id, date, controlled_characterization as "controlled_characterization: _", comment, created_by_id, created_at, updated_by_id, updated_at
+            id, compressor_id, start_date, end_date, control_device as "control_device: _", comment, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor_controlled_characterization
             WHERE updated_by_id = ANY($1)
             "#,
@@ -156,7 +156,7 @@ impl Loader<Uuid> for CompressorControlledCharacterizationsByCompressorLoader {
             CompressorControlledCharacterization,
             r#"
             SELECT
-            id, compressor_id, date, controlled_characterization as "controlled_characterization: _", comment, created_by_id, created_at, updated_by_id, updated_at
+            id, compressor_id, start_date, end_date, control_device as "control_device: _", comment, created_by_id, created_at, updated_by_id, updated_at
             FROM compressor_controlled_characterization
             WHERE compressor_id = ANY($1)
             "#,

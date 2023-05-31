@@ -1,7 +1,13 @@
-use super::{super::super::super::user::User, StorageTank};
+use super::{
+    super::super::super::{survey_equipment::SurveyEquipment, user::User},
+    StorageTank,
+};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{routine::defined_vent_gas::storage_tank::StorageTankLoader, user::UserLoader},
+    dataloaders::{
+        routine::defined_vent_gas::storage_tank::StorageTankLoader,
+        survey_equipment::SurveyEquipmentLoader, user::UserLoader,
+    },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -47,5 +53,12 @@ impl StorageTankEmissionSurvey {
         let storage_tank = loader.load_one(self.storage_tank_id).await;
 
         storage_tank
+    }
+
+    async fn survey_equipment(&self, ctx: &Context<'_>) -> Result<Option<SurveyEquipment>, Error> {
+        let loader = ctx.get_loader::<DataLoader<SurveyEquipmentLoader>>();
+        let survey_equipment = loader.load_one(self.survey_equipment_id).await;
+
+        survey_equipment
     }
 }
