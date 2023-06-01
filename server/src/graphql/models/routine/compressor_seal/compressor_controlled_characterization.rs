@@ -1,7 +1,13 @@
-use super::{super::super::user::User, Compressor};
+use super::{super::super::user::User, Compressor, CompressorControlDeviceInactivity};
 use crate::graphql::{
     context::ContextExt,
-    dataloaders::{routine::compressor_seal::CompressorLoader, user::UserLoader},
+    dataloaders::{
+        routine::compressor_seal::{
+            CompressorControlDeviceInactivitiesByCompressorControlledCharacterizationLoader,
+            CompressorLoader,
+        },
+        user::UserLoader,
+    },
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
@@ -46,5 +52,18 @@ impl CompressorControlledCharacterization {
         let compressor = loader.load_one(self.compressor_id).await;
 
         compressor
+    }
+
+    async fn compressor_control_device_inactivities(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<CompressorControlDeviceInactivity>, Error> {
+        let loader = ctx.get_loader::<DataLoader<
+            CompressorControlDeviceInactivitiesByCompressorControlledCharacterizationLoader,
+        >>();
+        let compressor_control_device_inactivities = loader.load_one(self.id).await?;
+        let result = compressor_control_device_inactivities.unwrap_or(vec![]);
+
+        Ok(result)
     }
 }

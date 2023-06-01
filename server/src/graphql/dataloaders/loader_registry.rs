@@ -18,7 +18,8 @@ use super::{
     },
     routine::{
         compressor_seal::{
-            CompressorControlledCharacterizationLoader,
+            CompressorControlDeviceInactivitiesByCompressorControlledCharacterizationLoader,
+            CompressorControlDeviceInactivityLoader, CompressorControlledCharacterizationLoader,
             CompressorControlledCharacterizationsByCompressorLoader,
             CompressorEmissionSurveyLoader, CompressorEmissionSurveysByCompressorLoader,
             CompressorEmissionSurveysBySurveyEquipmentLoader, CompressorLoader,
@@ -27,11 +28,13 @@ use super::{
             CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader,
             CompressorSealTestLoader, CompressorSealTestsByCompressorSealLoader,
             CompressorSealTestsBySurveyEquipmentLoader,
+            CreatedCompressorControlDeviceInactivitiesLoader,
             CreatedCompressorControlledCharacterizationsLoader,
             CreatedCompressorEmissionSurveysLoader, CreatedCompressorMonthHoursLoader,
             CreatedCompressorSealMonthMethaneEmissionOverridesLoader,
             CreatedCompressorSealTestsLoader, CreatedCompressorSealsLoader,
             CreatedCompressorsLoader, SiteCompressorsLoader,
+            UpdatedCompressorControlDeviceInactivitiesLoader,
             UpdatedCompressorControlledCharacterizationsLoader,
             UpdatedCompressorEmissionSurveysLoader, UpdatedCompressorMonthHoursLoader,
             UpdatedCompressorSealMonthMethaneEmissionOverridesLoader,
@@ -447,6 +450,27 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Compressor Control Device Inactivity
+    let compressor_control_device_inactivity_by_id_loader = DataLoader::new(
+        CompressorControlDeviceInactivityLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_control_device_inactivities_by_compressor_controlled_characterization_id_loader =
+        DataLoader::new(
+            CompressorControlDeviceInactivitiesByCompressorControlledCharacterizationLoader::new(
+                pool.clone(),
+            ),
+            tokio::spawn,
+        );
+    let compressor_control_device_inactivities_by_creator_id_loader = DataLoader::new(
+        CreatedCompressorControlDeviceInactivitiesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let compressor_control_device_inactivities_by_updater_id_loader = DataLoader::new(
+        UpdatedCompressorControlDeviceInactivitiesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Compressor Month Hours
     let compressor_month_hours_by_id_loader =
         DataLoader::new(CompressorMonthHoursLoader::new(pool.clone()), tokio::spawn);
@@ -781,6 +805,13 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(compressor_controlled_characterizations_by_compressor_id_loader);
     loaders.insert(compressor_controlled_characterizations_by_creator_id_loader);
     loaders.insert(compressor_controlled_characterizations_by_updater_id_loader);
+
+    loaders.insert(compressor_control_device_inactivity_by_id_loader);
+    loaders.insert(
+        compressor_control_device_inactivities_by_compressor_controlled_characterization_id_loader,
+    );
+    loaders.insert(compressor_control_device_inactivities_by_creator_id_loader);
+    loaders.insert(compressor_control_device_inactivities_by_updater_id_loader);
 
     loaders.insert(compressor_month_hours_by_id_loader);
     loaders.insert(compressor_month_hours_by_compressor_id_loader);
