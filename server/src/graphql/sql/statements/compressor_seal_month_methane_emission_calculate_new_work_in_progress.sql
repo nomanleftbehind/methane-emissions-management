@@ -32,7 +32,8 @@ compressor_seal_test_cleaned as (
 					)::date,
 					CURRENT_DATE
 				) as max_end_date,
-				cst.rate,
+				-- scf/hr to m3/hr
+				cst.rate / 35.3147 as rate,
 				cst.testing_point
 			FROM
 				compressor_seal_test cst
@@ -475,7 +476,8 @@ FROM
 																													COALESCE(ces.end_date, CURRENT_DATE) as end_date,
 																													cpr.install_date as compressor_start_date,
 																													COALESCE(cpr.remove_date, CURRENT_DATE) as compressor_end_date,
-																													ces.rate,
+																													-- scf/hr to m3/hr
+																													ces.rate / 35.3147 as rate,
 																													ces.leak_duration
 																												FROM
 																													compressor_emission_survey ces
