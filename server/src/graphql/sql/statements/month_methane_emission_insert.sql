@@ -35,7 +35,7 @@ FROM
         $11::double precision[],
         $12::timestamp without time zone[],
         $12::timestamp without time zone[]
-    ) ON CONFLICT (source_table_id, category, source, month) DO
+    ) ON CONFLICT (source_table, source_table_id, category, source, month) DO
 UPDATE
 SET
     gas_volume = EXCLUDED.gas_volume,

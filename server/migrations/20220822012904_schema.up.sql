@@ -29,6 +29,9 @@ CREATE TYPE "seal_type" AS ENUM ('RODPACKING', 'DRY', 'WET');
 CREATE TYPE "compressor_seal_testing_point" AS ENUM ('PISTON_ROD_PACKING', 'DISTANCE_PIECE', 'CRANKCASE', 'DRIVE_SHAFT_AND_COMPRESSOR_CASE_INTERFACE');
 
 -- CreateEnum
+CREATE TYPE "compressor_emission_type" AS ENUM ('NONCRANKCASE', 'CRANKCASE', 'EMISSION_SURVEY');
+
+-- CreateEnum
 CREATE TYPE "calculation_method" AS ENUM ('EQUATION', 'MEASURED');
 
 -- CreateEnum
@@ -311,7 +314,7 @@ CREATE TABLE "compressor_controlled_characterization" (
 -- CreateTable
 CREATE TABLE "compressor_control_device_inactivity" (
     "id" UUID NOT NULL,
-    "storage_tank_controlled_characterization_id" UUID NOT NULL,
+    "compressor_controlled_characterization_id" UUID NOT NULL,
     "start_date" DATE NOT NULL,
     "end_date" DATE,
     "reason" "control_device_inactivity_reason" NOT NULL,
@@ -636,7 +639,7 @@ CREATE UNIQUE INDEX "compressor_seal_test_compressor_seal_id_start_date_testing_
 CREATE UNIQUE INDEX "compressor_controlled_characterization_compressor_id_start__key" ON "compressor_controlled_characterization"("compressor_id", "start_date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "compressor_control_device_inactivity_storage_tank_controlle_key" ON "compressor_control_device_inactivity"("storage_tank_controlled_characterization_id", "start_date");
+CREATE UNIQUE INDEX "compressor_control_device_inactivity_compressor_controlled__key" ON "compressor_control_device_inactivity"("compressor_controlled_characterization_id", "start_date");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "compressor_month_hours_compressor_id_month_key" ON "compressor_month_hours"("compressor_id", "month");
@@ -672,7 +675,7 @@ CREATE UNIQUE INDEX "storage_tank_month_methane_emission_override_storage_tank_i
 CREATE UNIQUE INDEX "gas_analysis_facility_id_date_key" ON "gas_analysis"("facility_id", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "month_methane_emission_source_table_id_category_source_mont_key" ON "month_methane_emission"("source_table_id", "category", "source", "month");
+CREATE UNIQUE INDEX "month_methane_emission_source_table_source_table_id_categor_key" ON "month_methane_emission"("source_table", "source_table_id", "category", "source", "month");
 
 -- AddForeignKey
 ALTER TABLE "facility" ADD CONSTRAINT "facility_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -828,7 +831,7 @@ ALTER TABLE "compressor_controlled_characterization" ADD CONSTRAINT "compressor_
 ALTER TABLE "compressor_controlled_characterization" ADD CONSTRAINT "compressor_controlled_characterization_updated_by_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "compressor_control_device_inactivity" ADD CONSTRAINT "compressor_control_device_inactivity_storage_tank_controll_fkey" FOREIGN KEY ("storage_tank_controlled_characterization_id") REFERENCES "compressor_controlled_characterization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "compressor_control_device_inactivity" ADD CONSTRAINT "compressor_control_device_inactivity_compressor_controlled_fkey" FOREIGN KEY ("compressor_controlled_characterization_id") REFERENCES "compressor_controlled_characterization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "compressor_control_device_inactivity" ADD CONSTRAINT "compressor_control_device_inactivity_created_by_id_fkey" FOREIGN KEY ("created_by_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

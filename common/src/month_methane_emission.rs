@@ -14,7 +14,7 @@ pub enum MethaneEmissionSourceTable {
     LevelController,
     CompressorSeal,
     CompressorBlowdown,
-    Tank,
+    StorageTank,
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -31,7 +31,7 @@ impl Display for MethaneEmissionSourceTable {
             MethaneEmissionSourceTable::LevelController => write!(f, "Level Controller"),
             MethaneEmissionSourceTable::CompressorSeal => write!(f, "Compressor Seal"),
             MethaneEmissionSourceTable::CompressorBlowdown => write!(f, "Compressor Blowdown"),
-            MethaneEmissionSourceTable::Tank => write!(f, "Tank"),
+            MethaneEmissionSourceTable::StorageTank => write!(f, "Storage Tank"),
         }
     }
 }
