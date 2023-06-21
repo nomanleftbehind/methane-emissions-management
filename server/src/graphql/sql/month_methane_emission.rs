@@ -36,9 +36,9 @@ pub async fn insert_month_methane_emissions(
     c1: &f64,
     co2: &f64,
 ) -> Result<u64, Error> {
-    let mut non_level_controller_month_methane_emissions_calculated = query_file_as!(
+    let mut pneumatic_instrument_month_methane_emissions_calculated = query_file_as!(
         MonthMethaneEmissionCalculated,
-        "src/graphql/sql/statements/non_level_controller_month_methane_emission_calculate.sql",
+        "src/graphql/sql/statements/pneumatic_instrument_month_methane_emission_calculate.sql",
         from_month,
         to_month,
         c1,
@@ -92,16 +92,16 @@ pub async fn insert_month_methane_emissions(
     .fetch_all(pool)
     .await?;
 
-    non_level_controller_month_methane_emissions_calculated
+    pneumatic_instrument_month_methane_emissions_calculated
         .append(&mut level_controller_month_methane_emissions_calculated);
 
-    non_level_controller_month_methane_emissions_calculated
+    pneumatic_instrument_month_methane_emissions_calculated
         .append(&mut compressor_seal_month_methane_emissions_calculated);
 
-    non_level_controller_month_methane_emissions_calculated
+    pneumatic_instrument_month_methane_emissions_calculated
         .append(&mut storage_tank_month_methane_emissions_calculated);
 
-    non_level_controller_month_methane_emissions_calculated
+    pneumatic_instrument_month_methane_emissions_calculated
         .append(&mut compressor_blowdown_month_methane_emissions_calculated);
 
     let MonthMethaneEmissionNestedRows {
@@ -117,7 +117,7 @@ pub async fn insert_month_methane_emissions(
         c1_volume,
         co2_volume,
         created_at,
-    } = MonthMethaneEmissionUnnestedRows(non_level_controller_month_methane_emissions_calculated)
+    } = MonthMethaneEmissionUnnestedRows(pneumatic_instrument_month_methane_emissions_calculated)
         .into();
 
     let rows_inserted = query_file!(

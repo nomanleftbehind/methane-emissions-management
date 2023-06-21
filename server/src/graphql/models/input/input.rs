@@ -1,7 +1,7 @@
 use super::super::validator::MonthBeginningValidator;
 use async_graphql::InputObject;
 use chrono::{NaiveDate, NaiveDateTime};
-use common::{DeleteEntryVariant, GetObjectVariant, NonLevelControllerType, UpdateFieldVariant};
+use common::{DeleteEntryVariant, GetObjectVariant, PneumaticInstrumentType, UpdateFieldVariant};
 use uuid::Uuid;
 
 #[derive(Debug, InputObject)]
@@ -54,7 +54,7 @@ pub struct ControllerChangeInput {
 #[derive(InputObject, Debug)]
 pub struct InsertPneumaticDeviceInput {
     pub site_id: Uuid,
-    pub r#type: NonLevelControllerType,
+    pub r#type: PneumaticInstrumentType,
     pub manufacturer_id: Uuid,
     pub model: Option<String>,
     pub serial_number: Option<String>,

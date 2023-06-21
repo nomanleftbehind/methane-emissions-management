@@ -1,5 +1,5 @@
 use crate::graphql::models::{
-    routine::pneumatic_device::non_level_controller::NonLevelController,
+    routine::pneumatic_device::pneumatic_instrument::PneumaticInstrument,
     user::{User, UserBy},
 };
 use sqlx::PgExecutor;
@@ -36,10 +36,10 @@ pub async fn query_user_controllers<'e, E: PgExecutor<'e>>(
     user_id: Uuid,
     limit: i64,
     offset: i64,
-) -> Result<Vec<NonLevelController>, sqlx::Error> {
+) -> Result<Vec<PneumaticInstrument>, sqlx::Error> {
     let controllers = sqlx::query_as!(
-        NonLevelController,
-        r#"SELECT id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at FROM non_level_controller WHERE created_by_id = $1 LIMIT $2 OFFSET $3"#,
+        PneumaticInstrument,
+        r#"SELECT id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at FROM pneumatic_instrument WHERE created_by_id = $1 LIMIT $2 OFFSET $3"#,
         user_id,
         limit,
         offset

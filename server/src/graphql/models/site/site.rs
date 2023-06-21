@@ -5,7 +5,7 @@ use super::super::{
         compressor_seal::Compressor,
         defined_vent_gas::storage_tank::StorageTank,
         pneumatic_device::{
-            level_controller::LevelController, non_level_controller::NonLevelController,
+            level_controller::LevelController, pneumatic_instrument::PneumaticInstrument,
         },
     },
     user::User,
@@ -20,7 +20,7 @@ use crate::graphql::{
             defined_vent_gas::storage_tank::SiteStorageTanksLoader,
             pneumatic_device::{
                 level_controller::SiteLevelControllersLoader,
-                non_level_controller::SiteNonLevelControllersLoader,
+                pneumatic_instrument::SitePneumaticInstrumentsLoader,
             },
         },
         user::UserLoader,
@@ -71,13 +71,13 @@ impl Site {
         facility
     }
 
-    async fn non_level_controllers(
+    async fn pneumatic_instruments(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelController>, Error> {
-        let loader = ctx.get_loader::<DataLoader<SiteNonLevelControllersLoader>>();
-        let non_level_controllers = loader.load_one(self.id).await?;
-        let result = non_level_controllers.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticInstrument>, Error> {
+        let loader = ctx.get_loader::<DataLoader<SitePneumaticInstrumentsLoader>>();
+        let pneumatic_instruments = loader.load_one(self.id).await?;
+        let result = pneumatic_instruments.unwrap_or(vec![]);
 
         Ok(result)
     }

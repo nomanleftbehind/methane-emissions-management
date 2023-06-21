@@ -23,14 +23,18 @@ model User {
   siteCreatedBy     Site[]     @relation("siteCreatedBy")
   siteUpdatedBy     Site[]     @relation("siteUpdatedBy")
 
-  nonLevelControllerCreatedBy                             NonLevelController[]                             @relation("nonLevelControllerCreatedBy")
-  nonLevelControllerUpdatedBy                             NonLevelController[]                             @relation("nonLevelControllerUpdatedBy")
-  nonLevelControllerChangeCreatedBy                       NonLevelControllerChange[]                       @relation("nonLevelControllerChangeCreatedBy")
-  nonLevelControllerChangeUpdatedBy                       NonLevelControllerChange[]                       @relation("nonLevelControllerChangeUpdatedBy")
-  nonLevelControllerMonthHoursCreatedBy                   NonLevelControllerMonthHours[]                   @relation("nonLevelControllerMonthHoursCreatedBy")
-  nonLevelControllerMonthHoursUpdatedBy                   NonLevelControllerMonthHours[]                   @relation("nonLevelControllerMonthHoursUpdatedBy")
-  nonLevelControllerMonthMethaneEmissionOverrideCreatedBy NonLevelControllerMonthMethaneEmissionOverride[] @relation("nonLevelControllerMonthMethaneEmissionOverrideCreatedBy")
-  nonLevelControllerMonthMethaneEmissionOverrideUpdatedBy NonLevelControllerMonthMethaneEmissionOverride[] @relation("nonLevelControllerMonthMethaneEmissionOverrideUpdatedBy")
+  pneumaticInstrumentCreatedBy                             PneumaticInstrument[]                             @relation("pneumaticInstrumentCreatedBy")
+  pneumaticInstrumentUpdatedBy                             PneumaticInstrument[]                             @relation("pneumaticInstrumentUpdatedBy")
+  pneumaticInstrumentChangeCreatedBy                       PneumaticInstrumentChange[]                       @relation("pneumaticInstrumentChangeCreatedBy")
+  pneumaticInstrumentChangeUpdatedBy                       PneumaticInstrumentChange[]                       @relation("pneumaticInstrumentChangeUpdatedBy")
+  pneumaticInstrumentControlledCharacterizationCreatedBy   PneumaticInstrumentControlledCharacterization[]   @relation("pneumaticInstrumentControlledCharacterizationCreatedBy")
+  pneumaticInstrumentControlledCharacterizationUpdatedBy   PneumaticInstrumentControlledCharacterization[]   @relation("pneumaticInstrumentControlledCharacterizationUpdatedBy")
+  pneumaticInstrumentControlDeviceInactivityCreatedBy      PneumaticInstrumentControlDeviceInactivity[]      @relation("pneumaticInstrumentControlDeviceInactivityCreatedBy")
+  pneumaticInstrumentControlDeviceInactivityUpdatedBy      PneumaticInstrumentControlDeviceInactivity[]      @relation("pneumaticInstrumentControlDeviceInactivityUpdatedBy")
+  pneumaticInstrumentMonthHoursCreatedBy                   PneumaticInstrumentMonthHours[]                   @relation("pneumaticInstrumentMonthHoursCreatedBy")
+  pneumaticInstrumentMonthHoursUpdatedBy                   PneumaticInstrumentMonthHours[]                   @relation("pneumaticInstrumentMonthHoursUpdatedBy")
+  pneumaticInstrumentMonthMethaneEmissionOverrideCreatedBy PneumaticInstrumentMonthMethaneEmissionOverride[] @relation("pneumaticInstrumentMonthMethaneEmissionOverrideCreatedBy")
+  pneumaticInstrumentMonthMethaneEmissionOverrideUpdatedBy PneumaticInstrumentMonthMethaneEmissionOverride[] @relation("pneumaticInstrumentMonthMethaneEmissionOverrideUpdatedBy")
 
   levelControllerCreatedBy                             LevelController[]                             @relation("levelControllerCreatedBy")
   levelControllerUpdatedBy                             LevelController[]                             @relation("levelControllerUpdatedBy")
@@ -38,10 +42,27 @@ model User {
   levelControllerChangeUpdatedBy                       LevelControllerChange[]                       @relation("levelControllerChangeUpdatedBy")
   levelControllerActuationFrequencyCreatedBy           LevelControllerActuationFrequency[]           @relation("levelControllerActuationFrequencyCreatedBy")
   levelControllerActuationFrequencyUpdatedBy           LevelControllerActuationFrequency[]           @relation("levelControllerActuationFrequencyUpdatedBy")
+  levelControllerControlledCharacterizationCreatedBy   LevelControllerControlledCharacterization[]   @relation("levelControllerControlledCharacterizationCreatedBy")
+  levelControllerControlledCharacterizationUpdatedBy   LevelControllerControlledCharacterization[]   @relation("levelControllerControlledCharacterizationUpdatedBy")
+  levelControllerControlDeviceInactivityCreatedBy      LevelControllerControlDeviceInactivity[]      @relation("levelControllerControlDeviceInactivityCreatedBy")
+  levelControllerControlDeviceInactivityUpdatedBy      LevelControllerControlDeviceInactivity[]      @relation("levelControllerControlDeviceInactivityUpdatedBy")
   levelControllerMonthHoursCreatedBy                   LevelControllerMonthHours[]                   @relation("levelControllerMonthHoursCreatedBy")
   levelControllerMonthHoursUpdatedBy                   LevelControllerMonthHours[]                   @relation("levelControllerMonthHoursUpdatedBy")
   levelControllerMonthMethaneEmissionOverrideCreatedBy LevelControllerMonthMethaneEmissionOverride[] @relation("levelControllerMonthMethaneEmissionOverrideCreatedBy")
   levelControllerMonthMethaneEmissionOverrideUpdatedBy LevelControllerMonthMethaneEmissionOverride[] @relation("levelControllerMonthMethaneEmissionOverrideUpdatedBy")
+
+  pneumaticPumpCreatedBy                             PneumaticPump[]                             @relation("pneumaticPumpCreatedBy")
+  pneumaticPumpUpdatedBy                             PneumaticPump[]                             @relation("pneumaticPumpUpdatedBy")
+  pneumaticPumpChangeCreatedBy                       PneumaticPumpChange[]                       @relation("pneumaticPumpChangeCreatedBy")
+  pneumaticPumpChangeUpdatedBy                       PneumaticPumpChange[]                       @relation("pneumaticPumpChangeUpdatedBy")
+  pneumaticPumpControlledCharacterizationCreatedBy   PneumaticPumpControlledCharacterization[]   @relation("pneumaticPumpControlledCharacterizationCreatedBy")
+  pneumaticPumpControlledCharacterizationUpdatedBy   PneumaticPumpControlledCharacterization[]   @relation("pneumaticPumpControlledCharacterizationUpdatedBy")
+  pneumaticPumpControlDeviceInactivityCreatedBy      PneumaticPumpControlDeviceInactivity[]      @relation("pneumaticPumpControlDeviceInactivityCreatedBy")
+  pneumaticPumpControlDeviceInactivityUpdatedBy      PneumaticPumpControlDeviceInactivity[]      @relation("pneumaticPumpControlDeviceInactivityUpdatedBy")
+  pneumaticPumpMonthHoursCreatedBy                   PneumaticPumpMonthHours[]                   @relation("pneumaticPumpMonthHoursCreatedBy")
+  pneumaticPumpMonthHoursUpdatedBy                   PneumaticPumpMonthHours[]                   @relation("pneumaticPumpMonthHoursUpdatedBy")
+  pneumaticPumpMonthMethaneEmissionOverrideCreatedBy PneumaticPumpMonthMethaneEmissionOverride[] @relation("pneumaticPumpMonthMethaneEmissionOverrideCreatedBy")
+  pneumaticPumpMonthMethaneEmissionOverrideUpdatedBy PneumaticPumpMonthMethaneEmissionOverride[] @relation("pneumaticPumpMonthMethaneEmissionOverrideUpdatedBy")
 
   deviceManufacturerCreatedBy DeviceManufacturer[] @relation("deviceManufacturerCreatedBy")
   deviceManufacturerUpdatedBy DeviceManufacturer[] @relation("deviceManufacturerUpdatedBy")
@@ -153,8 +174,9 @@ model Site {
   name                  String
   type                  SiteType
   description           String?
-  nonLevelControllers   NonLevelController[]
+  pneumaticInstruments  PneumaticInstrument[]
   levelControllers      LevelController[]
+  pneumaticPumps        PneumaticPump[]
   compressors           Compressor[]
   storageTanks          StorageTank[]
   monthMethaneEmissions MonthMethaneEmission[]
@@ -178,107 +200,147 @@ enum SiteType {
   @@map("site_type")
 }
 
-enum NonLevelControllerType {
+model DeviceManufacturer {
+  id                   String                @id @default(uuid()) @db.Uuid
+  manufacturer         String                @unique
+  pneumaticInstruments PneumaticInstrument[]
+  LevelControllers     LevelController[]
+  pneumaticPumps       PneumaticPump[]
+  createdBy            User                  @relation("deviceManufacturerCreatedBy", fields: [createdById], references: [id])
+  createdById          String                @map("created_by_id") @db.Uuid
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedBy            User                  @relation("deviceManufacturerUpdatedBy", fields: [updatedById], references: [id])
+  updatedById          String                @map("updated_by_id") @db.Uuid
+  updatedAt            DateTime              @updatedAt @map("updated_at")
+
+  @@map("device_manufacturer")
+}
+
+enum PneumaticInstrumentType {
   PressureController         @map("PRESSURE_CONTROLLER")
   TemperatureController      @map("TEMPERATURE_CONTROLLER")
   Switch                     @map("SWITCH")
   Transducer                 @map("TRANSDUCER")
   Positioner                 @map("POSITIONER")
-  PneumaticPump              @map("PNEUMATIC_PUMP")
   GenericPneumaticInstrument @map("GENERIC_PNEUMATIC_INSTRUMENT")
 
-  @@map("non_level_controller_type")
+  @@map("pneumatic_instrument_type")
 }
 
-model DeviceManufacturer {
-  id                  String               @id @default(uuid()) @db.Uuid
-  manufacturer        String               @unique
-  nonLevelControllers NonLevelController[]
-  LevelControllers    LevelController[]
-  createdBy           User                 @relation("deviceManufacturerCreatedBy", fields: [createdById], references: [id])
-  createdById         String               @map("created_by_id") @db.Uuid
-  createdAt           DateTime             @default(now()) @map("created_at")
-  updatedBy           User                 @relation("deviceManufacturerUpdatedBy", fields: [updatedById], references: [id])
-  updatedById         String               @map("updated_by_id") @db.Uuid
-  updatedAt           DateTime             @updatedAt @map("updated_at")
-
-  @@map("device_manufacturer")
-}
-
-model NonLevelController {
-  id                           String                                           @id @default(uuid()) @db.Uuid
-  site                         Site                                             @relation(fields: [siteId], references: [id])
-  siteId                       String                                           @map("site_id") @db.Uuid
-  type                         NonLevelControllerType
-  manufacturer                 DeviceManufacturer                               @relation(fields: [manufacturerId], references: [id])
-  manufacturerId               String                                           @map("manufacturer_id") @db.Uuid
+model PneumaticInstrument {
+  id                           String                                            @id @default(uuid()) @db.Uuid
+  site                         Site                                              @relation(fields: [siteId], references: [id])
+  siteId                       String                                            @map("site_id") @db.Uuid
+  type                         PneumaticInstrumentType
+  manufacturer                 DeviceManufacturer                                @relation(fields: [manufacturerId], references: [id])
+  manufacturerId               String                                            @map("manufacturer_id") @db.Uuid
   model                        String?
-  serialNumber                 String?                                          @map("serial_number")
-  startDate                    DateTime                                         @map("start_date") @db.Date
-  endDate                      DateTime?                                        @map("end_date") @db.Date
-  changes                      NonLevelControllerChange[]
-  monthHours                   NonLevelControllerMonthHours[]
-  monthMethaneEmissionOverride NonLevelControllerMonthMethaneEmissionOverride[]
-  createdBy                    User                                             @relation("nonLevelControllerCreatedBy", fields: [createdById], references: [id])
-  createdById                  String                                           @map("created_by_id") @db.Uuid
-  createdAt                    DateTime                                         @default(now()) @map("created_at")
-  updatedBy                    User                                             @relation("nonLevelControllerUpdatedBy", fields: [updatedById], references: [id])
-  updatedById                  String                                           @map("updated_by_id") @db.Uuid
-  updatedAt                    DateTime                                         @updatedAt @map("updated_at")
+  serialNumber                 String?                                           @map("serial_number")
+  startDate                    DateTime                                          @map("start_date") @db.Date
+  endDate                      DateTime?                                         @map("end_date") @db.Date
+  changes                      PneumaticInstrumentChange[]
+  controlledCharacterizations  PneumaticInstrumentControlledCharacterization[]
+  monthHours                   PneumaticInstrumentMonthHours[]
+  monthMethaneEmissionOverride PneumaticInstrumentMonthMethaneEmissionOverride[]
+  createdBy                    User                                              @relation("pneumaticInstrumentCreatedBy", fields: [createdById], references: [id])
+  createdById                  String                                            @map("created_by_id") @db.Uuid
+  createdAt                    DateTime                                          @default(now()) @map("created_at")
+  updatedBy                    User                                              @relation("pneumaticInstrumentUpdatedBy", fields: [updatedById], references: [id])
+  updatedById                  String                                            @map("updated_by_id") @db.Uuid
+  updatedAt                    DateTime                                          @updatedAt @map("updated_at")
 
-  @@map("non_level_controller")
+  @@map("pneumatic_instrument")
 }
 
-model NonLevelControllerChange {
-  id                   String             @id @default(uuid()) @db.Uuid
-  nonLevelController   NonLevelController @relation(fields: [nonLevelControllerId], references: [id])
-  nonLevelControllerId String             @map("non_level_controller_id") @db.Uuid
-  date                 DateTime           @db.Date
-  rate                 Float
-  createdBy            User               @relation("nonLevelControllerChangeCreatedBy", fields: [createdById], references: [id])
-  createdById          String             @map("created_by_id") @db.Uuid
-  createdAt            DateTime           @default(now()) @map("created_at")
-  updatedBy            User               @relation("nonLevelControllerChangeUpdatedBy", fields: [updatedById], references: [id])
-  updatedById          String             @map("updated_by_id") @db.Uuid
-  updatedAt            DateTime           @updatedAt @map("updated_at")
+model PneumaticInstrumentChange {
+  id                    String              @id @default(uuid()) @db.Uuid
+  pneumaticInstrument   PneumaticInstrument @relation(fields: [pneumaticInstrumentId], references: [id])
+  pneumaticInstrumentId String              @map("pneumatic_instrument_id") @db.Uuid
+  date                  DateTime            @db.Date
+  rate                  Float
+  createdBy             User                @relation("pneumaticInstrumentChangeCreatedBy", fields: [createdById], references: [id])
+  createdById           String              @map("created_by_id") @db.Uuid
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedBy             User                @relation("pneumaticInstrumentChangeUpdatedBy", fields: [updatedById], references: [id])
+  updatedById           String              @map("updated_by_id") @db.Uuid
+  updatedAt             DateTime            @updatedAt @map("updated_at")
 
-  @@unique([nonLevelControllerId, date])
-  @@map("non_level_controller_change")
+  @@unique([pneumaticInstrumentId, date])
+  @@map("pneumatic_instrument_change")
 }
 
-model NonLevelControllerMonthHours {
-  id                   String             @id @default(uuid()) @db.Uuid
-  nonLevelController   NonLevelController @relation(fields: [nonLevelControllerId], references: [id])
-  nonLevelControllerId String             @map("non_level_controller_id") @db.Uuid
-  month                DateTime           @db.Date
-  hoursOn              Float              @map("hours_on")
-  createdBy            User               @relation("nonLevelControllerMonthHoursCreatedBy", fields: [createdById], references: [id])
-  createdById          String             @map("created_by_id") @db.Uuid
-  createdAt            DateTime           @default(now()) @map("created_at")
-  updatedBy            User               @relation("nonLevelControllerMonthHoursUpdatedBy", fields: [updatedById], references: [id])
-  updatedById          String             @map("updated_by_id") @db.Uuid
-  updatedAt            DateTime           @updatedAt @map("updated_at")
+model PneumaticInstrumentControlledCharacterization {
+  id                      String                                       @id @default(uuid()) @db.Uuid
+  pneumaticInstrument     PneumaticInstrument                          @relation(fields: [pneumaticInstrumentId], references: [id])
+  pneumaticInstrumentId   String                                       @map("pneumatic_instrument_id") @db.Uuid
+  startDate               DateTime                                     @map("start_date") @db.Date
+  endDate                 DateTime?                                    @map("end_date") @db.Date
+  controlDevice           ControlDevice                                @map("control_device")
+  comment                 String?
+  controlDeviceInactivity PneumaticInstrumentControlDeviceInactivity[]
+  createdBy               User                                         @relation("pneumaticInstrumentControlledCharacterizationCreatedBy", fields: [createdById], references: [id])
+  createdById             String                                       @map("created_by_id") @db.Uuid
+  createdAt               DateTime                                     @default(now()) @map("created_at")
+  updatedBy               User                                         @relation("pneumaticInstrumentControlledCharacterizationUpdatedBy", fields: [updatedById], references: [id])
+  updatedById             String                                       @map("updated_by_id") @db.Uuid
+  updatedAt               DateTime                                     @updatedAt @map("updated_at")
 
-  @@unique([nonLevelControllerId, month])
-  @@map("non_level_controller_month_hours")
+  @@unique([pneumaticInstrumentId, startDate])
+  @@map("pneumatic_instrument_controlled_characterization")
 }
 
-model NonLevelControllerMonthMethaneEmissionOverride {
-  id                   String             @id @default(uuid()) @db.Uuid
-  nonLevelController   NonLevelController @relation(fields: [nonLevelControllerId], references: [id])
-  nonLevelControllerId String             @map("non_level_controller_id") @db.Uuid
-  month                DateTime           @db.Date
-  gasVolume            Float              @map("gas_volume")
-  comment              String?
-  createdBy            User               @relation("nonLevelControllerMonthMethaneEmissionOverrideCreatedBy", fields: [createdById], references: [id])
-  createdById          String             @map("created_by_id") @db.Uuid
-  createdAt            DateTime           @default(now()) @map("created_at")
-  updatedBy            User               @relation("nonLevelControllerMonthMethaneEmissionOverrideUpdatedBy", fields: [updatedById], references: [id])
-  updatedById          String             @map("updated_by_id") @db.Uuid
-  updatedAt            DateTime           @updatedAt @map("updated_at")
+model PneumaticInstrumentControlDeviceInactivity {
+  id                                              String                                        @id @default(uuid()) @db.Uuid
+  pneumaticInstrumentControlledCharacterization   PneumaticInstrumentControlledCharacterization @relation(fields: [pneumaticInstrumentControlledCharacterizationId], references: [id])
+  pneumaticInstrumentControlledCharacterizationId String                                        @map("pneumatic_instrument_controlled_characterization_id") @db.Uuid
+  startDate                                       DateTime                                      @map("start_date") @db.Date
+  endDate                                         DateTime?                                     @map("end_date") @db.Date
+  reason                                          ControlDeviceInactivityReason
+  comment                                         String?
+  createdBy                                       User                                          @relation("pneumaticInstrumentControlDeviceInactivityCreatedBy", fields: [createdById], references: [id])
+  createdById                                     String                                        @map("created_by_id") @db.Uuid
+  createdAt                                       DateTime                                      @default(now()) @map("created_at")
+  updatedBy                                       User                                          @relation("pneumaticInstrumentControlDeviceInactivityUpdatedBy", fields: [updatedById], references: [id])
+  updatedById                                     String                                        @map("updated_by_id") @db.Uuid
+  updatedAt                                       DateTime                                      @updatedAt @map("updated_at")
 
-  @@unique([nonLevelControllerId, month])
-  @@map("non_level_controller_month_methane_emission_override")
+  @@unique([pneumaticInstrumentControlledCharacterizationId, startDate])
+  @@map("pneumatic_instrument_control_device_inactivity")
+}
+
+model PneumaticInstrumentMonthHours {
+  id                    String              @id @default(uuid()) @db.Uuid
+  pneumaticInstrument   PneumaticInstrument @relation(fields: [pneumaticInstrumentId], references: [id])
+  pneumaticInstrumentId String              @map("pneumatic_instrument_id") @db.Uuid
+  month                 DateTime            @db.Date
+  hoursOn               Float               @map("hours_on")
+  createdBy             User                @relation("pneumaticInstrumentMonthHoursCreatedBy", fields: [createdById], references: [id])
+  createdById           String              @map("created_by_id") @db.Uuid
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedBy             User                @relation("pneumaticInstrumentMonthHoursUpdatedBy", fields: [updatedById], references: [id])
+  updatedById           String              @map("updated_by_id") @db.Uuid
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+
+  @@unique([pneumaticInstrumentId, month])
+  @@map("pneumatic_instrument_month_hours")
+}
+
+model PneumaticInstrumentMonthMethaneEmissionOverride {
+  id                    String              @id @default(uuid()) @db.Uuid
+  pneumaticInstrument   PneumaticInstrument @relation(fields: [pneumaticInstrumentId], references: [id])
+  pneumaticInstrumentId String              @map("pneumatic_instrument_id") @db.Uuid
+  month                 DateTime            @db.Date
+  gasVolume             Float               @map("gas_volume")
+  comment               String?
+  createdBy             User                @relation("pneumaticInstrumentMonthMethaneEmissionOverrideCreatedBy", fields: [createdById], references: [id])
+  createdById           String              @map("created_by_id") @db.Uuid
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedBy             User                @relation("pneumaticInstrumentMonthMethaneEmissionOverrideUpdatedBy", fields: [updatedById], references: [id])
+  updatedById           String              @map("updated_by_id") @db.Uuid
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+
+  @@unique([pneumaticInstrumentId, month])
+  @@map("pneumatic_instrument_month_methane_emission_override")
 }
 
 model LevelController {
@@ -293,6 +355,7 @@ model LevelController {
   endDate                      DateTime?                                     @map("end_date") @db.Date
   changes                      LevelControllerChange[]
   actuationFrequencies         LevelControllerActuationFrequency[]
+  controlledCharacterizations  LevelControllerControlledCharacterization[]
   monthHours                   LevelControllerMonthHours[]
   monthMethaneEmissionOverride LevelControllerMonthMethaneEmissionOverride[]
   createdBy                    User                                          @relation("levelControllerCreatedBy", fields: [createdById], references: [id])
@@ -339,6 +402,45 @@ model LevelControllerActuationFrequency {
   @@map("level_controller_actuation_frequency")
 }
 
+model LevelControllerControlledCharacterization {
+  id                      String                                   @id @default(uuid()) @db.Uuid
+  levelController         LevelController                          @relation(fields: [levelControllerId], references: [id])
+  levelControllerId       String                                   @map("level_controller_id") @db.Uuid
+  startDate               DateTime                                 @map("start_date") @db.Date
+  endDate                 DateTime?                                @map("end_date") @db.Date
+  controlDevice           ControlDevice                            @map("control_device")
+  comment                 String?
+  controlDeviceInactivity LevelControllerControlDeviceInactivity[]
+  createdBy               User                                     @relation("levelControllerControlledCharacterizationCreatedBy", fields: [createdById], references: [id])
+  createdById             String                                   @map("created_by_id") @db.Uuid
+  createdAt               DateTime                                 @default(now()) @map("created_at")
+  updatedBy               User                                     @relation("levelControllerControlledCharacterizationUpdatedBy", fields: [updatedById], references: [id])
+  updatedById             String                                   @map("updated_by_id") @db.Uuid
+  updatedAt               DateTime                                 @updatedAt @map("updated_at")
+
+  @@unique([levelControllerId, startDate])
+  @@map("level_controller_controlled_characterization")
+}
+
+model LevelControllerControlDeviceInactivity {
+  id                                          String                                    @id @default(uuid()) @db.Uuid
+  levelControllerControlledCharacterization   LevelControllerControlledCharacterization @relation(fields: [levelControllerControlledCharacterizationId], references: [id])
+  levelControllerControlledCharacterizationId String                                    @map("level_controller_controlled_characterization_id") @db.Uuid
+  startDate                                   DateTime                                  @map("start_date") @db.Date
+  endDate                                     DateTime?                                 @map("end_date") @db.Date
+  reason                                      ControlDeviceInactivityReason
+  comment                                     String?
+  createdBy                                   User                                      @relation("levelControllerControlDeviceInactivityCreatedBy", fields: [createdById], references: [id])
+  createdById                                 String                                    @map("created_by_id") @db.Uuid
+  createdAt                                   DateTime                                  @default(now()) @map("created_at")
+  updatedBy                                   User                                      @relation("levelControllerControlDeviceInactivityUpdatedBy", fields: [updatedById], references: [id])
+  updatedById                                 String                                    @map("updated_by_id") @db.Uuid
+  updatedAt                                   DateTime                                  @updatedAt @map("updated_at")
+
+  @@unique([levelControllerControlledCharacterizationId, startDate])
+  @@map("level_controller_control_device_inactivity")
+}
+
 model LevelControllerMonthHours {
   id                String          @id @default(uuid()) @db.Uuid
   levelController   LevelController @relation(fields: [levelControllerId], references: [id])
@@ -374,6 +476,121 @@ model LevelControllerMonthMethaneEmissionOverride {
   @@map("level_controller_month_methane_emission_override")
 }
 
+model PneumaticPump {
+  id                           String                                      @id @default(uuid()) @db.Uuid
+  site                         Site                                        @relation(fields: [siteId], references: [id])
+  siteId                       String                                      @map("site_id") @db.Uuid
+  manufacturer                 DeviceManufacturer                          @relation(fields: [manufacturerId], references: [id])
+  manufacturerId               String                                      @map("manufacturer_id") @db.Uuid
+  model                        String?
+  serialNumber                 String?                                     @map("serial_number")
+  startDate                    DateTime                                    @map("start_date") @db.Date
+  endDate                      DateTime?                                   @map("end_date") @db.Date
+  changes                      PneumaticPumpChange[]
+  controlledCharacterizations  PneumaticPumpControlledCharacterization[]
+  monthHours                   PneumaticPumpMonthHours[]
+  monthMethaneEmissionOverride PneumaticPumpMonthMethaneEmissionOverride[]
+  createdBy                    User                                        @relation("pneumaticPumpCreatedBy", fields: [createdById], references: [id])
+  createdById                  String                                      @map("created_by_id") @db.Uuid
+  createdAt                    DateTime                                    @default(now()) @map("created_at")
+  updatedBy                    User                                        @relation("pneumaticPumpUpdatedBy", fields: [updatedById], references: [id])
+  updatedById                  String                                      @map("updated_by_id") @db.Uuid
+  updatedAt                    DateTime                                    @updatedAt @map("updated_at")
+
+  @@map("pneumatic_pump")
+}
+
+model PneumaticPumpChange {
+  id              String        @id @default(uuid()) @db.Uuid
+  pneumaticPump   PneumaticPump @relation(fields: [pneumaticPumpId], references: [id])
+  pneumaticPumpId String        @map("pneumatic_pump_id") @db.Uuid
+  date            DateTime      @db.Date
+  rate            Float
+  createdBy       User          @relation("pneumaticPumpChangeCreatedBy", fields: [createdById], references: [id])
+  createdById     String        @map("created_by_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedBy       User          @relation("pneumaticPumpChangeUpdatedBy", fields: [updatedById], references: [id])
+  updatedById     String        @map("updated_by_id") @db.Uuid
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  @@unique([pneumaticPumpId, date])
+  @@map("pneumatic_pump_change")
+}
+
+model PneumaticPumpControlledCharacterization {
+  id                      String                                 @id @default(uuid()) @db.Uuid
+  pneumaticPump           PneumaticPump                          @relation(fields: [pneumaticPumpId], references: [id])
+  pneumaticPumpId         String                                 @map("pneumatic_pump_id") @db.Uuid
+  startDate               DateTime                               @map("start_date") @db.Date
+  endDate                 DateTime?                              @map("end_date") @db.Date
+  controlDevice           ControlDevice                          @map("control_device")
+  comment                 String?
+  controlDeviceInactivity PneumaticPumpControlDeviceInactivity[]
+  createdBy               User                                   @relation("pneumaticPumpControlledCharacterizationCreatedBy", fields: [createdById], references: [id])
+  createdById             String                                 @map("created_by_id") @db.Uuid
+  createdAt               DateTime                               @default(now()) @map("created_at")
+  updatedBy               User                                   @relation("pneumaticPumpControlledCharacterizationUpdatedBy", fields: [updatedById], references: [id])
+  updatedById             String                                 @map("updated_by_id") @db.Uuid
+  updatedAt               DateTime                               @updatedAt @map("updated_at")
+
+  @@unique([pneumaticPumpId, startDate])
+  @@map("pneumatic_pump_controlled_characterization")
+}
+
+model PneumaticPumpControlDeviceInactivity {
+  id                                        String                                  @id @default(uuid()) @db.Uuid
+  pneumaticPumpControlledCharacterization   PneumaticPumpControlledCharacterization @relation(fields: [pneumaticPumpControlledCharacterizationId], references: [id])
+  pneumaticPumpControlledCharacterizationId String                                  @map("pneumatic_pump_controlled_characterization_id") @db.Uuid
+  startDate                                 DateTime                                @map("start_date") @db.Date
+  endDate                                   DateTime?                               @map("end_date") @db.Date
+  reason                                    ControlDeviceInactivityReason
+  comment                                   String?
+  createdBy                                 User                                    @relation("pneumaticPumpControlDeviceInactivityCreatedBy", fields: [createdById], references: [id])
+  createdById                               String                                  @map("created_by_id") @db.Uuid
+  createdAt                                 DateTime                                @default(now()) @map("created_at")
+  updatedBy                                 User                                    @relation("pneumaticPumpControlDeviceInactivityUpdatedBy", fields: [updatedById], references: [id])
+  updatedById                               String                                  @map("updated_by_id") @db.Uuid
+  updatedAt                                 DateTime                                @updatedAt @map("updated_at")
+
+  @@unique([pneumaticPumpControlledCharacterizationId, startDate])
+  @@map("pneumatic_pump_control_device_inactivity")
+}
+
+model PneumaticPumpMonthHours {
+  id              String        @id @default(uuid()) @db.Uuid
+  pneumaticPump   PneumaticPump @relation(fields: [pneumaticPumpId], references: [id])
+  pneumaticPumpId String        @map("pneumatic_pump_id") @db.Uuid
+  month           DateTime      @db.Date
+  hoursOn         Float         @map("hours_on")
+  createdBy       User          @relation("pneumaticPumpMonthHoursCreatedBy", fields: [createdById], references: [id])
+  createdById     String        @map("created_by_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedBy       User          @relation("pneumaticPumpMonthHoursUpdatedBy", fields: [updatedById], references: [id])
+  updatedById     String        @map("updated_by_id") @db.Uuid
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  @@unique([pneumaticPumpId, month])
+  @@map("pneumatic_pump_month_hours")
+}
+
+model PneumaticPumpMonthMethaneEmissionOverride {
+  id              String        @id @default(uuid()) @db.Uuid
+  pneumaticPump   PneumaticPump @relation(fields: [pneumaticPumpId], references: [id])
+  pneumaticPumpId String        @map("pneumatic_pump_id") @db.Uuid
+  month           DateTime      @db.Date
+  gasVolume       Float         @map("gas_volume")
+  comment         String?
+  createdBy       User          @relation("pneumaticPumpMonthMethaneEmissionOverrideCreatedBy", fields: [createdById], references: [id])
+  createdById     String        @map("created_by_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedBy       User          @relation("pneumaticPumpMonthMethaneEmissionOverrideUpdatedBy", fields: [updatedById], references: [id])
+  updatedById     String        @map("updated_by_id") @db.Uuid
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  @@unique([pneumaticPumpId, month])
+  @@map("pneumatic_pump_month_methane_emission_override")
+}
+
 enum CompressorType {
   Reciprocating @map("RECIPROCATING")
   Centrifugal   @map("CENTRIFUGAL")
@@ -381,13 +598,6 @@ enum CompressorType {
   Scroll        @map("SCROLL")
 
   @@map("compressor_type")
-}
-
-enum ControlledCharacterization {
-  Controlled   @map("CONTROLLED")
-  Uncontrolled @map("UNCONTROLLED")
-
-  @@map("controlled_characterization")
 }
 
 enum ControlDevice {
@@ -866,11 +1076,12 @@ enum MethaneEmissionSource {
 }
 
 enum MethaneEmissionSourceTable {
-  NonLevelController @map("non_level_controller")
-  LevelController    @map("level_controller")
-  CompressorSeal     @map("compressor_seal")
-  CompressorBlowdown @map("compressor_blowdown")
-  StorageTank        @map("storage_tank")
+  PneumaticInstrument @map("pneumatic_instrument")
+  LevelController     @map("level_controller")
+  PneumaticPump       @map("pneumatic_pump")
+  CompressorSeal      @map("compressor_seal")
+  CompressorBlowdown  @map("compressor_blowdown")
+  StorageTank         @map("storage_tank")
 
   @@map("methane_emission_source_table")
 }

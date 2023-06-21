@@ -1,13 +1,13 @@
 use super::{
     super::super::user::User, level_controller::LevelController,
-    non_level_controller::NonLevelController,
+    pneumatic_instrument::PneumaticInstrument,
 };
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         routine::pneumatic_device::{
             level_controller::LevelControllersByManufacturerLoader,
-            non_level_controller::NonLevelControllersByManufacturerLoader,
+            pneumatic_instrument::PneumaticInstrumentsByManufacturerLoader,
         },
         user::UserLoader,
     },
@@ -44,13 +44,13 @@ impl DeviceManufacturer {
         updated_by
     }
 
-    async fn non_level_controllers(
+    async fn pneumatic_instruments(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelController>, Error> {
-        let loader = ctx.get_loader::<DataLoader<NonLevelControllersByManufacturerLoader>>();
-        let non_level_controllers = loader.load_one(self.id).await?;
-        let result = non_level_controllers.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticInstrument>, Error> {
+        let loader = ctx.get_loader::<DataLoader<PneumaticInstrumentsByManufacturerLoader>>();
+        let pneumatic_instruments = loader.load_one(self.id).await?;
+        let result = pneumatic_instruments.unwrap_or(vec![]);
 
         Ok(result)
     }

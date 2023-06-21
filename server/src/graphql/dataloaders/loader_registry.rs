@@ -85,19 +85,21 @@ use super::{
                 UpdatedLevelControllerMonthMethaneEmissionOverridesLoader,
                 UpdatedLevelControllersLoader,
             },
-            non_level_controller::{
-                CreatedNonLevelControllerChangesLoader, CreatedNonLevelControllerMonthHoursLoader,
-                CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
-                CreatedNonLevelControllersLoader, NonLevelControllerChangeLoader,
-                NonLevelControllerChangesByNonLevelControllerLoader, NonLevelControllerLoader,
-                NonLevelControllerMonthHoursByNonLevelControllerLoader,
-                NonLevelControllerMonthHoursLoader,
-                NonLevelControllerMonthMethaneEmissionOverrideLoader,
-                NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
-                NonLevelControllersByManufacturerLoader, SiteNonLevelControllersLoader,
-                UpdatedNonLevelControllerChangesLoader, UpdatedNonLevelControllerMonthHoursLoader,
-                UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader,
-                UpdatedNonLevelControllersLoader,
+            pneumatic_instrument::{
+                CreatedPneumaticInstrumentChangesLoader,
+                CreatedPneumaticInstrumentMonthHoursLoader,
+                CreatedPneumaticInstrumentMonthMethaneEmissionOverridesLoader,
+                CreatedPneumaticInstrumentsLoader, PneumaticInstrumentChangeLoader,
+                PneumaticInstrumentChangesByPneumaticInstrumentLoader, PneumaticInstrumentLoader,
+                PneumaticInstrumentMonthHoursByPneumaticInstrumentLoader,
+                PneumaticInstrumentMonthHoursLoader,
+                PneumaticInstrumentMonthMethaneEmissionOverrideLoader,
+                PneumaticInstrumentMonthMethaneEmissionOverridesByPneumaticInstrumentLoader,
+                PneumaticInstrumentsByManufacturerLoader, SitePneumaticInstrumentsLoader,
+                UpdatedPneumaticInstrumentChangesLoader,
+                UpdatedPneumaticInstrumentMonthHoursLoader,
+                UpdatedPneumaticInstrumentMonthMethaneEmissionOverridesLoader,
+                UpdatedPneumaticInstrumentsLoader,
             },
             CreatedDeviceManufacturersLoader, DeviceManufacturerLoader,
             UpdatedDeviceManufacturersLoader,
@@ -164,23 +166,23 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Non-Level Controller
-    let non_level_controller_by_id_loader =
-        DataLoader::new(NonLevelControllerLoader::new(pool.clone()), tokio::spawn);
-    let non_level_controllers_by_site_id_loader = DataLoader::new(
-        SiteNonLevelControllersLoader::new(pool.clone()),
+    // Pneumatic Instrument
+    let pneumatic_instrument_by_id_loader =
+        DataLoader::new(PneumaticInstrumentLoader::new(pool.clone()), tokio::spawn);
+    let pneumatic_instruments_by_site_id_loader = DataLoader::new(
+        SitePneumaticInstrumentsLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let non_level_controllers_by_manufacturer_id_loader = DataLoader::new(
-        NonLevelControllersByManufacturerLoader::new(pool.clone()),
+    let pneumatic_instruments_by_manufacturer_id_loader = DataLoader::new(
+        PneumaticInstrumentsByManufacturerLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let non_level_controllers_by_creator_id_loader = DataLoader::new(
-        CreatedNonLevelControllersLoader::new(pool.clone()),
+    let pneumatic_instruments_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticInstrumentsLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let non_level_controllers_by_updater_id_loader = DataLoader::new(
-        UpdatedNonLevelControllersLoader::new(pool.clone()),
+    let pneumatic_instruments_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticInstrumentsLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -196,62 +198,62 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Non-Level Controller Change
-    let non_level_controller_change_by_id_loader = DataLoader::new(
-        NonLevelControllerChangeLoader::new(pool.clone()),
+    // Pneumatic Instrument Change
+    let pneumatic_instrument_change_by_id_loader = DataLoader::new(
+        PneumaticInstrumentChangeLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let non_level_controller_changes_by_non_level_controller_id_loader = DataLoader::new(
-        NonLevelControllerChangesByNonLevelControllerLoader::new(pool.clone()),
+    let pneumatic_instrument_changes_by_pneumatic_instrument_id_loader = DataLoader::new(
+        PneumaticInstrumentChangesByPneumaticInstrumentLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let non_level_controller_changes_by_creator_id_loader = DataLoader::new(
-        CreatedNonLevelControllerChangesLoader::new(pool.clone()),
+    let pneumatic_instrument_changes_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticInstrumentChangesLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let non_level_controller_changes_by_updater_id_loader = DataLoader::new(
-        UpdatedNonLevelControllerChangesLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-
-    // Non-Level Controller Month Hours
-    let non_level_controller_month_hours_by_id_loader = DataLoader::new(
-        NonLevelControllerMonthHoursLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let non_level_controller_month_hours_by_non_level_controller_id_loader = DataLoader::new(
-        NonLevelControllerMonthHoursByNonLevelControllerLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let non_level_controller_month_hours_by_creator_id_loader = DataLoader::new(
-        CreatedNonLevelControllerMonthHoursLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let non_level_controller_month_hours_by_updater_id_loader = DataLoader::new(
-        UpdatedNonLevelControllerMonthHoursLoader::new(pool.clone()),
+    let pneumatic_instrument_changes_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticInstrumentChangesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
-    // Non-Level Controller Month Methane Emission Override
-    let non_level_controller_month_methane_emission_override_by_id_loader = DataLoader::new(
-        NonLevelControllerMonthMethaneEmissionOverrideLoader::new(pool.clone()),
+    // Pneumatic Instrument Month Hours
+    let pneumatic_instrument_month_hours_by_id_loader = DataLoader::new(
+        PneumaticInstrumentMonthHoursLoader::new(pool.clone()),
         tokio::spawn,
     );
-    let non_level_controller_month_methane_emission_overrides_by_non_level_controller_id_loader =
+    let pneumatic_instrument_month_hours_by_pneumatic_instrument_id_loader = DataLoader::new(
+        PneumaticInstrumentMonthHoursByPneumaticInstrumentLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_instrument_month_hours_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticInstrumentMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_instrument_month_hours_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticInstrumentMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Pneumatic Instrument Month Methane Emission Override
+    let pneumatic_instrument_month_methane_emission_override_by_id_loader = DataLoader::new(
+        PneumaticInstrumentMonthMethaneEmissionOverrideLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_instrument_month_methane_emission_overrides_by_pneumatic_instrument_id_loader =
         DataLoader::new(
-            NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader::new(
+            PneumaticInstrumentMonthMethaneEmissionOverridesByPneumaticInstrumentLoader::new(
                 pool.clone(),
             ),
             tokio::spawn,
         );
-    let non_level_controller_month_methane_emission_overrides_by_creator_id_loader =
+    let pneumatic_instrument_month_methane_emission_overrides_by_creator_id_loader =
         DataLoader::new(
-            CreatedNonLevelControllerMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+            CreatedPneumaticInstrumentMonthMethaneEmissionOverridesLoader::new(pool.clone()),
             tokio::spawn,
         );
-    let non_level_controller_month_methane_emission_overrides_by_updater_id_loader =
+    let pneumatic_instrument_month_methane_emission_overrides_by_updater_id_loader =
         DataLoader::new(
-            UpdatedNonLevelControllerMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+            UpdatedPneumaticInstrumentMonthMethaneEmissionOverridesLoader::new(pool.clone()),
             tokio::spawn,
         );
 
@@ -720,32 +722,32 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(survey_equipment_by_creator_id_loader);
     loaders.insert(survey_equipment_by_updater_id_loader);
 
-    loaders.insert(non_level_controller_by_id_loader);
-    loaders.insert(non_level_controllers_by_creator_id_loader);
-    loaders.insert(non_level_controllers_by_updater_id_loader);
-    loaders.insert(non_level_controllers_by_site_id_loader);
-    loaders.insert(non_level_controllers_by_manufacturer_id_loader);
+    loaders.insert(pneumatic_instrument_by_id_loader);
+    loaders.insert(pneumatic_instruments_by_creator_id_loader);
+    loaders.insert(pneumatic_instruments_by_updater_id_loader);
+    loaders.insert(pneumatic_instruments_by_site_id_loader);
+    loaders.insert(pneumatic_instruments_by_manufacturer_id_loader);
 
     loaders.insert(device_manufacturer_by_id_loader);
     loaders.insert(device_manufacturers_by_creator_id_loader);
     loaders.insert(device_manufacturers_by_updater_id_loader);
 
-    loaders.insert(non_level_controller_change_by_id_loader);
-    loaders.insert(non_level_controller_changes_by_non_level_controller_id_loader);
-    loaders.insert(non_level_controller_changes_by_creator_id_loader);
-    loaders.insert(non_level_controller_changes_by_updater_id_loader);
+    loaders.insert(pneumatic_instrument_change_by_id_loader);
+    loaders.insert(pneumatic_instrument_changes_by_pneumatic_instrument_id_loader);
+    loaders.insert(pneumatic_instrument_changes_by_creator_id_loader);
+    loaders.insert(pneumatic_instrument_changes_by_updater_id_loader);
 
-    loaders.insert(non_level_controller_month_hours_by_id_loader);
-    loaders.insert(non_level_controller_month_hours_by_non_level_controller_id_loader);
-    loaders.insert(non_level_controller_month_hours_by_creator_id_loader);
-    loaders.insert(non_level_controller_month_hours_by_updater_id_loader);
+    loaders.insert(pneumatic_instrument_month_hours_by_id_loader);
+    loaders.insert(pneumatic_instrument_month_hours_by_pneumatic_instrument_id_loader);
+    loaders.insert(pneumatic_instrument_month_hours_by_creator_id_loader);
+    loaders.insert(pneumatic_instrument_month_hours_by_updater_id_loader);
 
-    loaders.insert(non_level_controller_month_methane_emission_override_by_id_loader);
+    loaders.insert(pneumatic_instrument_month_methane_emission_override_by_id_loader);
     loaders.insert(
-        non_level_controller_month_methane_emission_overrides_by_non_level_controller_id_loader,
+        pneumatic_instrument_month_methane_emission_overrides_by_pneumatic_instrument_id_loader,
     );
-    loaders.insert(non_level_controller_month_methane_emission_overrides_by_creator_id_loader);
-    loaders.insert(non_level_controller_month_methane_emission_overrides_by_updater_id_loader);
+    loaders.insert(pneumatic_instrument_month_methane_emission_overrides_by_creator_id_loader);
+    loaders.insert(pneumatic_instrument_month_methane_emission_overrides_by_updater_id_loader);
 
     loaders.insert(level_controller_by_id_loader);
     loaders.insert(level_controllers_by_creator_id_loader);

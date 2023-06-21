@@ -3,9 +3,9 @@ use super::{
     routine::{
         compressor_seal::Compressor,
         defined_vent_gas::storage_tank::StorageTank,
-        pneumatic_device::non_level_controller::{
-            NonLevelController, NonLevelControllerChange, NonLevelControllerMonthHours,
-            NonLevelControllerMonthMethaneEmissionOverride,
+        pneumatic_device::pneumatic_instrument::{
+            PneumaticInstrument, PneumaticInstrumentChange, PneumaticInstrumentMonthHours,
+            PneumaticInstrumentMonthMethaneEmissionOverride,
         },
     },
 };
@@ -15,13 +15,13 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Debug)]
 pub struct GetObject {
-    pub non_level_controllers: Option<Vec<NonLevelController>>,
+    pub pneumatic_instruments: Option<Vec<PneumaticInstrument>>,
     pub compressors: Option<Vec<Compressor>>,
     pub storage_tanks: Option<Vec<StorageTank>>,
-    pub non_level_controller_changes: Option<Vec<NonLevelControllerChange>>,
-    pub non_level_controller_month_hours: Option<Vec<NonLevelControllerMonthHours>>,
-    pub non_level_controller_month_methane_emission_overrides:
-        Option<Vec<NonLevelControllerMonthMethaneEmissionOverride>>,
+    pub pneumatic_instrument_changes: Option<Vec<PneumaticInstrumentChange>>,
+    pub pneumatic_instrument_month_hours: Option<Vec<PneumaticInstrumentMonthHours>>,
+    pub pneumatic_instrument_month_methane_emission_overrides:
+        Option<Vec<PneumaticInstrumentMonthMethaneEmissionOverride>>,
     pub month_methane_emissions: Option<Vec<MonthMethaneEmission>>,
 }
 

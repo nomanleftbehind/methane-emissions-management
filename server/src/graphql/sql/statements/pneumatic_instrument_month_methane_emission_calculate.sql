@@ -7,7 +7,7 @@ WITH allocate_month as (
 SELECT
 	nlcmme.facility_id,
 	nlcmme.site_id as "site_id!",
-	'non_level_controller'::methane_emission_source_table as "source_table!: _",
+	'pneumatic_instrument'::methane_emission_source_table as "source_table!: _",
 	nlcmme.id as "source_table_id!",
 	'ROUTINE'::methane_emission_category as "category!: _",
 	'PNEUMATIC_DEVICE'::methane_emission_source as "source!: _",
@@ -105,29 +105,29 @@ FROM
 															nlc.site_id,
 															am.month_beginning
 														FROM
-															non_level_controller nlc
+															pneumatic_instrument nlc
 															INNER JOIN allocate_month am ON am.month_beginning BETWEEN DATE_TRUNC('month', nlc.start_date)
 															AND COALESCE(nlc.end_date, CURRENT_DATE)
 															AND (nlc.id, am.month_beginning) NOT IN (
 																SELECT
-																	nlcmmeo.non_level_controller_id,
+																	nlcmmeo.pneumatic_instrument_id,
 																	nlcmmeo.month
 																FROM
-																	non_level_controller_month_methane_emission_override nlcmmeo
+																	pneumatic_instrument_month_methane_emission_override nlcmmeo
 																	INNER JOIN allocate_month am ON am.month_beginning = nlcmmeo.month
 															)
 													) nlc
-													LEFT OUTER JOIN non_level_controller_month_hours cmh ON cmh.non_level_controller_id = nlc.id
+													LEFT OUTER JOIN pneumatic_instrument_month_hours cmh ON cmh.pneumatic_instrument_id = nlc.id
 													AND cmh.month = nlc.month_beginning
 													LEFT OUTER JOIN (
 														SELECT
-															non_level_controller_id,
+															pneumatic_instrument_id,
 															DATE_TRUNC('month', date) as month_join_beginning,
 															DATE_TRUNC(
 																'month',
 																COALESCE(
 																	LEAD(date) OVER (
-																		PARTITION BY non_level_controller_id
+																		PARTITION BY pneumatic_instrument_id
 																		ORDER BY
 																			date
 																	) - INTERVAL '1 day',
@@ -137,7 +137,7 @@ FROM
 															-- If first device change, from_date has to be first of the month because there is no carryover from previous change.
 															CASE
 																WHEN ROW_NUMBER() OVER (
-																	PARTITION BY non_level_controller_id
+																	PARTITION BY pneumatic_instrument_id
 																	ORDER BY
 																		date
 																) = 1 THEN DATE_TRUNC('month', date)::date
@@ -145,7 +145,7 @@ FROM
 															END as from_date,
 															COALESCE(
 																LEAD(date) OVER (
-																	PARTITION BY non_level_controller_id
+																	PARTITION BY pneumatic_instrument_id
 																	ORDER BY
 																		date
 																) - INTERVAL '1 day',
@@ -153,8 +153,8 @@ FROM
 															) as to_date,
 															rate
 														FROM
-															non_level_controller_change
-													) nlcc ON nlcc.non_level_controller_id = nlc.id
+															pneumatic_instrument_change
+													) nlcc ON nlcc.pneumatic_instrument_id = nlc.id
 													AND nlc.month_beginning BETWEEN nlcc.month_join_beginning
 													AND nlcc.month_join_end
 											) nlcmme
@@ -174,8 +174,8 @@ FROM
 									nlcmmeo.month + INTERVAL '1 month - 1 day' as to_date,
 									nlcmmeo.gas_volume
 								FROM
-									non_level_controller_month_methane_emission_override nlcmmeo
-									INNER JOIN non_level_controller nlc ON nlc.id = nlcmmeo.non_level_controller_id
+									pneumatic_instrument_month_methane_emission_override nlcmmeo
+									INNER JOIN pneumatic_instrument nlc ON nlc.id = nlcmmeo.pneumatic_instrument_id
 									AND nlcmmeo.month BETWEEN DATE_TRUNC('month', nlc.start_date)
 									AND COALESCE(nlc.end_date, CURRENT_DATE)
 									AND nlcmmeo.month IN (

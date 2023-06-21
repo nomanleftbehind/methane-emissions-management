@@ -3,18 +3,18 @@ use super::{
         super::super::{month_methane_emission::MonthMethaneEmission, site::Site, user::User},
         DeviceManufacturer,
     },
-    NonLevelControllerChange, NonLevelControllerMonthHours,
-    NonLevelControllerMonthMethaneEmissionOverride,
+    PneumaticInstrumentChange, PneumaticInstrumentMonthHours,
+    PneumaticInstrumentMonthMethaneEmissionOverride,
 };
 use crate::graphql::{
     context::ContextExt,
     dataloaders::{
         month_methane_emission::MonthMethaneEmissionsBySourceTableLoader,
         routine::pneumatic_device::{
-            non_level_controller::{
-                NonLevelControllerChangesByNonLevelControllerLoader,
-                NonLevelControllerMonthHoursByNonLevelControllerLoader,
-                NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
+            pneumatic_instrument::{
+                PneumaticInstrumentChangesByPneumaticInstrumentLoader,
+                PneumaticInstrumentMonthHoursByPneumaticInstrumentLoader,
+                PneumaticInstrumentMonthMethaneEmissionOverridesByPneumaticInstrumentLoader,
             },
             DeviceManufacturerLoader,
         },
@@ -24,17 +24,17 @@ use crate::graphql::{
 };
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, Error, SimpleObject};
 use chrono::{NaiveDate, NaiveDateTime};
-use common::NonLevelControllerType;
+use common::PneumaticInstrumentType;
 use sqlx::FromRow;
 use uuid::Uuid;
 
 /// Pneumatic pump or any pneumatic instrument excluding level controller, as defined in AER Directive 060 [`Appendix 2`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=98).
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct NonLevelController {
+pub struct PneumaticInstrument {
     pub id: Uuid,
     pub site_id: Uuid,
-    pub r#type: NonLevelControllerType,
+    pub r#type: PneumaticInstrumentType,
     pub manufacturer_id: Uuid,
     pub model: Option<String>,
     pub serial_number: Option<String>,
@@ -47,7 +47,7 @@ pub struct NonLevelController {
 }
 
 #[ComplexObject]
-impl NonLevelController {
+impl PneumaticInstrument {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;
@@ -76,41 +76,41 @@ impl NonLevelController {
         manufacturer
     }
 
-    async fn non_level_controller_changes(
+    async fn pneumatic_instrument_changes(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerChange>, Error> {
+    ) -> Result<Vec<PneumaticInstrumentChange>, Error> {
         let loader =
-            ctx.get_loader::<DataLoader<NonLevelControllerChangesByNonLevelControllerLoader>>();
-        let non_level_controller_changes = loader.load_one(self.id).await?;
-        let result = non_level_controller_changes.unwrap_or(vec![]);
+            ctx.get_loader::<DataLoader<PneumaticInstrumentChangesByPneumaticInstrumentLoader>>();
+        let pneumatic_instrument_changes = loader.load_one(self.id).await?;
+        let result = pneumatic_instrument_changes.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn non_level_controller_month_hours(
+    async fn pneumatic_instrument_month_hours(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerMonthHours>, Error> {
-        let loader =
-            ctx.get_loader::<DataLoader<NonLevelControllerMonthHoursByNonLevelControllerLoader>>();
-        let non_level_controller_month_hours = loader.load_one(self.id).await?;
-        let result = non_level_controller_month_hours.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticInstrumentMonthHours>, Error> {
+        let loader = ctx
+            .get_loader::<DataLoader<PneumaticInstrumentMonthHoursByPneumaticInstrumentLoader>>();
+        let pneumatic_instrument_month_hours = loader.load_one(self.id).await?;
+        let result = pneumatic_instrument_month_hours.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn non_level_controller_month_methane_emission_overrides(
+    async fn pneumatic_instrument_month_methane_emission_overrides(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<NonLevelControllerMonthMethaneEmissionOverride>, Error> {
+    ) -> Result<Vec<PneumaticInstrumentMonthMethaneEmissionOverride>, Error> {
         let loader =
             ctx.get_loader::<DataLoader<
-                NonLevelControllerMonthMethaneEmissionOverridesByNonLevelControllerLoader,
+                PneumaticInstrumentMonthMethaneEmissionOverridesByPneumaticInstrumentLoader,
             >>();
-        let non_level_controller_month_methane_emission_overrides =
+        let pneumatic_instrument_month_methane_emission_overrides =
             loader.load_one(self.id).await?;
-        let result = non_level_controller_month_methane_emission_overrides.unwrap_or(vec![]);
+        let result = pneumatic_instrument_month_methane_emission_overrides.unwrap_or(vec![]);
 
         Ok(result)
     }

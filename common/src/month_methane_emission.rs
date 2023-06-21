@@ -10,8 +10,9 @@ use std::fmt::Display;
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MethaneEmissionSourceTable {
-    NonLevelController,
+    PneumaticInstrument,
     LevelController,
+    PneumaticPump,
     CompressorSeal,
     CompressorBlowdown,
     StorageTank,
@@ -27,8 +28,9 @@ impl sqlx::postgres::PgHasArrayType for MethaneEmissionSourceTable {
 impl Display for MethaneEmissionSourceTable {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            MethaneEmissionSourceTable::NonLevelController => write!(f, "Non-Level Controller"),
+            MethaneEmissionSourceTable::PneumaticInstrument => write!(f, "Pneumatic Instrument"),
             MethaneEmissionSourceTable::LevelController => write!(f, "Level Controller"),
+            MethaneEmissionSourceTable::PneumaticPump => write!(f, "Pneumatic Pump"),
             MethaneEmissionSourceTable::CompressorSeal => write!(f, "Compressor Seal"),
             MethaneEmissionSourceTable::CompressorBlowdown => write!(f, "Compressor Blowdown"),
             MethaneEmissionSourceTable::StorageTank => write!(f, "Storage Tank"),
