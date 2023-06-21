@@ -87,16 +87,25 @@ use super::{
             },
             pneumatic_instrument::{
                 CreatedPneumaticInstrumentChangesLoader,
+                CreatedPneumaticInstrumentControlDeviceInactivitiesLoader,
+                CreatedPneumaticInstrumentControlledCharacterizationsLoader,
                 CreatedPneumaticInstrumentMonthHoursLoader,
                 CreatedPneumaticInstrumentMonthMethaneEmissionOverridesLoader,
                 CreatedPneumaticInstrumentsLoader, PneumaticInstrumentChangeLoader,
-                PneumaticInstrumentChangesByPneumaticInstrumentLoader, PneumaticInstrumentLoader,
+                PneumaticInstrumentChangesByPneumaticInstrumentLoader,
+                PneumaticInstrumentControlDeviceInactivitiesByPneumaticInstrumentControlledCharacterizationLoader,
+                PneumaticInstrumentControlDeviceInactivityLoader,
+                PneumaticInstrumentControlledCharacterizationLoader,
+                PneumaticInstrumentControlledCharacterizationsByPneumaticInstrumentLoader,
+                PneumaticInstrumentLoader,
                 PneumaticInstrumentMonthHoursByPneumaticInstrumentLoader,
                 PneumaticInstrumentMonthHoursLoader,
                 PneumaticInstrumentMonthMethaneEmissionOverrideLoader,
                 PneumaticInstrumentMonthMethaneEmissionOverridesByPneumaticInstrumentLoader,
                 PneumaticInstrumentsByManufacturerLoader, SitePneumaticInstrumentsLoader,
                 UpdatedPneumaticInstrumentChangesLoader,
+                UpdatedPneumaticInstrumentControlDeviceInactivitiesLoader,
+                UpdatedPneumaticInstrumentControlledCharacterizationsLoader,
                 UpdatedPneumaticInstrumentMonthHoursLoader,
                 UpdatedPneumaticInstrumentMonthMethaneEmissionOverridesLoader,
                 UpdatedPneumaticInstrumentsLoader,
@@ -166,6 +175,18 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
+    // Device Manufacturer
+    let device_manufacturer_by_id_loader =
+        DataLoader::new(DeviceManufacturerLoader::new(pool.clone()), tokio::spawn);
+    let device_manufacturers_by_creator_id_loader = DataLoader::new(
+        CreatedDeviceManufacturersLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let device_manufacturers_by_updater_id_loader = DataLoader::new(
+        UpdatedDeviceManufacturersLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
     // Pneumatic Instrument
     let pneumatic_instrument_by_id_loader =
         DataLoader::new(PneumaticInstrumentLoader::new(pool.clone()), tokio::spawn);
@@ -186,18 +207,6 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Device Manufacturer
-    let device_manufacturer_by_id_loader =
-        DataLoader::new(DeviceManufacturerLoader::new(pool.clone()), tokio::spawn);
-    let device_manufacturers_by_creator_id_loader = DataLoader::new(
-        CreatedDeviceManufacturersLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-    let device_manufacturers_by_updater_id_loader = DataLoader::new(
-        UpdatedDeviceManufacturersLoader::new(pool.clone()),
-        tokio::spawn,
-    );
-
     // Pneumatic Instrument Change
     let pneumatic_instrument_change_by_id_loader = DataLoader::new(
         PneumaticInstrumentChangeLoader::new(pool.clone()),
@@ -213,6 +222,48 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
     let pneumatic_instrument_changes_by_updater_id_loader = DataLoader::new(
         UpdatedPneumaticInstrumentChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Storage Tank Controlled Characterization
+    let pneumatic_instrument_controlled_characterization_by_id_loader = DataLoader::new(
+        PneumaticInstrumentControlledCharacterizationLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_instrument_controlled_characterizations_by_pneumatic_instrument_id_loader =
+        DataLoader::new(
+            PneumaticInstrumentControlledCharacterizationsByPneumaticInstrumentLoader::new(
+                pool.clone(),
+            ),
+            tokio::spawn,
+        );
+    let pneumatic_instrument_controlled_characterizations_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticInstrumentControlledCharacterizationsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_instrument_controlled_characterizations_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticInstrumentControlledCharacterizationsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Pneumatic Instrument Control Device Inactivity
+    let pneumatic_instrument_control_device_inactivity_by_id_loader = DataLoader::new(
+        PneumaticInstrumentControlDeviceInactivityLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_instrument_control_device_inactivities_by_pneumatic_instrument_controlled_characterization_id_loader =
+            DataLoader::new(
+                PneumaticInstrumentControlDeviceInactivitiesByPneumaticInstrumentControlledCharacterizationLoader::new(
+                    pool.clone(),
+                ),
+                tokio::spawn,
+            );
+    let pneumatic_instrument_control_device_inactivities_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticInstrumentControlDeviceInactivitiesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_instrument_control_device_inactivities_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticInstrumentControlDeviceInactivitiesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -434,7 +485,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Compressor Month Hours
+    // Compressor Controlled Characterization
     let compressor_controlled_characterization_by_id_loader = DataLoader::new(
         CompressorControlledCharacterizationLoader::new(pool.clone()),
         tokio::spawn,
@@ -722,20 +773,34 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(survey_equipment_by_creator_id_loader);
     loaders.insert(survey_equipment_by_updater_id_loader);
 
+    loaders.insert(device_manufacturer_by_id_loader);
+    loaders.insert(device_manufacturers_by_creator_id_loader);
+    loaders.insert(device_manufacturers_by_updater_id_loader);
+
     loaders.insert(pneumatic_instrument_by_id_loader);
     loaders.insert(pneumatic_instruments_by_creator_id_loader);
     loaders.insert(pneumatic_instruments_by_updater_id_loader);
     loaders.insert(pneumatic_instruments_by_site_id_loader);
     loaders.insert(pneumatic_instruments_by_manufacturer_id_loader);
 
-    loaders.insert(device_manufacturer_by_id_loader);
-    loaders.insert(device_manufacturers_by_creator_id_loader);
-    loaders.insert(device_manufacturers_by_updater_id_loader);
-
     loaders.insert(pneumatic_instrument_change_by_id_loader);
     loaders.insert(pneumatic_instrument_changes_by_pneumatic_instrument_id_loader);
     loaders.insert(pneumatic_instrument_changes_by_creator_id_loader);
     loaders.insert(pneumatic_instrument_changes_by_updater_id_loader);
+
+    loaders.insert(pneumatic_instrument_controlled_characterization_by_id_loader);
+    loaders.insert(
+        pneumatic_instrument_controlled_characterizations_by_pneumatic_instrument_id_loader,
+    );
+    loaders.insert(pneumatic_instrument_controlled_characterizations_by_creator_id_loader);
+    loaders.insert(pneumatic_instrument_controlled_characterizations_by_updater_id_loader);
+
+    loaders.insert(pneumatic_instrument_control_device_inactivity_by_id_loader);
+    loaders.insert(
+        pneumatic_instrument_control_device_inactivities_by_pneumatic_instrument_controlled_characterization_id_loader,
+    );
+    loaders.insert(pneumatic_instrument_control_device_inactivities_by_creator_id_loader);
+    loaders.insert(pneumatic_instrument_control_device_inactivities_by_updater_id_loader);
 
     loaders.insert(pneumatic_instrument_month_hours_by_id_loader);
     loaders.insert(pneumatic_instrument_month_hours_by_pneumatic_instrument_id_loader);

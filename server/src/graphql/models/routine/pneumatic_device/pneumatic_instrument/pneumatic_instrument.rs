@@ -3,8 +3,8 @@ use super::{
         super::super::{month_methane_emission::MonthMethaneEmission, site::Site, user::User},
         DeviceManufacturer,
     },
-    PneumaticInstrumentChange, PneumaticInstrumentMonthHours,
-    PneumaticInstrumentMonthMethaneEmissionOverride,
+    PneumaticInstrumentChange, PneumaticInstrumentControlledCharacterization,
+    PneumaticInstrumentMonthHours, PneumaticInstrumentMonthMethaneEmissionOverride,
 };
 use crate::graphql::{
     context::ContextExt,
@@ -13,6 +13,7 @@ use crate::graphql::{
         routine::pneumatic_device::{
             pneumatic_instrument::{
                 PneumaticInstrumentChangesByPneumaticInstrumentLoader,
+                PneumaticInstrumentControlledCharacterizationsByPneumaticInstrumentLoader,
                 PneumaticInstrumentMonthHoursByPneumaticInstrumentLoader,
                 PneumaticInstrumentMonthMethaneEmissionOverridesByPneumaticInstrumentLoader,
             },
@@ -84,6 +85,20 @@ impl PneumaticInstrument {
             ctx.get_loader::<DataLoader<PneumaticInstrumentChangesByPneumaticInstrumentLoader>>();
         let pneumatic_instrument_changes = loader.load_one(self.id).await?;
         let result = pneumatic_instrument_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn pneumatic_instrument_controlled_characterizations(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<PneumaticInstrumentControlledCharacterization>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<
+                PneumaticInstrumentControlledCharacterizationsByPneumaticInstrumentLoader,
+            >>();
+        let pneumatic_instrument_controlled_characterizations = loader.load_one(self.id).await?;
+        let result = pneumatic_instrument_controlled_characterizations.unwrap_or(vec![]);
 
         Ok(result)
     }
