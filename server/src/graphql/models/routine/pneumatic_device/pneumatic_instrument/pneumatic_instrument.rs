@@ -29,7 +29,7 @@ use common::PneumaticInstrumentType;
 use sqlx::FromRow;
 use uuid::Uuid;
 
-/// Pneumatic pump or any pneumatic instrument excluding level controller, as defined in AER Directive 060 [`Appendix 2`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=98).
+/// Pneumatic instrument excluding level controller, as defined in AER Directive 060 [`Appendix 2`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=98).
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
 pub struct PneumaticInstrument {

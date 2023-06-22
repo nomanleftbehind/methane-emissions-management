@@ -70,18 +70,28 @@ use super::{
         pneumatic_device::{
             level_controller::{
                 CreatedLevelControllerActuationFrequenciesLoader,
-                CreatedLevelControllerChangesLoader, CreatedLevelControllerMonthHoursLoader,
+                CreatedLevelControllerChangesLoader,
+                CreatedLevelControllerControlDeviceInactivitiesLoader,
+                CreatedLevelControllerControlledCharacterizationsLoader,
+                CreatedLevelControllerMonthHoursLoader,
                 CreatedLevelControllerMonthMethaneEmissionOverridesLoader,
                 CreatedLevelControllersLoader,
                 LevelControllerActuationFrequenciesByLevelControllerLoader,
                 LevelControllerActuationFrequencyLoader, LevelControllerChangeLoader,
-                LevelControllerChangesByLevelControllerLoader, LevelControllerLoader,
-                LevelControllerMonthHoursByLevelControllerLoader, LevelControllerMonthHoursLoader,
-                LevelControllerMonthMethaneEmissionOverrideLoader,
+                LevelControllerChangesByLevelControllerLoader,
+                LevelControllerControlDeviceInactivitiesByLevelControllerControlledCharacterizationLoader,
+                LevelControllerControlDeviceInactivityLoader,
+                LevelControllerControlledCharacterizationLoader,
+                LevelControllerControlledCharacterizationsByLevelControllerLoader,
+                LevelControllerLoader, LevelControllerMonthHoursByLevelControllerLoader,
+                LevelControllerMonthHoursLoader, LevelControllerMonthMethaneEmissionOverrideLoader,
                 LevelControllerMonthMethaneEmissionOverridesByLevelControllerLoader,
                 LevelControllersByManufacturerLoader, SiteLevelControllersLoader,
                 UpdatedLevelControllerActuationFrequenciesLoader,
-                UpdatedLevelControllerChangesLoader, UpdatedLevelControllerMonthHoursLoader,
+                UpdatedLevelControllerChangesLoader,
+                UpdatedLevelControllerControlDeviceInactivitiesLoader,
+                UpdatedLevelControllerControlledCharacterizationsLoader,
+                UpdatedLevelControllerMonthHoursLoader,
                 UpdatedLevelControllerMonthMethaneEmissionOverridesLoader,
                 UpdatedLevelControllersLoader,
             },
@@ -225,7 +235,7 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
         tokio::spawn,
     );
 
-    // Storage Tank Controlled Characterization
+    // Pneumatic Instrument Controlled Characterization
     let pneumatic_instrument_controlled_characterization_by_id_loader = DataLoader::new(
         PneumaticInstrumentControlledCharacterizationLoader::new(pool.clone()),
         tokio::spawn,
@@ -357,6 +367,46 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
     let level_controller_changes_by_updater_id_loader = DataLoader::new(
         UpdatedLevelControllerChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Level Controller Controlled Characterization
+    let level_controller_controlled_characterization_by_id_loader = DataLoader::new(
+        LevelControllerControlledCharacterizationLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_controlled_characterizations_by_level_controller_id_loader =
+        DataLoader::new(
+            LevelControllerControlledCharacterizationsByLevelControllerLoader::new(pool.clone()),
+            tokio::spawn,
+        );
+    let level_controller_controlled_characterizations_by_creator_id_loader = DataLoader::new(
+        CreatedLevelControllerControlledCharacterizationsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_controlled_characterizations_by_updater_id_loader = DataLoader::new(
+        UpdatedLevelControllerControlledCharacterizationsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Level Controller Control Device Inactivity
+    let level_controller_control_device_inactivity_by_id_loader = DataLoader::new(
+        LevelControllerControlDeviceInactivityLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_control_device_inactivities_by_level_controller_controlled_characterization_id_loader =
+        DataLoader::new(
+            LevelControllerControlDeviceInactivitiesByLevelControllerControlledCharacterizationLoader::new(
+                pool.clone(),
+            ),
+            tokio::spawn,
+        );
+    let level_controller_control_device_inactivities_by_creator_id_loader = DataLoader::new(
+        CreatedLevelControllerControlDeviceInactivitiesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let level_controller_control_device_inactivities_by_updater_id_loader = DataLoader::new(
+        UpdatedLevelControllerControlDeviceInactivitiesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -829,6 +879,18 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(level_controller_changes_by_level_controller_id_loader);
     loaders.insert(level_controller_changes_by_creator_id_loader);
     loaders.insert(level_controller_changes_by_updater_id_loader);
+
+    loaders.insert(level_controller_controlled_characterization_by_id_loader);
+    loaders.insert(level_controller_controlled_characterizations_by_level_controller_id_loader);
+    loaders.insert(level_controller_controlled_characterizations_by_creator_id_loader);
+    loaders.insert(level_controller_controlled_characterizations_by_updater_id_loader);
+
+    loaders.insert(level_controller_control_device_inactivity_by_id_loader);
+    loaders.insert(
+        level_controller_control_device_inactivities_by_level_controller_controlled_characterization_id_loader,
+    );
+    loaders.insert(level_controller_control_device_inactivities_by_creator_id_loader);
+    loaders.insert(level_controller_control_device_inactivities_by_updater_id_loader);
 
     loaders.insert(level_controller_month_hours_by_id_loader);
     loaders.insert(level_controller_month_hours_by_level_controller_id_loader);

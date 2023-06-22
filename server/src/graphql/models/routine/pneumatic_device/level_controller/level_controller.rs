@@ -4,6 +4,7 @@ use super::{
         DeviceManufacturer,
     },
     LevelControllerActuationFrequency, LevelControllerChange,
+    LevelControllerControlledCharacterization,
 };
 use super::{LevelControllerMonthHours, LevelControllerMonthMethaneEmissionOverride};
 use crate::graphql::{
@@ -14,6 +15,7 @@ use crate::graphql::{
             level_controller::{
                 LevelControllerActuationFrequenciesByLevelControllerLoader,
                 LevelControllerChangesByLevelControllerLoader,
+                LevelControllerControlledCharacterizationsByLevelControllerLoader,
                 LevelControllerMonthHoursByLevelControllerLoader,
                 LevelControllerMonthMethaneEmissionOverridesByLevelControllerLoader,
             },
@@ -94,6 +96,20 @@ impl LevelController {
         let loader = ctx.get_loader::<DataLoader<LevelControllerChangesByLevelControllerLoader>>();
         let level_controller_changes = loader.load_one(self.id).await?;
         let result = level_controller_changes.unwrap_or(vec![]);
+
+        Ok(result)
+    }
+
+    async fn level_controller_controlled_characterizations(
+        &self,
+        ctx: &Context<'_>,
+    ) -> Result<Vec<LevelControllerControlledCharacterization>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<
+                LevelControllerControlledCharacterizationsByLevelControllerLoader,
+            >>();
+        let level_controller_controlled_characterizations = loader.load_one(self.id).await?;
+        let result = level_controller_controlled_characterizations.unwrap_or(vec![]);
 
         Ok(result)
     }
