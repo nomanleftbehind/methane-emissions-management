@@ -120,6 +120,29 @@ use super::{
                 UpdatedPneumaticInstrumentMonthMethaneEmissionOverridesLoader,
                 UpdatedPneumaticInstrumentsLoader,
             },
+            pneumatic_pump::{
+                CreatedPneumaticPumpChangesLoader,
+                CreatedPneumaticPumpControlDeviceInactivitiesLoader,
+                CreatedPneumaticPumpControlledCharacterizationsLoader,
+                CreatedPneumaticPumpMonthHoursLoader,
+                CreatedPneumaticPumpMonthMethaneEmissionOverridesLoader,
+                CreatedPneumaticPumpsLoader, PneumaticPumpChangeLoader,
+                PneumaticPumpChangesByPneumaticPumpLoader,
+                PneumaticPumpControlDeviceInactivitiesByPneumaticPumpControlledCharacterizationLoader,
+                PneumaticPumpControlDeviceInactivityLoader,
+                PneumaticPumpControlledCharacterizationLoader,
+                PneumaticPumpControlledCharacterizationsByPneumaticPumpLoader, PneumaticPumpLoader,
+                PneumaticPumpMonthHoursByPneumaticPumpLoader, PneumaticPumpMonthHoursLoader,
+                PneumaticPumpMonthMethaneEmissionOverrideLoader,
+                PneumaticPumpMonthMethaneEmissionOverridesByPneumaticPumpLoader,
+                PneumaticPumpsByManufacturerLoader, SitePneumaticPumpsLoader,
+                UpdatedPneumaticPumpChangesLoader,
+                UpdatedPneumaticPumpControlDeviceInactivitiesLoader,
+                UpdatedPneumaticPumpControlledCharacterizationsLoader,
+                UpdatedPneumaticPumpMonthHoursLoader,
+                UpdatedPneumaticPumpMonthMethaneEmissionOverridesLoader,
+                UpdatedPneumaticPumpsLoader,
+            },
             CreatedDeviceManufacturersLoader, DeviceManufacturerLoader,
             UpdatedDeviceManufacturersLoader,
         },
@@ -444,6 +467,112 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     );
     let level_controller_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
         UpdatedLevelControllerMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Pneumatic Pump
+    let pneumatic_pump_by_id_loader =
+        DataLoader::new(PneumaticPumpLoader::new(pool.clone()), tokio::spawn);
+    let pneumatic_pumps_by_site_id_loader =
+        DataLoader::new(SitePneumaticPumpsLoader::new(pool.clone()), tokio::spawn);
+    let pneumatic_pumps_by_manufacturer_id_loader = DataLoader::new(
+        PneumaticPumpsByManufacturerLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pumps_by_creator_id_loader =
+        DataLoader::new(CreatedPneumaticPumpsLoader::new(pool.clone()), tokio::spawn);
+    let pneumatic_pumps_by_updater_id_loader =
+        DataLoader::new(UpdatedPneumaticPumpsLoader::new(pool.clone()), tokio::spawn);
+
+    // Pneumatic Pump Change
+    let pneumatic_pump_change_by_id_loader =
+        DataLoader::new(PneumaticPumpChangeLoader::new(pool.clone()), tokio::spawn);
+    let pneumatic_pump_changes_by_pneumatic_pump_id_loader = DataLoader::new(
+        PneumaticPumpChangesByPneumaticPumpLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_changes_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticPumpChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_changes_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticPumpChangesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Pneumatic Pump Controlled Characterization
+    let pneumatic_pump_controlled_characterization_by_id_loader = DataLoader::new(
+        PneumaticPumpControlledCharacterizationLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_controlled_characterizations_by_pneumatic_pump_id_loader = DataLoader::new(
+        PneumaticPumpControlledCharacterizationsByPneumaticPumpLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_controlled_characterizations_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticPumpControlledCharacterizationsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_controlled_characterizations_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticPumpControlledCharacterizationsLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Pneumatic Pump Control Device Inactivity
+    let pneumatic_pump_control_device_inactivity_by_id_loader = DataLoader::new(
+        PneumaticPumpControlDeviceInactivityLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_control_device_inactivities_by_pneumatic_pump_controlled_characterization_id_loader =
+        DataLoader::new(
+            PneumaticPumpControlDeviceInactivitiesByPneumaticPumpControlledCharacterizationLoader::new(
+                pool.clone(),
+            ),
+            tokio::spawn,
+        );
+    let pneumatic_pump_control_device_inactivities_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticPumpControlDeviceInactivitiesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_control_device_inactivities_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticPumpControlDeviceInactivitiesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Pneumatic Pump Month Hours
+    let pneumatic_pump_month_hours_by_id_loader = DataLoader::new(
+        PneumaticPumpMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_month_hours_by_pneumatic_pump_id_loader = DataLoader::new(
+        PneumaticPumpMonthHoursByPneumaticPumpLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_month_hours_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticPumpMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_month_hours_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticPumpMonthHoursLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+
+    // Pneumatic Pump Month Methane Emission Override
+    let pneumatic_pump_month_methane_emission_override_by_id_loader = DataLoader::new(
+        PneumaticPumpMonthMethaneEmissionOverrideLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_month_methane_emission_overrides_by_pneumatic_pump_id_loader =
+        DataLoader::new(
+            PneumaticPumpMonthMethaneEmissionOverridesByPneumaticPumpLoader::new(pool.clone()),
+            tokio::spawn,
+        );
+    let pneumatic_pump_month_methane_emission_overrides_by_creator_id_loader = DataLoader::new(
+        CreatedPneumaticPumpMonthMethaneEmissionOverridesLoader::new(pool.clone()),
+        tokio::spawn,
+    );
+    let pneumatic_pump_month_methane_emission_overrides_by_updater_id_loader = DataLoader::new(
+        UpdatedPneumaticPumpMonthMethaneEmissionOverridesLoader::new(pool.clone()),
         tokio::spawn,
     );
 
@@ -901,6 +1030,39 @@ pub async fn get_loaders(pool: Data<PgPool>) -> LoaderMap {
     loaders.insert(level_controller_month_methane_emission_overrides_by_level_controller_id_loader);
     loaders.insert(level_controller_month_methane_emission_overrides_by_creator_id_loader);
     loaders.insert(level_controller_month_methane_emission_overrides_by_updater_id_loader);
+
+    loaders.insert(pneumatic_pump_by_id_loader);
+    loaders.insert(pneumatic_pumps_by_creator_id_loader);
+    loaders.insert(pneumatic_pumps_by_updater_id_loader);
+    loaders.insert(pneumatic_pumps_by_site_id_loader);
+    loaders.insert(pneumatic_pumps_by_manufacturer_id_loader);
+
+    loaders.insert(pneumatic_pump_change_by_id_loader);
+    loaders.insert(pneumatic_pump_changes_by_pneumatic_pump_id_loader);
+    loaders.insert(pneumatic_pump_changes_by_creator_id_loader);
+    loaders.insert(pneumatic_pump_changes_by_updater_id_loader);
+
+    loaders.insert(pneumatic_pump_controlled_characterization_by_id_loader);
+    loaders.insert(pneumatic_pump_controlled_characterizations_by_pneumatic_pump_id_loader);
+    loaders.insert(pneumatic_pump_controlled_characterizations_by_creator_id_loader);
+    loaders.insert(pneumatic_pump_controlled_characterizations_by_updater_id_loader);
+
+    loaders.insert(pneumatic_pump_control_device_inactivity_by_id_loader);
+    loaders.insert(
+        pneumatic_pump_control_device_inactivities_by_pneumatic_pump_controlled_characterization_id_loader,
+    );
+    loaders.insert(pneumatic_pump_control_device_inactivities_by_creator_id_loader);
+    loaders.insert(pneumatic_pump_control_device_inactivities_by_updater_id_loader);
+
+    loaders.insert(pneumatic_pump_month_hours_by_id_loader);
+    loaders.insert(pneumatic_pump_month_hours_by_pneumatic_pump_id_loader);
+    loaders.insert(pneumatic_pump_month_hours_by_creator_id_loader);
+    loaders.insert(pneumatic_pump_month_hours_by_updater_id_loader);
+
+    loaders.insert(pneumatic_pump_month_methane_emission_override_by_id_loader);
+    loaders.insert(pneumatic_pump_month_methane_emission_overrides_by_pneumatic_pump_id_loader);
+    loaders.insert(pneumatic_pump_month_methane_emission_overrides_by_creator_id_loader);
+    loaders.insert(pneumatic_pump_month_methane_emission_overrides_by_updater_id_loader);
 
     loaders.insert(month_methane_emission_by_id_loader);
     loaders.insert(month_methane_emissions_by_facility_id_loader);
