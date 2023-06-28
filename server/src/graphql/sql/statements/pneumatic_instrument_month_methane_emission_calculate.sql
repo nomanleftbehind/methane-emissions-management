@@ -1,223 +1,306 @@
-WITH allocate_month as (
+WITH calculate_dates as (
 	SELECT
-		month_beginning::date
+		date::date
 	FROM
-		generate_series($1::date, $2::date, '1 month') as month_beginning
+		generate_series(
+			DATE_TRUNC('month', $1::date),
+			$2::date + INTERVAL '1 month - 1 day',
+			'1 day'
+		) as date
 )
 SELECT
-	nlcmme.facility_id,
-	nlcmme.site_id as "site_id!",
+	pimme.facility_id,
+	pimme.site_id as "site_id!",
 	'pneumatic_instrument'::methane_emission_source_table as "source_table!: _",
-	nlcmme.id as "source_table_id!",
-	'ROUTINE'::methane_emission_category as "category!: _",
-	'PNEUMATIC_DEVICE'::methane_emission_source as "source!: _",
-	nlcmme.month_beginning as "month!",
-	SUM(nlcmme.gas_volume * nlcmme.percent) as "gas_volume!",
-	SUM(nlcmme.gas_volume * nlcmme.c1 * nlcmme.percent) as "c1_volume!",
-	SUM(nlcmme.gas_volume * nlcmme.co2 * nlcmme.percent) as "co2_volume!"
+	pimme.id as "source_table_id!",
+	pimme.category as "category!: _",
+	pimme.source as "source!: _",
+	pimme.month as "month!",
+	SUM(pimme.gas_volume) as "gas_volume!",
+	SUM(pimme.c1_volume) as "c1_volume!",
+	SUM(pimme.co2_volume) as "co2_volume!"
 FROM
 	(
 		SELECT
-			nlcmme.facility_id,
-			nlcmme.site_id,
-			nlcmme.id,
-			nlcmme.month_beginning,
-			nlcmme.gas_volume,
-			nlcmme.c1,
-			nlcmme.co2,
-			EXTRACT(
-				DAY
-				FROM
-					(
-						nlcmme.to_date + INTERVAL '1 day' - nlcmme.from_date
-					)
-			) / nlcmme.days_in_period as percent
+			pimme.facility_id,
+			pimme.site_id,
+			pimme.id,
+			CASE
+				WHEN pimme.reason IS NULL THEN 'ROUTINE'::methane_emission_category
+				ELSE CASE
+					-- AER Manual 015 section 1.1.2
+					WHEN pimme.reason = 'MALFUNCTION' THEN 'FUGITIVE'::methane_emission_category
+					WHEN pimme.reason IN ('PLANNED_MAINTENANCE', 'UNPLANNED_MAINTENANCE') THEN 'NONROUTINE'::methane_emission_category
+				END
+			END as category,
+			CASE
+				WHEN pimme.reason IS NULL THEN 'PNEUMATIC_DEVICE'::methane_emission_source
+				ELSE CASE
+					-- AER Manual 015 section 1.1.2
+					WHEN pimme.reason = 'MALFUNCTION' THEN 'FUGITIVE'::methane_emission_source
+					WHEN pimme.reason = 'PLANNED_MAINTENANCE' THEN 'PLANNED'::methane_emission_source
+					WHEN pimme.reason = 'UNPLANNED_MAINTENANCE' THEN 'UNPLANNED'::methane_emission_source
+				END
+			END as source,
+			pimme.month,
+			pimme.gas_volume,
+			pimme.c1_volume,
+			pimme.co2_volume
 		FROM
 			(
 				SELECT
-					s.facility_id,
-					nlcmme.site_id,
-					nlcmme.id,
-					nlcmme.month_beginning,
-					nlcmme.gas_volume,
-					COALESCE(ga.c1, $3) as c1,
-					COALESCE(ga.co2, $4) as co2,
-					GREATEST(ga.from_date, nlcmme.from_date) as from_date,
-					LEAST(ga.to_date, nlcmme.to_date) as to_date,
-					EXTRACT(
-						DAY
-						FROM
-							(
-								nlcmme.to_date + INTERVAL '1 day' - nlcmme.from_date
-							)
-					) as days_in_period
+					pimme.facility_id,
+					pimme.site_id,
+					pimme.id,
+					pimme.month,
+					pimme.control_device,
+					pimme.reason,
+					SUM(pimme.gas_volume) as gas_volume,
+					SUM(pimme.c1_volume) as c1_volume,
+					SUM(pimme.co2_volume) as co2_volume
 				FROM
 					(
 						SELECT
-							nlcmme.*
+							pimme.facility_id,
+							pimme.site_id,
+							pimme.id,
+							pimme.date,
+							pimme.month,
+							pimme.control_device,
+							pimme.reason,
+							pimme.gas_volume,
+							pimme.gas_volume * pimme.c1 as c1_volume,
+							pimme.gas_volume * pimme.co2 as co2_volume
 						FROM
 							(
 								SELECT
-									nlcmme.id,
-									nlcmme.site_id,
-									nlcmme.month_beginning,
-									nlcmme.from_date,
-									nlcmme.to_date,
-									nlcmme.hours_on * nlcmme.rate * nlcmme.percent as gas_volume
+									pimme.*,
+									COALESCE(ga.c1, $3) as c1,
+									COALESCE(ga.co2, $4) as co2
 								FROM
 									(
 										SELECT
-											nlcmme.id,
-											nlcmme.site_id,
-											nlcmme.month_beginning,
-											nlcmme.from_date,
-											nlcmme.to_date,
-											nlcmme.hours_on,
-											nlcmme.rate,
-											EXTRACT(
-												DAY
-												FROM
-													(
-														nlcmme.to_date + INTERVAL '1 day' - nlcmme.from_date
-													)
-											) / nlcmme.days_in_month as percent
+											s.facility_id,
+											pimme.*
 										FROM
 											(
 												SELECT
-													nlc.id,
-													nlc.site_id,
-													nlc.month_beginning,
-													GREATEST(nlcc.from_date, nlc.month_beginning) as from_date,
-													LEAST(
-														nlcc.to_date,
-														nlc.month_beginning + INTERVAL '1 month - 1 day'
-													) as to_date,
-													DATE_PART(
-														'days',
-														nlc.month_beginning + INTERVAL '1 month - 1 day'
-													) as days_in_month,
-													COALESCE(cmh.hours_on, 0) as hours_on,
-													COALESCE(nlcc.rate, 0) as rate
+													pimme.site_id,
+													pimme.id,
+													pimme.date,
+													pimme.month,
+													pimme.gas_volume,
+													pimme.control_device,
+													picdi.reason
 												FROM
 													(
 														SELECT
-															nlc.id,
-															nlc.site_id,
-															am.month_beginning
+															pimme.*,
+															picc.id as pneumatic_instrument_controlled_characterization_id,
+															picc.control_device
 														FROM
-															pneumatic_instrument nlc
-															INNER JOIN allocate_month am ON am.month_beginning BETWEEN DATE_TRUNC('month', nlc.start_date)
-															AND COALESCE(nlc.end_date, CURRENT_DATE)
-															AND (nlc.id, am.month_beginning) NOT IN (
+															(
 																SELECT
-																	nlcmmeo.pneumatic_instrument_id,
-																	nlcmmeo.month
+																	pimme.id,
+																	pimme.site_id,
+																	pimme.date,
+																	pimme.month,
+																	pimme.hours_on * pimme.rate as gas_volume
 																FROM
-																	pneumatic_instrument_month_methane_emission_override nlcmmeo
-																	INNER JOIN allocate_month am ON am.month_beginning = nlcmmeo.month
-															)
-													) nlc
-													LEFT OUTER JOIN pneumatic_instrument_month_hours cmh ON cmh.pneumatic_instrument_id = nlc.id
-													AND cmh.month = nlc.month_beginning
+																	(
+																		SELECT
+																			pimme.id,
+																			pimme.site_id,
+																			pimme.date,
+																			pimme.month,
+																			-- If month hours are larger than theoretical, use theoretical.
+																			LEAST(pimme.hours_on, 24) as hours_on,
+																			pimme.rate
+																		FROM
+																			(
+																				SELECT
+																					pi.id,
+																					pi.site_id,
+																					pi.date,
+																					pi.month,
+																					COALESCE(
+																						pimh.hours_on / COUNT(pi.id) OVER (PARTITION BY pi.id, pi.month),
+																						0
+																					) as hours_on,
+																					COALESCE(pichg.rate, 0) as rate
+																				FROM
+																					(
+																						SELECT
+																							pi.id,
+																							pi.site_id,
+																							cd.date,
+																							DATE_TRUNC('month', cd.date)::date as month
+																						FROM
+																							pneumatic_instrument pi
+																							INNER JOIN calculate_dates cd ON cd.date BETWEEN pi.start_date
+																							AND COALESCE(pi.end_date, CURRENT_DATE)
+																							AND (pi.id, DATE_TRUNC('month', cd.date)) NOT IN (
+																								SELECT
+																									pimmeo.pneumatic_instrument_id,
+																									pimmeo.month
+																								FROM
+																									pneumatic_instrument_month_methane_emission_override pimmeo
+																							)
+																							INNER JOIN site s ON s.id = pi.site_id
+																						WHERE
+																							s.fdc_rec_id = '01695F3482624E4A946AA9E144C3B719'
+																							AND pi.serial_number = 'PP37405'
+																					) pi
+																					LEFT OUTER JOIN pneumatic_instrument_month_hours pimh ON pimh.pneumatic_instrument_id = pi.id
+																					AND pimh.month = pi.month
+																					LEFT OUTER JOIN (
+																						SELECT
+																							pichg.pneumatic_instrument_id,
+																							pichg.date as from_date,
+																							COALESCE(
+																								(
+																									LEAD(pichg.date) OVER (
+																										PARTITION BY pichg.pneumatic_instrument_id
+																										ORDER BY
+																											pichg.date
+																									) - INTERVAL '1 day'
+																								)::date,
+																								CURRENT_DATE
+																							) as to_date,
+																							pichg.rate
+																						FROM
+																							pneumatic_instrument_change pichg
+																					) pichg ON pichg.pneumatic_instrument_id = pi.id
+																					AND pi.date BETWEEN pichg.from_date
+																					AND pichg.to_date
+																			) pimme
+																	) pimme
+																UNION
+																ALL
+																SELECT
+																	pi.id,
+																	pi.site_id,
+																	cd.date,
+																	pimmeo.month,
+																	pimmeo.gas_volume / COUNT(pimmeo.pneumatic_instrument_id) OVER (
+																		PARTITION BY pimmeo.pneumatic_instrument_id,
+																		pimmeo.month
+																	) as gas_volume
+																FROM
+																	pneumatic_instrument_month_methane_emission_override pimmeo
+																	INNER JOIN calculate_dates cd ON DATE_TRUNC('month', cd.date) = pimmeo.month
+																	INNER JOIN pneumatic_instrument pi ON pi.id = pimmeo.pneumatic_instrument_id
+																	AND cd.date BETWEEN pi.start_date
+																	AND COALESCE(pi.end_date, CURRENT_DATE)
+																	INNER JOIN site s ON s.id = pi.site_id
+																WHERE
+																	s.fdc_rec_id = '01695F3482624E4A946AA9E144C3B719'
+															) pimme
+															LEFT OUTER JOIN (
+																SELECT
+																	picc.id,
+																	picc.pneumatic_instrument_id,
+																	picc.start_date,
+																	LEAST(picc.end_date, picc.max_end_date) as end_date,
+																	picc.control_device
+																FROM
+																	(
+																		SELECT
+																			picc.id,
+																			picc.pneumatic_instrument_id,
+																			picc.start_date,
+																			picc.end_date,
+																			picc.control_device,
+																			COALESCE(
+																				(
+																					LEAD(picc.start_date) OVER (
+																						PARTITION BY picc.pneumatic_instrument_id
+																						ORDER BY
+																							picc.start_date
+																					) - INTERVAL '1 day'
+																				)::date,
+																				CURRENT_DATE
+																			) as max_end_date
+																		FROM
+																			pneumatic_instrument_controlled_characterization picc
+																	) picc
+															) picc ON picc.pneumatic_instrument_id = pimme.id
+															AND pimme.date BETWEEN picc.start_date
+															AND picc.end_date
+													) pimme
 													LEFT OUTER JOIN (
 														SELECT
-															pneumatic_instrument_id,
-															DATE_TRUNC('month', date) as month_join_beginning,
-															DATE_TRUNC(
-																'month',
-																COALESCE(
-																	LEAD(date) OVER (
-																		PARTITION BY pneumatic_instrument_id
-																		ORDER BY
-																			date
-																	) - INTERVAL '1 day',
-																	CURRENT_DATE
-																)
-															) + INTERVAL '1 month - 1 day' as month_join_end,
-															-- If first device change, from_date has to be first of the month because there is no carryover from previous change.
-															CASE
-																WHEN ROW_NUMBER() OVER (
-																	PARTITION BY pneumatic_instrument_id
-																	ORDER BY
-																		date
-																) = 1 THEN DATE_TRUNC('month', date)::date
-																ELSE date
-															END as from_date,
-															COALESCE(
-																LEAD(date) OVER (
-																	PARTITION BY pneumatic_instrument_id
-																	ORDER BY
-																		date
-																) - INTERVAL '1 day',
-																CURRENT_DATE
-															) as to_date,
-															rate
+															picdi.pneumatic_instrument_controlled_characterization_id,
+															picdi.start_date,
+															LEAST(picdi.end_date, picdi.max_end_date) as end_date,
+															picdi.reason
 														FROM
-															pneumatic_instrument_change
-													) nlcc ON nlcc.pneumatic_instrument_id = nlc.id
-													AND nlc.month_beginning BETWEEN nlcc.month_join_beginning
-													AND nlcc.month_join_end
-											) nlcmme
-									) nlcmme
-							) nlcmme
-						UNION
-						ALL
-						SELECT
-							nlcmme.*
-						FROM
-							(
-								SELECT
-									nlc.id,
-									nlc.site_id,
-									nlcmmeo.month as month_beginning,
-									nlcmmeo.month as from_date,
-									nlcmmeo.month + INTERVAL '1 month - 1 day' as to_date,
-									nlcmmeo.gas_volume
-								FROM
-									pneumatic_instrument_month_methane_emission_override nlcmmeo
-									INNER JOIN pneumatic_instrument nlc ON nlc.id = nlcmmeo.pneumatic_instrument_id
-									AND nlcmmeo.month BETWEEN DATE_TRUNC('month', nlc.start_date)
-									AND COALESCE(nlc.end_date, CURRENT_DATE)
-									AND nlcmmeo.month IN (
+															(
+																SELECT
+																	picdi.pneumatic_instrument_controlled_characterization_id,
+																	picdi.start_date,
+																	picdi.end_date,
+																	picdi.reason,
+																	COALESCE(
+																		(
+																			LEAD(picdi.start_date) OVER (
+																				PARTITION BY picdi.pneumatic_instrument_controlled_characterization_id
+																				ORDER BY
+																					picdi.start_date
+																			) - INTERVAL '1 day'
+																		)::date,
+																		CURRENT_DATE
+																	) as max_end_date
+																FROM
+																	pneumatic_instrument_control_device_inactivity picdi
+															) picdi
+													) picdi ON picdi.pneumatic_instrument_controlled_characterization_id = pimme.pneumatic_instrument_controlled_characterization_id
+													AND pimme.date BETWEEN picdi.start_date
+													AND picdi.end_date
+											) pimme
+											INNER JOIN site s ON s.id = pimme.site_id
+											AND NOT (
+												-- Controlled emission is destroyed or recovered, so it's filtered out here.
+												pimme.control_device IS NOT NULL
+												AND pimme.reason IS NULL
+											)
+									) pimme
+									LEFT OUTER JOIN (
 										SELECT
-											month_beginning
+											ga.facility_id,
+											ga.date as from_date,
+											COALESCE(
+												(
+													LEAD(ga.date) OVER (
+														PARTITION BY ga.facility_id
+														ORDER BY
+															ga.date
+													) - INTERVAL '1 day'
+												)::date,
+												CURRENT_DATE
+											) as to_date,
+											ga.c1,
+											ga.co2
 										FROM
-											allocate_month
-									)
-							) nlcmme
-					) nlcmme
-					LEFT OUTER JOIN site s ON s.id = nlcmme.site_id
-					LEFT OUTER JOIN (
-						SELECT
-							facility_id,
-							-- If first gas analysis, from_date has to be first of the month because there is no carryover from previous analysis.
-							CASE
-								WHEN ROW_NUMBER() OVER (
-									PARTITION BY facility_id
-									ORDER BY
-										date
-								) = 1 THEN DATE_TRUNC('month', date)::date
-								ELSE date
-							END as from_date,
-							COALESCE(
-								LEAD(date) OVER (
-									PARTITION BY facility_id
-									ORDER BY
-										date
-								) - INTERVAL '1 day',
-								CURRENT_DATE
-							) as to_date,
-							c1,
-							co2
-						FROM
-							gas_analysis
-					) ga ON ga.facility_id = s.facility_id
-					AND ga.from_date <= nlcmme.to_date
-					AND ga.to_date >= nlcmme.from_date
-			) nlcmme
-	) nlcmme
+											gas_analysis ga
+									) ga ON ga.facility_id = pimme.facility_id
+									AND pimme.date BETWEEN ga.from_date
+									AND ga.to_date
+							) pimme
+					) pimme
+				GROUP BY
+					pimme.facility_id,
+					pimme.site_id,
+					pimme.id,
+					pimme.month,
+					pimme.control_device,
+					pimme.reason
+			) pimme
+	) pimme
 GROUP BY
-	nlcmme.facility_id,
-	nlcmme.site_id,
-	nlcmme.id,
-	nlcmme.month_beginning
+	pimme.facility_id,
+	pimme.site_id,
+	pimme.id,
+	pimme.category,
+	pimme.source,
+	pimme.month
