@@ -4,7 +4,7 @@ WITH calculate_dates as (
 	FROM
 		generate_series(
 			DATE_TRUNC('month', $1::date),
-			$2::date + INTERVAL '1 month - 1 day',
+			DATE_TRUNC('month', $2::date) + INTERVAL '1 month - 1 day',
 			'1 day'
 		) as date
 )
@@ -146,10 +146,10 @@ FROM
 																								FROM
 																									pneumatic_instrument_month_methane_emission_override pimmeo
 																							)
-																							INNER JOIN site s ON s.id = pi.site_id
-																						WHERE
-																							s.fdc_rec_id = '01695F3482624E4A946AA9E144C3B719'
-																							AND pi.serial_number = 'PP37405'
+																						-- 	INNER JOIN site s ON s.id = pi.site_id
+																						-- WHERE
+																						-- 	s.fdc_rec_id = '01695F3482624E4A946AA9E144C3B719'
+																						-- 	AND pi.serial_number = 'PP37405'
 																					) pi
 																					LEFT OUTER JOIN pneumatic_instrument_month_hours pimh ON pimh.pneumatic_instrument_id = pi.id
 																					AND pimh.month = pi.month
@@ -192,9 +192,9 @@ FROM
 																	INNER JOIN pneumatic_instrument pi ON pi.id = pimmeo.pneumatic_instrument_id
 																	AND cd.date BETWEEN pi.start_date
 																	AND COALESCE(pi.end_date, CURRENT_DATE)
-																	INNER JOIN site s ON s.id = pi.site_id
-																WHERE
-																	s.fdc_rec_id = '01695F3482624E4A946AA9E144C3B719'
+																-- 	INNER JOIN site s ON s.id = pi.site_id
+																-- WHERE
+																-- 	s.fdc_rec_id = '01695F3482624E4A946AA9E144C3B719'
 															) pimme
 															LEFT OUTER JOIN (
 																SELECT

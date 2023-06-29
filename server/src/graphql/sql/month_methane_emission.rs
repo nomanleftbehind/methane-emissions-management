@@ -1,3 +1,4 @@
+use super::routine::defined_vent_gas::storage_tank::insert_storage_tank_gas_in_solution_factor_calculated;
 use crate::graphql::models::{
     input::{FromToMonthInput, MonthMethaneEmissionBySourceIdInput},
     month_methane_emission::{
@@ -29,13 +30,16 @@ pub async fn select_month_methane_emissions(
 pub async fn insert_month_methane_emissions(
     pool: &PgPool,
     user_id: Uuid,
-    FromToMonthInput {
-        from_month,
-        to_month,
-    }: FromToMonthInput,
+    month_range: &FromToMonthInput,
     c1: &f64,
     co2: &f64,
+    gas_gravity: &f64,
 ) -> Result<u64, Error> {
+    let FromToMonthInput {
+        from_month,
+        to_month,
+    } = month_range;
+
     let mut pneumatic_instrument_month_methane_emissions_calculated = query_file_as!(
         MonthMethaneEmissionCalculated,
         "src/graphql/sql/statements/pneumatic_instrument_month_methane_emission_calculate.sql",
@@ -50,6 +54,17 @@ pub async fn insert_month_methane_emissions(
     let mut level_controller_month_methane_emissions_calculated = query_file_as!(
         MonthMethaneEmissionCalculated,
         "src/graphql/sql/statements/level_controller_month_methane_emission_calculate.sql",
+        from_month,
+        to_month,
+        c1,
+        co2
+    )
+    .fetch_all(pool)
+    .await?;
+
+    let mut pneumatic_pump_month_methane_emissions_calculated = query_file_as!(
+        MonthMethaneEmissionCalculated,
+        "src/graphql/sql/statements/pneumatic_pump_month_methane_emission_calculate.sql",
         from_month,
         to_month,
         c1,
@@ -80,6 +95,10 @@ pub async fn insert_month_methane_emissions(
     .fetch_all(pool)
     .await?;
 
+    // Storage tank methane emissions calculation requires precalculation of GIS factors which is done here.
+    insert_storage_tank_gas_in_solution_factor_calculated(pool, user_id, month_range, gas_gravity)
+        .await?;
+
     let mut storage_tank_month_methane_emissions_calculated = query_file_as!(
         MonthMethaneEmissionCalculated,
         "src/graphql/sql/statements/storage_tank_month_methane_emission_calculate.sql",
@@ -94,6 +113,9 @@ pub async fn insert_month_methane_emissions(
 
     pneumatic_instrument_month_methane_emissions_calculated
         .append(&mut level_controller_month_methane_emissions_calculated);
+
+    pneumatic_instrument_month_methane_emissions_calculated
+        .append(&mut pneumatic_pump_month_methane_emissions_calculated);
 
     pneumatic_instrument_month_methane_emissions_calculated
         .append(&mut compressor_seal_month_methane_emissions_calculated);

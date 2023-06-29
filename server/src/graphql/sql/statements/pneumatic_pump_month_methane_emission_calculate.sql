@@ -1,4 +1,3 @@
--- TODO: Use actuation frequency to determine emission volume instead of continuous rate.
 WITH calculate_dates as (
     SELECT
         date::date
@@ -12,7 +11,7 @@ WITH calculate_dates as (
 SELECT
     pimme.facility_id,
     pimme.site_id as "site_id!",
-    'level_controller'::methane_emission_source_table as "source_table!: _",
+    'pneumatic_pump'::methane_emission_source_table as "source_table!: _",
     pimme.id as "source_table_id!",
     pimme.category as "category!: _",
     pimme.source as "source!: _",
@@ -97,7 +96,7 @@ FROM
                                                     (
                                                         SELECT
                                                             pimme.*,
-                                                            picc.id as level_controller_controlled_characterization_id,
+                                                            picc.id as pneumatic_pump_controlled_characterization_id,
                                                             picc.control_device
                                                         FROM
                                                             (
@@ -137,30 +136,27 @@ FROM
                                                                                             cd.date,
                                                                                             DATE_TRUNC('month', cd.date)::date as month
                                                                                         FROM
-                                                                                            level_controller pi
+                                                                                            pneumatic_pump pi
                                                                                             INNER JOIN calculate_dates cd ON cd.date BETWEEN pi.start_date
                                                                                             AND COALESCE(pi.end_date, CURRENT_DATE)
                                                                                             AND (pi.id, DATE_TRUNC('month', cd.date)) NOT IN (
                                                                                                 SELECT
-                                                                                                    pimmeo.level_controller_id,
+                                                                                                    pimmeo.pneumatic_pump_id,
                                                                                                     pimmeo.month
                                                                                                 FROM
-                                                                                                    level_controller_month_methane_emission_override pimmeo
-                                                                                            ) -- 	INNER JOIN site s ON s.id = pi.site_id
-                                                                                            -- WHERE
-                                                                                            -- 	s.fdc_rec_id = '01695F3482624E4A946AA9E144C3B719'
-                                                                                            -- 	AND pi.serial_number = 'PP37405'
+                                                                                                    pneumatic_pump_month_methane_emission_override pimmeo
+                                                                                            )
                                                                                     ) pi
-                                                                                    LEFT OUTER JOIN level_controller_month_hours pimh ON pimh.level_controller_id = pi.id
+                                                                                    LEFT OUTER JOIN pneumatic_pump_month_hours pimh ON pimh.pneumatic_pump_id = pi.id
                                                                                     AND pimh.month = pi.month
                                                                                     LEFT OUTER JOIN (
                                                                                         SELECT
-                                                                                            pichg.level_controller_id,
+                                                                                            pichg.pneumatic_pump_id,
                                                                                             pichg.date as from_date,
                                                                                             COALESCE(
                                                                                                 (
                                                                                                     LEAD(pichg.date) OVER (
-                                                                                                        PARTITION BY pichg.level_controller_id
+                                                                                                        PARTITION BY pichg.pneumatic_pump_id
                                                                                                         ORDER BY
                                                                                                             pichg.date
                                                                                                     ) - INTERVAL '1 day'
@@ -169,8 +165,8 @@ FROM
                                                                                             ) as to_date,
                                                                                             pichg.rate
                                                                                         FROM
-                                                                                            level_controller_change pichg
-                                                                                    ) pichg ON pichg.level_controller_id = pi.id
+                                                                                            pneumatic_pump_change pichg
+                                                                                    ) pichg ON pichg.pneumatic_pump_id = pi.id
                                                                                     AND pi.date BETWEEN pichg.from_date
                                                                                     AND pichg.to_date
                                                                             ) pimme
@@ -182,23 +178,21 @@ FROM
                                                                     pi.site_id,
                                                                     cd.date,
                                                                     pimmeo.month,
-                                                                    pimmeo.gas_volume / COUNT(pimmeo.level_controller_id) OVER (
-                                                                        PARTITION BY pimmeo.level_controller_id,
+                                                                    pimmeo.gas_volume / COUNT(pimmeo.pneumatic_pump_id) OVER (
+                                                                        PARTITION BY pimmeo.pneumatic_pump_id,
                                                                         pimmeo.month
                                                                     ) as gas_volume
                                                                 FROM
-                                                                    level_controller_month_methane_emission_override pimmeo
+                                                                    pneumatic_pump_month_methane_emission_override pimmeo
                                                                     INNER JOIN calculate_dates cd ON DATE_TRUNC('month', cd.date) = pimmeo.month
-                                                                    INNER JOIN level_controller pi ON pi.id = pimmeo.level_controller_id
+                                                                    INNER JOIN pneumatic_pump pi ON pi.id = pimmeo.pneumatic_pump_id
                                                                     AND cd.date BETWEEN pi.start_date
-                                                                    AND COALESCE(pi.end_date, CURRENT_DATE) -- 	INNER JOIN site s ON s.id = pi.site_id
-                                                                    -- WHERE
-                                                                    -- 	s.fdc_rec_id = '01695F3482624E4A946AA9E144C3B719'
+                                                                    AND COALESCE(pi.end_date, CURRENT_DATE)
                                                             ) pimme
                                                             LEFT OUTER JOIN (
                                                                 SELECT
                                                                     picc.id,
-                                                                    picc.level_controller_id,
+                                                                    picc.pneumatic_pump_id,
                                                                     picc.start_date,
                                                                     LEAST(picc.end_date, picc.max_end_date) as end_date,
                                                                     picc.control_device
@@ -206,14 +200,14 @@ FROM
                                                                     (
                                                                         SELECT
                                                                             picc.id,
-                                                                            picc.level_controller_id,
+                                                                            picc.pneumatic_pump_id,
                                                                             picc.start_date,
                                                                             picc.end_date,
                                                                             picc.control_device,
                                                                             COALESCE(
                                                                                 (
                                                                                     LEAD(picc.start_date) OVER (
-                                                                                        PARTITION BY picc.level_controller_id
+                                                                                        PARTITION BY picc.pneumatic_pump_id
                                                                                         ORDER BY
                                                                                             picc.start_date
                                                                                     ) - INTERVAL '1 day'
@@ -221,29 +215,29 @@ FROM
                                                                                 CURRENT_DATE
                                                                             ) as max_end_date
                                                                         FROM
-                                                                            level_controller_controlled_characterization picc
+                                                                            pneumatic_pump_controlled_characterization picc
                                                                     ) picc
-                                                            ) picc ON picc.level_controller_id = pimme.id
+                                                            ) picc ON picc.pneumatic_pump_id = pimme.id
                                                             AND pimme.date BETWEEN picc.start_date
                                                             AND picc.end_date
                                                     ) pimme
                                                     LEFT OUTER JOIN (
                                                         SELECT
-                                                            picdi.level_controller_controlled_characterization_id,
+                                                            picdi.pneumatic_pump_controlled_characterization_id,
                                                             picdi.start_date,
                                                             LEAST(picdi.end_date, picdi.max_end_date) as end_date,
                                                             picdi.reason
                                                         FROM
                                                             (
                                                                 SELECT
-                                                                    picdi.level_controller_controlled_characterization_id,
+                                                                    picdi.pneumatic_pump_controlled_characterization_id,
                                                                     picdi.start_date,
                                                                     picdi.end_date,
                                                                     picdi.reason,
                                                                     COALESCE(
                                                                         (
                                                                             LEAD(picdi.start_date) OVER (
-                                                                                PARTITION BY picdi.level_controller_controlled_characterization_id
+                                                                                PARTITION BY picdi.pneumatic_pump_controlled_characterization_id
                                                                                 ORDER BY
                                                                                     picdi.start_date
                                                                             ) - INTERVAL '1 day'
@@ -251,9 +245,9 @@ FROM
                                                                         CURRENT_DATE
                                                                     ) as max_end_date
                                                                 FROM
-                                                                    level_controller_control_device_inactivity picdi
+                                                                    pneumatic_pump_control_device_inactivity picdi
                                                             ) picdi
-                                                    ) picdi ON picdi.level_controller_controlled_characterization_id = pimme.level_controller_controlled_characterization_id
+                                                    ) picdi ON picdi.pneumatic_pump_controlled_characterization_id = pimme.pneumatic_pump_controlled_characterization_id
                                                     AND pimme.date BETWEEN picdi.start_date
                                                     AND picdi.end_date
                                             ) pimme
