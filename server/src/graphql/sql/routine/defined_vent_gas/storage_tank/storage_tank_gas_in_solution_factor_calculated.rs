@@ -1,6 +1,6 @@
 use super::super::super::super::gas_analysis::insert_gas_analysis_calculated_param;
 use crate::graphql::models::{
-    input::FromToMonthInput,
+    input::MonthRangeInput,
     routine::defined_vent_gas::storage_tank::{
         StorageTankGasInSolutionFactorCalculatedInterim,
         StorageTankGasInSolutionFactorCalculatedInterimNestedRows,
@@ -13,13 +13,13 @@ use uuid::Uuid;
 pub async fn insert_storage_tank_gas_in_solution_factor_calculated(
     pool: &PgPool,
     user_id: Uuid,
-    month_range: &FromToMonthInput,
+    month_range: &MonthRangeInput,
     gas_gravity: &f64,
 ) -> Result<u64, Error> {
     // Gas in solution factor calculation requires precalculation of gas gravity which is done here.
     insert_gas_analysis_calculated_param(pool, user_id, month_range).await?;
 
-    let FromToMonthInput {
+    let MonthRangeInput {
         from_month,
         to_month,
     } = month_range;

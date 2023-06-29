@@ -1,6 +1,6 @@
-use super::routine::defined_vent_gas::storage_tank::insert_storage_tank_gas_in_solution_factor_calculated;
+use super::super::routine::defined_vent_gas::storage_tank::insert_storage_tank_gas_in_solution_factor_calculated;
 use crate::graphql::models::{
-    input::{FromToMonthInput, MonthMethaneEmissionBySourceIdInput},
+    input::{MonthMethaneEmissionBySourceIdInput, MonthRangeInput},
     month_methane_emission::{
         MonthMethaneEmission, MonthMethaneEmissionCalculated, MonthMethaneEmissionNestedRows,
         MonthMethaneEmissionUnnestedRows,
@@ -10,7 +10,7 @@ use common::{MethaneEmissionCategory, MethaneEmissionSource, MethaneEmissionSour
 use sqlx::{query_as, query_file, query_file_as, Error, PgPool};
 use uuid::Uuid;
 
-pub async fn select_month_methane_emissions(
+pub async fn get_month_methane_emissions(
     pool: &PgPool,
     by: MonthMethaneEmissionBySourceIdInput,
 ) -> Result<Vec<MonthMethaneEmission>, Error> {
@@ -30,12 +30,12 @@ pub async fn select_month_methane_emissions(
 pub async fn insert_month_methane_emissions(
     pool: &PgPool,
     user_id: Uuid,
-    month_range: &FromToMonthInput,
+    month_range: &MonthRangeInput,
     c1: &f64,
     co2: &f64,
     gas_gravity: &f64,
 ) -> Result<u64, Error> {
-    let FromToMonthInput {
+    let MonthRangeInput {
         from_month,
         to_month,
     } = month_range;

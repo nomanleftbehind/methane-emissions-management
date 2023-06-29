@@ -1,4 +1,4 @@
-use super::super::input::FromToMonthInput;
+use super::super::input::MonthRangeInput;
 use async_graphql::{CustomValidator, InputValueError};
 use chrono::{Datelike, NaiveDate};
 
@@ -29,14 +29,14 @@ impl MonthRangeValidator {
     }
 }
 
-impl CustomValidator<FromToMonthInput> for MonthRangeValidator {
+impl CustomValidator<MonthRangeInput> for MonthRangeValidator {
     fn check(
         &self,
-        FromToMonthInput {
+        MonthRangeInput {
             from_month,
             to_month,
-        }: &FromToMonthInput,
-    ) -> Result<(), InputValueError<FromToMonthInput>> {
+        }: &MonthRangeInput,
+    ) -> Result<(), InputValueError<MonthRangeInput>> {
         let month_range = to_month.year() * 12 + to_month.month() as i32
             - (from_month.year() * 12 + from_month.month() as i32)
             + 1;

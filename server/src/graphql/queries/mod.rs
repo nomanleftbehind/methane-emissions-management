@@ -1,26 +1,20 @@
 use self::{
-    compressor_blowdown::CompressorBlowdownQuery,
-    // compressor_month_vent::CompressorMonthVentQuery,
-    // controller_application::ControllerApplicationQuery,
-    // controller_manufacturer::ControllerManufacturerQuery,
-    facility::FacilityQuery,
     // get_object::GetObjectQuery,
-    // id_selection::IdSelectionQuery,
+    dropdown_selection::DropdownSelectionQuery,
+    facility::FacilityQuery,
     month_methane_emission::MonthMethaneEmissionQuery,
-    // tank_farm_month_vent::TankFarmMonthVentQuery,
+    nonroutine::compressor_blowdown::CompressorBlowdownQuery,
+    routine::pneumatic_device::DeviceManufacturerQuery,
     user::UserQuery,
 };
 use async_graphql::MergedObject;
 
-mod compressor_blowdown;
-// mod compressor_month_vent;
-// mod controller_application;
-// mod controller_manufacturer;
 mod facility;
-// mod get_object;
-// mod id_selection;
 mod month_methane_emission;
-// mod tank_farm_month_vent;
+mod nonroutine;
+mod routine;
+// mod get_object;
+mod dropdown_selection;
 mod user;
 
 #[derive(MergedObject, Default, Clone)]
@@ -30,11 +24,8 @@ pub struct FullQuery(
     FacilityQuery,
     CompressorBlowdownQuery,
     MonthMethaneEmissionQuery,
-    // CompressorMonthVentQuery,
-    // TankFarmMonthVentQuery,
-    // IdSelectionQuery,
-    // ControllerManufacturerQuery,
-    // ControllerApplicationQuery,
+    DeviceManufacturerQuery,
+    DropdownSelectionQuery,
 );
 
 pub(crate) fn full_query() -> FullQuery {
@@ -44,10 +35,7 @@ pub(crate) fn full_query() -> FullQuery {
         FacilityQuery,
         CompressorBlowdownQuery,
         MonthMethaneEmissionQuery,
-        // CompressorMonthVentQuery,
-        // TankFarmMonthVentQuery,
-        // IdSelectionQuery,
-        // ControllerManufacturerQuery,
-        // ControllerApplicationQuery,
+        DeviceManufacturerQuery,
+        DropdownSelectionQuery,
     )
 }

@@ -3,13 +3,12 @@ use crate::graphql::{
     models::{
         input::MonthMethaneEmissionBySourceIdInput, month_methane_emission::MonthMethaneEmission,
     },
-    // models::pneumatic_device::{ControllerMonthVent, ControllerMonthVentBy},
     sql,
 };
 use async_graphql::{Context, Error, Object};
 
 #[derive(Default, Clone)]
-pub(super) struct MonthMethaneEmissionQuery;
+pub struct MonthMethaneEmissionQuery;
 
 #[Object]
 impl MonthMethaneEmissionQuery {
@@ -20,10 +19,10 @@ impl MonthMethaneEmissionQuery {
     ) -> Result<Vec<MonthMethaneEmission>, Error> {
         let pool = ctx.db_pool();
 
-        let controller_month_vents = sql::select_month_methane_emissions(pool, by)
+        let month_methane_emissions = sql::get_month_methane_emissions(pool, by)
             .await
             .map_err(Error::from);
 
-        controller_month_vents
+        month_methane_emissions
     }
 }

@@ -1,6 +1,6 @@
 use crate::{
     graphql::models::{
-        input::FromToMonthInput,
+        input::MonthRangeInput,
         nonroutine::compressor_blowdown::{
             CompressorBlowdown, CompressorBlowdownInterim, CompressorBlowdownInterimNestedRows,
             CompressorBlowdownInterimUnnestedRows, MssqlCompressorBlowdownRows,
@@ -27,14 +27,14 @@ pub async fn select_compressor_blowdowns(
 /// This function retrieves compressor blowdown volumes data from third party MSSQL database,
 ///
 /// transforms data into insert friendly form, and inserts it into Postgres database.
-pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
+pub async fn insert_compressor_blowdowns_from_fdc(
     pool: &PgPool,
     mssql_fdc_client: &mut MssqlFdcClient,
     user_id: Uuid,
-    FromToMonthInput {
+    MonthRangeInput {
         from_month,
         to_month,
-    }: FromToMonthInput,
+    }: &MonthRangeInput,
 ) -> Result<u64, anyhow::Error> {
     let stream = mssql_fdc_client.query(
         r#"
@@ -77,7 +77,7 @@ pub async fn mutatation_insert_compressor_blowdowns_from_fdc(
         GROUP BY
         cb.IDREC,
         cb.DTTM"#,
-        &[&from_month, &to_month]).await?;
+        &[from_month, to_month]).await?;
 
     let mssql_compressor_blowdown_rows = stream.into_first_result().await?;
 

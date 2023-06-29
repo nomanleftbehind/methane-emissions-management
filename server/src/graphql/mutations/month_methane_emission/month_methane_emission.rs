@@ -1,18 +1,18 @@
 use crate::{
     configuration::DefaultGasParams,
-    graphql::{context::ContextExt, models::input::FromToMonthInput, sql},
+    graphql::{context::ContextExt, models::input::MonthRangeInput, sql},
 };
 use async_graphql::{Context, Error, Object};
 
 #[derive(Default, Clone)]
-pub(super) struct MonthMethaneEmissionMutation;
+pub struct MonthMethaneEmissionMutation;
 
 #[Object]
 impl MonthMethaneEmissionMutation {
     async fn insert_month_methane_emissions(
         &self,
         ctx: &Context<'_>,
-        month_range: FromToMonthInput,
+        month_range: MonthRangeInput,
     ) -> Result<u64, Error> {
         let pool = ctx.db_pool();
         let cookie = ctx.get_cookie()?;

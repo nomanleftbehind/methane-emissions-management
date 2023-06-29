@@ -1,6 +1,6 @@
 use crate::graphql::{
     context::ContextExt,
-    models::{input::FromToMonthInput, validator::MonthRangeValidator},
+    models::{input::MonthRangeInput, validator::MonthRangeValidator},
     sql::gas_analysis,
 };
 use async_graphql::{Context, Error, Object};
@@ -13,8 +13,7 @@ impl GasAnalysisCalculatedParamMutation {
     async fn insert_gas_analysis_calculated_param(
         &self,
         ctx: &Context<'_>,
-        #[graphql(validator(custom = "MonthRangeValidator::new(12)"))]
-        month_range: FromToMonthInput,
+        #[graphql(validator(custom = "MonthRangeValidator::new(12)"))] month_range: MonthRangeInput,
     ) -> Result<u64, Error> {
         let pool = ctx.db_pool();
         let cookie = ctx.get_cookie()?;

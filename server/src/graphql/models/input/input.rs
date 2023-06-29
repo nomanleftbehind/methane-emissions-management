@@ -10,7 +10,7 @@ pub struct EmittersByInput {
 }
 
 #[derive(InputObject, Debug)]
-pub struct FromToMonthInput {
+pub struct MonthRangeInput {
     #[graphql(validator(custom = "MonthBeginningValidator"))]
     pub from_month: NaiveDate,
     #[graphql(validator(custom = "MonthBeginningValidator"))]

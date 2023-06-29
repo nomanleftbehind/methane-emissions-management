@@ -1,12 +1,12 @@
 use crate::graphql::{
     context::ContextExt, models::nonroutine::compressor_blowdown::CompressorBlowdown,
-    sql::select_compressor_blowdowns,
+    sql::nonroutine::compressor_blowdown::select_compressor_blowdowns,
 };
 use async_graphql::{Context, Error, Object};
 use uuid::Uuid;
 
 #[derive(Default, Clone)]
-pub(super) struct CompressorBlowdownQuery;
+pub struct CompressorBlowdownQuery;
 
 #[Object]
 impl CompressorBlowdownQuery {

@@ -2,7 +2,7 @@ use crate::{
     configuration::DefaultGasParams,
     graphql::{
         context::ContextExt,
-        models::{input::FromToMonthInput, validator::MonthRangeValidator},
+        models::{input::MonthRangeInput, validator::MonthRangeValidator},
         sql::routine::defined_vent_gas::storage_tank,
     },
 };
@@ -16,8 +16,7 @@ impl StorageTankGasInSolutionFactorCalculatedMutation {
     async fn insert_storage_tank_gas_in_solution_factor_calculated(
         &self,
         ctx: &Context<'_>,
-        #[graphql(validator(custom = "MonthRangeValidator::new(12)"))]
-        month_range: FromToMonthInput,
+        #[graphql(validator(custom = "MonthRangeValidator::new(12)"))] month_range: MonthRangeInput,
     ) -> Result<u64, Error> {
         let pool = ctx.db_pool();
         let cookie = ctx.get_cookie()?;

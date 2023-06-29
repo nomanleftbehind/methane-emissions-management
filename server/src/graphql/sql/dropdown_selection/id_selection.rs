@@ -1,5 +1,5 @@
 use crate::graphql::models::IdSelection;
-use common::IdSelectionVariant::{self, ControllerApplicationId, ControllerManufacturerId};
+use common::IdSelectionVariant::{self, ControllerApplicationId, DeviceManufacturerId};
 use sqlx::{query_as, Error, PgPool};
 
 pub async fn id_selection(
@@ -8,7 +8,7 @@ pub async fn id_selection(
 ) -> Result<Vec<IdSelection>, Error> {
     println!("calling id selection: {:?}", &variant);
     match variant {
-        ControllerManufacturerId => {
+        DeviceManufacturerId => {
             query_as!(
                 IdSelection,
                 "SELECT id, manufacturer as name FROM device_manufacturer ORDER BY manufacturer"
@@ -17,12 +17,10 @@ pub async fn id_selection(
             .await
         }
         ControllerApplicationId => {
-            query_as!(
-                IdSelection,
-                "SELECT id, application as name FROM controller_applications ORDER BY application"
-            )
-            .fetch_all(pool)
-            .await
+            return Err(Error::Io(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                format!("Wrong input provided"),
+            )))
         }
     }
 }
