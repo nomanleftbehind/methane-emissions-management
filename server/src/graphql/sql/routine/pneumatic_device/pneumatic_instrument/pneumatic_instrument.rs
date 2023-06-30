@@ -1,12 +1,12 @@
-use crate::graphql::models::input::InsertPneumaticDeviceInput;
+use crate::graphql::models::input::InsertPneumaticInstrumentInput;
 use common::PneumaticInstrumentType;
 use sqlx::{query, Error, PgPool};
 use uuid::Uuid;
 
 pub async fn insert_pneumatic_instrument(
     pool: &PgPool,
-    user_id: Uuid,
-    InsertPneumaticDeviceInput {
+    user_id: &Uuid,
+    InsertPneumaticInstrumentInput {
         site_id,
         manufacturer_id,
         model,
@@ -14,7 +14,7 @@ pub async fn insert_pneumatic_instrument(
         r#type,
         start_date,
         end_date,
-    }: InsertPneumaticDeviceInput,
+    }: InsertPneumaticInstrumentInput,
 ) -> Result<u64, Error> {
     let rows_inserted = query!(
         "INSERT INTO pneumatic_instrument (id, site_id, type, manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at)

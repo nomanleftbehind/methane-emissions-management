@@ -1,7 +1,10 @@
 use super::super::validator::MonthBeginningValidator;
 use async_graphql::InputObject;
 use chrono::{NaiveDate, NaiveDateTime};
-use common::{DeleteEntryVariant, GetObjectVariant, PneumaticInstrumentType, UpdateFieldVariant};
+use common::{
+    CompressorType, DeleteEntryVariant, GetObjectVariant, PneumaticInstrumentType,
+    UpdateFieldVariant,
+};
 use uuid::Uuid;
 
 #[derive(Debug, InputObject)]
@@ -52,7 +55,7 @@ pub struct ControllerChangeInput {
 }
 
 #[derive(InputObject, Debug)]
-pub struct InsertPneumaticDeviceInput {
+pub struct InsertPneumaticInstrumentInput {
     pub site_id: Uuid,
     pub r#type: PneumaticInstrumentType,
     pub manufacturer_id: Uuid,
@@ -64,17 +67,21 @@ pub struct InsertPneumaticDeviceInput {
 
 #[derive(InputObject, Debug)]
 pub struct InsertCompressorInput {
+    pub id: Uuid,
+    pub site_id: Uuid,
     pub fdc_rec_id: String,
-    pub facility_id: Uuid,
+    pub r#type: CompressorType,
     pub name: String,
     pub serial_number: String,
+    pub power: f64,
+    pub throw_count: Option<i32>,
     pub install_date: NaiveDate,
     pub remove_date: Option<NaiveDate>,
 }
 
 #[derive(InputObject, Debug)]
 pub struct InsertEntryInput {
-    pub controller: Option<InsertPneumaticDeviceInput>,
+    pub pneumatic_instrument: Option<InsertPneumaticInstrumentInput>,
     pub compressor: Option<InsertCompressorInput>,
 }
 

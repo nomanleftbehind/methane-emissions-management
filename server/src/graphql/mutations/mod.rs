@@ -3,7 +3,10 @@ use self::{
     // manual_mutation::ManualMutation,
     month_methane_emission::MonthMethaneEmissionMutation,
     nonroutine::compressor_blowdown::CompressorBlowdownMutation,
-    routine::defined_vent_gas::storage_tank::StorageTankGasInSolutionFactorCalculatedMutation,
+    routine::{
+        defined_vent_gas::storage_tank::StorageTankGasInSolutionFactorCalculatedMutation,
+        pneumatic_device::pneumatic_instrument::PneumaticInstrumentMutation,
+    },
     user::UserMutation,
 };
 use async_graphql::MergedObject;
@@ -19,6 +22,7 @@ mod user;
 pub struct FullMutation(
     // ManualMutation,
     UserMutation,
+    PneumaticInstrumentMutation,
     MonthMethaneEmissionMutation,
     CompressorBlowdownMutation,
     StorageTankGasInSolutionFactorCalculatedMutation,
@@ -29,6 +33,7 @@ pub(crate) fn full_mutation() -> FullMutation {
     FullMutation(
         // ManualMutation,
         UserMutation,
+        PneumaticInstrumentMutation,
         MonthMethaneEmissionMutation,
         CompressorBlowdownMutation,
         StorageTankGasInSolutionFactorCalculatedMutation,
