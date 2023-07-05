@@ -7,7 +7,7 @@ pub mod routine;
 mod user;
 // mod delete_entry;
 // mod get_object;
-// mod insert_entry;
+mod insert_entry;
 // mod update_field;
 
 // pub(in crate::graphql) use delete_entry::*;

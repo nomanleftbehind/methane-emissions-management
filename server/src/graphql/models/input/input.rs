@@ -67,7 +67,6 @@ pub struct InsertPneumaticInstrumentInput {
 
 #[derive(InputObject, Debug)]
 pub struct InsertCompressorInput {
-    pub id: Uuid,
     pub site_id: Uuid,
     pub fdc_rec_id: String,
     pub r#type: CompressorType,
