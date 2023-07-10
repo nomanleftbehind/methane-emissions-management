@@ -64,6 +64,7 @@ impl Display for FacilityType {
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum UpdateFieldVariant {
+    // Pneumatic Instrument
     PneumaticInstrumentSiteId,
     PneumaticInstrumentType,
     PneumaticInstrumentManufacturerId,
@@ -71,6 +72,68 @@ pub enum UpdateFieldVariant {
     PneumaticInstrumentSerialNumber,
     PneumaticInstrumentStartDate,
     PneumaticInstrumentEndDate,
+    // Pneumatic Instrument Change
+    PneumaticInstrumentChangePneumaticInstrumentId,
+    PneumaticInstrumentChangeDate,
+    PneumaticInstrumentChangeRate,
+    // Pneumatic Instrument Controlled Characterization
+    PneumaticInstrumentControlledCharacterizationPneumaticInstrumentId,
+    PneumaticInstrumentControlledCharacterizationStartDate,
+    PneumaticInstrumentControlledCharacterizationEndDate,
+    PneumaticInstrumentControlledCharacterizationControlDevice,
+    PneumaticInstrumentControlledCharacterizationComment,
+    // Pneumatic Instrument Control Device Inactivity
+    PneumaticInstrumentControlDeviceInactivityPneumaticInstrumentControlledCharacterizationId,
+    PneumaticInstrumentControlDeviceInactivityStartDate,
+    PneumaticInstrumentControlDeviceInactivityEndDate,
+    PneumaticInstrumentControlDeviceInactivityReason,
+    PneumaticInstrumentControlDeviceInactivityComment,
+    // Pneumatic Instrument Month Hours
+    PneumaticInstrumentMonthHoursPneumaticInstrumentId,
+    PneumaticInstrumentMonthHoursMonth,
+    PneumaticInstrumentMonthHoursHoursOn,
+    // Pneumatic Instrument Month Methane Emission Override
+    PneumaticInstrumentMonthMethaneEmissionOverridePneumaticInstrumentId,
+    PneumaticInstrumentMonthMethaneEmissionOverrideMonth,
+    PneumaticInstrumentMonthMethaneEmissionOverrideGasVolume,
+    PneumaticInstrumentMonthMethaneEmissionOverrideComment,
+    // Level Controller
+    LevelControllerSiteId,
+    LevelControllerManufacturerId,
+    LevelControllerModel,
+    LevelControllerSerialNumber,
+    LevelControllerStartDate,
+    LevelControllerEndDate,
+    // Level Controller Actuation Frequency
+    LevelControllerActuationFrequencyLevelControllerId,
+    LevelControllerActuationFrequencyDate,
+    LevelControllerActuationFrequencyActuationFrequency,
+    // Level Controller Change
+    LevelControllerChangeLevelControllerId,
+    LevelControllerChangeDate,
+    LevelControllerChangeRate,
+    // Level Controller Controlled Characterization
+    LevelControllerControlledCharacterizationLevelControllerId,
+    LevelControllerControlledCharacterizationStartDate,
+    LevelControllerControlledCharacterizationEndDate,
+    LevelControllerControlledCharacterizationControlDevice,
+    LevelControllerControlledCharacterizationComment,
+    // Level Controller Control Device Inactivity
+    LevelControllerControlDeviceInactivityLevelControllerControlledCharacterizationId,
+    LevelControllerControlDeviceInactivityStartDate,
+    LevelControllerControlDeviceInactivityEndDate,
+    LevelControllerControlDeviceInactivityReason,
+    LevelControllerControlDeviceInactivityComment,
+    // Level Controller Month Hours
+    LevelControllerMonthHoursLevelControllerId,
+    LevelControllerMonthHoursMonth,
+    LevelControllerMonthHoursHoursOn,
+    // Level Controller Month Methane Emission Override
+    LevelControllerMonthMethaneEmissionOverrideLevelControllerId,
+    LevelControllerMonthMethaneEmissionOverrideMonth,
+    LevelControllerMonthMethaneEmissionOverrideGasVolume,
+    LevelControllerMonthMethaneEmissionOverrideComment,
+    // Compressor
     CompressorSiteId,
     CompressorFdcRecId,
     CompressorType,
@@ -80,16 +143,6 @@ pub enum UpdateFieldVariant {
     CompressorThrowCount,
     CompressorInstallDate,
     CompressorRemoveDate,
-    PneumaticInstrumentChangePneumaticInstrumentId,
-    PneumaticInstrumentChangeDate,
-    PneumaticInstrumentChangeRate,
-    PneumaticInstrumentMonthHoursPneumaticInstrumentId,
-    PneumaticInstrumentMonthHoursMonth,
-    PneumaticInstrumentMonthHoursHoursOn,
-    PneumaticInstrumentMonthMethaneEmissionOverridePneumaticInstrumentId,
-    PneumaticInstrumentMonthMethaneEmissionOverrideMonth,
-    PneumaticInstrumentMonthMethaneEmissionOverrideGasVolume,
-    PneumaticInstrumentMonthMethaneEmissionOverrideComment,
 }
 
 // graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
