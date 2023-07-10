@@ -23,11 +23,13 @@ pub struct MonthRangeInput {
 #[derive(InputObject, Debug)]
 pub struct UpdateFieldValue {
     pub string_value: Option<String>,
-    pub integer_value: Option<i64>,
+    pub integer_value: Option<i32>,
     pub float_value: Option<f64>,
     pub uuid_value: Option<Uuid>,
     pub naive_date_value: Option<NaiveDate>,
     pub naive_date_time_value: Option<NaiveDateTime>,
+    pub pneumatic_instrument_type_value: Option<PneumaticInstrumentType>,
+    pub compressor_type_value: Option<CompressorType>,
 }
 
 #[derive(InputObject, Debug)]

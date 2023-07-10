@@ -8,7 +8,6 @@ mod month_methane_emission;
 mod pneumatic_instrument;
 mod site;
 mod storage_tank;
-mod tank;
 mod user;
 
 pub use compressor::*;
@@ -16,7 +15,6 @@ pub use month_methane_emission::*;
 pub use pneumatic_instrument::*;
 pub use site::*;
 pub use storage_tank::*;
-pub use tank::*;
 pub use user::*;
 
 /// `FacilityType` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
@@ -66,28 +64,32 @@ impl Display for FacilityType {
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum UpdateFieldVariant {
-    ControllerFdcRecId,
-    ControllerManufacturerId,
-    ControllerModel,
-    ControllerSerialNumber,
-    ControllerApplicationId,
-    ControllerFacilityId,
+    PneumaticInstrumentSiteId,
+    PneumaticInstrumentType,
+    PneumaticInstrumentManufacturerId,
+    PneumaticInstrumentModel,
+    PneumaticInstrumentSerialNumber,
+    PneumaticInstrumentStartDate,
+    PneumaticInstrumentEndDate,
+    CompressorSiteId,
     CompressorFdcRecId,
-    CompressorFacilityId,
+    CompressorType,
     CompressorName,
     CompressorSerialNumber,
+    CompressorPower,
+    CompressorThrowCount,
     CompressorInstallDate,
     CompressorRemoveDate,
-    ControllerChangeId,
-    ControllerChangeDate,
-    ControllerChangeRate,
-    ControllerMonthHoursControllerId,
-    ControllerMonthHoursMonth,
-    ControllerMonthHoursHoursOn,
-    ControllerMonthVentOverrideControllerId,
-    ControllerMonthVentOverrideMonth,
-    ControllerMonthVentOverrideGasVolume,
-    ControllerMonthVentOverrideComment,
+    PneumaticInstrumentChangePneumaticInstrumentId,
+    PneumaticInstrumentChangeDate,
+    PneumaticInstrumentChangeRate,
+    PneumaticInstrumentMonthHoursPneumaticInstrumentId,
+    PneumaticInstrumentMonthHoursMonth,
+    PneumaticInstrumentMonthHoursHoursOn,
+    PneumaticInstrumentMonthMethaneEmissionOverridePneumaticInstrumentId,
+    PneumaticInstrumentMonthMethaneEmissionOverrideMonth,
+    PneumaticInstrumentMonthMethaneEmissionOverrideGasVolume,
+    PneumaticInstrumentMonthMethaneEmissionOverrideComment,
 }
 
 // graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
@@ -162,30 +164,70 @@ impl Display for UpdateFieldValueEnum {
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum DeleteEntryVariant {
-    Controller,
+    Facility,
+    Site,
+    DeviceManufacturer,
+    SurveyEquipment,
+    GasAnalysis,
+    // Pneumatic Instrument
+    PneumaticInstrument,
+    PneumaticInstrumentChange,
+    PneumaticInstrumentControlledCharacterization,
+    PneumaticInstrumentControlDeviceInactivity,
+    PneumaticInstrumentMonthHours,
+    PneumaticInstrumentMonthMethaneEmissionOverride,
+    // Level Controller
+    LevelController,
+    LevelControllerActuationFrequency,
+    LevelControllerChange,
+    LevelControllerControlledCharacterization,
+    LevelControllerControlDeviceInactivity,
+    LevelControllerMonthHours,
+    LevelControllerMonthMethaneEmissionOverride,
+    // Pneumatic Pump
+    PneumaticPump,
+    PneumaticPumpChange,
+    PneumaticPumpControlledCharacterization,
+    PneumaticPumpControlDeviceInactivity,
+    PneumaticPumpMonthHours,
+    PneumaticPumpMonthMethaneEmissionOverride,
+    // Compressor Seal
     Compressor,
-    TankFarm,
-    ControllerChange,
-    ControllerMonthHours,
-    ControllerMonthVentOverride,
-    ControllerMonthVent,
+    CompressorSeal,
+    CompressorSealTest,
+    CompressorEmissionSurvey,
+    CompressorControlledCharacterization,
+    CompressorControlDeviceInactivity,
+    CompressorMonthHours,
+    CompressorSealMonthMethaneEmissionOverride,
+    CompressorBlowdown,
+    CompressorBlowdownOverride,
+    // Storage Tank
+    StorageTank,
+    StorageTankChange,
+    StorageTankEmissionSurvey,
+    StorageTankControlledCharacterization,
+    StorageTankControlDeviceInactivity,
+    StorageTankGasInSolutionFactorCalculated,
+    StorageTankMonthLiquidHydrocarbonEntering,
+    StorageTankMonthMethaneEmissionOverride,
 }
 
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum GetObjectVariant {
-    ControllerByFacilityId,
+    PneumaticInstrumentByFacilityId,
     CompressorByFacilityId,
-    TankFarmByFacilityId,
-    ControllerChangeByControllerId,
-    ControllerMonthHoursByControllerId,
-    ControllerMonthVentOverrideByControllerId,
-    ControllerMonthVentByControllerId,
+    StorageTankByFacilityId,
+    PneumaticInstrumentChangeByPneumaticInstrumentId,
+    PneumaticInstrumentMonthHoursByPneumaticInstrumentId,
+    PneumaticInstrumentMonthMethaneEmissionOverrideByPneumaticInstrumentId,
+    PneumaticInstrumentMonthMethaneEmissionByPneumaticInstrumentId,
 }
 
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum IdSelectionVariant {
     DeviceManufacturerId,
-    ControllerApplicationId,
+    UserId,
 }

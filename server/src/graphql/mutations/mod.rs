@@ -1,6 +1,6 @@
 use self::{
     gas_analysis::GasAnalysisCalculatedParamMutation,
-    // manual_mutation::ManualMutation,
+    manual_mutation::ManualMutation,
     month_methane_emission::MonthMethaneEmissionMutation,
     nonroutine::compressor_blowdown::CompressorBlowdownMutation,
     routine::{
@@ -11,8 +11,8 @@ use self::{
 };
 use async_graphql::MergedObject;
 
-// mod manual_mutation;
 mod gas_analysis;
+mod manual_mutation;
 mod month_methane_emission;
 mod nonroutine;
 mod routine;
@@ -20,7 +20,7 @@ mod user;
 
 #[derive(MergedObject, Default, Clone)]
 pub struct FullMutation(
-    // ManualMutation,
+    ManualMutation,
     UserMutation,
     PneumaticInstrumentMutation,
     MonthMethaneEmissionMutation,
@@ -31,7 +31,7 @@ pub struct FullMutation(
 
 pub(crate) fn full_mutation() -> FullMutation {
     FullMutation(
-        // ManualMutation,
+        ManualMutation,
         UserMutation,
         PneumaticInstrumentMutation,
         MonthMethaneEmissionMutation,

@@ -8,7 +8,7 @@ use uuid::Uuid;
 pub async fn insert_entry(
     pool: &PgPool,
     input: InsertEntryInput,
-    user_id: Uuid,
+    user_id: &Uuid,
 ) -> Result<u64, Error> {
     let now = chrono::Utc::now().naive_utc();
 

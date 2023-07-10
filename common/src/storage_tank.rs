@@ -51,3 +51,24 @@ impl Display for ControlDeviceInactivityReason {
         }
     }
 }
+
+#[cfg_attr(
+    not(target_arch = "wasm32"),
+    derive(async_graphql::Enum, sqlx::Type),
+    sqlx(type_name = "calculation_method", rename_all = "SCREAMING_SNAKE_CASE")
+)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum CalculationMethod {
+    Equation,
+    Measured,
+}
+
+impl Display for CalculationMethod {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CalculationMethod::Equation => write!(f, "Equation"),
+            CalculationMethod::Measured => write!(f, "Measured"),
+        }
+    }
+}
