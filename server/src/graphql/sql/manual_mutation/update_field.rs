@@ -1,10 +1,30 @@
 use crate::graphql::models::input::{UpdateFieldInput, UpdateFieldValue};
 use chrono::Datelike;
 use common::{
-    CompressorType, ControlDevice, ControlDeviceInactivityReason, PneumaticInstrumentType,
+    CompressorSealTestingPoint, CompressorType, ControlDevice, ControlDeviceInactivityReason,
+    PneumaticInstrumentType, SealType,
     UpdateFieldVariant::{
-        CompressorFdcRecId, CompressorInstallDate, CompressorName, CompressorPower,
-        CompressorRemoveDate, CompressorSerialNumber, CompressorSiteId, CompressorThrowCount,
+        CompressorControlDeviceInactivityComment,
+        CompressorControlDeviceInactivityCompressorControlledCharacterizationId,
+        CompressorControlDeviceInactivityEndDate, CompressorControlDeviceInactivityReason,
+        CompressorControlDeviceInactivityStartDate, CompressorControlledCharacterizationComment,
+        CompressorControlledCharacterizationCompressorId,
+        CompressorControlledCharacterizationControlDevice,
+        CompressorControlledCharacterizationEndDate, CompressorControlledCharacterizationStartDate,
+        CompressorEmissionSurveyCompressorId, CompressorEmissionSurveyEndDate,
+        CompressorEmissionSurveyLeakDuration, CompressorEmissionSurveyRate,
+        CompressorEmissionSurveyStartDate, CompressorEmissionSurveySurveyEquipmentId,
+        CompressorEmissionSurveySurveyPoint, CompressorFdcRecId, CompressorInstallDate,
+        CompressorMonthHoursCompressorId, CompressorMonthHoursMonth,
+        CompressorMonthHoursPressurizedHours, CompressorName, CompressorPower,
+        CompressorRemoveDate, CompressorSealDescription,
+        CompressorSealMonthMethaneEmissionOverrideComment,
+        CompressorSealMonthMethaneEmissionOverrideCompressorSealId,
+        CompressorSealMonthMethaneEmissionOverrideGasVolume,
+        CompressorSealMonthMethaneEmissionOverrideMonth, CompressorSealTestCompressorSealId,
+        CompressorSealTestEndDate, CompressorSealTestRate, CompressorSealTestStartDate,
+        CompressorSealTestSurveyEquipmentId, CompressorSealTestTestingPoint, CompressorSealType,
+        CompressorSerialNumber, CompressorSiteId, CompressorThrowCount,
         CompressorType as CompressorTypeVariant,
         LevelControllerActuationFrequencyActuationFrequency, LevelControllerActuationFrequencyDate,
         LevelControllerActuationFrequencyLevelControllerId, LevelControllerChangeDate,
@@ -45,7 +65,23 @@ use common::{
         PneumaticInstrumentMonthMethaneEmissionOverrideMonth,
         PneumaticInstrumentMonthMethaneEmissionOverridePneumaticInstrumentId,
         PneumaticInstrumentSerialNumber, PneumaticInstrumentSiteId, PneumaticInstrumentStartDate,
-        PneumaticInstrumentType as PneumaticInstrumentTypeVariant,
+        PneumaticInstrumentType as PneumaticInstrumentTypeVariant, PneumaticPumpChangeDate,
+        PneumaticPumpChangePneumaticPumpId, PneumaticPumpChangeRate,
+        PneumaticPumpControlDeviceInactivityComment, PneumaticPumpControlDeviceInactivityEndDate,
+        PneumaticPumpControlDeviceInactivityPneumaticPumpControlledCharacterizationId,
+        PneumaticPumpControlDeviceInactivityReason, PneumaticPumpControlDeviceInactivityStartDate,
+        PneumaticPumpControlledCharacterizationComment,
+        PneumaticPumpControlledCharacterizationControlDevice,
+        PneumaticPumpControlledCharacterizationEndDate,
+        PneumaticPumpControlledCharacterizationPneumaticPumpId,
+        PneumaticPumpControlledCharacterizationStartDate, PneumaticPumpEndDate,
+        PneumaticPumpManufacturerId, PneumaticPumpModel, PneumaticPumpMonthHoursHoursOn,
+        PneumaticPumpMonthHoursMonth, PneumaticPumpMonthHoursPneumaticPumpId,
+        PneumaticPumpMonthMethaneEmissionOverrideComment,
+        PneumaticPumpMonthMethaneEmissionOverrideGasVolume,
+        PneumaticPumpMonthMethaneEmissionOverrideMonth,
+        PneumaticPumpMonthMethaneEmissionOverridePneumaticPumpId, PneumaticPumpSerialNumber,
+        PneumaticPumpSiteId, PneumaticPumpStartDate,
     },
 };
 use sqlx::{query, Error, PgPool};
@@ -74,6 +110,8 @@ pub async fn update_field(
                 compressor_type_value,
                 control_device_value,
                 control_device_inactivity_reason_value,
+                seal_type_value,
+                compressor_seal_testing_point_value,
             },
     } = input;
 
@@ -677,10 +715,10 @@ pub async fn update_field(
         // Level Controller Month Hours
         LevelControllerMonthHoursLevelControllerId => query!(
             "UPDATE level_controller_month_hours
-                    SET level_controller_id = $2,
-                        updated_by_id = $3,
-                        updated_at = $4
-                    WHERE id = $1",
+            SET level_controller_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
             id,
             uuid_value,
             user_id,
@@ -699,10 +737,10 @@ pub async fn update_field(
 
             query!(
                 "UPDATE level_controller_month_hours
-                        SET month = $2,
-                            updated_by_id = $3,
-                            updated_at = $4
-                        WHERE id = $1",
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
                 id,
                 naive_date_value,
                 user_id,
@@ -711,10 +749,10 @@ pub async fn update_field(
         }
         LevelControllerMonthHoursHoursOn => query!(
             "UPDATE level_controller_month_hours
-                    SET hours_on = $2,
-                        updated_by_id = $3,
-                        updated_at = $4
-                    WHERE id = $1",
+            SET hours_on = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
             id,
             float_value,
             user_id,
@@ -723,10 +761,10 @@ pub async fn update_field(
         // Level Controller Month Methane Emission Override
         LevelControllerMonthMethaneEmissionOverrideLevelControllerId => query!(
             "UPDATE level_controller_month_methane_emission_override
-                    SET level_controller_id = $2,
-                        updated_by_id = $3,
-                        updated_at = $4
-                    WHERE id = $1",
+            SET level_controller_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
             id,
             uuid_value,
             user_id,
@@ -745,10 +783,10 @@ pub async fn update_field(
 
             query!(
                 "UPDATE level_controller_month_methane_emission_override
-                        SET month = $2,
-                            updated_by_id = $3,
-                            updated_at = $4
-                        WHERE id = $1",
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
                 id,
                 naive_date_value,
                 user_id,
@@ -757,10 +795,10 @@ pub async fn update_field(
         }
         LevelControllerMonthMethaneEmissionOverrideGasVolume => query!(
             "UPDATE level_controller_month_methane_emission_override
-                    SET gas_volume = $2,
-                        updated_by_id = $3,
-                        updated_at = $4
-                    WHERE id = $1",
+            SET gas_volume = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
             id,
             float_value,
             user_id,
@@ -768,10 +806,336 @@ pub async fn update_field(
         ),
         LevelControllerMonthMethaneEmissionOverrideComment => query!(
             "UPDATE level_controller_month_methane_emission_override
-                    SET comment = $2,
-                        updated_by_id = $3,
-                        updated_at = $4
-                    WHERE id = $1",
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        // Pneumatic Pump
+        PneumaticPumpSiteId => query!(
+            "UPDATE pneumatic_pump
+            SET site_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpManufacturerId => query!(
+            "UPDATE pneumatic_pump
+            SET manufacturer_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpModel => query!(
+            "UPDATE pneumatic_pump
+            SET model = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpSerialNumber => query!(
+            "UPDATE pneumatic_pump
+            SET serial_number = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpStartDate => query!(
+            "UPDATE pneumatic_pump
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpEndDate => query!(
+            "UPDATE pneumatic_pump
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        // Pneumatic Pump Change
+        PneumaticPumpChangePneumaticPumpId => query!(
+            "UPDATE pneumatic_pump_change
+            SET pneumatic_pump_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpChangeDate => query!(
+            "UPDATE pneumatic_pump_change
+            SET date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpChangeRate => query!(
+            "UPDATE pneumatic_pump_change
+            SET rate = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        // Pneumatic Pump Controlled Characterization
+        PneumaticPumpControlledCharacterizationPneumaticPumpId => query!(
+            "UPDATE pneumatic_pump_controlled_characterization
+            SET pneumatic_pump_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpControlledCharacterizationStartDate => query!(
+            "UPDATE pneumatic_pump_controlled_characterization
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpControlledCharacterizationEndDate => query!(
+            "UPDATE pneumatic_pump_controlled_characterization
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpControlledCharacterizationControlDevice => query!(
+            "UPDATE pneumatic_pump_controlled_characterization
+            SET control_device = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            control_device_value as Option<ControlDevice>,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpControlledCharacterizationComment => query!(
+            "UPDATE pneumatic_pump_controlled_characterization
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        // Pneumatic Pump Control Device Inactivity
+        PneumaticPumpControlDeviceInactivityPneumaticPumpControlledCharacterizationId => {
+            query!(
+                "UPDATE pneumatic_pump_control_device_inactivity
+                SET pneumatic_pump_controlled_characterization_id = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                uuid_value,
+                user_id,
+                updated_at,
+            )
+        }
+        PneumaticPumpControlDeviceInactivityStartDate => {
+            query!(
+                "UPDATE pneumatic_pump_control_device_inactivity
+                SET start_date = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                user_id,
+                updated_at,
+            )
+        }
+        PneumaticPumpControlDeviceInactivityEndDate => {
+            query!(
+                "UPDATE pneumatic_pump_control_device_inactivity
+                SET end_date = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                user_id,
+                updated_at,
+            )
+        }
+        PneumaticPumpControlDeviceInactivityReason => {
+            query!(
+                "UPDATE pneumatic_pump_control_device_inactivity
+                SET reason = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                control_device_inactivity_reason_value as Option<ControlDeviceInactivityReason>,
+                user_id,
+                updated_at,
+            )
+        }
+        PneumaticPumpControlDeviceInactivityComment => {
+            query!(
+                "UPDATE pneumatic_pump_control_device_inactivity
+                SET comment = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                string_value,
+                user_id,
+                updated_at,
+            )
+        }
+        // Pneumatic Pump Month Hours
+        PneumaticPumpMonthHoursPneumaticPumpId => query!(
+            "UPDATE pneumatic_pump_month_hours
+            SET pneumatic_pump_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpMonthHoursMonth => {
+            if let Some(value) = &naive_date_value {
+                if value.day() != 1 {
+                    let error = Error::Io(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected first day of the month, got `{}`", value),
+                    ));
+                    return Err(error);
+                }
+            }
+
+            query!(
+                "UPDATE pneumatic_pump_month_hours
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                user_id,
+                updated_at,
+            )
+        }
+        PneumaticPumpMonthHoursHoursOn => query!(
+            "UPDATE pneumatic_pump_month_hours
+            SET hours_on = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        // Pneumatic Pump Month Methane Emission Override
+        PneumaticPumpMonthMethaneEmissionOverridePneumaticPumpId => query!(
+            "UPDATE pneumatic_pump_month_methane_emission_override
+            SET pneumatic_pump_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpMonthMethaneEmissionOverrideMonth => {
+            if let Some(value) = &naive_date_value {
+                if value.day() != 1 {
+                    let error = Error::Io(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected first day of the month, got `{}`", value),
+                    ));
+                    return Err(error);
+                }
+            }
+
+            query!(
+                "UPDATE pneumatic_pump_month_methane_emission_override
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                user_id,
+                updated_at,
+            )
+        }
+        PneumaticPumpMonthMethaneEmissionOverrideGasVolume => query!(
+            "UPDATE pneumatic_pump_month_methane_emission_override
+            SET gas_volume = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        PneumaticPumpMonthMethaneEmissionOverrideComment => query!(
+            "UPDATE pneumatic_pump_month_methane_emission_override
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
             id,
             string_value,
             user_id,
@@ -874,6 +1238,381 @@ pub async fn update_field(
             WHERE id = $1",
             id,
             naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealType => query!(
+            "UPDATE compressor_seal
+            SET type = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            seal_type_value as Option<SealType>,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealDescription => query!(
+            "UPDATE compressor_seal
+            SET description = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealTestCompressorSealId => query!(
+            "UPDATE compressor_seal_test
+            SET compressor_seal_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealTestStartDate => query!(
+            "UPDATE compressor_seal_test
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealTestEndDate => query!(
+            "UPDATE compressor_seal_test
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealTestRate => query!(
+            "UPDATE compressor_seal_test
+            SET rate = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealTestTestingPoint => query!(
+            "UPDATE compressor_seal_test
+            SET testing_point = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            compressor_seal_testing_point_value as Option<CompressorSealTestingPoint>,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealTestSurveyEquipmentId => query!(
+            "UPDATE compressor_seal_test
+            SET survey_equipment_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        // Compressor Emission Survey
+        CompressorEmissionSurveyCompressorId => query!(
+            "UPDATE compressor_emission_survey
+            SET compressor_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorEmissionSurveyStartDate => query!(
+            "UPDATE compressor_emission_survey
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorEmissionSurveyEndDate => query!(
+            "UPDATE compressor_emission_survey
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorEmissionSurveyRate => query!(
+            "UPDATE compressor_emission_survey
+            SET rate = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorEmissionSurveySurveyPoint => query!(
+            "UPDATE compressor_emission_survey
+            SET survey_point = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorEmissionSurveyLeakDuration => query!(
+            "UPDATE compressor_emission_survey
+            SET leak_duration = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorEmissionSurveySurveyEquipmentId => query!(
+            "UPDATE compressor_emission_survey
+            SET survey_equipment_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlledCharacterizationCompressorId => query!(
+            "UPDATE compressor_controlled_characterization
+            SET compressor_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlledCharacterizationStartDate => query!(
+            "UPDATE compressor_controlled_characterization
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlledCharacterizationEndDate => query!(
+            "UPDATE compressor_controlled_characterization
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlledCharacterizationControlDevice => query!(
+            "UPDATE compressor_controlled_characterization
+            SET control_device = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            control_device_value as Option<ControlDevice>,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlledCharacterizationComment => query!(
+            "UPDATE compressor_controlled_characterization
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlDeviceInactivityCompressorControlledCharacterizationId => query!(
+            "UPDATE compressor_control_device_inactivity
+            SET compressor_controlled_characterization_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlDeviceInactivityStartDate => query!(
+            "UPDATE compressor_control_device_inactivity
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlDeviceInactivityEndDate => query!(
+            "UPDATE compressor_control_device_inactivity
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlDeviceInactivityReason => query!(
+            "UPDATE compressor_control_device_inactivity
+            SET reason = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            control_device_inactivity_reason_value as Option<ControlDeviceInactivityReason>,
+            user_id,
+            updated_at,
+        ),
+        CompressorControlDeviceInactivityComment => query!(
+            "UPDATE compressor_control_device_inactivity
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorMonthHoursCompressorId => query!(
+            "UPDATE compressor_month_hours
+            SET compressor_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorMonthHoursMonth => {
+            if let Some(value) = &naive_date_value {
+                if value.day() != 1 {
+                    let error = Error::Io(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected first day of the month, got `{}`", value),
+                    ));
+                    return Err(error);
+                }
+            }
+            query!(
+                "UPDATE compressor_month_hours
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                user_id,
+                updated_at,
+            )
+        }
+        CompressorMonthHoursPressurizedHours => query!(
+            "UPDATE compressor_month_hours
+            SET pressurized_hours = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealMonthMethaneEmissionOverrideCompressorSealId => query!(
+            "UPDATE compressor_seal_month_methane_emission_override
+            SET compressor_seal_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealMonthMethaneEmissionOverrideMonth => {
+            if let Some(value) = &naive_date_value {
+                if value.day() != 1 {
+                    let error = Error::Io(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected first day of the month, got `{}`", value),
+                    ));
+                    return Err(error);
+                }
+            }
+            query!(
+                "UPDATE compressor_seal_month_methane_emission_override
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                user_id,
+                updated_at,
+            )
+        }
+        CompressorSealMonthMethaneEmissionOverrideGasVolume => query!(
+            "UPDATE compressor_seal_month_methane_emission_override
+            SET gas_volume = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorSealMonthMethaneEmissionOverrideComment => query!(
+            "UPDATE compressor_seal_month_methane_emission_override
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
             user_id,
             updated_at,
         ),

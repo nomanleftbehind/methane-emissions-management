@@ -133,6 +133,38 @@ pub enum UpdateFieldVariant {
     LevelControllerMonthMethaneEmissionOverrideMonth,
     LevelControllerMonthMethaneEmissionOverrideGasVolume,
     LevelControllerMonthMethaneEmissionOverrideComment,
+    // Pneumatic Pump
+    PneumaticPumpSiteId,
+    PneumaticPumpManufacturerId,
+    PneumaticPumpModel,
+    PneumaticPumpSerialNumber,
+    PneumaticPumpStartDate,
+    PneumaticPumpEndDate,
+    // Pneumatic Pump Change
+    PneumaticPumpChangePneumaticPumpId,
+    PneumaticPumpChangeDate,
+    PneumaticPumpChangeRate,
+    // Pneumatic Pump Controlled Characterization
+    PneumaticPumpControlledCharacterizationPneumaticPumpId,
+    PneumaticPumpControlledCharacterizationStartDate,
+    PneumaticPumpControlledCharacterizationEndDate,
+    PneumaticPumpControlledCharacterizationControlDevice,
+    PneumaticPumpControlledCharacterizationComment,
+    // Pneumatic Pump Control Device Inactivity
+    PneumaticPumpControlDeviceInactivityPneumaticPumpControlledCharacterizationId,
+    PneumaticPumpControlDeviceInactivityStartDate,
+    PneumaticPumpControlDeviceInactivityEndDate,
+    PneumaticPumpControlDeviceInactivityReason,
+    PneumaticPumpControlDeviceInactivityComment,
+    // Pneumatic Pump Month Hours
+    PneumaticPumpMonthHoursPneumaticPumpId,
+    PneumaticPumpMonthHoursMonth,
+    PneumaticPumpMonthHoursHoursOn,
+    // Pneumatic Pump Month Methane Emission Override
+    PneumaticPumpMonthMethaneEmissionOverridePneumaticPumpId,
+    PneumaticPumpMonthMethaneEmissionOverrideMonth,
+    PneumaticPumpMonthMethaneEmissionOverrideGasVolume,
+    PneumaticPumpMonthMethaneEmissionOverrideComment,
     // Compressor
     CompressorSiteId,
     CompressorFdcRecId,
@@ -143,6 +175,45 @@ pub enum UpdateFieldVariant {
     CompressorThrowCount,
     CompressorInstallDate,
     CompressorRemoveDate,
+    // Compressor Seal
+    CompressorSealType,
+    CompressorSealDescription,
+    // Compressor Seal Test
+    CompressorSealTestCompressorSealId,
+    CompressorSealTestStartDate,
+    CompressorSealTestEndDate,
+    CompressorSealTestRate,
+    CompressorSealTestTestingPoint,
+    CompressorSealTestSurveyEquipmentId,
+    // Compressor Emission Survey
+    CompressorEmissionSurveyCompressorId,
+    CompressorEmissionSurveyStartDate,
+    CompressorEmissionSurveyEndDate,
+    CompressorEmissionSurveyRate,
+    CompressorEmissionSurveySurveyPoint,
+    CompressorEmissionSurveyLeakDuration,
+    CompressorEmissionSurveySurveyEquipmentId,
+    // Compressor Controlled Characterization,
+    CompressorControlledCharacterizationCompressorId,
+    CompressorControlledCharacterizationStartDate,
+    CompressorControlledCharacterizationEndDate,
+    CompressorControlledCharacterizationControlDevice,
+    CompressorControlledCharacterizationComment,
+    // Compressor Control Device Inactivity
+    CompressorControlDeviceInactivityCompressorControlledCharacterizationId,
+    CompressorControlDeviceInactivityStartDate,
+    CompressorControlDeviceInactivityEndDate,
+    CompressorControlDeviceInactivityReason,
+    CompressorControlDeviceInactivityComment,
+    // Compressor Month Hours
+    CompressorMonthHoursCompressorId,
+    CompressorMonthHoursMonth,
+    CompressorMonthHoursPressurizedHours,
+    // Compressor Seal Month Methane Emission Override
+    CompressorSealMonthMethaneEmissionOverrideCompressorSealId,
+    CompressorSealMonthMethaneEmissionOverrideMonth,
+    CompressorSealMonthMethaneEmissionOverrideGasVolume,
+    CompressorSealMonthMethaneEmissionOverrideComment,
 }
 
 // graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
