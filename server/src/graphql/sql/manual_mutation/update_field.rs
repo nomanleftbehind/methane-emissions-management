@@ -1,9 +1,11 @@
 use crate::graphql::models::input::{UpdateFieldInput, UpdateFieldValue};
 use chrono::Datelike;
 use common::{
-    CompressorSealTestingPoint, CompressorType, ControlDevice, ControlDeviceInactivityReason,
-    PneumaticInstrumentType, SealType,
+    CalculationMethod, CompressorSealTestingPoint, CompressorType, ControlDevice,
+    ControlDeviceInactivityReason, FacilityType, PneumaticInstrumentType, SealType, SiteType,
     UpdateFieldVariant::{
+        CompressorBlowdownOverrideComment, CompressorBlowdownOverrideCompressorId,
+        CompressorBlowdownOverrideDate, CompressorBlowdownOverrideGasVolume,
         CompressorControlDeviceInactivityComment,
         CompressorControlDeviceInactivityCompressorControlledCharacterizationId,
         CompressorControlDeviceInactivityEndDate, CompressorControlDeviceInactivityReason,
@@ -25,7 +27,11 @@ use common::{
         CompressorSealTestEndDate, CompressorSealTestRate, CompressorSealTestStartDate,
         CompressorSealTestSurveyEquipmentId, CompressorSealTestTestingPoint, CompressorSealType,
         CompressorSerialNumber, CompressorSiteId, CompressorThrowCount,
-        CompressorType as CompressorTypeVariant,
+        CompressorType as CompressorTypeVariant, DeviceManufacturerManufacturer, FacilityIdpa,
+        FacilityName, FacilityType as FacilityTypeVariant, GasAnalysisC1, GasAnalysisC2,
+        GasAnalysisC3, GasAnalysisC4I, GasAnalysisC4N, GasAnalysisC5I, GasAnalysisC5N,
+        GasAnalysisC6, GasAnalysisC7Plus, GasAnalysisCo2, GasAnalysisDate, GasAnalysisH2,
+        GasAnalysisH2s, GasAnalysisHe, GasAnalysisN2,
         LevelControllerActuationFrequencyActuationFrequency, LevelControllerActuationFrequencyDate,
         LevelControllerActuationFrequencyLevelControllerId, LevelControllerChangeDate,
         LevelControllerChangeLevelControllerId, LevelControllerChangeRate,
@@ -81,7 +87,29 @@ use common::{
         PneumaticPumpMonthMethaneEmissionOverrideGasVolume,
         PneumaticPumpMonthMethaneEmissionOverrideMonth,
         PneumaticPumpMonthMethaneEmissionOverridePneumaticPumpId, PneumaticPumpSerialNumber,
-        PneumaticPumpSiteId, PneumaticPumpStartDate,
+        PneumaticPumpSiteId, PneumaticPumpStartDate, SiteDescription, SiteFacilityId, SiteFdcRecId,
+        SiteName, SiteType as SiteTypeVariant, StorageTankChangeApiDensity,
+        StorageTankChangeCalculationMethod, StorageTankChangeDate, StorageTankChangeIA,
+        StorageTankChangePressure, StorageTankChangeStorageTankId, StorageTankChangeTemperature,
+        StorageTankControlDeviceInactivityComment, StorageTankControlDeviceInactivityEndDate,
+        StorageTankControlDeviceInactivityReason, StorageTankControlDeviceInactivityStartDate,
+        StorageTankControlDeviceInactivityStorageTankControlledCharacterizationId,
+        StorageTankControlledCharacterizationComment,
+        StorageTankControlledCharacterizationControlDevice,
+        StorageTankControlledCharacterizationEndDate,
+        StorageTankControlledCharacterizationStartDate,
+        StorageTankControlledCharacterizationStorageTankId, StorageTankEmissionSurveyEndDate,
+        StorageTankEmissionSurveyLeakDuration, StorageTankEmissionSurveyRate,
+        StorageTankEmissionSurveyStartDate, StorageTankEmissionSurveyStorageTankId,
+        StorageTankEmissionSurveySurveyEquipmentId, StorageTankEmissionSurveySurveyPoint,
+        StorageTankEndDate, StorageTankMonthLiquidHydrocarbonEnteringLiquidHydrocarbonVolume,
+        StorageTankMonthLiquidHydrocarbonEnteringMonth,
+        StorageTankMonthLiquidHydrocarbonEnteringStorageTankId,
+        StorageTankMonthMethaneEmissionOverrideComment,
+        StorageTankMonthMethaneEmissionOverrideGasVolume,
+        StorageTankMonthMethaneEmissionOverrideMonth,
+        StorageTankMonthMethaneEmissionOverrideStorageTankId, StorageTankSiteId,
+        StorageTankStartDate, SurveyEquipmentMake, SurveyEquipmentModel,
     },
 };
 use sqlx::{query, Error, PgPool};
@@ -101,21 +129,315 @@ pub async fn update_field(
         value:
             UpdateFieldValue {
                 string_value,
-                uuid_value,
                 integer_value,
                 float_value,
+                uuid_value,
+                bool_value,
                 naive_date_value,
                 naive_date_time_value: _,
+                facility_type_value,
+                site_type_value,
                 pneumatic_instrument_type_value,
                 compressor_type_value,
                 control_device_value,
                 control_device_inactivity_reason_value,
                 seal_type_value,
                 compressor_seal_testing_point_value,
+                calculation_method_value,
             },
     } = input;
 
     let query = match update_field_variant {
+        // Facility
+        FacilityIdpa => query!(
+            "UPDATE facility
+            SET idpa = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        FacilityName => query!(
+            "UPDATE facility
+            SET name = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        FacilityTypeVariant => query!(
+            "UPDATE facility
+            SET type = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            facility_type_value as Option<FacilityType>,
+            user_id,
+            updated_at,
+        ),
+        // Site
+        SiteFacilityId => query!(
+            "UPDATE site
+            SET facility_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        SiteFdcRecId => query!(
+            "UPDATE site
+            SET fdc_rec_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        SiteName => query!(
+            "UPDATE site
+            SET name = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        SiteTypeVariant => query!(
+            "UPDATE site
+            SET type = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            site_type_value as Option<SiteType>,
+            user_id,
+            updated_at,
+        ),
+        SiteDescription => query!(
+            "UPDATE site
+            SET description = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        // Device Manufacturer
+        DeviceManufacturerManufacturer => query!(
+            "UPDATE device_manufacturer
+            SET manufacturer = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        // Survey Equipment
+        SurveyEquipmentMake => query!(
+            "UPDATE survey_equipment
+            SET make = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        SurveyEquipmentModel => query!(
+            "UPDATE survey_equipment
+            SET model = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisDate => query!(
+            "UPDATE gas_analysis
+            SET date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisH2 => query!(
+            "UPDATE gas_analysis
+            SET h2 = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisHe => query!(
+            "UPDATE gas_analysis
+            SET he = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisN2 => query!(
+            "UPDATE gas_analysis
+            SET n2 = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisCo2 => query!(
+            "UPDATE gas_analysis
+            SET co2 = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisH2s => query!(
+            "UPDATE gas_analysis
+            SET h2s = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisC1 => query!(
+            "UPDATE gas_analysis
+            SET c1 = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisC2 => query!(
+            "UPDATE gas_analysis
+            SET c2 = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisC3 => query!(
+            "UPDATE gas_analysis
+            SET c3 = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisC4I => query!(
+            "UPDATE gas_analysis
+            SET c4_i = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisC4N => query!(
+            "UPDATE gas_analysis
+            SET c4_n = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisC5I => query!(
+            "UPDATE gas_analysis
+            SET c5_i = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisC5N => query!(
+            "UPDATE gas_analysis
+            SET c5_n = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisC6 => query!(
+            "UPDATE gas_analysis
+            SET c6 = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        GasAnalysisC7Plus => query!(
+            "UPDATE gas_analysis
+            SET c7_plus = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
         // Pneumatic Instrument
         PneumaticInstrumentSiteId => query!(
             "UPDATE pneumatic_instrument
@@ -1407,6 +1729,7 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
+        // Compressor Controlled Characterization
         CompressorControlledCharacterizationCompressorId => query!(
             "UPDATE compressor_controlled_characterization
             SET compressor_id = $2,
@@ -1462,6 +1785,7 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
+        // Compressor Control Device Inactivity
         CompressorControlDeviceInactivityCompressorControlledCharacterizationId => query!(
             "UPDATE compressor_control_device_inactivity
             SET compressor_controlled_characterization_id = $2,
@@ -1561,6 +1885,7 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
+        // Compressor Seal Month Methane Emission Override
         CompressorSealMonthMethaneEmissionOverrideCompressorSealId => query!(
             "UPDATE compressor_seal_month_methane_emission_override
             SET compressor_seal_id = $2,
@@ -1607,6 +1932,450 @@ pub async fn update_field(
         ),
         CompressorSealMonthMethaneEmissionOverrideComment => query!(
             "UPDATE compressor_seal_month_methane_emission_override
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        // Compressor Blowdown Override
+        CompressorBlowdownOverrideCompressorId => query!(
+            "UPDATE compressor_blowdown_override
+            SET compressor_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorBlowdownOverrideDate => query!(
+            "UPDATE compressor_blowdown_override
+            SET date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorBlowdownOverrideGasVolume => query!(
+            "UPDATE compressor_blowdown_override
+            SET gas_volume = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        CompressorBlowdownOverrideComment => query!(
+            "UPDATE compressor_blowdown_override
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankSiteId => query!(
+            "UPDATE storage_tank
+            SET site_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankStartDate => query!(
+            "UPDATE storage_tank
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankEndDate => query!(
+            "UPDATE storage_tank
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankChangeStorageTankId => query!(
+            "UPDATE storage_tank_change
+            SET storage_tank_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankChangeDate => query!(
+            "UPDATE storage_tank_change
+            SET date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankChangeIA => query!(
+            "UPDATE storage_tank_change
+            SET ia = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            bool_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankChangeApiDensity => query!(
+            "UPDATE storage_tank_change
+            SET api_density = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankChangeTemperature => query!(
+            "UPDATE storage_tank_change
+            SET temperature = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankChangePressure => query!(
+            "UPDATE storage_tank_change
+            SET pressure = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankChangeCalculationMethod => query!(
+            "UPDATE storage_tank_change
+            SET calculation_method = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            calculation_method_value as Option<CalculationMethod>,
+            user_id,
+            updated_at,
+        ),
+        StorageTankEmissionSurveyStorageTankId => query!(
+            "UPDATE storage_tank_emission_survey
+            SET storage_tank_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankEmissionSurveyStartDate => query!(
+            "UPDATE storage_tank_emission_survey
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankEmissionSurveyEndDate => query!(
+            "UPDATE storage_tank_emission_survey
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankEmissionSurveyRate => query!(
+            "UPDATE storage_tank_emission_survey
+            SET rate = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankEmissionSurveySurveyPoint => query!(
+            "UPDATE storage_tank_emission_survey
+            SET survey_point = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankEmissionSurveyLeakDuration => query!(
+            "UPDATE storage_tank_emission_survey
+            SET leak_duration = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankEmissionSurveySurveyEquipmentId => query!(
+            "UPDATE storage_tank_emission_survey
+            SET survey_equipment_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        // Storage Tank Controlled Characterization
+        StorageTankControlledCharacterizationStorageTankId => query!(
+            "UPDATE storage_tank_controlled_characterization
+            SET storage_tank_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankControlledCharacterizationStartDate => query!(
+            "UPDATE storage_tank_controlled_characterization
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankControlledCharacterizationEndDate => query!(
+            "UPDATE storage_tank_controlled_characterization
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankControlledCharacterizationControlDevice => query!(
+            "UPDATE storage_tank_controlled_characterization
+            SET control_device = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            control_device_value as Option<ControlDevice>,
+            user_id,
+            updated_at,
+        ),
+        StorageTankControlledCharacterizationComment => query!(
+            "UPDATE storage_tank_controlled_characterization
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        // Storage Tank Control Device Inactivity
+        StorageTankControlDeviceInactivityStorageTankControlledCharacterizationId => query!(
+            "UPDATE storage_tank_control_device_inactivity
+            SET storage_tank_controlled_characterization_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankControlDeviceInactivityStartDate => query!(
+            "UPDATE storage_tank_control_device_inactivity
+            SET start_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankControlDeviceInactivityEndDate => query!(
+            "UPDATE storage_tank_control_device_inactivity
+            SET end_date = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            naive_date_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankControlDeviceInactivityReason => query!(
+            "UPDATE storage_tank_control_device_inactivity
+            SET reason = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            control_device_inactivity_reason_value as Option<ControlDeviceInactivityReason>,
+            user_id,
+            updated_at,
+        ),
+        StorageTankControlDeviceInactivityComment => query!(
+            "UPDATE storage_tank_control_device_inactivity
+            SET comment = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            string_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankMonthLiquidHydrocarbonEnteringStorageTankId => query!(
+            "UPDATE storage_tank_month_liquid_hydrocarbon_entering
+            SET storage_tank_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankMonthLiquidHydrocarbonEnteringMonth => {
+            if let Some(value) = &naive_date_value {
+                if value.day() != 1 {
+                    let error = Error::Io(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected first day of the month, got `{}`", value),
+                    ));
+                    return Err(error);
+                }
+            }
+            query!(
+                "UPDATE storage_tank_month_liquid_hydrocarbon_entering
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                user_id,
+                updated_at,
+            )
+        }
+        StorageTankMonthLiquidHydrocarbonEnteringLiquidHydrocarbonVolume => query!(
+            "UPDATE storage_tank_month_liquid_hydrocarbon_entering
+            SET liquid_hydrocarbon_volume = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        // Storage Tank Month Methane Emission Override
+        StorageTankMonthMethaneEmissionOverrideStorageTankId => query!(
+            "UPDATE storage_tank_month_methane_emission_override
+            SET storage_tank_id = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            uuid_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankMonthMethaneEmissionOverrideMonth => {
+            if let Some(value) = &naive_date_value {
+                if value.day() != 1 {
+                    let error = Error::Io(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        format!("Expected first day of the month, got `{}`", value),
+                    ));
+                    return Err(error);
+                }
+            }
+            query!(
+                "UPDATE storage_tank_month_methane_emission_override
+                SET month = $2,
+                    updated_by_id = $3,
+                    updated_at = $4
+                WHERE id = $1",
+                id,
+                naive_date_value,
+                user_id,
+                updated_at,
+            )
+        }
+        StorageTankMonthMethaneEmissionOverrideGasVolume => query!(
+            "UPDATE storage_tank_month_methane_emission_override
+            SET gas_volume = $2,
+                updated_by_id = $3,
+                updated_at = $4
+            WHERE id = $1",
+            id,
+            float_value,
+            user_id,
+            updated_at,
+        ),
+        StorageTankMonthMethaneEmissionOverrideComment => query!(
+            "UPDATE storage_tank_month_methane_emission_override
             SET comment = $2,
                 updated_by_id = $3,
                 updated_at = $4

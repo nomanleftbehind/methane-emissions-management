@@ -2,8 +2,9 @@ use super::super::validator::MonthBeginningValidator;
 use async_graphql::InputObject;
 use chrono::{NaiveDate, NaiveDateTime};
 use common::{
-    CompressorSealTestingPoint, CompressorType, ControlDevice, ControlDeviceInactivityReason,
-    DeleteEntryVariant, GetObjectVariant, PneumaticInstrumentType, SealType, UpdateFieldVariant,
+    CalculationMethod, CompressorSealTestingPoint, CompressorType, ControlDevice,
+    ControlDeviceInactivityReason, DeleteEntryVariant, FacilityType, GetObjectVariant,
+    PneumaticInstrumentType, SealType, SiteType, UpdateFieldVariant,
 };
 use uuid::Uuid;
 
@@ -26,14 +27,18 @@ pub struct UpdateFieldValue {
     pub integer_value: Option<i32>,
     pub float_value: Option<f64>,
     pub uuid_value: Option<Uuid>,
+    pub bool_value: Option<bool>,
     pub naive_date_value: Option<NaiveDate>,
     pub naive_date_time_value: Option<NaiveDateTime>,
+    pub facility_type_value: Option<FacilityType>,
+    pub site_type_value: Option<SiteType>,
     pub pneumatic_instrument_type_value: Option<PneumaticInstrumentType>,
     pub compressor_type_value: Option<CompressorType>,
     pub control_device_value: Option<ControlDevice>,
     pub control_device_inactivity_reason_value: Option<ControlDeviceInactivityReason>,
     pub seal_type_value: Option<SealType>,
     pub compressor_seal_testing_point_value: Option<CompressorSealTestingPoint>,
+    pub calculation_method_value: Option<CalculationMethod>,
 }
 
 #[derive(InputObject, Debug)]

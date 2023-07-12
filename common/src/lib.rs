@@ -64,6 +64,37 @@ impl Display for FacilityType {
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum UpdateFieldVariant {
+    // Facility
+    FacilityIdpa,
+    FacilityName,
+    FacilityType,
+    // Site
+    SiteFacilityId,
+    SiteFdcRecId,
+    SiteName,
+    SiteType,
+    SiteDescription,
+    // Device Manufacturer
+    DeviceManufacturerManufacturer,
+    // Survey Equipment
+    SurveyEquipmentMake,
+    SurveyEquipmentModel,
+    // Gas Analysis
+    GasAnalysisDate,
+    GasAnalysisH2,
+    GasAnalysisHe,
+    GasAnalysisN2,
+    GasAnalysisCo2,
+    GasAnalysisH2s,
+    GasAnalysisC1,
+    GasAnalysisC2,
+    GasAnalysisC3,
+    GasAnalysisC4I,
+    GasAnalysisC4N,
+    GasAnalysisC5I,
+    GasAnalysisC5N,
+    GasAnalysisC6,
+    GasAnalysisC7Plus,
     // Pneumatic Instrument
     PneumaticInstrumentSiteId,
     PneumaticInstrumentType,
@@ -214,6 +245,52 @@ pub enum UpdateFieldVariant {
     CompressorSealMonthMethaneEmissionOverrideMonth,
     CompressorSealMonthMethaneEmissionOverrideGasVolume,
     CompressorSealMonthMethaneEmissionOverrideComment,
+    // Compressor Blowdown Override
+    CompressorBlowdownOverrideCompressorId,
+    CompressorBlowdownOverrideDate,
+    CompressorBlowdownOverrideGasVolume,
+    CompressorBlowdownOverrideComment,
+    // Storage Tank
+    StorageTankSiteId,
+    StorageTankStartDate,
+    StorageTankEndDate,
+    // Storage Tank Change
+    StorageTankChangeStorageTankId,
+    StorageTankChangeDate,
+    StorageTankChangeIA,
+    StorageTankChangeApiDensity,
+    StorageTankChangeTemperature,
+    StorageTankChangePressure,
+    StorageTankChangeCalculationMethod,
+    //Storage Tank Emission Survey
+    StorageTankEmissionSurveyStorageTankId,
+    StorageTankEmissionSurveyStartDate,
+    StorageTankEmissionSurveyEndDate,
+    StorageTankEmissionSurveyRate,
+    StorageTankEmissionSurveySurveyPoint,
+    StorageTankEmissionSurveyLeakDuration,
+    StorageTankEmissionSurveySurveyEquipmentId,
+    // Storage Tank Controlled Characterization,
+    StorageTankControlledCharacterizationStorageTankId,
+    StorageTankControlledCharacterizationStartDate,
+    StorageTankControlledCharacterizationEndDate,
+    StorageTankControlledCharacterizationControlDevice,
+    StorageTankControlledCharacterizationComment,
+    // Storage Tank Control Device Inactivity
+    StorageTankControlDeviceInactivityStorageTankControlledCharacterizationId,
+    StorageTankControlDeviceInactivityStartDate,
+    StorageTankControlDeviceInactivityEndDate,
+    StorageTankControlDeviceInactivityReason,
+    StorageTankControlDeviceInactivityComment,
+    // Storage Tank Month Liquid Hydrocarbon Entering
+    StorageTankMonthLiquidHydrocarbonEnteringStorageTankId,
+    StorageTankMonthLiquidHydrocarbonEnteringMonth,
+    StorageTankMonthLiquidHydrocarbonEnteringLiquidHydrocarbonVolume,
+    // Storage Tank Month Methane Emission Override
+    StorageTankMonthMethaneEmissionOverrideStorageTankId,
+    StorageTankMonthMethaneEmissionOverrideMonth,
+    StorageTankMonthMethaneEmissionOverrideGasVolume,
+    StorageTankMonthMethaneEmissionOverrideComment,
 }
 
 // graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
