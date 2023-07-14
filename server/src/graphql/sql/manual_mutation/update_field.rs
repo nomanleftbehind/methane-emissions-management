@@ -1,5 +1,5 @@
 use crate::graphql::models::input::{UpdateFieldInput, UpdateFieldValue};
-use chrono::Datelike;
+use chrono::{Datelike, NaiveDate};
 use common::{
     CalculationMethod, CompressorSealTestingPoint, CompressorType, ControlDevice,
     ControlDeviceInactivityReason, FacilityType, PneumaticInstrumentType, SealType, SiteType,
@@ -114,6 +114,13 @@ use common::{
 };
 use sqlx::{query, Error, PgPool};
 use uuid::Uuid;
+
+fn not_first_day_of_month_error(date: &NaiveDate) -> Error {
+    Error::Io(std::io::Error::new(
+        std::io::ErrorKind::InvalidInput,
+        format!("Expected first day of the month, got `{}`", date),
+    ))
+}
 
 pub async fn update_field(
     pool: &PgPool,
@@ -689,11 +696,7 @@ pub async fn update_field(
         PneumaticInstrumentMonthHoursMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
 
@@ -735,11 +738,7 @@ pub async fn update_field(
         PneumaticInstrumentMonthMethaneEmissionOverrideMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
 
@@ -1049,11 +1048,7 @@ pub async fn update_field(
         LevelControllerMonthHoursMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
 
@@ -1095,11 +1090,7 @@ pub async fn update_field(
         LevelControllerMonthMethaneEmissionOverrideMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
 
@@ -1375,11 +1366,7 @@ pub async fn update_field(
         PneumaticPumpMonthHoursMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
 
@@ -1421,11 +1408,7 @@ pub async fn update_field(
         PneumaticPumpMonthMethaneEmissionOverrideMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
 
@@ -1855,11 +1838,7 @@ pub async fn update_field(
         CompressorMonthHoursMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
             query!(
@@ -1900,11 +1879,7 @@ pub async fn update_field(
         CompressorSealMonthMethaneEmissionOverrideMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
             query!(
@@ -2299,11 +2274,7 @@ pub async fn update_field(
         StorageTankMonthLiquidHydrocarbonEnteringMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
             query!(
@@ -2344,11 +2315,7 @@ pub async fn update_field(
         StorageTankMonthMethaneEmissionOverrideMonth => {
             if let Some(value) = &naive_date_value {
                 if value.day() != 1 {
-                    let error = Error::Io(std::io::Error::new(
-                        std::io::ErrorKind::InvalidInput,
-                        format!("Expected first day of the month, got `{}`", value),
-                    ));
-                    return Err(error);
+                    return Err(not_first_day_of_month_error(value));
                 }
             }
             query!(
