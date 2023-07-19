@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 pub async fn insert_gas_analysis_calculated_param(
     pool: &PgPool,
-    user_id: Uuid,
+    user_id: &Uuid,
     MonthRangeInput {
         from_month,
         to_month,

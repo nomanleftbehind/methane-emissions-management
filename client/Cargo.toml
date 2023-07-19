@@ -23,6 +23,7 @@ futures = { version = "0.3", features = ["std"], default-features = false }
 gloo-timers = "0.2.6"
 wasm-bindgen = "0.2"
 common = { path = "../common" }
+wasm-logger = "0.2"
 
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

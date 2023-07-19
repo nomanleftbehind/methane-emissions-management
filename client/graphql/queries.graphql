@@ -1,3 +1,11 @@
+query Me {
+	me {
+    id
+    email
+    role
+  }
+}
+
 query GetUsers {
   allUsers {
     id
@@ -17,133 +25,53 @@ query AllFacilities {
   }
 }
 
-query GetObject($getObjectInput: GetObjectInput!) {
-  getObject(input: $getObjectInput) {
-    controllers {
-      id
-      model
-      serialNumber
-      applicationId
-      application {
-        application
-      }
-      manufacturerId
-      manufacturer {
-        manufacturer
-      }
-      fdcRecId
-      createdBy {
-        email
-      }
-      createdAt
-      updatedBy {
-        email
-      }
-      updatedAt
+query GetPneumaticInstruments($getPneumaticInstrumentsInput: GetPneumaticInstrumentsInput!) {
+  getPneumaticInstruments(getPneumaticInstrumentsInput: $getPneumaticInstrumentsInput) {
+    id
+    type
+    manufacturerId
+    manufacturer {
+      manufacturer
     }
-    compressors {
-      id
-      fdcRecId
-      name
-      serialNumber
-      installDate
-      removeDate
-      createdBy {
-        email
-      }
-      createdAt
-      updatedBy {
-        email
-      }
-      updatedAt
+    model
+    serialNumber
+    startDate
+    endDate
+    createdBy {
+      email
     }
-    tankFarms {
-      id
-      createdBy {
-        email
-      }
-      createdAt
-      updatedBy {
-        email
-      }
-      updatedAt
+    createdAt
+    updatedBy {
+      email
     }
-    controllerChanges {
-      id
-      date
-      rate
-      createdBy {
-        email
-      }
-      createdAt
-      updatedBy {
-        email
-      }
-      updatedAt
-    }
-    controllerMonthHours {
-      id
-      month
-      hoursOn
-      createdBy {
-        email
-      }
-      createdAt
-      updatedBy {
-        email
-      }
-      updatedAt
-    }
-    controllerMonthVentOverride {
-      id
-      month
-      gasVolume
-      comment
-      createdBy {
-        email
-      }
-      createdAt
-      updatedBy {
-        email
-      }
-      updatedAt
-    }
-    controllerMonthVent {
-      id
-      month
-      gasVolume
-      c1Volume
-      co2Volume
-      createdBy {
-        email
-      }
-      createdAt
-      updatedBy {
-        email
-      }
-      updatedAt
-    }
+    updatedAt
   }
 }
 
-query Me {
-	me {
+query GetMonthMethaneEmissions($getMonthMethaneEmissionsInput: GetMonthMethaneEmissionsInput!) {
+  getMonthMethaneEmissions(getMonthMethaneEmissionsInput: $getMonthMethaneEmissionsInput) {
     id
-    email
-    role
+    sourceTable
+    category
+    source
+    month
+    gasVolume
+    c1Volume
+    co2Volume
+    createdBy {
+      email
+    }
+    createdAt
+    updatedBy {
+      email
+    }
+    updatedAt
   }
 }
 
 query IdSelection($variant: IdSelectionVariant!) {
 	idSelection(variant: $variant) {
 		id
-    name
-  }
-}
-
-query ControllerManufacturerSelection {
-	controllerManufacturerSelection {
-    id
     name
   }
 }

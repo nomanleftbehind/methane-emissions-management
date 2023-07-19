@@ -1,7 +1,55 @@
-use crate::graphql::models::input::InsertPneumaticInstrumentInput;
-use common::PneumaticInstrumentType;
-use sqlx::{query, Error, PgPool};
+use crate::graphql::models::{
+    input::{GetPneumaticInstrumentsInput, InsertPneumaticInstrumentInput},
+    routine::pneumatic_device::pneumatic_instrument::PneumaticInstrument,
+};
+use common::{
+    PneumaticInstrumentType,
+    PneumaticInstrumentsByVariant::{FacilityId, ManufacturerId, SiteId},
+};
+use sqlx::{query, query_as, Error, PgPool};
 use uuid::Uuid;
+
+pub async fn get_pneumatic_instruments(
+    pool: &PgPool,
+    GetPneumaticInstrumentsInput { by, id }: GetPneumaticInstrumentsInput,
+) -> Result<Vec<PneumaticInstrument>, Error> {
+    println!("by: {:?}", by);
+    match by {
+        FacilityId => query_as!(
+            PneumaticInstrument,
+            r#"
+            SELECT
+            id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM pneumatic_instrument
+            WHERE site_id IN (SELECT id FROM site WHERE facility_id = $1)
+            "#,
+            id
+            ).fetch_all(pool)
+            .await,
+        SiteId => query_as!(
+            PneumaticInstrument,
+            r#"
+            SELECT
+            id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM pneumatic_instrument
+            WHERE site_id = $1
+            "#,
+            id
+            ).fetch_all(pool)
+            .await,
+        ManufacturerId => query_as!(
+            PneumaticInstrument,
+            r#"
+            SELECT
+            id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
+            FROM pneumatic_instrument
+            WHERE manufacturer_id = $1
+            "#,
+            id
+            ).fetch_all(pool)
+            .await,
+    }
+}
 
 pub async fn insert_pneumatic_instrument(
     pool: &PgPool,

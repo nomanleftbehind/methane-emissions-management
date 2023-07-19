@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
+use strum_macros::EnumString;
 
 /// `PneumaticInstrumentType` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
 ///
@@ -12,14 +13,17 @@ use std::fmt::Display;
         rename_all = "SCREAMING_SNAKE_CASE"
     )
 )]
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, EnumString)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum PneumaticInstrumentType {
+    #[strum(serialize = "Pressure Controller")]
     PressureController,
+    #[strum(serialize = "Temperature Controller")]
     TemperatureController,
     Switch,
     Transducer,
     Positioner,
+    #[strum(serialize = "Generic Pneumatic Instrument")]
     GenericPneumaticInstrument,
 }
 
@@ -36,4 +40,13 @@ impl Display for PneumaticInstrumentType {
             }
         }
     }
+}
+
+#[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum PneumaticInstrumentsByVariant {
+    FacilityId,
+    SiteId,
+    ManufacturerId,
 }

@@ -1,4 +1,4 @@
-use crate::models::queries::get_object::get_object::GetObjectVariant;
+// use crate::models::queries::get_object::get_object::GetObjectVariant;
 use yew::{classes, function_component, html, Callback, Html, Properties};
 
 #[derive(Properties, PartialEq)]

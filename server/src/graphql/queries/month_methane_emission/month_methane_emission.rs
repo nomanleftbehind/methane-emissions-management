@@ -1,8 +1,6 @@
 use crate::graphql::{
     context::ContextExt,
-    models::{
-        input::MonthMethaneEmissionBySourceIdInput, month_methane_emission::MonthMethaneEmission,
-    },
+    models::{input::GetMonthMethaneEmissionsInput, month_methane_emission::MonthMethaneEmission},
     sql,
 };
 use async_graphql::{Context, Error, Object};
@@ -12,17 +10,15 @@ pub struct MonthMethaneEmissionQuery;
 
 #[Object]
 impl MonthMethaneEmissionQuery {
-    async fn controller_month_vents(
+    async fn get_month_methane_emissions(
         &self,
         ctx: &Context<'_>,
-        by: MonthMethaneEmissionBySourceIdInput,
+        get_month_methane_emissions_input: GetMonthMethaneEmissionsInput,
     ) -> Result<Vec<MonthMethaneEmission>, Error> {
         let pool = ctx.db_pool();
 
-        let month_methane_emissions = sql::get_month_methane_emissions(pool, by)
+        sql::get_month_methane_emissions(pool, get_month_methane_emissions_input)
             .await
-            .map_err(Error::from);
-
-        month_methane_emissions
+            .map_err(Error::from)
     }
 }

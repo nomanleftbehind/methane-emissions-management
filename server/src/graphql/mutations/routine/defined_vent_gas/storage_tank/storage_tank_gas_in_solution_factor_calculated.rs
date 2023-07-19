@@ -20,7 +20,7 @@ impl StorageTankGasInSolutionFactorCalculatedMutation {
     ) -> Result<u64, Error> {
         let pool = ctx.db_pool();
         let cookie = ctx.get_cookie()?;
-        let user_id = ctx.get_session_manager()?.user_id(cookie).await?;
+        let user_id = &ctx.get_session_manager()?.user_id(cookie).await?;
         let DefaultGasParams { gas_gravity, .. } = ctx.get_default_gas_params();
 
         let rows_inserted = storage_tank::insert_storage_tank_gas_in_solution_factor_calculated(

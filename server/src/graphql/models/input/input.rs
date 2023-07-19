@@ -1,10 +1,12 @@
 use super::super::validator::MonthBeginningValidator;
+use crate::graphql::models::validator::MonthRangeValidator;
 use async_graphql::InputObject;
 use chrono::{NaiveDate, NaiveDateTime};
 use common::{
     CalculationMethod, CompressorSealTestingPoint, CompressorType, ControlDevice,
     ControlDeviceInactivityReason, DeleteEntryVariant, FacilityType, GetObjectVariant,
-    PneumaticInstrumentType, SealType, SiteType, UpdateFieldVariant,
+    MonthMethaneEmissionsByVariant, PneumaticInstrumentType, PneumaticInstrumentsByVariant,
+    SealType, SiteType, UpdateFieldVariant,
 };
 use uuid::Uuid;
 
@@ -98,4 +100,18 @@ pub struct InsertEntryInput {
 #[derive(InputObject, Debug)]
 pub struct MonthMethaneEmissionBySourceIdInput {
     pub source_id: Uuid,
+}
+
+#[derive(InputObject, Debug)]
+pub struct GetMonthMethaneEmissionsInput {
+    pub by: MonthMethaneEmissionsByVariant,
+    pub id: Uuid,
+    #[graphql(validator(custom = "MonthRangeValidator::new(12)"))]
+    pub month_range: MonthRangeInput,
+}
+
+#[derive(InputObject, Debug)]
+pub struct GetPneumaticInstrumentsInput {
+    pub by: PneumaticInstrumentsByVariant,
+    pub id: Uuid,
 }

@@ -1,3 +1,3 @@
-mod insert_controller_form;
+mod insert_pneumatic_instrument_form;
 
-pub use insert_controller_form::InsertControllerForm;
+pub use insert_pneumatic_instrument_form::InsertPneumaticInstrumentForm;

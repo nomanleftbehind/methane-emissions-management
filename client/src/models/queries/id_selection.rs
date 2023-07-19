@@ -1,4 +1,5 @@
 use super::super::UUID;
+// use common::IdSelectionVariant;
 use graphql_client::GraphQLQuery;
 
 #[derive(GraphQLQuery, Debug, PartialEq, Clone)]
@@ -8,4 +9,5 @@ use graphql_client::GraphQLQuery;
     variables_derives = "PartialEq, Clone",
     response_derives = "Debug, Clone, PartialEq"
 )]
+// extern_enums("IdSelectionVariant")
 pub struct IdSelection;

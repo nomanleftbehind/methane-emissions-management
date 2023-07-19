@@ -2,17 +2,19 @@ use crate::{
     components::emitters_window::data::entry::{IdSelectionComponent, IdSelectionProp},
     models::{
         mutations::manual_mutation::update_field::{
-            UpdateFieldInput, UpdateFieldValue, UpdateFieldVariant,
-            Variables as VariablesUpdateField,
+            UpdateFieldInput, UpdateFieldValue, Variables as VariablesUpdateField,
         },
         NaiveDateTime,
     },
     utils::console_log,
 };
-use common::UpdateFieldValueEnum::{
-    self, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionFloatValue,
-    OptionIntegerValue, OptionNaiveDateTimeValue, OptionNaiveDateValue, OptionStringValue,
-    OptionUuidValue, StringValue, UuidValue,
+use common::{
+    UpdateFieldValueEnum::{
+        self, BoolValue, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue,
+        OptionBoolValue, OptionFloatValue, OptionIntegerValue, OptionNaiveDateTimeValue,
+        OptionNaiveDateValue, OptionStringValue, OptionUuidValue, StringValue, UuidValue,
+    },
+    UpdateFieldVariant,
 };
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast, UnwrapThrowExt};
@@ -134,6 +136,7 @@ pub fn entry(
                     let input_value = input.value_as_number();
                     OptionFloatValue((!input_value.is_nan()).then(|| input_value))
                 }
+
                 UuidValue(_) | OptionUuidValue(_) => {
                     let input_value = input.value();
                     OptionUuidValue(
@@ -158,6 +161,11 @@ pub fn entry(
                             .expect_throw("Unable to convert i64 to NaiveDateTime.")
                     }))
                 }
+                // BoolValue(_) | OptionBoolValue(_) => {
+                //     let input_value = input.value_as_number();
+                //     OptionBoolValue((!input_value.is_nan()).then(|| input_value as i64))
+                // }
+                _ => todo!(),
             };
 
             option_input_value_handle.set(Some(changed_value));
@@ -190,6 +198,16 @@ pub fn entry(
                             uuid_value: None,
                             naive_date_value: None,
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         OptionStringValue(option_string_value) => UpdateFieldValue {
                             string_value: option_string_value,
@@ -198,6 +216,16 @@ pub fn entry(
                             uuid_value: None,
                             naive_date_value: None,
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         IntegerValue(integer_value) => UpdateFieldValue {
                             string_value: None,
@@ -206,6 +234,16 @@ pub fn entry(
                             uuid_value: None,
                             naive_date_value: None,
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         OptionIntegerValue(option_integer_value) => UpdateFieldValue {
                             string_value: None,
@@ -214,6 +252,16 @@ pub fn entry(
                             uuid_value: None,
                             naive_date_value: None,
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         FloatValue(float_value) => UpdateFieldValue {
                             string_value: None,
@@ -222,6 +270,16 @@ pub fn entry(
                             uuid_value: None,
                             naive_date_value: None,
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         OptionFloatValue(option_float_value) => UpdateFieldValue {
                             string_value: None,
@@ -230,6 +288,16 @@ pub fn entry(
                             uuid_value: None,
                             naive_date_value: None,
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         UuidValue(uuid_value) => UpdateFieldValue {
                             string_value: None,
@@ -238,6 +306,16 @@ pub fn entry(
                             uuid_value: Some(uuid_value),
                             naive_date_value: None,
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         OptionUuidValue(option_uuid_value) => UpdateFieldValue {
                             string_value: None,
@@ -246,6 +324,16 @@ pub fn entry(
                             uuid_value: option_uuid_value,
                             naive_date_value: None,
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         NaiveDateValue(naive_date_value) => UpdateFieldValue {
                             string_value: None,
@@ -254,6 +342,16 @@ pub fn entry(
                             uuid_value: None,
                             naive_date_value: Some(naive_date_value),
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         OptionNaiveDateValue(option_naive_date_value) => UpdateFieldValue {
                             string_value: None,
@@ -262,6 +360,16 @@ pub fn entry(
                             uuid_value: None,
                             naive_date_value: option_naive_date_value,
                             naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         NaiveDateTimeValue(naive_date_time_value) => UpdateFieldValue {
                             string_value: None,
@@ -270,6 +378,16 @@ pub fn entry(
                             uuid_value: None,
                             naive_date_value: None,
                             naive_date_time_value: Some(naive_date_time_value),
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: None,
+                            seal_type_value: None,
+                            site_type_value: None,
                         },
                         OptionNaiveDateTimeValue(option_naive_date_time_value) => {
                             UpdateFieldValue {
@@ -279,8 +397,19 @@ pub fn entry(
                                 uuid_value: None,
                                 naive_date_value: None,
                                 naive_date_time_value: option_naive_date_time_value,
+                                bool_value: None,
+                                calculation_method_value: None,
+                                compressor_seal_testing_point_value: None,
+                                compressor_type_value: None,
+                                control_device_inactivity_reason_value: None,
+                                control_device_value: None,
+                                facility_type_value: None,
+                                pneumatic_instrument_type_value: None,
+                                seal_type_value: None,
+                                site_type_value: None,
                             }
                         }
+                        _ => todo!(),
                     };
 
                     let variables = VariablesUpdateField {
@@ -318,7 +447,8 @@ pub fn entry(
         IntegerValue(_) | OptionIntegerValue(_) | FloatValue(_) | OptionFloatValue(_) => "number",
         NaiveDateValue(_) | OptionNaiveDateValue(_) => "date",
         NaiveDateTimeValue(_) | OptionNaiveDateTimeValue(_) => "datetime-local",
-        StringValue(_) | OptionStringValue(_) | UuidValue(_) | OptionUuidValue(_) => "text",
+        _ => "text",
+        // StringValue(_) | OptionStringValue(_) | UuidValue(_) | OptionUuidValue(_) => "text",
     };
 
     let form_step = match value {

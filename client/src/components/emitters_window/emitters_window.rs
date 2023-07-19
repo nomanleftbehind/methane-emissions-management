@@ -1,11 +1,8 @@
 use crate::{
     components::emitters_window::{
-        data::objects::ObjectsComponent,
+        data::pneumatic_instruments::PneumaticInstrumentsComponent,
         emitter_navbar::EmitterNavbar,
         Emitter::{self, Compressor, Controller, TankFarm},
-    },
-    models::queries::get_object::get_object::GetObjectVariant::{
-        COMPRESSOR_BY_FACILITY_ID, CONTROLLER_BY_FACILITY_ID, TANK_FARM_BY_FACILITY_ID,
     },
     pages::ModalVariant,
 };
@@ -46,11 +43,7 @@ pub fn emitters_window(
             <EmitterNavbar {emitter} {on_emitter_change} />
             <div />
             if let Some(id) = facility_id {
-                <ObjectsComponent {id} {modal_variant_handle} object_variant={match emitter {
-                    Controller => CONTROLLER_BY_FACILITY_ID,
-                    Compressor => COMPRESSOR_BY_FACILITY_ID,
-                    TankFarm => TANK_FARM_BY_FACILITY_ID,
-                }} />
+                <PneumaticInstrumentsComponent {id} {modal_variant_handle} />
             }
         </div>
     }

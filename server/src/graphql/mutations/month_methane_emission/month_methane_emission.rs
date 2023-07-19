@@ -16,7 +16,7 @@ impl MonthMethaneEmissionMutation {
     ) -> Result<u64, Error> {
         let pool = ctx.db_pool();
         let cookie = ctx.get_cookie()?;
-        let user_id = ctx.get_session_manager()?.user_id(cookie).await?;
+        let user_id = &ctx.get_session_manager()?.user_id(cookie).await?;
         let DefaultGasParams {
             c1,
             co2,

@@ -8,7 +8,7 @@ use std::fmt::Display;
     sqlx(type_name = "methane_emission_source_table", rename_all = "snake_case")
 )]
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+// #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MethaneEmissionSourceTable {
     PneumaticInstrument,
     LevelController,
@@ -48,7 +48,7 @@ impl Display for MethaneEmissionSourceTable {
     )
 )]
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+// #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MethaneEmissionCategory {
     Routine,
     Nonroutine,
@@ -82,7 +82,7 @@ impl Display for MethaneEmissionCategory {
     )
 )]
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+// #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MethaneEmissionSource {
     PneumaticDevice,
     CompressorSeal,
@@ -112,4 +112,12 @@ impl Display for MethaneEmissionSource {
             MethaneEmissionSource::Fugitive => write!(f, "Fugitive"),
         }
     }
+}
+
+#[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+pub enum MonthMethaneEmissionsByVariant {
+    FacilityId,
+    SiteId,
+    SourceTableId,
 }

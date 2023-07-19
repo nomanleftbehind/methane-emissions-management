@@ -4,6 +4,7 @@ use std::fmt::Display;
 use uuid::Uuid;
 
 mod compressor;
+mod manual_mutation;
 mod month_methane_emission;
 mod pneumatic_instrument;
 mod site;
@@ -11,15 +12,13 @@ mod storage_tank;
 mod user;
 
 pub use compressor::*;
+pub use manual_mutation::*;
 pub use month_methane_emission::*;
 pub use pneumatic_instrument::*;
 pub use site::*;
 pub use storage_tank::*;
 pub use user::*;
 
-/// `FacilityType` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
-///
-/// It is defined in common library so it can be used by both server and client.
 #[cfg_attr(
     not(target_arch = "wasm32"),
     derive(async_graphql::Enum, sqlx::Type),
@@ -61,238 +60,6 @@ impl Display for FacilityType {
     }
 }
 
-#[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum UpdateFieldVariant {
-    // Facility
-    FacilityIdpa,
-    FacilityName,
-    FacilityType,
-    // Site
-    SiteFacilityId,
-    SiteFdcRecId,
-    SiteName,
-    SiteType,
-    SiteDescription,
-    // Device Manufacturer
-    DeviceManufacturerManufacturer,
-    // Survey Equipment
-    SurveyEquipmentMake,
-    SurveyEquipmentModel,
-    // Gas Analysis
-    GasAnalysisDate,
-    GasAnalysisH2,
-    GasAnalysisHe,
-    GasAnalysisN2,
-    GasAnalysisCo2,
-    GasAnalysisH2s,
-    GasAnalysisC1,
-    GasAnalysisC2,
-    GasAnalysisC3,
-    GasAnalysisC4I,
-    GasAnalysisC4N,
-    GasAnalysisC5I,
-    GasAnalysisC5N,
-    GasAnalysisC6,
-    GasAnalysisC7Plus,
-    // Pneumatic Instrument
-    PneumaticInstrumentSiteId,
-    PneumaticInstrumentType,
-    PneumaticInstrumentManufacturerId,
-    PneumaticInstrumentModel,
-    PneumaticInstrumentSerialNumber,
-    PneumaticInstrumentStartDate,
-    PneumaticInstrumentEndDate,
-    // Pneumatic Instrument Change
-    PneumaticInstrumentChangePneumaticInstrumentId,
-    PneumaticInstrumentChangeDate,
-    PneumaticInstrumentChangeRate,
-    // Pneumatic Instrument Controlled Characterization
-    PneumaticInstrumentControlledCharacterizationPneumaticInstrumentId,
-    PneumaticInstrumentControlledCharacterizationStartDate,
-    PneumaticInstrumentControlledCharacterizationEndDate,
-    PneumaticInstrumentControlledCharacterizationControlDevice,
-    PneumaticInstrumentControlledCharacterizationComment,
-    // Pneumatic Instrument Control Device Inactivity
-    PneumaticInstrumentControlDeviceInactivityPneumaticInstrumentControlledCharacterizationId,
-    PneumaticInstrumentControlDeviceInactivityStartDate,
-    PneumaticInstrumentControlDeviceInactivityEndDate,
-    PneumaticInstrumentControlDeviceInactivityReason,
-    PneumaticInstrumentControlDeviceInactivityComment,
-    // Pneumatic Instrument Month Hours
-    PneumaticInstrumentMonthHoursPneumaticInstrumentId,
-    PneumaticInstrumentMonthHoursMonth,
-    PneumaticInstrumentMonthHoursHoursOn,
-    // Pneumatic Instrument Month Methane Emission Override
-    PneumaticInstrumentMonthMethaneEmissionOverridePneumaticInstrumentId,
-    PneumaticInstrumentMonthMethaneEmissionOverrideMonth,
-    PneumaticInstrumentMonthMethaneEmissionOverrideGasVolume,
-    PneumaticInstrumentMonthMethaneEmissionOverrideComment,
-    // Level Controller
-    LevelControllerSiteId,
-    LevelControllerManufacturerId,
-    LevelControllerModel,
-    LevelControllerSerialNumber,
-    LevelControllerStartDate,
-    LevelControllerEndDate,
-    // Level Controller Actuation Frequency
-    LevelControllerActuationFrequencyLevelControllerId,
-    LevelControllerActuationFrequencyDate,
-    LevelControllerActuationFrequencyActuationFrequency,
-    // Level Controller Change
-    LevelControllerChangeLevelControllerId,
-    LevelControllerChangeDate,
-    LevelControllerChangeRate,
-    // Level Controller Controlled Characterization
-    LevelControllerControlledCharacterizationLevelControllerId,
-    LevelControllerControlledCharacterizationStartDate,
-    LevelControllerControlledCharacterizationEndDate,
-    LevelControllerControlledCharacterizationControlDevice,
-    LevelControllerControlledCharacterizationComment,
-    // Level Controller Control Device Inactivity
-    LevelControllerControlDeviceInactivityLevelControllerControlledCharacterizationId,
-    LevelControllerControlDeviceInactivityStartDate,
-    LevelControllerControlDeviceInactivityEndDate,
-    LevelControllerControlDeviceInactivityReason,
-    LevelControllerControlDeviceInactivityComment,
-    // Level Controller Month Hours
-    LevelControllerMonthHoursLevelControllerId,
-    LevelControllerMonthHoursMonth,
-    LevelControllerMonthHoursHoursOn,
-    // Level Controller Month Methane Emission Override
-    LevelControllerMonthMethaneEmissionOverrideLevelControllerId,
-    LevelControllerMonthMethaneEmissionOverrideMonth,
-    LevelControllerMonthMethaneEmissionOverrideGasVolume,
-    LevelControllerMonthMethaneEmissionOverrideComment,
-    // Pneumatic Pump
-    PneumaticPumpSiteId,
-    PneumaticPumpManufacturerId,
-    PneumaticPumpModel,
-    PneumaticPumpSerialNumber,
-    PneumaticPumpStartDate,
-    PneumaticPumpEndDate,
-    // Pneumatic Pump Change
-    PneumaticPumpChangePneumaticPumpId,
-    PneumaticPumpChangeDate,
-    PneumaticPumpChangeRate,
-    // Pneumatic Pump Controlled Characterization
-    PneumaticPumpControlledCharacterizationPneumaticPumpId,
-    PneumaticPumpControlledCharacterizationStartDate,
-    PneumaticPumpControlledCharacterizationEndDate,
-    PneumaticPumpControlledCharacterizationControlDevice,
-    PneumaticPumpControlledCharacterizationComment,
-    // Pneumatic Pump Control Device Inactivity
-    PneumaticPumpControlDeviceInactivityPneumaticPumpControlledCharacterizationId,
-    PneumaticPumpControlDeviceInactivityStartDate,
-    PneumaticPumpControlDeviceInactivityEndDate,
-    PneumaticPumpControlDeviceInactivityReason,
-    PneumaticPumpControlDeviceInactivityComment,
-    // Pneumatic Pump Month Hours
-    PneumaticPumpMonthHoursPneumaticPumpId,
-    PneumaticPumpMonthHoursMonth,
-    PneumaticPumpMonthHoursHoursOn,
-    // Pneumatic Pump Month Methane Emission Override
-    PneumaticPumpMonthMethaneEmissionOverridePneumaticPumpId,
-    PneumaticPumpMonthMethaneEmissionOverrideMonth,
-    PneumaticPumpMonthMethaneEmissionOverrideGasVolume,
-    PneumaticPumpMonthMethaneEmissionOverrideComment,
-    // Compressor
-    CompressorSiteId,
-    CompressorFdcRecId,
-    CompressorType,
-    CompressorName,
-    CompressorSerialNumber,
-    CompressorPower,
-    CompressorThrowCount,
-    CompressorInstallDate,
-    CompressorRemoveDate,
-    // Compressor Seal
-    CompressorSealType,
-    CompressorSealDescription,
-    // Compressor Seal Test
-    CompressorSealTestCompressorSealId,
-    CompressorSealTestStartDate,
-    CompressorSealTestEndDate,
-    CompressorSealTestRate,
-    CompressorSealTestTestingPoint,
-    CompressorSealTestSurveyEquipmentId,
-    // Compressor Emission Survey
-    CompressorEmissionSurveyCompressorId,
-    CompressorEmissionSurveyStartDate,
-    CompressorEmissionSurveyEndDate,
-    CompressorEmissionSurveyRate,
-    CompressorEmissionSurveySurveyPoint,
-    CompressorEmissionSurveyLeakDuration,
-    CompressorEmissionSurveySurveyEquipmentId,
-    // Compressor Controlled Characterization,
-    CompressorControlledCharacterizationCompressorId,
-    CompressorControlledCharacterizationStartDate,
-    CompressorControlledCharacterizationEndDate,
-    CompressorControlledCharacterizationControlDevice,
-    CompressorControlledCharacterizationComment,
-    // Compressor Control Device Inactivity
-    CompressorControlDeviceInactivityCompressorControlledCharacterizationId,
-    CompressorControlDeviceInactivityStartDate,
-    CompressorControlDeviceInactivityEndDate,
-    CompressorControlDeviceInactivityReason,
-    CompressorControlDeviceInactivityComment,
-    // Compressor Month Hours
-    CompressorMonthHoursCompressorId,
-    CompressorMonthHoursMonth,
-    CompressorMonthHoursPressurizedHours,
-    // Compressor Seal Month Methane Emission Override
-    CompressorSealMonthMethaneEmissionOverrideCompressorSealId,
-    CompressorSealMonthMethaneEmissionOverrideMonth,
-    CompressorSealMonthMethaneEmissionOverrideGasVolume,
-    CompressorSealMonthMethaneEmissionOverrideComment,
-    // Compressor Blowdown Override
-    CompressorBlowdownOverrideCompressorId,
-    CompressorBlowdownOverrideDate,
-    CompressorBlowdownOverrideGasVolume,
-    CompressorBlowdownOverrideComment,
-    // Storage Tank
-    StorageTankSiteId,
-    StorageTankStartDate,
-    StorageTankEndDate,
-    // Storage Tank Change
-    StorageTankChangeStorageTankId,
-    StorageTankChangeDate,
-    StorageTankChangeIA,
-    StorageTankChangeApiDensity,
-    StorageTankChangeTemperature,
-    StorageTankChangePressure,
-    StorageTankChangeCalculationMethod,
-    //Storage Tank Emission Survey
-    StorageTankEmissionSurveyStorageTankId,
-    StorageTankEmissionSurveyStartDate,
-    StorageTankEmissionSurveyEndDate,
-    StorageTankEmissionSurveyRate,
-    StorageTankEmissionSurveySurveyPoint,
-    StorageTankEmissionSurveyLeakDuration,
-    StorageTankEmissionSurveySurveyEquipmentId,
-    // Storage Tank Controlled Characterization,
-    StorageTankControlledCharacterizationStorageTankId,
-    StorageTankControlledCharacterizationStartDate,
-    StorageTankControlledCharacterizationEndDate,
-    StorageTankControlledCharacterizationControlDevice,
-    StorageTankControlledCharacterizationComment,
-    // Storage Tank Control Device Inactivity
-    StorageTankControlDeviceInactivityStorageTankControlledCharacterizationId,
-    StorageTankControlDeviceInactivityStartDate,
-    StorageTankControlDeviceInactivityEndDate,
-    StorageTankControlDeviceInactivityReason,
-    StorageTankControlDeviceInactivityComment,
-    // Storage Tank Month Liquid Hydrocarbon Entering
-    StorageTankMonthLiquidHydrocarbonEnteringStorageTankId,
-    StorageTankMonthLiquidHydrocarbonEnteringMonth,
-    StorageTankMonthLiquidHydrocarbonEnteringLiquidHydrocarbonVolume,
-    // Storage Tank Month Methane Emission Override
-    StorageTankMonthMethaneEmissionOverrideStorageTankId,
-    StorageTankMonthMethaneEmissionOverrideMonth,
-    StorageTankMonthMethaneEmissionOverrideGasVolume,
-    StorageTankMonthMethaneEmissionOverrideComment,
-}
-
 // graphql_client cannot handle OneofObject. InputObject has to be used instead and care must be made to not pass wrong value type to update_field mutation on the client side.
 // Leaving this enum and OneofObject trait implementation in `common` library in case of potential upgrades to graphql_client in the future.
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::OneofObject))]
@@ -310,6 +77,26 @@ pub enum UpdateFieldValueEnum {
     OptionNaiveDateValue(Option<NaiveDate>),
     NaiveDateTimeValue(NaiveDateTime),
     OptionNaiveDateTimeValue(Option<NaiveDateTime>),
+    BoolValue(bool),
+    OptionBoolValue(Option<bool>),
+    FacilityTypeValue(FacilityType),
+    OptionFacilityTypeValue(Option<FacilityType>),
+    SiteTypeValue(SiteType),
+    OptionSiteTypeValue(Option<SiteType>),
+    PneumaticInstrumentTypeValue(PneumaticInstrumentType),
+    OptionPneumaticInstrumentTypeValue(Option<PneumaticInstrumentType>),
+    CompressorTypeValue(CompressorType),
+    OptionCompressorTypeValue(Option<CompressorType>),
+    ControlDeviceValue(ControlDevice),
+    OptionControlDeviceValue(Option<ControlDevice>),
+    ControlDeviceInactivityReasonValue(ControlDeviceInactivityReason),
+    OptionControlDeviceInactivityReasonValue(Option<ControlDeviceInactivityReason>),
+    SealTypeValue(SealType),
+    OptionSealTypeValue(Option<SealType>),
+    CompressorSealTestingPointValue(CompressorSealTestingPoint),
+    OptionCompressorSealTestingPointValue(Option<CompressorSealTestingPoint>),
+    CalculationMethodValue(CalculationMethod),
+    OptionCalculationMethodValue(Option<CalculationMethod>),
 }
 
 impl Display for UpdateFieldValueEnum {
@@ -358,60 +145,80 @@ impl Display for UpdateFieldValueEnum {
                         .map_or_else(|| "".to_string(), |ndt| ndt.to_string())
                 )
             }
+            Self::BoolValue(b) => write!(f, "{}", b),
+            Self::OptionBoolValue(ob) => write!(
+                f,
+                "{}",
+                ob.as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::FacilityTypeValue(ft) => write!(f, "{}", ft),
+            Self::OptionFacilityTypeValue(oft) => write!(
+                f,
+                "{}",
+                oft.as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::SiteTypeValue(st) => write!(f, "{}", st),
+            Self::OptionSiteTypeValue(ost) => write!(
+                f,
+                "{}",
+                ost.as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::PneumaticInstrumentTypeValue(pit) => write!(f, "{}", pit),
+            Self::OptionPneumaticInstrumentTypeValue(opit) => write!(
+                f,
+                "{}",
+                opit.as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::CompressorTypeValue(ct) => write!(f, "{}", ct),
+            Self::OptionCompressorTypeValue(oct) => write!(
+                f,
+                "{}",
+                oct.as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::ControlDeviceValue(cd) => write!(f, "{}", cd),
+            Self::OptionControlDeviceValue(ocd) => write!(
+                f,
+                "{}",
+                ocd.as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::ControlDeviceInactivityReasonValue(cdir) => write!(f, "{}", cdir),
+            Self::OptionControlDeviceInactivityReasonValue(ocdir) => write!(
+                f,
+                "{}",
+                ocdir
+                    .as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::SealTypeValue(st) => write!(f, "{}", st),
+            Self::OptionSealTypeValue(ost) => write!(
+                f,
+                "{}",
+                ost.as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::CompressorSealTestingPointValue(cstp) => write!(f, "{}", cstp),
+            Self::OptionCompressorSealTestingPointValue(ocstp) => write!(
+                f,
+                "{}",
+                ocstp
+                    .as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
+            Self::CalculationMethodValue(cm) => write!(f, "{}", cm),
+            Self::OptionCalculationMethodValue(ocm) => write!(
+                f,
+                "{}",
+                ocm.as_ref()
+                    .map_or_else(|| "".to_string(), |s| s.to_string())
+            ),
         }
     }
-}
-
-#[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum DeleteEntryVariant {
-    Facility,
-    Site,
-    DeviceManufacturer,
-    SurveyEquipment,
-    GasAnalysis,
-    // Pneumatic Instrument
-    PneumaticInstrument,
-    PneumaticInstrumentChange,
-    PneumaticInstrumentControlledCharacterization,
-    PneumaticInstrumentControlDeviceInactivity,
-    PneumaticInstrumentMonthHours,
-    PneumaticInstrumentMonthMethaneEmissionOverride,
-    // Level Controller
-    LevelController,
-    LevelControllerActuationFrequency,
-    LevelControllerChange,
-    LevelControllerControlledCharacterization,
-    LevelControllerControlDeviceInactivity,
-    LevelControllerMonthHours,
-    LevelControllerMonthMethaneEmissionOverride,
-    // Pneumatic Pump
-    PneumaticPump,
-    PneumaticPumpChange,
-    PneumaticPumpControlledCharacterization,
-    PneumaticPumpControlDeviceInactivity,
-    PneumaticPumpMonthHours,
-    PneumaticPumpMonthMethaneEmissionOverride,
-    // Compressor Seal
-    Compressor,
-    CompressorSeal,
-    CompressorSealTest,
-    CompressorEmissionSurvey,
-    CompressorControlledCharacterization,
-    CompressorControlDeviceInactivity,
-    CompressorMonthHours,
-    CompressorSealMonthMethaneEmissionOverride,
-    CompressorBlowdown,
-    CompressorBlowdownOverride,
-    // Storage Tank
-    StorageTank,
-    StorageTankChange,
-    StorageTankEmissionSurvey,
-    StorageTankControlledCharacterization,
-    StorageTankControlDeviceInactivity,
-    StorageTankGasInSolutionFactorCalculated,
-    StorageTankMonthLiquidHydrocarbonEntering,
-    StorageTankMonthMethaneEmissionOverride,
 }
 
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
@@ -427,7 +234,7 @@ pub enum GetObjectVariant {
 }
 
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize)]
 pub enum IdSelectionVariant {
     DeviceManufacturerId,
     UserId,

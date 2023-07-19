@@ -1,35 +1,75 @@
 use super::super::routine::defined_vent_gas::storage_tank::insert_storage_tank_gas_in_solution_factor_calculated;
 use crate::graphql::models::{
-    input::{MonthMethaneEmissionBySourceIdInput, MonthRangeInput},
+    input::{GetMonthMethaneEmissionsInput, MonthRangeInput},
     month_methane_emission::{
         MonthMethaneEmission, MonthMethaneEmissionCalculated, MonthMethaneEmissionNestedRows,
         MonthMethaneEmissionUnnestedRows,
     },
 };
-use common::{MethaneEmissionCategory, MethaneEmissionSource, MethaneEmissionSourceTable};
+use common::{
+    MethaneEmissionCategory, MethaneEmissionSource, MethaneEmissionSourceTable,
+    MonthMethaneEmissionsByVariant::{FacilityId, SiteId, SourceTableId},
+};
 use sqlx::{query_as, query_file, query_file_as, Error, PgPool};
 use uuid::Uuid;
 
 pub async fn get_month_methane_emissions(
     pool: &PgPool,
-    by: MonthMethaneEmissionBySourceIdInput,
+    GetMonthMethaneEmissionsInput {
+        by,
+        id,
+        month_range: MonthRangeInput {
+            from_month,
+            to_month,
+        },
+    }: GetMonthMethaneEmissionsInput,
 ) -> Result<Vec<MonthMethaneEmission>, Error> {
-    query_as!(MonthMethaneEmission,
-        r#"
-        SELECT
-        id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
-        FROM month_methane_emission
-        WHERE source_table_id = $1
-        "#,
-        by.source_id
-    )
-    .fetch_all(pool)
-    .await
+    match by {
+        FacilityId => query_as!(
+            MonthMethaneEmission,
+            r#"
+            SELECT
+            id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            FROM month_methane_emission
+            WHERE facility_id = $1 AND month BETWEEN $2 AND $3
+            "#,
+            id,
+            from_month,
+            to_month
+        ).fetch_all(pool)
+        .await,
+        SiteId => query_as!(
+            MonthMethaneEmission,
+            r#"
+            SELECT
+            id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            FROM month_methane_emission
+            WHERE site_id = $1 AND month BETWEEN $2 AND $3
+            "#,
+            id,
+            from_month,
+            to_month
+        ).fetch_all(pool)
+        .await,
+        SourceTableId => query_as!(
+            MonthMethaneEmission,
+            r#"
+            SELECT
+            id, facility_id, site_id, source_table as "source_table: _", source_table_id, category as "category: _", source as "source: _", month, gas_volume, c1_volume, co2_volume, created_by_id, created_at, updated_by_id, updated_at
+            FROM month_methane_emission
+            WHERE source_table_id = $1 AND month BETWEEN $2 AND $3
+            "#,
+            id,
+            from_month,
+            to_month
+        ).fetch_all(pool)
+        .await,
+    }
 }
 
 pub async fn insert_month_methane_emissions(
     pool: &PgPool,
-    user_id: Uuid,
+    user_id: &Uuid,
     month_range: &MonthRangeInput,
     c1: &f64,
     co2: &f64,

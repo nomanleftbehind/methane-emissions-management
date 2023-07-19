@@ -4,7 +4,9 @@ use self::{
     facility::FacilityQuery,
     month_methane_emission::MonthMethaneEmissionQuery,
     nonroutine::compressor_blowdown::CompressorBlowdownQuery,
-    routine::pneumatic_device::DeviceManufacturerQuery,
+    routine::pneumatic_device::{
+        pneumatic_instrument::PneumaticInstrumentQuery, DeviceManufacturerQuery,
+    },
     user::UserQuery,
 };
 use async_graphql::MergedObject;
@@ -22,6 +24,7 @@ pub struct FullQuery(
     // GetObjectQuery,
     UserQuery,
     FacilityQuery,
+    PneumaticInstrumentQuery,
     CompressorBlowdownQuery,
     MonthMethaneEmissionQuery,
     DeviceManufacturerQuery,
@@ -33,6 +36,7 @@ pub(crate) fn full_query() -> FullQuery {
         // GetObjectQuery,
         UserQuery,
         FacilityQuery,
+        PneumaticInstrumentQuery,
         CompressorBlowdownQuery,
         MonthMethaneEmissionQuery,
         DeviceManufacturerQuery,

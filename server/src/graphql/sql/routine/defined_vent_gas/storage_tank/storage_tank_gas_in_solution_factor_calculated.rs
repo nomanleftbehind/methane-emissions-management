@@ -12,7 +12,7 @@ use uuid::Uuid;
 
 pub async fn insert_storage_tank_gas_in_solution_factor_calculated(
     pool: &PgPool,
-    user_id: Uuid,
+    user_id: &Uuid,
     month_range: &MonthRangeInput,
     gas_gravity: &f64,
 ) -> Result<u64, Error> {
