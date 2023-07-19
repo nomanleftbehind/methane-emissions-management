@@ -1,3 +1,0 @@
-mod insert_pneumatic_instrument_form;
-
-pub use insert_pneumatic_instrument_form::InsertPneumaticInstrumentForm;

@@ -1,8 +1,9 @@
+use super::{
+    insert_pneumatic_instrument_form::InsertPneumaticInstrumentForm,
+    pneumatic_instrument_row::PneumaticInstrumentRowComponent,
+};
 use crate::{
-    components::emitters_window::data::{
-        controller::InsertPneumaticInstrumentForm, insert_entry_button::InsertEntryButton,
-        pneumatic_instrument_row::PneumaticInstrumentRowComponent,
-    },
+    components::emitters_window::data::insert_entry_button::InsertEntryButton,
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
     models::{
         mutations::{

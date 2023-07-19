@@ -1,4 +1,5 @@
-use super::Emitter;
+use common::Emitter;
+use strum::IntoEnumIterator;
 use yew::{classes, function_component, html, Callback, Html, Properties};
 
 #[derive(Properties, PartialEq)]
@@ -14,26 +15,24 @@ pub fn emitter_navbar(
         on_emitter_change,
     }: &Props,
 ) -> Html {
-    let emitter_vec = vec![Emitter::Controller, Emitter::Compressor, Emitter::TankFarm];
-
-    let emitter_iter = emitter_vec.into_iter().enumerate().map(|(key, e)| {
-        let on_emitter_change = on_emitter_change.clone();
-        let onclick = move |_| {
-            on_emitter_change.emit(e);
-        };
-
-        html! {
-            <button {key} {onclick} class={classes!(
-                "emitters-navigation-button",
-                (emitter == &e).then(|| "active")
-            )}>{ e }
-            </button>
-        }
-    });
-
     html! {
         <nav class={classes!("emitters-navbar")}>
-            { for emitter_iter }
+            {
+                Emitter::iter().enumerate().map(|(key, e)| {
+                    let on_emitter_change = on_emitter_change.clone();
+                    let onclick = move |_| {
+                        on_emitter_change.emit(e);
+                    };
+
+                    html! {
+                        <button {key} {onclick} class={classes!(
+                            "emitters-navigation-button",
+                            (emitter == &e).then(|| "active")
+                        )}>{ e }
+                        </button>
+                    }
+                }).collect::<Html>()
+            }
         </nav>
     }
 }

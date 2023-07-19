@@ -37,7 +37,7 @@ pub fn insert_pneumatic_instrument_form(
     let input_start_date_handle = use_state_eq(|| None);
     let input_end_date_handle = use_state_eq(|| None);
 
-    let type_ = (*input_type_handle).clone();
+    let type_ = *input_type_handle;
     let manufacturer_id = *input_manufacturer_id_handle;
     let model = (*input_model_handle).clone();
     let serial_number = (*input_serial_number_handle).clone();

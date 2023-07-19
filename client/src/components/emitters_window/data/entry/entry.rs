@@ -2,19 +2,17 @@ use crate::{
     components::emitters_window::data::entry::{IdSelectionComponent, IdSelectionProp},
     models::{
         mutations::manual_mutation::update_field::{
-            UpdateFieldInput, UpdateFieldValue, Variables as VariablesUpdateField,
+            UpdateFieldInput, UpdateFieldValue, UpdateFieldVariant,
+            Variables as VariablesUpdateField,
         },
         NaiveDateTime,
     },
     utils::console_log,
 };
-use common::{
-    UpdateFieldValueEnum::{
-        self, BoolValue, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue,
-        OptionBoolValue, OptionFloatValue, OptionIntegerValue, OptionNaiveDateTimeValue,
-        OptionNaiveDateValue, OptionStringValue, OptionUuidValue, StringValue, UuidValue,
-    },
-    UpdateFieldVariant,
+use common::UpdateFieldValueEnum::{
+    self, BoolValue, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionBoolValue,
+    OptionFloatValue, OptionIntegerValue, OptionNaiveDateTimeValue, OptionNaiveDateValue,
+    OptionStringValue, OptionUuidValue, StringValue, UuidValue,
 };
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast, UnwrapThrowExt};

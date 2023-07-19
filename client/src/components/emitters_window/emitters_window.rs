@@ -1,11 +1,11 @@
 use crate::{
     components::emitters_window::{
-        data::pneumatic_instruments::PneumaticInstrumentsComponent,
+        data::pneumatic_instrument::pneumatic_instruments::PneumaticInstrumentsComponent,
         emitter_navbar::EmitterNavbar,
-        Emitter::{self, Compressor, Controller, TankFarm},
     },
     pages::ModalVariant,
 };
+use common::Emitter::{self, PneumaticInstrument};
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
@@ -23,7 +23,7 @@ pub fn emitters_window(
         modal_variant_handle,
     }: &Props,
 ) -> Html {
-    let emitter_state = use_state_eq(|| Controller);
+    let emitter_state = use_state_eq(|| PneumaticInstrument);
 
     let emitter = *emitter_state;
 

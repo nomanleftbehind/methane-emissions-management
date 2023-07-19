@@ -34,7 +34,7 @@ pub fn navigation_bar() -> Html {
     html! {
         <nav class={classes!("navigation-bar")} role="navigation">
             <div class={classes!("navbar-brand")}>
-                <h1>{ "Emissions App" }</h1>
+                <h1>{ "Methane Emissions Management App" }</h1>
             </div>
             <div class={classes!("navbar-menu"/*, active_class*/)}>
                 <div class="navbar-start">

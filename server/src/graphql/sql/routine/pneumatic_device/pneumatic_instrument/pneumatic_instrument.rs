@@ -13,7 +13,6 @@ pub async fn get_pneumatic_instruments(
     pool: &PgPool,
     GetPneumaticInstrumentsInput { by, id }: GetPneumaticInstrumentsInput,
 ) -> Result<Vec<PneumaticInstrument>, Error> {
-    println!("by: {:?}", by);
     match by {
         FacilityId => query_as!(
             PneumaticInstrument,

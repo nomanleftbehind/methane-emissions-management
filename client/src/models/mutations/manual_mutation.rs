@@ -1,15 +1,15 @@
 use super::super::{NaiveDate, NaiveDateTime, UUID};
-use common::{DeleteEntryVariant, UpdateFieldVariant};
+use common::DeleteEntryVariant;
 use graphql_client::GraphQLQuery;
 
 #[derive(GraphQLQuery, Debug)]
 #[graphql(
     schema_path = "graphql/schema.json",
     query_path = "graphql/mutations.graphql",
-    response_derives = "Debug, Clone, PartialEq",
-    extern_enums("UpdateFieldVariant")
+    response_derives = "Debug, Clone, PartialEq"
 )]
 pub struct UpdateField;
+// extern_enums("UpdateFieldVariant")
 
 #[derive(GraphQLQuery, Debug, PartialEq, Clone)]
 #[graphql(

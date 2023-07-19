@@ -12,6 +12,7 @@
   --date-column-width: 12.5rem;
   --fdc-rec-id-column-width: 21rem;
   --user-info-column-width: repeat(2, 14rem 13rem);
+  --pneumatic-instrument-grid-template-columns: repeat(2, 2.7rem) repeat(4, 10rem) repeat(2, var(--date-column-width));
 
   --spacer-1: .25rem;
   --spacer-2: .5rem;

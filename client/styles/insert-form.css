@@ -35,5 +35,5 @@
 .controller-form {
   /* grid-row: 2;
   grid-column: 1/8; */
-  grid-template-columns: repeat(2, 2.7rem) repeat(2, 10rem) repeat(2, 13rem) var(--fdc-rec-id-column-width);
+  grid-template-columns: var(--pneumatic-instrument-grid-template-columns);
 }

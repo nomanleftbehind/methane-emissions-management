@@ -1,11 +1,13 @@
 use chrono::{NaiveDate, NaiveDateTime};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
+
 use uuid::Uuid;
 
 mod compressor;
 mod manual_mutation;
 mod month_methane_emission;
+mod navbar_item;
 mod pneumatic_instrument;
 mod site;
 mod storage_tank;
@@ -14,6 +16,7 @@ mod user;
 pub use compressor::*;
 pub use manual_mutation::*;
 pub use month_methane_emission::*;
+pub use navbar_item::*;
 pub use pneumatic_instrument::*;
 pub use site::*;
 pub use storage_tank::*;

@@ -1,11 +1,11 @@
-// use crate::models::queries::get_object::get_object::GetObjectVariant;
+use common::SidebarItem;
 use yew::{classes, function_component, html, Callback, Html, Properties};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub sidebar_items: Vec<GetObjectVariant>,
-    pub selected_sidebar_item: Option<GetObjectVariant>,
-    pub select_sidebar_item_callback: Callback<GetObjectVariant>,
+    pub sidebar_items: Vec<SidebarItem>,
+    pub selected_sidebar_item: Option<SidebarItem>,
+    pub select_sidebar_item_callback: Callback<SidebarItem>,
 }
 
 #[function_component(EmitterSidebar)]

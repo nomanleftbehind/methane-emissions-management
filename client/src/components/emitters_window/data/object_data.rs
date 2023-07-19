@@ -1,10 +1,7 @@
 use crate::{
-    components::emitters_window::data::{
-        emitter_sidebar::EmitterSidebar, objects::ObjectsComponent,
-    },
-    models::queries::get_object::get_object::GetObjectVariant,
-    pages::ModalVariant,
+    components::emitters_window::data::emitter_sidebar::EmitterSidebar, pages::ModalVariant,
 };
+use common::SidebarItem;
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
@@ -14,7 +11,7 @@ pub struct Props {
     pub id: Uuid,
     pub row_num: usize,
     pub col_num: usize,
-    pub sidebar_items: Vec<GetObjectVariant>,
+    pub sidebar_items: Vec<SidebarItem>,
     pub modal_variant_handle: Callback<Option<ModalVariant>>,
 }
 
@@ -34,7 +31,7 @@ pub fn object_data_component(
     let selected_sidebar_item_handle = use_state_eq(|| None);
     let selected_sidebar_item = (*selected_sidebar_item_handle).clone();
 
-    let select_sidebar_item_callback = Callback::from(move |e: GetObjectVariant| {
+    let select_sidebar_item_callback = Callback::from(move |e: SidebarItem| {
         selected_sidebar_item_handle.set(Some(e));
     });
 
@@ -44,7 +41,7 @@ pub fn object_data_component(
                 <EmitterSidebar sidebar_items={sidebar_items.clone()} selected_sidebar_item={selected_sidebar_item.clone()} {select_sidebar_item_callback} />
                 if let Some(sidebar_item) = selected_sidebar_item {
                     <div class={classes!("emitter-data-main")}>
-                        <ObjectsComponent {id} {modal_variant_handle} object_variant={sidebar_item} />
+                        // <ObjectsComponent {id} {modal_variant_handle} object_variant={sidebar_item} />
                     </div>
                 }
             </div>

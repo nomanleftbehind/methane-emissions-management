@@ -30,7 +30,7 @@
 }
 
 .controllers {
-  grid-template-columns: repeat(2, 2.7rem) repeat(2, 10rem) repeat(2, 13rem) var(--fdc-rec-id-column-width) var(--user-info-column-width) var(--id-column-width);
+  grid-template-columns: var(--pneumatic-instrument-grid-template-columns) var(--user-info-column-width) var(--id-column-width);
 }
 
 .compressors {
