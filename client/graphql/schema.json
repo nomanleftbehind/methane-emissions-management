@@ -4666,7 +4666,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "String",
                   "ofType": null
                 }
               }
@@ -4701,7 +4701,19 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
+              "name": "SITE_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
               "name": "DEVICE_MANUFACTURER_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PNEUMATIC_INSTRUMENT_TYPE"
             },
             {
               "deprecationReason": null,

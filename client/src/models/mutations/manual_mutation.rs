@@ -1,12 +1,13 @@
 use super::super::{NaiveDate, NaiveDateTime, UUID};
-use common::DeleteEntryVariant;
+use common::{DeleteEntryVariant, PneumaticInstrumentType};
 use graphql_client::GraphQLQuery;
 
 #[derive(GraphQLQuery, Debug)]
 #[graphql(
     schema_path = "graphql/schema.json",
     query_path = "graphql/mutations.graphql",
-    response_derives = "Debug, Clone, PartialEq"
+    response_derives = "Debug, Clone, PartialEq",
+    extern_enums("PneumaticInstrumentType")
 )]
 pub struct UpdateField;
 // extern_enums("UpdateFieldVariant")

@@ -212,19 +212,20 @@ pub fn pneumatic_instruments_component(
                 <div class={classes!("emitters", "controllers")}>
                     <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
                     <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
-                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Type" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Manufacturer" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Model" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Serial Number" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "StartDate" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "End Date" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Created By" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Created At" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Updated By" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "Updated At" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(13, 1)}>{ "ID" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Site" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Type" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Manufacturer" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Model" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Serial Number" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "StartDate" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "End Date" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Created By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Created At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "Updated By" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(13, 1)}>{ "Updated At" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(14, 1)}>{ "ID" }</div>
                     if insert_form_is_open {
-                        <InsertPneumaticInstrumentForm site_id={id} {close_insert_form} {handle_insert_pneumatic_instrument} />
+                        <InsertPneumaticInstrumentForm {close_insert_form} {handle_insert_pneumatic_instrument} {modal_variant_handle} />
                     }
                     { for pneumatic_instruments_iter }
                 </div>

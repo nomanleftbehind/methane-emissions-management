@@ -14,7 +14,7 @@
   height: 100%;
 }
 
-.insert-form input {
+.insert-form input, select {
   display: inline-flex;
   align-items: center;
   /* gap: 0.5rem; */

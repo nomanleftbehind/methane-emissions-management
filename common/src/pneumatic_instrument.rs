@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use strum_macros::{Display, EnumString};
+use strum_macros::{Display, EnumIter, EnumString};
 
 /// `PneumaticInstrumentType` is an externally defined enum inside schema, so we have to provide matching Rust type and `Display` trait implementation.
 ///
@@ -12,7 +12,9 @@ use strum_macros::{Display, EnumString};
         rename_all = "SCREAMING_SNAKE_CASE"
     )
 )]
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, EnumString, Display)]
+#[derive(
+    Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, EnumString, Display, EnumIter,
+)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 #[strum(serialize_all = "title_case")]
 pub enum PneumaticInstrumentType {

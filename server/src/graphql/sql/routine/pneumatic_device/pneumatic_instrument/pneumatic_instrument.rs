@@ -21,6 +21,7 @@ pub async fn get_pneumatic_instruments(
             id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
             FROM pneumatic_instrument
             WHERE site_id IN (SELECT id FROM site WHERE facility_id = $1)
+            ORDER BY site_id, id
             "#,
             id
             ).fetch_all(pool)
@@ -32,6 +33,7 @@ pub async fn get_pneumatic_instruments(
             id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
             FROM pneumatic_instrument
             WHERE site_id = $1
+            ORDER BY site_id, id
             "#,
             id
             ).fetch_all(pool)
@@ -43,6 +45,7 @@ pub async fn get_pneumatic_instruments(
             id, site_id, type as "type: _", manufacturer_id, model, serial_number, start_date, end_date, created_by_id, created_at, updated_by_id, updated_at
             FROM pneumatic_instrument
             WHERE manufacturer_id = $1
+            ORDER BY site_id, id
             "#,
             id
             ).fetch_all(pool)

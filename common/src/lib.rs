@@ -239,6 +239,8 @@ pub enum GetObjectVariant {
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize)]
 pub enum IdSelectionVariant {
+    SiteId,
     DeviceManufacturerId,
+    PneumaticInstrumentType,
     UserId,
 }

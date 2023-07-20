@@ -28,6 +28,10 @@ query AllFacilities {
 query GetPneumaticInstruments($getPneumaticInstrumentsInput: GetPneumaticInstrumentsInput!) {
   getPneumaticInstruments(getPneumaticInstrumentsInput: $getPneumaticInstrumentsInput) {
     id
+    siteId
+    site {
+      name
+    }
     type
     manufacturerId
     manufacturer {

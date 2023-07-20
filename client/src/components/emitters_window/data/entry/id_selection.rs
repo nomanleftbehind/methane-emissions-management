@@ -6,7 +6,6 @@ use crate::{
     },
     pages::ModalVariant,
 };
-// use common::IdSelectionVariant;
 use yew::{function_component, html, Callback, Event, Html, Properties};
 
 #[derive(Properties, PartialEq, Debug, Clone)]
@@ -20,7 +19,8 @@ pub struct Props {
     pub id_selection: IdSelectionProp,
     pub onchange: Callback<Event>,
     pub null_option: bool,
-    pub value: String,
+    pub value: Option<String>,
+    pub col_num: Option<usize>,
 }
 
 #[function_component(IdSelectionComponent)]
@@ -34,6 +34,7 @@ pub fn id_selection(
         onchange,
         null_option,
         value,
+        col_num,
     }: &Props,
 ) -> Html {
     let get_id_selection = {
@@ -43,23 +44,24 @@ pub fn id_selection(
         use_query_with_deps::<IdSelection, _>(variables, ())
     };
 
+    let style = col_num.map(|col_num| format!("grid-row: 1; grid-column: {};", col_num));
+
     match get_id_selection {
         QueryResponse {
             data: Some(ResponseData { id_selection }),
             ..
         } => html! {
-                <select name="id-select" onchange={onchange.clone()}>
+                <select name="id-select" {style} onchange={onchange.clone()}>
                     if *null_option {
-                        <option key="" value="" selected={value == ""}>{ "None" }</option>
+                        <option key="" value="" selected={value.is_none()}>{ "None" }</option>
                     }
                     {
                         id_selection
                         .into_iter()
                         .map(|IdSelectionIdSelection { id, name }| {
-                            let id_string = id.to_string();
-                            let selected = &id_string == value;
+                            let selected = Some(&id) == value.as_ref();
                             html! {
-                                <option key={id_string.clone()} value={id_string} {selected}>{ name }</option>
+                                <option key={id.clone()} value={id} {selected}>{ name }</option>
                             }
                         })
                         .collect::<Html>()

@@ -1600,6 +1600,8 @@ dependencies = [
  "serde_json",
  "sha2 0.10.2",
  "sqlx",
+ "strum",
+ "strum_macros",
  "thiserror",
  "tiberius",
  "tokio",

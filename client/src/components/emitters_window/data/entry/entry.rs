@@ -9,11 +9,16 @@ use crate::{
     },
     utils::console_log,
 };
-use common::UpdateFieldValueEnum::{
-    self, BoolValue, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionBoolValue,
-    OptionFloatValue, OptionIntegerValue, OptionNaiveDateTimeValue, OptionNaiveDateValue,
-    OptionStringValue, OptionUuidValue, StringValue, UuidValue,
+use common::{
+    PneumaticInstrumentType,
+    UpdateFieldValueEnum::{
+        self, BoolValue, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue,
+        OptionBoolValue, OptionFloatValue, OptionIntegerValue, OptionNaiveDateTimeValue,
+        OptionNaiveDateValue, OptionPneumaticInstrumentTypeValue, OptionStringValue,
+        OptionUuidValue, PneumaticInstrumentTypeValue, StringValue, UuidValue,
+    },
 };
+use std::str::FromStr;
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast, UnwrapThrowExt};
 use web_sys::{window, Event, HtmlInputElement, Node, SubmitEvent};
@@ -158,6 +163,14 @@ pub fn entry(
                         NaiveDateTime::from_timestamp_millis(input_value as i64)
                             .expect_throw("Unable to convert i64 to NaiveDateTime.")
                     }))
+                }
+                PneumaticInstrumentTypeValue(_) | OptionPneumaticInstrumentTypeValue(_) => {
+                    let input_value = input.value();
+                    OptionPneumaticInstrumentTypeValue(
+                        (!input_value.is_empty())
+                            .then(|| PneumaticInstrumentType::from_str(input.value().as_str()).ok())
+                            .flatten(),
+                    )
                 }
                 // BoolValue(_) | OptionBoolValue(_) => {
                 //     let input_value = input.value_as_number();
@@ -407,6 +420,48 @@ pub fn entry(
                                 site_type_value: None,
                             }
                         }
+                        PneumaticInstrumentTypeValue(pneumatic_instrument_type_value) => {
+                            UpdateFieldValue {
+                                string_value: None,
+                                integer_value: None,
+                                float_value: None,
+                                uuid_value: None,
+                                naive_date_value: None,
+                                naive_date_time_value: None,
+                                bool_value: None,
+                                calculation_method_value: None,
+                                compressor_seal_testing_point_value: None,
+                                compressor_type_value: None,
+                                control_device_inactivity_reason_value: None,
+                                control_device_value: None,
+                                facility_type_value: None,
+                                pneumatic_instrument_type_value: Some(
+                                    pneumatic_instrument_type_value,
+                                ),
+                                seal_type_value: None,
+                                site_type_value: None,
+                            }
+                        }
+                        OptionPneumaticInstrumentTypeValue(
+                            option_pneumatic_instrument_type_value,
+                        ) => UpdateFieldValue {
+                            string_value: None,
+                            integer_value: None,
+                            float_value: None,
+                            uuid_value: None,
+                            naive_date_value: None,
+                            naive_date_time_value: None,
+                            bool_value: None,
+                            calculation_method_value: None,
+                            compressor_seal_testing_point_value: None,
+                            compressor_type_value: None,
+                            control_device_inactivity_reason_value: None,
+                            control_device_value: None,
+                            facility_type_value: None,
+                            pneumatic_instrument_type_value: option_pneumatic_instrument_type_value,
+                            seal_type_value: None,
+                            site_type_value: None,
+                        },
                         _ => todo!(),
                     };
 
@@ -461,6 +516,7 @@ pub fn entry(
         | OptionUuidValue(_)
         | OptionNaiveDateValue(_)
         | OptionNaiveDateTimeValue(_) => true,
+        OptionPneumaticInstrumentTypeValue(_) => true,
         _ => false,
     };
 
