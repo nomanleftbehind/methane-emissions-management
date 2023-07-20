@@ -11,7 +11,6 @@ pub async fn id_selection(
     pool: &PgPool,
     variant: IdSelectionVariant,
 ) -> Result<Vec<IdSelection>, Error> {
-    println!("calling id selection: {:?}", &variant);
 
     match variant {
         SiteId => {

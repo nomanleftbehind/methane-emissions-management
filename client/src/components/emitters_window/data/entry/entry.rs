@@ -139,7 +139,6 @@ pub fn entry(
                     let input_value = input.value_as_number();
                     OptionFloatValue((!input_value.is_nan()).then(|| input_value))
                 }
-
                 UuidValue(_) | OptionUuidValue(_) => {
                     let input_value = input.value();
                     OptionUuidValue(

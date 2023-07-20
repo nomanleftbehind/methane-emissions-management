@@ -8,15 +8,16 @@ use crate::{
         NaiveDateTime,
     },
     pages::ModalVariant,
+    utils::console_log,
 };
-use common::{PneumaticInstrumentType, UpdateFieldValueEnum::OptionUuidValue};
+use common::PneumaticInstrumentType;
 use std::str::FromStr;
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::HtmlInputElement;
 use yew::{
-    classes, function_component, html, use_state_eq, Callback, Event, Html, Properties,
-    SubmitEvent, TargetCast,
+    classes, function_component, html, use_effect_with_deps, use_state_eq, Callback, Event, Html,
+    Properties, SubmitEvent, TargetCast,
 };
 
 #[derive(Clone, Debug, PartialEq, Properties)]
@@ -52,26 +53,20 @@ pub fn insert_pneumatic_instrument_form(
 
     let onchange_site_id = Callback::from(move |e: Event| {
         let input: HtmlInputElement = e.target_unchecked_into();
-        let Ok(uuid) = Uuid::parse_str(input.value().as_str()) else {
-            return
-        };
-        input_site_id_handle.set(Some(uuid));
+        let uuid = Uuid::parse_str(input.value().as_str()).ok();
+        input_site_id_handle.set(uuid);
     });
 
     let onchange_type = Callback::from(move |e: Event| {
         let input: HtmlInputElement = e.target_unchecked_into();
-        let Ok(type_) = PneumaticInstrumentType::from_str(input.value().as_str()) else {
-            return
-        };
-        input_type_handle.set(Some(type_));
+        let type_ = PneumaticInstrumentType::from_str(input.value().as_str()).ok();
+        input_type_handle.set(type_);
     });
 
     let onchange_manufacturer_id = Callback::from(move |e: Event| {
         let input: HtmlInputElement = e.target_unchecked_into();
-        let Ok(uuid) = Uuid::parse_str(input.value().as_str()) else {
-            return
-        };
-        input_manufacturer_id_handle.set(Some(uuid));
+        let uuid = Uuid::parse_str(input.value().as_str()).ok();
+        input_manufacturer_id_handle.set(uuid);
     });
 
     let onchange_model = Callback::from(move |e: Event| {
@@ -106,9 +101,23 @@ pub fn insert_pneumatic_instrument_form(
         input_end_date_handle.set(end_date);
     });
 
+    use_effect_with_deps(
+        move |u| {
+            console_log!("number_of_updated_fields: {:#?}", u);
+        },
+        (site_id, type_, manufacturer_id, start_date),
+    );
+
+    let disabled = !(site_id.is_some()
+        && type_.is_some()
+        && manufacturer_id.is_some()
+        && start_date.is_some());
+
     let onsubmit = {
         let handle_insert_pneumatic_instrument = handle_insert_pneumatic_instrument.clone();
         let close_insert_form = close_insert_form.clone();
+        let model = model.clone();
+        let serial_number = serial_number.clone();
 
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
@@ -119,6 +128,13 @@ pub fn insert_pneumatic_instrument_form(
             if let (Some(site_id), Some(type_), Some(manufacturer_id), Some(start_date)) =
                 (site_id, type_, manufacturer_id, start_date)
             {
+                console_log!(
+                    "type {:?}, {:?}, {:?}, {:?}",
+                    &site_id,
+                    &type_,
+                    &manufacturer_id,
+                    &start_date
+                );
                 let variables = VariablesInsertPneumaticInstrument {
                     insert_pneumatic_instrument_input: InsertPneumaticInstrumentInput {
                         site_id,
@@ -139,20 +155,29 @@ pub fn insert_pneumatic_instrument_form(
     html! {
         <form {onsubmit} class={classes!("insert-form", "emitter-cell")}>
             <fieldset class={classes!("controller-form", "center")}>
-                <button class={classes!("entry-button")} style="grid-row: 1; grid-column: 1;" type="submit">{"✓"}</button>
-                // <input type="text" style="grid-row: 1; grid-column: 3;" onchange={onchange_site_id}/>
+                <button class={classes!("entry-button")} style="grid-row: 1; grid-column: 1;" type="submit" {disabled}>{"✓"}</button>
                 <IdSelectionComponent
                     id_selection={IdSelectionProp {variant: IdSelectionVariant::SITE_ID, modal_variant_handle: modal_variant_handle.clone()}}
                     onchange={onchange_site_id}
                     null_option={false}
                     col_num={3}
                 />
-                <input type="text" style="grid-row: 1; grid-column: 4;" onchange={onchange_type}/>
-                <input type="text" style="grid-row: 1; grid-column: 5;" onchange={onchange_manufacturer_id}/>
-                <input type="text" style="grid-row: 1; grid-column: 6;" onchange={onchange_model}/>
-                <input type="text" style="grid-row: 1; grid-column: 7;" onchange={onchange_serial_number}/>
-                <input type="text" style="grid-row: 1; grid-column: 8;" onchange={onchange_start_date}/>
-                <input type="text" style="grid-row: 1; grid-column: 9;" onchange={onchange_end_date}/>
+                <IdSelectionComponent
+                    id_selection={IdSelectionProp {variant: IdSelectionVariant::PNEUMATIC_INSTRUMENT_TYPE, modal_variant_handle: modal_variant_handle.clone()}}
+                    onchange={onchange_type}
+                    null_option={false}
+                    col_num={4}
+                />
+                <IdSelectionComponent
+                    id_selection={IdSelectionProp {variant: IdSelectionVariant::DEVICE_MANUFACTURER_ID, modal_variant_handle: modal_variant_handle.clone()}}
+                    onchange={onchange_manufacturer_id}
+                    null_option={false}
+                    col_num={5}
+                />
+                <input type="text" style="grid-row: 1; grid-column: 6;" onchange={onchange_model} value={model.map_or_else(|| "".to_string(), |model| model)}/>
+                <input type="text" style="grid-row: 1; grid-column: 7;" onchange={onchange_serial_number} value={serial_number.map_or_else(|| "".to_string(), |serial_number| serial_number)}/>
+                <input type="date" style="grid-row: 1; grid-column: 8;" onchange={onchange_start_date}/>
+                <input type="date" style="grid-row: 1; grid-column: 9;" onchange={onchange_end_date}/>
             </fieldset>
         </form>
     }
