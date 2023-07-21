@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::fmt::Display;
+use strum_macros::Display;
 
 /// `month_methane_emission` table doesn't have a foreign key constraint for `source_table_id` column because a value from that column could be refering to a column from multiple tables. This type represents a table it is refering to.
 #[cfg_attr(
@@ -7,8 +7,9 @@ use std::fmt::Display;
     derive(async_graphql::Enum, sqlx::Type),
     sqlx(type_name = "methane_emission_source_table", rename_all = "snake_case")
 )]
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
-// #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, Display)]
+#[strum(serialize_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
 pub enum MethaneEmissionSourceTable {
     PneumaticInstrument,
     LevelController,
@@ -25,19 +26,6 @@ impl sqlx::postgres::PgHasArrayType for MethaneEmissionSourceTable {
     }
 }
 
-impl Display for MethaneEmissionSourceTable {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            MethaneEmissionSourceTable::PneumaticInstrument => write!(f, "Pneumatic Instrument"),
-            MethaneEmissionSourceTable::LevelController => write!(f, "Level Controller"),
-            MethaneEmissionSourceTable::PneumaticPump => write!(f, "Pneumatic Pump"),
-            MethaneEmissionSourceTable::CompressorSeal => write!(f, "Compressor Seal"),
-            MethaneEmissionSourceTable::CompressorBlowdown => write!(f, "Compressor Blowdown"),
-            MethaneEmissionSourceTable::StorageTank => write!(f, "Storage Tank"),
-        }
-    }
-}
-
 /// Type representing top level categorization of methane emission sources as illustrated in AER Directive 060 [`Section 8, Figure 10`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=71).
 #[cfg_attr(
     not(target_arch = "wasm32"),
@@ -47,8 +35,9 @@ impl Display for MethaneEmissionSourceTable {
         rename_all = "SCREAMING_SNAKE_CASE"
     )
 )]
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
-// #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, Display)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[strum(serialize_all = "title_case")]
 pub enum MethaneEmissionCategory {
     Routine,
     Nonroutine,
@@ -62,16 +51,6 @@ impl sqlx::postgres::PgHasArrayType for MethaneEmissionCategory {
     }
 }
 
-impl Display for MethaneEmissionCategory {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            MethaneEmissionCategory::Routine => write!(f, "Routine"),
-            MethaneEmissionCategory::Nonroutine => write!(f, "Nonroutine"),
-            MethaneEmissionCategory::Fugitive => write!(f, "Fugitive"),
-        }
-    }
-}
-
 /// Type representing lowest level categorization of methane emission sources as illustrated in AER Directive 060 [`Section 8, Figure 10`](https://static.aer.ca/prd/documents/directives/Directive060.pdf#page=71).
 #[cfg_attr(
     not(target_arch = "wasm32"),
@@ -81,8 +60,9 @@ impl Display for MethaneEmissionCategory {
         rename_all = "SCREAMING_SNAKE_CASE"
     )
 )]
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
-// #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, Display)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[strum(serialize_all = "title_case")]
 pub enum MethaneEmissionSource {
     PneumaticDevice,
     CompressorSeal,
@@ -97,20 +77,6 @@ pub enum MethaneEmissionSource {
 impl sqlx::postgres::PgHasArrayType for MethaneEmissionSource {
     fn array_type_info() -> sqlx::postgres::PgTypeInfo {
         sqlx::postgres::PgTypeInfo::with_name("_methane_emission_source")
-    }
-}
-
-impl Display for MethaneEmissionSource {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            MethaneEmissionSource::PneumaticDevice => write!(f, "Pneumatic Device"),
-            MethaneEmissionSource::CompressorSeal => write!(f, "Compressor Seal"),
-            MethaneEmissionSource::GlycolDehydrator => write!(f, "Glycol Dehydrator"),
-            MethaneEmissionSource::DefinedVentGas => write!(f, "Defined Vent Gas"),
-            MethaneEmissionSource::Planned => write!(f, "Planned"),
-            MethaneEmissionSource::Unplanned => write!(f, "Unplanned"),
-            MethaneEmissionSource::Fugitive => write!(f, "Fugitive"),
-        }
     }
 }
 
