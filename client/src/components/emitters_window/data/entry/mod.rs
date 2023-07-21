@@ -1,5 +1,5 @@
+mod dropdown_selection;
 mod entry;
-mod id_selection;
 
+pub use dropdown_selection::{DropdownSelectionComponent, DropdownSelectionProp};
 pub use entry::{EditFieldProp, Entry};
-pub use id_selection::{IdSelectionComponent, IdSelectionProp};

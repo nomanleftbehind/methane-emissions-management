@@ -140,7 +140,7 @@
   transition: all .14s ease-out;
 }
 
-.entry-button:hover {
+.entry-button:hover:not(:disabled) {
   transform: translate(-.25rem, -.25rem);
   box-shadow: .25rem .25rem 0 var(--primary);
   border-color: currentColor;

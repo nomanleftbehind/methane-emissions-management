@@ -1,5 +1,5 @@
 use crate::{
-    components::emitters_window::data::entry::{IdSelectionComponent, IdSelectionProp},
+    components::emitters_window::data::entry::{DropdownSelectionComponent, DropdownSelectionProp},
     models::{
         mutations::manual_mutation::update_field::{
             UpdateFieldInput, UpdateFieldValue, UpdateFieldVariant,
@@ -12,10 +12,10 @@ use crate::{
 use common::{
     PneumaticInstrumentType,
     UpdateFieldValueEnum::{
-        self, BoolValue, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue,
-        OptionBoolValue, OptionFloatValue, OptionIntegerValue, OptionNaiveDateTimeValue,
-        OptionNaiveDateValue, OptionPneumaticInstrumentTypeValue, OptionStringValue,
-        OptionUuidValue, PneumaticInstrumentTypeValue, StringValue, UuidValue,
+        self, FloatValue, IntegerValue, NaiveDateTimeValue, NaiveDateValue, OptionFloatValue,
+        OptionIntegerValue, OptionNaiveDateTimeValue, OptionNaiveDateValue,
+        OptionPneumaticInstrumentTypeValue, OptionStringValue, OptionUuidValue,
+        PneumaticInstrumentTypeValue, StringValue, UuidValue,
     },
 };
 use std::str::FromStr;
@@ -41,7 +41,7 @@ pub struct Props {
     pub value: UpdateFieldValueEnum,
     pub display_value: Option<UpdateFieldValueEnum>,
     pub edit_field: Option<EditFieldProp>,
-    pub id_selection: Option<IdSelectionProp>,
+    pub dropdown_selection: Option<DropdownSelectionProp>,
 }
 
 #[function_component(Entry)]
@@ -53,7 +53,7 @@ pub fn entry(
         value,
         display_value,
         edit_field,
-        id_selection,
+        dropdown_selection,
     }: &Props,
 ) -> Html {
     let option_input_value_handle = use_state_eq(|| None);
@@ -508,7 +508,7 @@ pub fn entry(
         _ => None,
     };
 
-    let null_option = match value {
+    let offer_null = match value {
         OptionStringValue(_)
         | OptionIntegerValue(_)
         | OptionFloatValue(_)
@@ -530,8 +530,8 @@ pub fn entry(
                         <fieldset>
                             <div class={classes!("input")}>
                                 <button type="submit" class={classes!("form-button")}>{ "✓" }</button>
-                                if let Some(id_selection) = id_selection {
-                                    <IdSelectionComponent id_selection={id_selection.clone()} {onchange} {null_option} value={value.to_string()}/>
+                                if let Some(dropdown_selection) = dropdown_selection {
+                                    <DropdownSelectionComponent dropdown_selection={dropdown_selection.clone()} {onchange} {offer_null} value={value.to_string()}/>
                                 } else {
                                     <input type={form_type} step={form_step} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
                                 }

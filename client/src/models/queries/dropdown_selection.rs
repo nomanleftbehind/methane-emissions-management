@@ -1,4 +1,4 @@
-// use super::super::UUID;
+use super::super::UUID;
 // use common::IdSelectionVariant;
 use graphql_client::GraphQLQuery;
 
@@ -6,8 +6,8 @@ use graphql_client::GraphQLQuery;
 #[graphql(
     schema_path = "graphql/schema.json",
     query_path = "graphql/queries.graphql",
-    variables_derives = "PartialEq, Clone",
+    variables_derives = "PartialEq, Clone, Debug",
     response_derives = "Debug, Clone, PartialEq"
 )]
 // extern_enums("IdSelectionVariant")
-pub struct IdSelection;
+pub struct GetDropdownSelection;

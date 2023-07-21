@@ -1,19 +1,22 @@
-use crate::graphql::{context::ContextExt, models::IdSelection, sql::dropdown_selection};
+use crate::graphql::{
+    context::ContextExt,
+    models::{dropdown_selection::DropdownSelection, input::GetDropdownSelectionInput},
+    sql::dropdown_selection,
+};
 use async_graphql::{Context, Error, Object};
-use common::IdSelectionVariant;
 
 #[derive(Default, Clone)]
 pub struct DropdownSelectionQuery;
 
 #[Object]
 impl DropdownSelectionQuery {
-    async fn id_selection(
+    async fn get_dropdown_selection(
         &self,
         ctx: &Context<'_>,
-        variant: IdSelectionVariant,
-    ) -> Result<Vec<IdSelection>, Error> {
+        get_dropdown_selection_input: GetDropdownSelectionInput,
+    ) -> Result<Vec<DropdownSelection>, Error> {
         let pool = ctx.db_pool();
-        dropdown_selection::id_selection(pool, variant)
+        dropdown_selection::get_dropdown_selection(pool, get_dropdown_selection_input)
             .await
             .map_err(Error::from)
     }

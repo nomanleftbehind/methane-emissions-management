@@ -4,9 +4,9 @@ use async_graphql::InputObject;
 use chrono::{NaiveDate, NaiveDateTime};
 use common::{
     CalculationMethod, CompressorSealTestingPoint, CompressorType, ControlDevice,
-    ControlDeviceInactivityReason, DeleteEntryVariant, FacilityType, GetObjectVariant,
-    MonthMethaneEmissionsByVariant, PneumaticInstrumentType, PneumaticInstrumentsByVariant,
-    SealType, SiteType, UpdateFieldVariant,
+    ControlDeviceInactivityReason, DeleteEntryVariant, DropdownSelectionVariant, FacilityType,
+    GetObjectVariant, MonthMethaneEmissionsByVariant, PneumaticInstrumentType,
+    PneumaticInstrumentsByVariant, SealType, SiteType, UpdateFieldVariant,
 };
 use uuid::Uuid;
 
@@ -114,4 +114,10 @@ pub struct GetMonthMethaneEmissionsInput {
 pub struct GetPneumaticInstrumentsInput {
     pub by: PneumaticInstrumentsByVariant,
     pub id: Uuid,
+}
+
+#[derive(InputObject, Debug)]
+pub struct GetDropdownSelectionInput {
+    pub variant: DropdownSelectionVariant,
+    pub id: Option<Uuid>,
 }

@@ -1,7 +1,7 @@
 use crate::{
     components::emitters_window::{
         data::{
-            entry::{EditFieldProp, Entry, IdSelectionProp},
+            entry::{DropdownSelectionProp, EditFieldProp, Entry},
             object_data::ObjectDataComponent,
         },
         delete_entry::DeleteEntryComponent,
@@ -9,18 +9,17 @@ use crate::{
     },
     models::{
         mutations::manual_mutation::{
-            delete_entry::Variables as VariablesDeleteEntry,
+            delete_entry::{DeleteEntryVariant, Variables as VariablesDeleteEntry},
             update_field::{UpdateFieldVariant, Variables as VariablesUpdateField},
         },
         queries::{
-            id_selection::id_selection::IdSelectionVariant,
+            dropdown_selection::get_dropdown_selection::DropdownSelectionVariant,
             pneumatic_instrument::get_pneumatic_instruments::GetPneumaticInstrumentsGetPneumaticInstruments,
         },
     },
     pages::ModalVariant,
 };
 use common::{
-    DeleteEntryVariant,
     SidebarItem::{
         PneumaticInstrumentChange, PneumaticInstrumentMonthHours,
         PneumaticInstrumentMonthMethaneEmission, PneumaticInstrumentMonthMethaneEmissionOverride,
@@ -74,22 +73,22 @@ pub fn pneumatic_instrument_row_component(
 
     html! {
         <>
-            <DeleteEntryComponent {id} {row_num} col_num={1} delete_entry_variant={DeleteEntryVariant::PneumaticInstrument} handle_delete_entry={handle_delete_entry.clone()} />
+            <DeleteEntryComponent {id} {row_num} col_num={1} delete_entry_variant={DeleteEntryVariant::PNEUMATIC_INSTRUMENT} handle_delete_entry={handle_delete_entry.clone()} />
             <ExpandDataComponent {row_num} col_num={2} {expanded} {handle_expand_data} />
             <Entry {id} {row_num} col_num={3}
                 edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::PNEUMATIC_INSTRUMENT_SITE_ID}}
-                id_selection={IdSelectionProp {variant: IdSelectionVariant::SITE_ID, modal_variant_handle: modal_variant_handle.clone()}}
+                dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::SITE_ID, id: None, modal_variant_handle: modal_variant_handle.clone()}}
                 value={UuidValue(pneumatic_instrument.site_id)}
                 display_value={OptionStringValue(site)}
             />
             <Entry {id} {row_num} col_num={4}
                 edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::PNEUMATIC_INSTRUMENT_TYPE}}
-                id_selection={IdSelectionProp {variant: IdSelectionVariant::PNEUMATIC_INSTRUMENT_TYPE, modal_variant_handle: modal_variant_handle.clone()}}
+                dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::PNEUMATIC_INSTRUMENT_TYPE, id: None, modal_variant_handle: modal_variant_handle.clone()}}
                 value={PneumaticInstrumentTypeValue(pneumatic_instrument.type_)}
             />
             <Entry {id} {row_num} col_num={5}
                 edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::PNEUMATIC_INSTRUMENT_MANUFACTURER_ID}}
-                id_selection={IdSelectionProp {variant: IdSelectionVariant::DEVICE_MANUFACTURER_ID, modal_variant_handle: modal_variant_handle.clone()}}
+                dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::DEVICE_MANUFACTURER_ID, id: None, modal_variant_handle: modal_variant_handle.clone()}}
                 value={UuidValue(pneumatic_instrument.manufacturer_id)}
                 display_value={OptionStringValue(manufacturer)}
             />

@@ -42,8 +42,8 @@ pub fn emitters_window(
         <div class={classes!("emitters-window")}>
             <EmitterNavbar {emitter} {on_emitter_change} />
             <div />
-            if let Some(id) = facility_id {
-                <PneumaticInstrumentsComponent {id} {modal_variant_handle} />
+            if let Some(facility_id) = facility_id {
+                <PneumaticInstrumentsComponent {facility_id} {modal_variant_handle} />
             }
         </div>
     }

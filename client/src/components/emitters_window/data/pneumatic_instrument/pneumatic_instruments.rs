@@ -35,23 +35,25 @@ use crate::{
     pages::ModalVariant,
     utils::gen_style::gen_grid_style,
 };
-// use common::PneumaticInstrumentsByVariant;
 use std::rc::Rc;
 use uuid::Uuid;
-use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
+use yew::{
+    classes, function_component, html, use_effect_with_deps, use_state_eq, Callback, Html,
+    Properties,
+};
 
 /// In an effort to avoid cloning large amounts of data to create props when re-rendering,
 /// a smart pointer is passed in props to only clone a reference to the data instead of the data itself.
 #[derive(Clone, Debug, PartialEq, Properties)]
 pub struct Props {
-    pub id: Rc<Uuid>,
+    pub facility_id: Rc<Uuid>,
     pub modal_variant_handle: Callback<Option<ModalVariant>>,
 }
 
 #[function_component(PneumaticInstrumentsComponent)]
 pub fn pneumatic_instruments_component(
     Props {
-        id,
+        facility_id,
         modal_variant_handle,
     }: &Props,
 ) -> Html {
@@ -68,29 +70,33 @@ pub fn pneumatic_instruments_component(
         })
     };
 
-    let close_insert_form = Callback::from(move |_| {
-        insert_form_is_open_handle.set(false);
-    });
+    let close_insert_form = {
+        let insert_form_is_open_handle = insert_form_is_open_handle.clone();
+        Callback::from(move |_| {
+            insert_form_is_open_handle.set(false);
+        })
+    };
 
     let get_pneumatic_instruments = {
         let variables = Variables {
             get_pneumatic_instruments_input: GetPneumaticInstrumentsInput {
                 by: PneumaticInstrumentsByVariant::FACILITY_ID,
-                id: **id,
+                id: **facility_id,
             },
         };
         use_query_with_deps::<GetPneumaticInstruments, _>(
             variables,
-            (id.clone(), number_of_updated_fields),
+            (facility_id.clone(), number_of_updated_fields),
         )
     };
 
-    // use_effect_with_deps(
-    //     move |u| {
-    //         console_log!("object_variant: {:#?}", u);
-    //     },
-    //     object_variant.clone(),
-    // );
+    // Close insert form every time facility is changed so that new sites are loaded when new insert form is opened.
+    use_effect_with_deps(
+        move |_| {
+            insert_form_is_open_handle.set(false);
+        },
+        facility_id.clone(),
+    );
 
     let handle_insert_pneumatic_instrument = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
@@ -225,7 +231,7 @@ pub fn pneumatic_instruments_component(
                     <div class={classes!("sticky")} style={gen_grid_style(13, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(14, 1)}>{ "ID" }</div>
                     if insert_form_is_open {
-                        <InsertPneumaticInstrumentForm {close_insert_form} {handle_insert_pneumatic_instrument} {modal_variant_handle} />
+                        <InsertPneumaticInstrumentForm {facility_id} {close_insert_form} {handle_insert_pneumatic_instrument} {modal_variant_handle} />
                     }
                     { for pneumatic_instruments_iter }
                 </div>

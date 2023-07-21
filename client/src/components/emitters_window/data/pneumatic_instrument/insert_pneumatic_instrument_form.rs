@@ -1,17 +1,17 @@
 use crate::{
-    components::emitters_window::data::entry::{IdSelectionComponent, IdSelectionProp},
+    components::emitters_window::data::entry::{DropdownSelectionComponent, DropdownSelectionProp},
     models::{
         mutations::pneumatic_instrument::insert_pneumatic_instrument::{
             InsertPneumaticInstrumentInput, Variables as VariablesInsertPneumaticInstrument,
         },
-        queries::id_selection::id_selection::IdSelectionVariant,
+        queries::dropdown_selection::get_dropdown_selection::DropdownSelectionVariant,
         NaiveDateTime,
     },
     pages::ModalVariant,
     utils::console_log,
 };
 use common::PneumaticInstrumentType;
-use std::str::FromStr;
+use std::{rc::Rc, str::FromStr};
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::HtmlInputElement;
@@ -25,6 +25,7 @@ pub struct Props {
     pub handle_insert_pneumatic_instrument: Callback<VariablesInsertPneumaticInstrument>,
     pub close_insert_form: Callback<()>,
     pub modal_variant_handle: Callback<Option<ModalVariant>>,
+    pub facility_id: Rc<Uuid>,
 }
 
 #[function_component(InsertPneumaticInstrumentForm)]
@@ -33,6 +34,7 @@ pub fn insert_pneumatic_instrument_form(
         handle_insert_pneumatic_instrument,
         close_insert_form,
         modal_variant_handle,
+        facility_id,
     }: &Props,
 ) -> Html {
     let input_site_id_handle = use_state_eq(|| None);
@@ -152,26 +154,27 @@ pub fn insert_pneumatic_instrument_form(
         })
     };
 
+    // When inserting new pneumatic instrument, server needs to offer only sites belonging to a selected facility.
+    // This is achieved by passing optional `id`, which, in this case, is `facility_id`.
+    let site_facility_id = Some(**facility_id);
+
     html! {
         <form {onsubmit} class={classes!("insert-form", "emitter-cell")}>
-            <fieldset class={classes!("controller-form", "center")}>
+            <fieldset class={classes!("pneumatic-instrument-form", "center")}>
                 <button class={classes!("entry-button")} style="grid-row: 1; grid-column: 1;" type="submit" {disabled}>{"✓"}</button>
-                <IdSelectionComponent
-                    id_selection={IdSelectionProp {variant: IdSelectionVariant::SITE_ID, modal_variant_handle: modal_variant_handle.clone()}}
+                <DropdownSelectionComponent
+                    dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::SITE_ID, id: site_facility_id, modal_variant_handle: modal_variant_handle.clone()}}
                     onchange={onchange_site_id}
-                    null_option={false}
                     col_num={3}
                 />
-                <IdSelectionComponent
-                    id_selection={IdSelectionProp {variant: IdSelectionVariant::PNEUMATIC_INSTRUMENT_TYPE, modal_variant_handle: modal_variant_handle.clone()}}
+                <DropdownSelectionComponent
+                    dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::PNEUMATIC_INSTRUMENT_TYPE, id: None, modal_variant_handle: modal_variant_handle.clone()}}
                     onchange={onchange_type}
-                    null_option={false}
                     col_num={4}
                 />
-                <IdSelectionComponent
-                    id_selection={IdSelectionProp {variant: IdSelectionVariant::DEVICE_MANUFACTURER_ID, modal_variant_handle: modal_variant_handle.clone()}}
+                <DropdownSelectionComponent
+                    dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::DEVICE_MANUFACTURER_ID, id: None, modal_variant_handle: modal_variant_handle.clone()}}
                     onchange={onchange_manufacturer_id}
-                    null_option={false}
                     col_num={5}
                 />
                 <input type="text" style="grid-row: 1; grid-column: 6;" onchange={onchange_model} value={model.map_or_else(|| "".to_string(), |model| model)}/>

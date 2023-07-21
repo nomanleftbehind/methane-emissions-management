@@ -4,8 +4,7 @@ use strum_macros::{Display, EnumIter};
 #[strum(serialize_all = "title_case")]
 pub enum Emitter {
     PneumaticInstrument,
-    #[strum(serialize = "Non-Level Controller")]
-    NonLevelController,
+    LevelController,
     PneumaticPump,
     CompressorSeal,
     StorageTank,

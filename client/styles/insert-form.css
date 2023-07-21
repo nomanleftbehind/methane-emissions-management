@@ -32,7 +32,7 @@
   height: 100%;
 }
 
-.controller-form {
+.pneumatic-instrument-form {
   /* grid-row: 2;
   grid-column: 1/8; */
   grid-template-columns: var(--pneumatic-instrument-grid-template-columns);

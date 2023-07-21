@@ -73,8 +73,8 @@ query GetMonthMethaneEmissions($getMonthMethaneEmissionsInput: GetMonthMethaneEm
   }
 }
 
-query IdSelection($variant: IdSelectionVariant!) {
-	idSelection(variant: $variant) {
+query GetDropdownSelection($getDropdownSelectionInput: GetDropdownSelectionInput!) {
+	getDropdownSelection(getDropdownSelectionInput: $getDropdownSelectionInput) {
 		id
     name
   }

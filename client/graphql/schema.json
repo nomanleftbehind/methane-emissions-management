@@ -2928,6 +2928,80 @@
           "possibleTypes": null
         },
         {
+          "description": null,
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "DropdownSelection",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "SITE_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "DEVICE_MANUFACTURER_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PNEUMATIC_INSTRUMENT_TYPE"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "USER_ID"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "DropdownSelectionVariant",
+          "possibleTypes": null
+        },
+        {
           "description": "Any building, structure, installation, equipment or appurtenance over which the Regulator has jurisdiction and that is connected to or associated with the recovery, development, production, handling, processing, treatment or disposal of hydrocarbon‑based resources, including synthetic coal gas and synthetic coal liquid, or any associated substances or wastes or the disposal of captured carbon dioxide.",
           "enumValues": null,
           "fields": [
@@ -3938,13 +4012,13 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "variant",
+                  "name": "getDropdownSelectionInput",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
                     "ofType": {
-                      "kind": "ENUM",
-                      "name": "IdSelectionVariant",
+                      "kind": "INPUT_OBJECT",
+                      "name": "GetDropdownSelectionInput",
                       "ofType": null
                     }
                   }
@@ -3953,7 +4027,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "idSelection",
+              "name": "getDropdownSelection",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -3965,7 +4039,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "IdSelection",
+                      "name": "DropdownSelection",
                       "ofType": null
                     }
                   }
@@ -4557,6 +4631,41 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "variant",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "DropdownSelectionVariant",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "GetDropdownSelectionInput",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "by",
               "type": {
                 "kind": "NON_NULL",
@@ -4649,84 +4758,6 @@
           "interfaces": null,
           "kind": "SCALAR",
           "name": "ID",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "name",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "IdSelection",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": [
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "SITE_ID"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "DEVICE_MANUFACTURER_ID"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "PNEUMATIC_INSTRUMENT_TYPE"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "USER_ID"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "IdSelectionVariant",
           "possibleTypes": null
         },
         {

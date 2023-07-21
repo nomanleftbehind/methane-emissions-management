@@ -1,7 +1,6 @@
 use crate::models::mutations::manual_mutation::delete_entry::{
-    DeleteEntryInput, Variables as VariablesDeleteEntry,
+    DeleteEntryInput, DeleteEntryVariant, Variables as VariablesDeleteEntry,
 };
-use common::DeleteEntryVariant;
 use uuid::Uuid;
 use yew::{classes, function_component, html, Callback, Html, Properties};
 
