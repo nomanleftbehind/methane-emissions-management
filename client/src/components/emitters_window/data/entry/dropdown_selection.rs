@@ -73,7 +73,6 @@ pub fn dropdown_selection(
                         .into_iter()
                         .map(|GetDropdownSelectionGetDropdownSelection { id, name }| {
                             let selected = Some(&id) == value.as_ref();
-                            let name = name.map_or_else(|| id.clone(), |name| name);
                             html! {
                                 <option key={id.clone()} value={id} {selected}>{ name }</option>
                             }

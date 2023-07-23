@@ -1,4 +1,4 @@
-use emissions_app_client::App;
+use methane_emissions_management_client::App;
 
 // fn main() {
 //     #[cfg(target_arch = "wasm32")]

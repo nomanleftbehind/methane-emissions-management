@@ -11,7 +11,7 @@ COPY . .
 
 RUN cd client && trunk build --release
 # RUN trunk build --release client/index.html
-RUN cargo build --release --bin emissions_app_server
+RUN cargo build --release --bin methane_emissions_management_server
 
 FROM gcr.io/distroless/cc-debian10
 
@@ -23,4 +23,4 @@ WORKDIR /usr/local/bin
 
 # RUN cargo install --path .
 
-# CMD ["emissions_app_server"]
+# CMD ["methane_emissions_management_server"]

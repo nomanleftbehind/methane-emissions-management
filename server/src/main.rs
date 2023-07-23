@@ -1,4 +1,4 @@
-use emissions_app_server::{configuration::get_configuration, startup::Application};
+use methane_emissions_management_server::{configuration::get_configuration, startup::Application};
 use std::fmt::{Debug, Display};
 use tokio::task::JoinError;
 

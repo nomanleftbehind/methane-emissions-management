@@ -19,28 +19,30 @@ pub async fn get_dropdown_selection(
             if let Some(id) = id {
                 query_as!(
                         DropdownSelection,
-                        r#"SELECT id::text as "id!", name as "name?" FROM site WHERE facility_id = $1 ORDER BY name"#,
+                        r#"SELECT id::text as "id!", name FROM site WHERE facility_id = $1 ORDER BY name"#,
                         id
                     ).fetch_all(pool).await
                 } else {
                 query_as!(
                     DropdownSelection,
-                    r#"SELECT id::text as "id!", name as "name?" FROM site ORDER BY name"#
+                    r#"SELECT id::text as "id!", name FROM site ORDER BY name"#
                 ).fetch_all(pool).await
                 }
         }
         DeviceManufacturerId => {
             query_as!(
                 DropdownSelection,
-                r#"SELECT id::text as "id!", manufacturer as "name?" FROM device_manufacturer ORDER BY manufacturer"#
+                r#"SELECT id::text as "id!", manufacturer as name FROM device_manufacturer ORDER BY manufacturer"#
             ).fetch_all(pool).await
         }
         PneumaticInstrumentTypeVariant => {
             Ok(PneumaticInstrumentType::iter()
-                .map(|pit| DropdownSelection {
-                    id: pit.to_string(),
-                    name: None,
-                })
+                .map(|pit| {
+                    let name = pit.to_string();
+                    DropdownSelection {
+                    id: name.clone(),
+                    name,
+                }})
                 .collect())
         }
         UserId => {

@@ -1,5 +1,5 @@
 [package]
-name = "emissions_app_client"
+name = "methane_emissions_management_client"
 version = "0.1.0"
 edition = "2021"
 

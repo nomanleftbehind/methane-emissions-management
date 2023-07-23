@@ -3,8 +3,8 @@ use actix_web::{
     web::{Bytes, Data},
     HttpRequest, HttpResponse, Responder,
 };
-use emissions_app_client::{ServerApp, ServerAppProps};
 use futures::stream::{self, StreamExt};
+use methane_emissions_management_client::{ServerApp, ServerAppProps};
 use std::{convert::Infallible, path::PathBuf};
 
 pub async fn ssr_render(

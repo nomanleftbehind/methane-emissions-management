@@ -1535,83 +1535,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f107b87b6afc2a64fd13cac55fe06d6c8859f12d4b14cbcdd2c67d0976781be"
 
 [[package]]
-name = "emissions_app_client"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "common",
- "futures",
- "gloo",
- "gloo-net 0.3.0",
- "gloo-timers",
- "graphql_client",
- "log",
- "serde",
- "serde_json",
- "strum",
- "strum_macros",
- "tokio",
- "uuid",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "wasm-logger",
- "web-sys",
- "yew",
- "yew-hooks",
- "yew-router",
-]
-
-[[package]]
-name = "emissions_app_server"
-version = "1.0.0"
-dependencies = [
- "actix",
- "actix-cors",
- "actix-files",
- "actix-identity",
- "actix-session",
- "actix-web",
- "actix-web-flash-messages",
- "actix-web-lab",
- "anyhow",
- "anymap",
- "argon2",
- "async-graphql",
- "async-graphql-actix-web",
- "async-redis-session",
- "async-session",
- "async-trait",
- "base64 0.21.0",
- "chrono",
- "clap",
- "common",
- "config",
- "env_logger",
- "futures",
- "futures-util",
- "hmac 0.12.1",
- "http",
- "itertools 0.11.0",
- "log",
- "rand 0.8.5",
- "secrecy",
- "serde",
- "serde-aux",
- "serde_json",
- "sha2 0.10.2",
- "sqlx",
- "strum",
- "strum_macros",
- "thiserror",
- "tiberius",
- "tokio",
- "tokio-util 0.7.2",
- "tracing",
- "uuid",
- "yew",
-]
-
-[[package]]
 name = "encoding"
 version = "0.2.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2667,6 +2590,83 @@ name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
+
+[[package]]
+name = "methane_emissions_management_client"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "common",
+ "futures",
+ "gloo",
+ "gloo-net 0.3.0",
+ "gloo-timers",
+ "graphql_client",
+ "log",
+ "serde",
+ "serde_json",
+ "strum",
+ "strum_macros",
+ "tokio",
+ "uuid",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-logger",
+ "web-sys",
+ "yew",
+ "yew-hooks",
+ "yew-router",
+]
+
+[[package]]
+name = "methane_emissions_management_server"
+version = "1.0.0"
+dependencies = [
+ "actix",
+ "actix-cors",
+ "actix-files",
+ "actix-identity",
+ "actix-session",
+ "actix-web",
+ "actix-web-flash-messages",
+ "actix-web-lab",
+ "anyhow",
+ "anymap",
+ "argon2",
+ "async-graphql",
+ "async-graphql-actix-web",
+ "async-redis-session",
+ "async-session",
+ "async-trait",
+ "base64 0.21.0",
+ "chrono",
+ "clap",
+ "common",
+ "config",
+ "env_logger",
+ "futures",
+ "futures-util",
+ "hmac 0.12.1",
+ "http",
+ "itertools 0.11.0",
+ "log",
+ "rand 0.8.5",
+ "secrecy",
+ "serde",
+ "serde-aux",
+ "serde_json",
+ "sha2 0.10.2",
+ "sqlx",
+ "strum",
+ "strum_macros",
+ "thiserror",
+ "tiberius",
+ "tokio",
+ "tokio-util 0.7.2",
+ "tracing",
+ "uuid",
+ "yew",
+]
 
 [[package]]
 name = "mime"
