@@ -1,8 +1,10 @@
 use crate::graphql::{
     context::ContextExt,
     models::{
-        input::GetPneumaticInstrumentsInput,
-        routine::pneumatic_device::pneumatic_instrument::PneumaticInstrument,
+        input::{GetPneumaticInstrumentChangesInput, GetPneumaticInstrumentsInput},
+        routine::pneumatic_device::pneumatic_instrument::{
+            PneumaticInstrument, PneumaticInstrumentChange,
+        },
     },
     sql::routine::pneumatic_device::pneumatic_instrument,
 };
@@ -23,5 +25,20 @@ impl PneumaticInstrumentQuery {
         pneumatic_instrument::get_pneumatic_instruments(pool, get_pneumatic_instruments_input)
             .await
             .map_err(Error::from)
+    }
+
+    async fn get_pneumatic_instrument_changes(
+        &self,
+        ctx: &Context<'_>,
+        get_pneumatic_instrument_changes_input: GetPneumaticInstrumentChangesInput,
+    ) -> Result<Vec<PneumaticInstrumentChange>, Error> {
+        let pool = ctx.db_pool();
+
+        pneumatic_instrument::get_pneumatic_instrument_changes(
+            pool,
+            get_pneumatic_instrument_changes_input,
+        )
+        .await
+        .map_err(Error::from)
     }
 }

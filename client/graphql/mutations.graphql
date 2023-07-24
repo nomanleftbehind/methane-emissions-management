@@ -25,3 +25,7 @@ mutation DeleteEntry($deleteEntryInput: DeleteEntryInput!) {
 mutation InsertPneumaticInstrument($insertPneumaticInstrumentInput: InsertPneumaticInstrumentInput!) {
   insertPneumaticInstrument(insertPneumaticInstrumentInput: $insertPneumaticInstrumentInput)
 }
+
+mutation InsertPneumaticInstrumentChange($insertPneumaticInstrumentChangeInput: InsertPneumaticInstrumentChangeInput!) {
+  insertPneumaticInstrumentChange(insertPneumaticInstrumentChangeInput: $insertPneumaticInstrumentChangeInput)
+}

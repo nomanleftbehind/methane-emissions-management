@@ -52,6 +52,23 @@ query GetPneumaticInstruments($getPneumaticInstrumentsInput: GetPneumaticInstrum
   }
 }
 
+query GetPneumaticInstrumentChanges($getPneumaticInstrumentChangesInput: GetPneumaticInstrumentChangesInput!) {
+  getPneumaticInstrumentChanges(getPneumaticInstrumentChangesInput: $getPneumaticInstrumentChangesInput) {
+    id
+    pneumaticInstrumentId
+		date
+    rate
+    createdBy {
+      email
+    }
+    createdAt
+    updatedBy {
+      email
+    }
+    updatedAt
+  }
+}
+
 query GetMonthMethaneEmissions($getMonthMethaneEmissionsInput: GetMonthMethaneEmissionsInput!) {
   getMonthMethaneEmissions(getMonthMethaneEmissionsInput: $getMonthMethaneEmissionsInput) {
     id
