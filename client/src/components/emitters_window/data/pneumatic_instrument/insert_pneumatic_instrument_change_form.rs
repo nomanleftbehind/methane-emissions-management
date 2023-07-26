@@ -1,12 +1,8 @@
-use crate::{
-    models::{
-        mutations::pneumatic_instrument::insert_pneumatic_instrument_change::{
-            InsertPneumaticInstrumentChangeInput,
-            Variables as VariablesInsertPneumaticInstrumentChange,
-        },
-        NaiveDateTime,
+use crate::models::{
+    mutations::pneumatic_instrument::insert_pneumatic_instrument_change::{
+        InsertPneumaticInstrumentChangeInput, Variables as VariablesInsertPneumaticInstrumentChange,
     },
-    pages::ModalVariant,
+    NaiveDateTime,
 };
 use std::rc::Rc;
 use uuid::Uuid;
@@ -22,7 +18,6 @@ pub struct Props {
     pub handle_insert_pneumatic_instrument_change:
         Callback<VariablesInsertPneumaticInstrumentChange>,
     pub close_insert_form: Callback<()>,
-    pub modal_variant_handle: Callback<Option<ModalVariant>>,
     pub pneumatic_instrument_id: Rc<Uuid>,
 }
 
@@ -31,7 +26,6 @@ pub fn insert_pneumatic_instrument_change_form(
     Props {
         handle_insert_pneumatic_instrument_change,
         close_insert_form,
-        modal_variant_handle,
         pneumatic_instrument_id,
     }: &Props,
 ) -> Html {

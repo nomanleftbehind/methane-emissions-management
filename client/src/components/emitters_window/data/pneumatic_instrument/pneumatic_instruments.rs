@@ -51,7 +51,7 @@ pub struct Props {
 }
 
 #[function_component(PneumaticInstrumentsComponent)]
-pub fn pneumatic_instruments_component(
+pub fn pneumatic_instruments(
     Props {
         facility_id,
         modal_variant_handle,

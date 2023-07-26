@@ -1,7 +1,6 @@
 use crate::{
     components::emitters_window::{
-        data::pneumatic_instrument::pneumatic_instruments::PneumaticInstrumentsComponent,
-        emitter_navbar::EmitterNavbar,
+        data::pneumatic_instrument::PneumaticInstrumentsComponent, emitter_navbar::EmitterNavbar,
     },
     pages::ModalVariant,
 };

@@ -1,11 +1,6 @@
+use super::{InsertPneumaticInstrumentChangeForm, PneumaticInstrumentChangeRowComponent};
 use crate::{
-    components::emitters_window::data::{
-        insert_entry_button::InsertEntryButton,
-        // object_row::{ObjectDataProp, ObjectRowComponent},
-        pneumatic_instrument::pneumatic_instrument_change::{
-            InsertPneumaticInstrumentChangeForm, PneumaticInstrumentChangeRowComponent,
-        },
-    },
+    components::emitters_window::data::insert_entry_button::InsertEntryButton,
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
     models::{
         mutations::{
@@ -28,7 +23,6 @@ use crate::{
         },
         queries::pneumatic_instrument::{
             get_pneumatic_instrument_changes::{
-                GetPneumaticInstrumentChangesGetPneumaticInstrumentChanges,
                 GetPneumaticInstrumentChangesInput, PneumaticInstrumentChangesByVariant,
                 ResponseData, Variables,
             },
@@ -50,8 +44,8 @@ pub struct Props {
     pub modal_variant_handle: Callback<Option<ModalVariant>>,
 }
 
-#[function_component(ObjectsComponent)]
-pub fn objects_component(
+#[function_component(PneumaticInstrumentChangesComponent)]
+pub fn pneumatic_instrument_changes(
     Props {
         id,
         modal_variant_handle,
@@ -222,7 +216,7 @@ pub fn objects_component(
                     <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
                     if insert_form_is_open {
-                        <InsertPneumaticInstrumentChangeForm pneumatic_instrument_id={id} {close_insert_form} {handle_insert_pneumatic_instrument_change} {modal_variant_handle} />
+                        <InsertPneumaticInstrumentChangeForm pneumatic_instrument_id={id} {close_insert_form} {handle_insert_pneumatic_instrument_change} />
                     }
                     { for pneumatic_instrument_changes_iter }
                 </div>

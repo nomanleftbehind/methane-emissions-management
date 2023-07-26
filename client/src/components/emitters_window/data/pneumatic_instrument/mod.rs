@@ -1,6 +1,12 @@
-mod insert_pneumatic_instrument_form;
-pub mod pneumatic_instrument_change;
+mod insert_pneumatic_instrument_change_form;
 mod pneumatic_instrument_row;
-pub mod pneumatic_instruments;
+mod pneumatic_instruments;
 
-// pub use insert_pneumatic_instrument_form::InsertPneumaticInstrumentForm;
+mod insert_pneumatic_instrument_form;
+mod pneumatic_instrument_change;
+mod pneumatic_instrument_change_row;
+
+pub use insert_pneumatic_instrument_change_form::InsertPneumaticInstrumentChangeForm;
+pub use pneumatic_instrument_change::PneumaticInstrumentChangesComponent;
+pub use pneumatic_instrument_change_row::PneumaticInstrumentChangeRowComponent;
+pub use pneumatic_instruments::PneumaticInstrumentsComponent;
