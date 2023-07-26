@@ -123,7 +123,6 @@ pub fn insert_pneumatic_instrument_form(
 
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
-            let end_date = end_date.clone();
             let model = model.clone();
             let serial_number = serial_number.clone();
 

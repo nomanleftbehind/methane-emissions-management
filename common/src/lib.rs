@@ -242,5 +242,6 @@ pub enum DropdownSelectionVariant {
     SiteId,
     DeviceManufacturerId,
     PneumaticInstrumentType,
+    PneumaticInstrumentId,
     UserId,
 }

@@ -2995,6 +2995,12 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
+              "name": "PNEUMATIC_INSTRUMENT_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
               "name": "USER_ID"
             }
           ],

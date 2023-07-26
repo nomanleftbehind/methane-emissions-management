@@ -2,8 +2,8 @@ use crate::graphql::models::dropdown_selection::DropdownSelection;
 use crate::graphql::models::input::GetDropdownSelectionInput;
 use common::{
     DropdownSelectionVariant::{
-        DeviceManufacturerId, PneumaticInstrumentType as PneumaticInstrumentTypeVariant, SiteId,
-        UserId,
+        DeviceManufacturerId, PneumaticInstrumentId,
+        PneumaticInstrumentType as PneumaticInstrumentTypeVariant, SiteId, UserId,
     },
     PneumaticInstrumentType,
 };
@@ -44,6 +44,36 @@ pub async fn get_dropdown_selection(
                     name,
                 }})
                 .collect())
+        }
+        PneumaticInstrumentId => {
+            if let Some(id) = id {
+            query_as!(
+                DropdownSelection,
+                r#"SELECT pi.id::text as "id!",
+
+                dm.manufacturer || ' ' || LOWER(pi.type::text) as "name!"
+                
+                FROM pneumatic_instrument pi
+                LEFT OUTER JOIN device_manufacturer dm ON dm.id = pi.manufacturer_id
+
+                WHERE site_id = $1
+                
+                ORDER BY dm.manufacturer, pi.type"#,
+                id
+            ).fetch_all(pool).await
+        } else {
+            query_as!(
+                DropdownSelection,
+                r#"SELECT pi.id::text as "id!",
+
+                dm.manufacturer || ' ' || LOWER(pi.type::text) as "name!"
+                
+                FROM pneumatic_instrument pi
+                LEFT OUTER JOIN device_manufacturer dm ON dm.id = pi.manufacturer_id
+                
+                ORDER BY dm.manufacturer, pi.type"#
+                ).fetch_all(pool).await
+            }
         }
         UserId => {
             return Err(Error::Io(std::io::Error::new(

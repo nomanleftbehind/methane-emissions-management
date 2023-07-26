@@ -1,8 +1,10 @@
 use crate::{
     components::emitters_window::data::{
         insert_entry_button::InsertEntryButton,
-        object_row::{ObjectDataProp, ObjectRowComponent},
-        pneumatic_instrument::InsertPneumaticInstrumentForm,
+        // object_row::{ObjectDataProp, ObjectRowComponent},
+        pneumatic_instrument::pneumatic_instrument_change::{
+            InsertPneumaticInstrumentChangeForm, PneumaticInstrumentChangeRowComponent,
+        },
     },
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
     models::{
@@ -205,13 +207,13 @@ pub fn objects_component(
             let pneumatic_instrument_changes_iter = get_pneumatic_instrument_changes.into_iter().enumerate().map(|(mut row_num, pneumatic_instrument_change)| {
                 row_num = (row_num + 2) * 2 - 1;
                 html! {
-                    <ObjectRowComponent {row_num} {modal_variant_handle} object_data={ObjectDataProp::ControllerChange(pneumatic_instrument_change)} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <PneumaticInstrumentChangeRowComponent {row_num} {modal_variant_handle} {pneumatic_instrument_change} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
             html! {
                 <div class={classes!("emitters", "controller-changes")}>
-                    <div class={classes!("sticky")} style={gen_grid_style(1, 1)}/>
+                    <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
                     <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Date" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Rate" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Created By" }</div>
@@ -219,6 +221,9 @@ pub fn objects_component(
                     <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Updated By" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
+                    if insert_form_is_open {
+                        <InsertPneumaticInstrumentChangeForm pneumatic_instrument_id={id} {close_insert_form} {handle_insert_pneumatic_instrument_change} {modal_variant_handle} />
+                    }
                     { for pneumatic_instrument_changes_iter }
                 </div>
             }
