@@ -118,8 +118,6 @@ pub fn insert_pneumatic_instrument_form(
     let onsubmit = {
         let handle_insert_pneumatic_instrument = handle_insert_pneumatic_instrument.clone();
         let close_insert_form = close_insert_form.clone();
-        let model = model.clone();
-        let serial_number = serial_number.clone();
 
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
@@ -162,24 +160,24 @@ pub fn insert_pneumatic_instrument_form(
             <fieldset class={classes!("pneumatic-instrument-form", "center")}>
                 <button class={classes!("entry-button")} style="grid-row: 1; grid-column: 1;" type="submit" {disabled}>{"✓"}</button>
                 <DropdownSelectionComponent
-                    dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::SITE_ID, id: site_facility_id, modal_variant_handle: modal_variant_handle.clone()}}
-                    onchange={onchange_site_id}
-                    col_num={3}
-                />
-                <DropdownSelectionComponent
                     dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::PNEUMATIC_INSTRUMENT_TYPE, id: None, modal_variant_handle: modal_variant_handle.clone()}}
                     onchange={onchange_type}
-                    col_num={4}
+                    col_num={3}
                 />
                 <DropdownSelectionComponent
                     dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::DEVICE_MANUFACTURER_ID, id: None, modal_variant_handle: modal_variant_handle.clone()}}
                     onchange={onchange_manufacturer_id}
-                    col_num={5}
+                    col_num={4}
                 />
-                <input type="text" style="grid-row: 1; grid-column: 6;" onchange={onchange_model} value={model.map_or_else(|| "".to_string(), |model| model)}/>
-                <input type="text" style="grid-row: 1; grid-column: 7;" onchange={onchange_serial_number} value={serial_number.map_or_else(|| "".to_string(), |serial_number| serial_number)}/>
-                <input type="date" style="grid-row: 1; grid-column: 8;" onchange={onchange_start_date}/>
-                <input type="date" style="grid-row: 1; grid-column: 9;" onchange={onchange_end_date}/>
+                <input type="text" style="grid-row: 1; grid-column: 5;" onchange={onchange_model}/>
+                <input type="text" style="grid-row: 1; grid-column: 6;" onchange={onchange_serial_number}/>
+                <input type="date" style="grid-row: 1; grid-column: 7;" onchange={onchange_start_date}/>
+                <input type="date" style="grid-row: 1; grid-column: 8;" onchange={onchange_end_date}/>
+                <DropdownSelectionComponent
+                    dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::SITE_ID, id: site_facility_id, modal_variant_handle: modal_variant_handle.clone()}}
+                    onchange={onchange_site_id}
+                    col_num={9}
+                />
             </fieldset>
         </form>
     }

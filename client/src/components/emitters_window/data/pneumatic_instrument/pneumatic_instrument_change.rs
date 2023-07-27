@@ -201,12 +201,12 @@ pub fn pneumatic_instrument_changes(
             let pneumatic_instrument_changes_iter = get_pneumatic_instrument_changes.into_iter().enumerate().map(|(mut row_num, pneumatic_instrument_change)| {
                 row_num = (row_num + 2) * 2 - 1;
                 html! {
-                    <PneumaticInstrumentChangeRowComponent {row_num} {modal_variant_handle} {pneumatic_instrument_change} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <PneumaticInstrumentChangeRowComponent {row_num} {pneumatic_instrument_change} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
             html! {
-                <div class={classes!("emitters", "controller-changes")}>
+                <div class={classes!("emitters", "pneumatic-instrument-changes")}>
                     <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
                     <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Date" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Rate" }</div>

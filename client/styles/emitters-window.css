@@ -25,11 +25,11 @@
   overflow: auto;
 }
 
-.emitters:not(.controllers, .compressors, .tank-farms) {
+.emitters:not(.pneumatic-instruments, .compressors, .tank-farms) {
   width: unset;
 }
 
-.controllers {
+.pneumatic-instruments {
   grid-template-columns: var(--pneumatic-instrument-grid-template-columns) var(--user-info-column-width) var(--id-column-width);
 }
 
@@ -41,8 +41,8 @@
   grid-template-columns: repeat(2, 2.7rem) var(--id-column-width) var(--user-info-column-width);
 }
 
-.controller-changes {
-  grid-template-columns: 2.7rem var(--date-column-width) 8rem var(--user-info-column-width) var(--id-column-width);
+.pneumatic-instrument-changes {
+  grid-template-columns: var(--pneumatic-instrument-change-grid-template-columns) var(--user-info-column-width) var(--id-column-width);
 }
 
 .controller-month-hours {

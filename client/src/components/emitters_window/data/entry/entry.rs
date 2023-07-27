@@ -533,7 +533,7 @@ pub fn entry(
                                 if let Some(dropdown_selection) = dropdown_selection {
                                     <DropdownSelectionComponent dropdown_selection={dropdown_selection.clone()} {onchange} {offer_null} value={value.to_string()}/>
                                 } else {
-                                    <input type={form_type} step={form_step} value={option_input_value.map_or_else(|| "".to_string(), |input_value| input_value.to_string())} {onchange} />
+                                    <input type={form_type} step={form_step} value={option_input_value.map(|input_value| input_value.to_string())} {onchange} />
                                 }
                             </div>
                         </fieldset>

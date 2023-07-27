@@ -1,15 +1,19 @@
-use crate::models::{
-    mutations::pneumatic_instrument::insert_pneumatic_instrument_change::{
-        InsertPneumaticInstrumentChangeInput, Variables as VariablesInsertPneumaticInstrumentChange,
+use crate::{
+    models::{
+        mutations::pneumatic_instrument::insert_pneumatic_instrument_change::{
+            InsertPneumaticInstrumentChangeInput,
+            Variables as VariablesInsertPneumaticInstrumentChange,
+        },
+        NaiveDateTime,
     },
-    NaiveDateTime,
+    utils::console_log,
 };
 use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::HtmlInputElement;
 use yew::{
-    classes, function_component, html, use_state_eq, Callback, Event, Html, Properties,
+    classes, function_component, html, use_state_eq, Callback, Event, Html, InputEvent, Properties,
     SubmitEvent, TargetCast,
 };
 
@@ -46,9 +50,10 @@ pub fn insert_pneumatic_instrument_change_form(
         input_date_handle.set(date);
     });
 
-    let onchange_rate = Callback::from(move |e: Event| {
+    let oninput_rate = Callback::from(move |e: InputEvent| {
         let input: HtmlInputElement = e.target_unchecked_into();
         let input_value = input.value_as_number();
+        console_log!("value: {}", input_value);
         input_rate_handle.set(Some(input_value));
     });
 
@@ -80,10 +85,12 @@ pub fn insert_pneumatic_instrument_change_form(
 
     html! {
         <form {onsubmit} class={classes!("insert-form", "emitter-cell")}>
-            <fieldset class={classes!("pneumatic-instrument-form", "center")}>
+            <fieldset class={classes!("pneumatic-instrument-change-form", "center")}>
                 <button class={classes!("entry-button")} style="grid-row: 1; grid-column: 1;" type="submit" {disabled}>{"✓"}</button>
-                <input type="date" style="grid-row: 1; grid-column: 3;" onchange={onchange_date}/>
-                <input type="number" style="grid-row: 1; grid-column: 4;" onchange={onchange_rate}/>
+                <input type="date" style="grid-row: 1; grid-column: 2;" onchange={onchange_date}/>
+                // oninput event occurs immediately after the content has been changed, while onchange occurs when the element loses focus.
+                // Using oninput here because we want button to stop being disabled as soon as date and rate are entered, and not having to click outide for onchange to occur.
+                <input type="number" step="any" style="grid-row: 1; grid-column: 3;" oninput={oninput_rate}/>
             </fieldset>
         </form>
     }

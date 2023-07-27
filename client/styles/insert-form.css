@@ -33,7 +33,9 @@
 }
 
 .pneumatic-instrument-form {
-  /* grid-row: 2;
-  grid-column: 1/8; */
   grid-template-columns: var(--pneumatic-instrument-grid-template-columns);
+}
+
+.pneumatic-instrument-change-form {
+  grid-template-columns: var(--pneumatic-instrument-change-grid-template-columns);
 }

@@ -1,5 +1,8 @@
 use crate::{
-    components::emitters_window::data::emitter_sidebar::EmitterSidebar, pages::ModalVariant,
+    components::emitters_window::data::{
+        emitter_sidebar::EmitterSidebar, pneumatic_instrument::PneumaticInstrumentChangesComponent,
+    },
+    pages::ModalVariant,
 };
 use common::SidebarItem;
 use std::rc::Rc;
@@ -41,7 +44,9 @@ pub fn object_data_component(
                 <EmitterSidebar sidebar_items={sidebar_items.clone()} selected_sidebar_item={selected_sidebar_item.clone()} {select_sidebar_item_callback} />
                 if let Some(sidebar_item) = selected_sidebar_item {
                     <div class={classes!("emitter-data-main")}>
-                        // <ObjectsComponent {id} {modal_variant_handle} object_variant={sidebar_item} />
+                        if sidebar_item == SidebarItem::PneumaticInstrumentChange {
+                            <PneumaticInstrumentChangesComponent {id} {modal_variant_handle}/>
+                        }
                     </div>
                 }
             </div>

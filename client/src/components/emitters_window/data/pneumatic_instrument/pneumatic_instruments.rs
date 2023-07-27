@@ -215,16 +215,16 @@ pub fn pneumatic_instruments(
             });
 
             html! {
-                <div class={classes!("emitters", "controllers")}>
+                <div class={classes!("emitters", "pneumatic-instruments")}>
                     <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
                     <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
-                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Site" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Type" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Manufacturer" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Model" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Serial Number" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "StartDate" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "End Date" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Type" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Manufacturer" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Model" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Serial Number" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "StartDate" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "End Date" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Site" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Created By" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Created At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "Updated By" }</div>
