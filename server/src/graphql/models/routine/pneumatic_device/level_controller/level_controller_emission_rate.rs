@@ -12,7 +12,7 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct LevelControllerChange {
+pub struct LevelControllerEmissionRate {
     pub id: Uuid,
     pub level_controller_id: Uuid,
     pub date: NaiveDate,
@@ -25,7 +25,7 @@ pub struct LevelControllerChange {
 }
 
 #[ComplexObject]
-impl LevelControllerChange {
+impl LevelControllerEmissionRate {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;

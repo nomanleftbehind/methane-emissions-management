@@ -41,8 +41,8 @@
   grid-template-columns: repeat(2, 2.7rem) var(--id-column-width) var(--user-info-column-width);
 }
 
-.pneumatic-instrument-changes {
-  grid-template-columns: var(--pneumatic-instrument-change-grid-template-columns) var(--user-info-column-width) var(--id-column-width);
+.pneumatic-instrument-emission-rates {
+  grid-template-columns: var(--pneumatic-instrument-emission-rate-grid-template-columns) var(--user-info-column-width) var(--id-column-width);
 }
 
 .controller-month-hours {

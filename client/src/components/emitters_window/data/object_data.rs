@@ -1,6 +1,7 @@
 use crate::{
     components::emitters_window::data::{
-        emitter_sidebar::EmitterSidebar, pneumatic_instrument::PneumaticInstrumentChangesComponent,
+        emitter_sidebar::EmitterSidebar,
+        pneumatic_instrument::PneumaticInstrumentEmissionRatesComponent,
     },
     pages::ModalVariant,
 };
@@ -44,8 +45,8 @@ pub fn object_data_component(
                 <EmitterSidebar sidebar_items={sidebar_items.clone()} selected_sidebar_item={selected_sidebar_item.clone()} {select_sidebar_item_callback} />
                 if let Some(sidebar_item) = selected_sidebar_item {
                     <div class={classes!("emitter-data-main")}>
-                        if sidebar_item == SidebarItem::PneumaticInstrumentChange {
-                            <PneumaticInstrumentChangesComponent {id} {modal_variant_handle}/>
+                        if sidebar_item == SidebarItem::PneumaticInstrumentEmissionRate {
+                            <PneumaticInstrumentEmissionRatesComponent {id} {modal_variant_handle}/>
                         }
                     </div>
                 }

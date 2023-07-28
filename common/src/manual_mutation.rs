@@ -42,10 +42,10 @@ pub enum UpdateFieldVariant {
     PneumaticInstrumentSerialNumber,
     PneumaticInstrumentStartDate,
     PneumaticInstrumentEndDate,
-    // Pneumatic Instrument Change
-    PneumaticInstrumentChangePneumaticInstrumentId,
-    PneumaticInstrumentChangeDate,
-    PneumaticInstrumentChangeRate,
+    // Pneumatic Instrument Emission Rate
+    PneumaticInstrumentEmissionRatePneumaticInstrumentId,
+    PneumaticInstrumentEmissionRateDate,
+    PneumaticInstrumentEmissionRateRate,
     // Pneumatic Instrument Controlled Characterization
     PneumaticInstrumentControlledCharacterizationPneumaticInstrumentId,
     PneumaticInstrumentControlledCharacterizationStartDate,
@@ -78,10 +78,10 @@ pub enum UpdateFieldVariant {
     LevelControllerActuationFrequencyLevelControllerId,
     LevelControllerActuationFrequencyDate,
     LevelControllerActuationFrequencyActuationFrequency,
-    // Level Controller Change
-    LevelControllerChangeLevelControllerId,
-    LevelControllerChangeDate,
-    LevelControllerChangeRate,
+    // Level Controller Emission Rate
+    LevelControllerEmissionRateLevelControllerId,
+    LevelControllerEmissionRateDate,
+    LevelControllerEmissionRateRate,
     // Level Controller Controlled Characterization
     LevelControllerControlledCharacterizationLevelControllerId,
     LevelControllerControlledCharacterizationStartDate,
@@ -110,10 +110,10 @@ pub enum UpdateFieldVariant {
     PneumaticPumpSerialNumber,
     PneumaticPumpStartDate,
     PneumaticPumpEndDate,
-    // Pneumatic Pump Change
-    PneumaticPumpChangePneumaticPumpId,
-    PneumaticPumpChangeDate,
-    PneumaticPumpChangeRate,
+    // Pneumatic Pump Emission Rate
+    PneumaticPumpEmissionRatePneumaticPumpId,
+    PneumaticPumpEmissionRateDate,
+    PneumaticPumpEmissionRateRate,
     // Pneumatic Pump Controlled Characterization
     PneumaticPumpControlledCharacterizationPneumaticPumpId,
     PneumaticPumpControlledCharacterizationStartDate,
@@ -242,7 +242,7 @@ pub enum DeleteEntryVariant {
     GasAnalysis,
     // Pneumatic Instrument
     PneumaticInstrument,
-    PneumaticInstrumentChange,
+    PneumaticInstrumentEmissionRate,
     PneumaticInstrumentControlledCharacterization,
     PneumaticInstrumentControlDeviceInactivity,
     PneumaticInstrumentMonthHours,
@@ -250,14 +250,14 @@ pub enum DeleteEntryVariant {
     // Level Controller
     LevelController,
     LevelControllerActuationFrequency,
-    LevelControllerChange,
+    LevelControllerEmissionRate,
     LevelControllerControlledCharacterization,
     LevelControllerControlDeviceInactivity,
     LevelControllerMonthHours,
     LevelControllerMonthMethaneEmissionOverride,
     // Pneumatic Pump
     PneumaticPump,
-    PneumaticPumpChange,
+    PneumaticPumpEmissionRate,
     PneumaticPumpControlledCharacterization,
     PneumaticPumpControlDeviceInactivity,
     PneumaticPumpMonthHours,

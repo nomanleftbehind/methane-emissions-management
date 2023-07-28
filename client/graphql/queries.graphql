@@ -52,8 +52,8 @@ query GetPneumaticInstruments($getPneumaticInstrumentsInput: GetPneumaticInstrum
   }
 }
 
-query GetPneumaticInstrumentChanges($getPneumaticInstrumentChangesInput: GetPneumaticInstrumentChangesInput!) {
-  getPneumaticInstrumentChanges(getPneumaticInstrumentChangesInput: $getPneumaticInstrumentChangesInput) {
+query GetPneumaticInstrumentEmissionRates($getPneumaticInstrumentEmissionRatesInput: GetPneumaticInstrumentEmissionRatesInput!) {
+  getPneumaticInstrumentEmissionRates(getPneumaticInstrumentEmissionRatesInput: $getPneumaticInstrumentEmissionRatesInput) {
     id
     pneumaticInstrumentId
 		date

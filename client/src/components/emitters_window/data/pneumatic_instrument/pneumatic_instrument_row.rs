@@ -21,7 +21,7 @@ use crate::{
 };
 use common::{
     SidebarItem::{
-        PneumaticInstrumentChange, PneumaticInstrumentMonthHours,
+        PneumaticInstrumentEmissionRate, PneumaticInstrumentMonthHours,
         PneumaticInstrumentMonthMethaneEmission, PneumaticInstrumentMonthMethaneEmissionOverride,
     },
     UpdateFieldValueEnum::{
@@ -65,7 +65,7 @@ pub fn pneumatic_instrument_row_component(
     let updated_by = pneumatic_instrument.updated_by.map(|ub| ub.email);
 
     let sidebar_items = vec![
-        PneumaticInstrumentChange,
+        PneumaticInstrumentEmissionRate,
         PneumaticInstrumentMonthHours,
         PneumaticInstrumentMonthMethaneEmissionOverride,
         PneumaticInstrumentMonthMethaneEmission,

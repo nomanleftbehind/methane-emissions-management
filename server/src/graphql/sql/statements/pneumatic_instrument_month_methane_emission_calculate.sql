@@ -127,7 +127,7 @@ FROM
 																						pimh.hours_on / COUNT(pi.id) OVER (PARTITION BY pi.id, pi.month),
 																						0
 																					) as hours_on,
-																					COALESCE(pichg.rate, 0) as rate
+																					COALESCE(pier.rate, 0) as rate
 																				FROM
 																					(
 																						SELECT
@@ -155,24 +155,24 @@ FROM
 																					AND pimh.month = pi.month
 																					LEFT OUTER JOIN (
 																						SELECT
-																							pichg.pneumatic_instrument_id,
-																							pichg.date as from_date,
+																							pier.pneumatic_instrument_id,
+																							pier.date as from_date,
 																							COALESCE(
 																								(
-																									LEAD(pichg.date) OVER (
-																										PARTITION BY pichg.pneumatic_instrument_id
+																									LEAD(pier.date) OVER (
+																										PARTITION BY pier.pneumatic_instrument_id
 																										ORDER BY
-																											pichg.date
+																											pier.date
 																									) - INTERVAL '1 day'
 																								)::date,
 																								CURRENT_DATE
 																							) as to_date,
-																							pichg.rate
+																							pier.rate
 																						FROM
-																							pneumatic_instrument_change pichg
-																					) pichg ON pichg.pneumatic_instrument_id = pi.id
-																					AND pi.date BETWEEN pichg.from_date
-																					AND pichg.to_date
+																							pneumatic_instrument_emission_rate pier
+																					) pier ON pier.pneumatic_instrument_id = pi.id
+																					AND pi.date BETWEEN pier.from_date
+																					AND pier.to_date
 																			) pimme
 																	) pimme
 																UNION

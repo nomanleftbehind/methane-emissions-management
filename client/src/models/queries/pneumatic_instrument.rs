@@ -19,4 +19,4 @@ pub struct GetPneumaticInstruments;
     response_derives = "Debug, Clone, PartialEq",
     variables_derives = "Debug, PartialEq, Clone"
 )]
-pub struct GetPneumaticInstrumentChanges;
+pub struct GetPneumaticInstrumentEmissionRates;

@@ -2528,7 +2528,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "PNEUMATIC_INSTRUMENT_CHANGE"
+              "name": "PNEUMATIC_INSTRUMENT_EMISSION_RATE"
             },
             {
               "deprecationReason": null,
@@ -2570,7 +2570,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "LEVEL_CONTROLLER_CHANGE"
+              "name": "LEVEL_CONTROLLER_EMISSION_RATE"
             },
             {
               "deprecationReason": null,
@@ -2606,7 +2606,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "PNEUMATIC_PUMP_CHANGE"
+              "name": "PNEUMATIC_PUMP_EMISSION_RATE"
             },
             {
               "deprecationReason": null,
@@ -3581,13 +3581,13 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "insertPneumaticInstrumentChangeInput",
+                  "name": "insertPneumaticInstrumentEmissionRateInput",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "InsertPneumaticInstrumentChangeInput",
+                      "name": "InsertPneumaticInstrumentEmissionRateInput",
                       "ofType": null
                     }
                   }
@@ -3596,7 +3596,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "insertPneumaticInstrumentChange",
+              "name": "insertPneumaticInstrumentEmissionRate",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -3951,13 +3951,13 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "getPneumaticInstrumentChangesInput",
+                  "name": "getPneumaticInstrumentEmissionRatesInput",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "GetPneumaticInstrumentChangesInput",
+                      "name": "GetPneumaticInstrumentEmissionRatesInput",
                       "ofType": null
                     }
                   }
@@ -3966,7 +3966,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "getPneumaticInstrumentChanges",
+              "name": "getPneumaticInstrumentEmissionRates",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -3978,7 +3978,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "PneumaticInstrumentChange",
+                      "name": "PneumaticInstrumentEmissionRate",
                       "ofType": null
                     }
                   }
@@ -4805,7 +4805,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "ENUM",
-                  "name": "PneumaticInstrumentChangesByVariant",
+                  "name": "PneumaticInstrumentEmissionRatesByVariant",
                   "ofType": null
                 }
               }
@@ -4827,7 +4827,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "GetPneumaticInstrumentChangesInput",
+          "name": "GetPneumaticInstrumentEmissionRatesInput",
           "possibleTypes": null
         },
         {
@@ -5089,7 +5089,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "InsertPneumaticInstrumentChangeInput",
+          "name": "InsertPneumaticInstrumentEmissionRateInput",
           "possibleTypes": null
         },
         {
@@ -5444,7 +5444,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "levelControllerChanges",
+              "name": "levelControllerEmissionRates",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -5456,7 +5456,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "LevelControllerChange",
+                      "name": "LevelControllerEmissionRate",
                       "ofType": null
                     }
                   }
@@ -5739,181 +5739,6 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "LevelControllerActuationFrequency",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "UUID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "levelControllerId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "UUID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "date",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "NaiveDate",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "rate",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "createdById",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "UUID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "createdAt",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "NaiveDateTime",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "updatedById",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "UUID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "updatedAt",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "NaiveDateTime",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "createdBy",
-              "type": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "updatedBy",
-              "type": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "levelController",
-              "type": {
-                "kind": "OBJECT",
-                "name": "LevelController",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "LevelControllerChange",
           "possibleTypes": null
         },
         {
@@ -6336,6 +6161,181 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "LevelControllerControlledCharacterization",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "levelControllerId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "date",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "NaiveDate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "standard cubic meters per hour of natural gas",
+              "isDeprecated": false,
+              "name": "rate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Float",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "createdById",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "NaiveDateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "updatedById",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "updatedAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "NaiveDateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "createdBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "User",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "updatedBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "User",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "levelController",
+              "type": {
+                "kind": "OBJECT",
+                "name": "LevelController",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "LevelControllerEmissionRate",
           "possibleTypes": null
         },
         {
@@ -7531,7 +7531,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "pneumaticInstrumentChanges",
+              "name": "pneumaticInstrumentEmissionRates",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -7543,7 +7543,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "PneumaticInstrumentChange",
+                      "name": "PneumaticInstrumentEmissionRate",
                       "ofType": null
                     }
                   }
@@ -7651,210 +7651,6 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "PneumaticInstrument",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "UUID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "pneumaticInstrumentId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "UUID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "date",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "NaiveDate",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "rate",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "createdById",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "UUID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "createdAt",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "NaiveDateTime",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "updatedById",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "UUID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "updatedAt",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "NaiveDateTime",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "createdBy",
-              "type": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "updatedBy",
-              "type": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "pneumaticInstrument",
-              "type": {
-                "kind": "OBJECT",
-                "name": "PneumaticInstrument",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "PneumaticInstrumentChange",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": [
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "PNEUMATIC_INSTRUMENT_ID"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "CREATED_BY_ID"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "UPDATED_BY_ID"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "PneumaticInstrumentChangesByVariant",
           "possibleTypes": null
         },
         {
@@ -8277,6 +8073,210 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "PneumaticInstrumentControlledCharacterization",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "pneumaticInstrumentId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "date",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "NaiveDate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "standard cubic meters per hour of natural gas",
+              "isDeprecated": false,
+              "name": "rate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Float",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "createdById",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "NaiveDateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "updatedById",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "updatedAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "NaiveDateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "createdBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "User",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "updatedBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "User",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "pneumaticInstrument",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PneumaticInstrument",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PneumaticInstrumentEmissionRate",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PNEUMATIC_INSTRUMENT_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CREATED_BY_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "UPDATED_BY_ID"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "PneumaticInstrumentEmissionRatesByVariant",
           "possibleTypes": null
         },
         {
@@ -11676,19 +11676,19 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "PNEUMATIC_INSTRUMENT_CHANGE_PNEUMATIC_INSTRUMENT_ID"
+              "name": "PNEUMATIC_INSTRUMENT_EMISSION_RATE_PNEUMATIC_INSTRUMENT_ID"
             },
             {
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "PNEUMATIC_INSTRUMENT_CHANGE_DATE"
+              "name": "PNEUMATIC_INSTRUMENT_EMISSION_RATE_DATE"
             },
             {
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "PNEUMATIC_INSTRUMENT_CHANGE_RATE"
+              "name": "PNEUMATIC_INSTRUMENT_EMISSION_RATE_RATE"
             },
             {
               "deprecationReason": null,
@@ -11850,19 +11850,19 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "LEVEL_CONTROLLER_CHANGE_LEVEL_CONTROLLER_ID"
+              "name": "LEVEL_CONTROLLER_EMISSION_RATE_LEVEL_CONTROLLER_ID"
             },
             {
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "LEVEL_CONTROLLER_CHANGE_DATE"
+              "name": "LEVEL_CONTROLLER_EMISSION_RATE_DATE"
             },
             {
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "LEVEL_CONTROLLER_CHANGE_RATE"
+              "name": "LEVEL_CONTROLLER_EMISSION_RATE_RATE"
             },
             {
               "deprecationReason": null,
@@ -12006,19 +12006,19 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "PNEUMATIC_PUMP_CHANGE_PNEUMATIC_PUMP_ID"
+              "name": "PNEUMATIC_PUMP_EMISSION_RATE_PNEUMATIC_PUMP_ID"
             },
             {
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "PNEUMATIC_PUMP_CHANGE_DATE"
+              "name": "PNEUMATIC_PUMP_EMISSION_RATE_DATE"
             },
             {
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "PNEUMATIC_PUMP_CHANGE_RATE"
+              "name": "PNEUMATIC_PUMP_EMISSION_RATE_RATE"
             },
             {
               "deprecationReason": null,
@@ -12885,7 +12885,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "createdPneumaticDeviceChanges",
+              "name": "createdPneumaticInstrumentEmissionRates",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -12897,7 +12897,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "PneumaticInstrumentChange",
+                      "name": "PneumaticInstrumentEmissionRate",
                       "ofType": null
                     }
                   }
@@ -12909,7 +12909,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "updatedPneumaticDeviceChanges",
+              "name": "updatedPneumaticInstrumentEmissionRates",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -12921,7 +12921,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "PneumaticInstrumentChange",
+                      "name": "PneumaticInstrumentEmissionRate",
                       "ofType": null
                     }
                   }

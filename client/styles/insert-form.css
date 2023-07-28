@@ -36,6 +36,6 @@
   grid-template-columns: var(--pneumatic-instrument-grid-template-columns);
 }
 
-.pneumatic-instrument-change-form {
-  grid-template-columns: var(--pneumatic-instrument-change-grid-template-columns);
+.pneumatic-instrument-emission-rate-form {
+  grid-template-columns: var(--pneumatic-instrument-emission-rate-grid-template-columns);
 }

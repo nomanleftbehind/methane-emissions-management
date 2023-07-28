@@ -33,8 +33,7 @@ use common::{
         GasAnalysisC6, GasAnalysisC7Plus, GasAnalysisCo2, GasAnalysisDate, GasAnalysisH2,
         GasAnalysisH2s, GasAnalysisHe, GasAnalysisN2,
         LevelControllerActuationFrequencyActuationFrequency, LevelControllerActuationFrequencyDate,
-        LevelControllerActuationFrequencyLevelControllerId, LevelControllerChangeDate,
-        LevelControllerChangeLevelControllerId, LevelControllerChangeRate,
+        LevelControllerActuationFrequencyLevelControllerId,
         LevelControllerControlDeviceInactivityComment,
         LevelControllerControlDeviceInactivityEndDate,
         LevelControllerControlDeviceInactivityLevelControllerControlledCharacterizationId,
@@ -44,15 +43,15 @@ use common::{
         LevelControllerControlledCharacterizationControlDevice,
         LevelControllerControlledCharacterizationEndDate,
         LevelControllerControlledCharacterizationLevelControllerId,
-        LevelControllerControlledCharacterizationStartDate, LevelControllerEndDate,
-        LevelControllerManufacturerId, LevelControllerModel, LevelControllerMonthHoursHoursOn,
-        LevelControllerMonthHoursLevelControllerId, LevelControllerMonthHoursMonth,
-        LevelControllerMonthMethaneEmissionOverrideComment,
+        LevelControllerControlledCharacterizationStartDate, LevelControllerEmissionRateDate,
+        LevelControllerEmissionRateLevelControllerId, LevelControllerEmissionRateRate,
+        LevelControllerEndDate, LevelControllerManufacturerId, LevelControllerModel,
+        LevelControllerMonthHoursHoursOn, LevelControllerMonthHoursLevelControllerId,
+        LevelControllerMonthHoursMonth, LevelControllerMonthMethaneEmissionOverrideComment,
         LevelControllerMonthMethaneEmissionOverrideGasVolume,
         LevelControllerMonthMethaneEmissionOverrideLevelControllerId,
         LevelControllerMonthMethaneEmissionOverrideMonth, LevelControllerSerialNumber,
-        LevelControllerSiteId, LevelControllerStartDate, PneumaticInstrumentChangeDate,
-        PneumaticInstrumentChangePneumaticInstrumentId, PneumaticInstrumentChangeRate,
+        LevelControllerSiteId, LevelControllerStartDate,
         PneumaticInstrumentControlDeviceInactivityComment,
         PneumaticInstrumentControlDeviceInactivityEndDate,
         PneumaticInstrumentControlDeviceInactivityPneumaticInstrumentControlledCharacterizationId,
@@ -62,7 +61,9 @@ use common::{
         PneumaticInstrumentControlledCharacterizationControlDevice,
         PneumaticInstrumentControlledCharacterizationEndDate,
         PneumaticInstrumentControlledCharacterizationPneumaticInstrumentId,
-        PneumaticInstrumentControlledCharacterizationStartDate, PneumaticInstrumentEndDate,
+        PneumaticInstrumentControlledCharacterizationStartDate,
+        PneumaticInstrumentEmissionRateDate, PneumaticInstrumentEmissionRatePneumaticInstrumentId,
+        PneumaticInstrumentEmissionRateRate, PneumaticInstrumentEndDate,
         PneumaticInstrumentManufacturerId, PneumaticInstrumentModel,
         PneumaticInstrumentMonthHoursHoursOn, PneumaticInstrumentMonthHoursMonth,
         PneumaticInstrumentMonthHoursPneumaticInstrumentId,
@@ -71,8 +72,7 @@ use common::{
         PneumaticInstrumentMonthMethaneEmissionOverrideMonth,
         PneumaticInstrumentMonthMethaneEmissionOverridePneumaticInstrumentId,
         PneumaticInstrumentSerialNumber, PneumaticInstrumentSiteId, PneumaticInstrumentStartDate,
-        PneumaticInstrumentType as PneumaticInstrumentTypeVariant, PneumaticPumpChangeDate,
-        PneumaticPumpChangePneumaticPumpId, PneumaticPumpChangeRate,
+        PneumaticInstrumentType as PneumaticInstrumentTypeVariant,
         PneumaticPumpControlDeviceInactivityComment, PneumaticPumpControlDeviceInactivityEndDate,
         PneumaticPumpControlDeviceInactivityPneumaticPumpControlledCharacterizationId,
         PneumaticPumpControlDeviceInactivityReason, PneumaticPumpControlDeviceInactivityStartDate,
@@ -80,10 +80,11 @@ use common::{
         PneumaticPumpControlledCharacterizationControlDevice,
         PneumaticPumpControlledCharacterizationEndDate,
         PneumaticPumpControlledCharacterizationPneumaticPumpId,
-        PneumaticPumpControlledCharacterizationStartDate, PneumaticPumpEndDate,
-        PneumaticPumpManufacturerId, PneumaticPumpModel, PneumaticPumpMonthHoursHoursOn,
-        PneumaticPumpMonthHoursMonth, PneumaticPumpMonthHoursPneumaticPumpId,
-        PneumaticPumpMonthMethaneEmissionOverrideComment,
+        PneumaticPumpControlledCharacterizationStartDate, PneumaticPumpEmissionRateDate,
+        PneumaticPumpEmissionRatePneumaticPumpId, PneumaticPumpEmissionRateRate,
+        PneumaticPumpEndDate, PneumaticPumpManufacturerId, PneumaticPumpModel,
+        PneumaticPumpMonthHoursHoursOn, PneumaticPumpMonthHoursMonth,
+        PneumaticPumpMonthHoursPneumaticPumpId, PneumaticPumpMonthMethaneEmissionOverrideComment,
         PneumaticPumpMonthMethaneEmissionOverrideGasVolume,
         PneumaticPumpMonthMethaneEmissionOverrideMonth,
         PneumaticPumpMonthMethaneEmissionOverridePneumaticPumpId, PneumaticPumpSerialNumber,
@@ -524,9 +525,9 @@ pub async fn update_field(
             updated_at,
         ),
 
-        // Pneumatic Instrument Change
-        PneumaticInstrumentChangePneumaticInstrumentId => query!(
-            "UPDATE pneumatic_instrument_change
+        // Pneumatic Instrument Emission Rate
+        PneumaticInstrumentEmissionRatePneumaticInstrumentId => query!(
+            "UPDATE pneumatic_instrument_emission_rate
             SET pneumatic_instrument_id = $2,
                 updated_by_id = $3,
                 updated_at = $4
@@ -536,8 +537,8 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
-        PneumaticInstrumentChangeDate => query!(
-            "UPDATE pneumatic_instrument_change
+        PneumaticInstrumentEmissionRateDate => query!(
+            "UPDATE pneumatic_instrument_emission_rate
             SET date = $2,
                 updated_by_id = $3,
                 updated_at = $4
@@ -547,8 +548,8 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
-        PneumaticInstrumentChangeRate => query!(
-            "UPDATE pneumatic_instrument_change
+        PneumaticInstrumentEmissionRateRate => query!(
+            "UPDATE pneumatic_instrument_emission_rate
             SET rate = $2,
                 updated_by_id = $3,
                 updated_at = $4
@@ -877,9 +878,9 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
-        // Level Controller Change
-        LevelControllerChangeLevelControllerId => query!(
-            "UPDATE level_controller_change
+        // Level Controller Emission Rate
+        LevelControllerEmissionRateLevelControllerId => query!(
+            "UPDATE level_controller_emission_rate
             SET level_controller_id = $2,
                 updated_by_id = $3,
                 updated_at = $4
@@ -889,8 +890,8 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
-        LevelControllerChangeDate => query!(
-            "UPDATE level_controller_change
+        LevelControllerEmissionRateDate => query!(
+            "UPDATE level_controller_emission_rate
             SET date = $2,
                 updated_by_id = $3,
                 updated_at = $4
@@ -900,8 +901,8 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
-        LevelControllerChangeRate => query!(
-            "UPDATE level_controller_change
+        LevelControllerEmissionRateRate => query!(
+            "UPDATE level_controller_emission_rate
             SET rate = $2,
                 updated_by_id = $3,
                 updated_at = $4
@@ -1195,9 +1196,9 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
-        // Pneumatic Pump Change
-        PneumaticPumpChangePneumaticPumpId => query!(
-            "UPDATE pneumatic_pump_change
+        // Pneumatic Pump Emission Rate
+        PneumaticPumpEmissionRatePneumaticPumpId => query!(
+            "UPDATE pneumatic_pump_emission_rate
             SET pneumatic_pump_id = $2,
                 updated_by_id = $3,
                 updated_at = $4
@@ -1207,8 +1208,8 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
-        PneumaticPumpChangeDate => query!(
-            "UPDATE pneumatic_pump_change
+        PneumaticPumpEmissionRateDate => query!(
+            "UPDATE pneumatic_pump_emission_rate
             SET date = $2,
                 updated_by_id = $3,
                 updated_at = $4
@@ -1218,8 +1219,8 @@ pub async fn update_field(
             user_id,
             updated_at,
         ),
-        PneumaticPumpChangeRate => query!(
-            "UPDATE pneumatic_pump_change
+        PneumaticPumpEmissionRateRate => query!(
+            "UPDATE pneumatic_pump_emission_rate
             SET rate = $2,
                 updated_by_id = $3,
                 updated_at = $4

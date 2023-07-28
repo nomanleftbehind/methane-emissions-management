@@ -13,7 +13,7 @@ pub enum Emitter {
 #[derive(Copy, Clone, PartialEq, Debug, Display)]
 #[strum(serialize_all = "title_case")]
 pub enum SidebarItem {
-    PneumaticInstrumentChange,
+    PneumaticInstrumentEmissionRate,
     PneumaticInstrumentMonthHours,
     PneumaticInstrumentMonthMethaneEmissionOverride,
     PneumaticInstrumentMonthMethaneEmission,

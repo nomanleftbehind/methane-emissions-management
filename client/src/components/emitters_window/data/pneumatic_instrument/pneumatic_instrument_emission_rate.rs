@@ -1,4 +1,6 @@
-use super::{InsertPneumaticInstrumentChangeForm, PneumaticInstrumentChangeRowComponent};
+use super::{
+    InsertPneumaticInstrumentEmissionRateForm, PneumaticInstrumentEmissionRateRowComponent,
+};
 use crate::{
     components::emitters_window::data::insert_entry_button::InsertEntryButton,
     hooks::{lazy_query, use_query_with_deps, QueryResponse},
@@ -14,19 +16,19 @@ use crate::{
                 DeleteEntry, UpdateField,
             },
             pneumatic_instrument::{
-                insert_pneumatic_instrument_change::{
-                    ResponseData as ResponseDataInsertPneumaticInstrumentChange,
+                insert_pneumatic_instrument_emission_rate::{
+                    ResponseData as ResponseDataInsertPneumaticInstrumentEmissionRate,
                     Variables as VariablesInsertController,
                 },
-                InsertPneumaticInstrumentChange,
+                InsertPneumaticInstrumentEmissionRate,
             },
         },
         queries::pneumatic_instrument::{
-            get_pneumatic_instrument_changes::{
-                GetPneumaticInstrumentChangesInput, PneumaticInstrumentChangesByVariant,
-                ResponseData, Variables,
+            get_pneumatic_instrument_emission_rates::{
+                GetPneumaticInstrumentEmissionRatesInput,
+                PneumaticInstrumentEmissionRatesByVariant, ResponseData, Variables,
             },
-            GetPneumaticInstrumentChanges,
+            GetPneumaticInstrumentEmissionRates,
         },
     },
     pages::ModalVariant,
@@ -44,8 +46,8 @@ pub struct Props {
     pub modal_variant_handle: Callback<Option<ModalVariant>>,
 }
 
-#[function_component(PneumaticInstrumentChangesComponent)]
-pub fn pneumatic_instrument_changes(
+#[function_component(PneumaticInstrumentEmissionRatesComponent)]
+pub fn pneumatic_instrument_emission_rates(
     Props {
         id,
         modal_variant_handle,
@@ -68,14 +70,15 @@ pub fn pneumatic_instrument_changes(
         insert_form_is_open_handle.set(false);
     });
 
-    let get_pneumatic_instrument_changes = {
+    let get_pneumatic_instrument_emission_rates = {
         let variables = Variables {
-            get_pneumatic_instrument_changes_input: GetPneumaticInstrumentChangesInput {
-                id: **id,
-                by: PneumaticInstrumentChangesByVariant::PNEUMATIC_INSTRUMENT_ID,
-            },
+            get_pneumatic_instrument_emission_rates_input:
+                GetPneumaticInstrumentEmissionRatesInput {
+                    id: **id,
+                    by: PneumaticInstrumentEmissionRatesByVariant::PNEUMATIC_INSTRUMENT_ID,
+                },
         };
-        use_query_with_deps::<GetPneumaticInstrumentChanges, _>(
+        use_query_with_deps::<GetPneumaticInstrumentEmissionRates, _>(
             variables,
             (id.clone(), number_of_updated_fields),
         )
@@ -88,23 +91,24 @@ pub fn pneumatic_instrument_changes(
     //     object_variant.clone(),
     // );
 
-    let handle_insert_pneumatic_instrument_change = {
+    let handle_insert_pneumatic_instrument_emission_rate = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
         let modal_variant_handle = modal_variant_handle.clone();
         Callback::from(move |variables: VariablesInsertController| {
             let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
             let modal_variant_handle = modal_variant_handle.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                match lazy_query::<InsertPneumaticInstrumentChange>(variables).await {
+                match lazy_query::<InsertPneumaticInstrumentEmissionRate>(variables).await {
                     QueryResponse {
                         data:
-                            Some(ResponseDataInsertPneumaticInstrumentChange {
-                                insert_pneumatic_instrument_change,
+                            Some(ResponseDataInsertPneumaticInstrumentEmissionRate {
+                                insert_pneumatic_instrument_emission_rate,
                             }),
                         ..
                     } => {
-                        number_of_updated_fields_handle
-                            .set(number_of_updated_fields + insert_pneumatic_instrument_change);
+                        number_of_updated_fields_handle.set(
+                            number_of_updated_fields + insert_pneumatic_instrument_emission_rate,
+                        );
                     }
                     QueryResponse {
                         error: Some(error), ..
@@ -190,23 +194,23 @@ pub fn pneumatic_instrument_changes(
     //     number_of_updated_fields,
     // );
 
-    let view = match get_pneumatic_instrument_changes {
+    let view = match get_pneumatic_instrument_emission_rates {
         QueryResponse {
             data:
                 Some(ResponseData {
-                    get_pneumatic_instrument_changes,
+                    get_pneumatic_instrument_emission_rates,
                 }),
             ..
         } => {
-            let pneumatic_instrument_changes_iter = get_pneumatic_instrument_changes.into_iter().enumerate().map(|(mut row_num, pneumatic_instrument_change)| {
+            let pneumatic_instrument_emission_rates_iter = get_pneumatic_instrument_emission_rates.into_iter().enumerate().map(|(mut row_num, pneumatic_instrument_emission_rate)| {
                 row_num = (row_num + 2) * 2 - 1;
                 html! {
-                    <PneumaticInstrumentChangeRowComponent {row_num} {pneumatic_instrument_change} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                    <PneumaticInstrumentEmissionRateRowComponent {row_num} {pneumatic_instrument_emission_rate} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                 }
             });
 
             html! {
-                <div class={classes!("emitters", "pneumatic-instrument-changes")}>
+                <div class={classes!("emitters", "pneumatic-instrument-emission-rates")}>
                     <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
                     <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Date" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Rate (m³/hr)" }</div>
@@ -216,9 +220,9 @@ pub fn pneumatic_instrument_changes(
                     <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
                     if insert_form_is_open {
-                        <InsertPneumaticInstrumentChangeForm pneumatic_instrument_id={id} {close_insert_form} {handle_insert_pneumatic_instrument_change} />
+                        <InsertPneumaticInstrumentEmissionRateForm pneumatic_instrument_id={id} {close_insert_form} {handle_insert_pneumatic_instrument_emission_rate} />
                     }
-                    { for pneumatic_instrument_changes_iter }
+                    { for pneumatic_instrument_emission_rates_iter }
                 </div>
             }
         }

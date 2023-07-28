@@ -14,8 +14,8 @@ use super::super::{
         },
         pneumatic_device::{
             pneumatic_instrument::{
-                PneumaticInstrument, PneumaticInstrumentChange, PneumaticInstrumentMonthHours,
-                PneumaticInstrumentMonthMethaneEmissionOverride,
+                PneumaticInstrument, PneumaticInstrumentEmissionRate,
+                PneumaticInstrumentMonthHours, PneumaticInstrumentMonthMethaneEmissionOverride,
             },
             DeviceManufacturer,
         },
@@ -59,10 +59,11 @@ use crate::graphql::{
             },
             pneumatic_device::{
                 pneumatic_instrument::{
-                    CreatedPneumaticInstrumentChangesLoader,
+                    CreatedPneumaticInstrumentEmissionRatesLoader,
                     CreatedPneumaticInstrumentMonthHoursLoader,
                     CreatedPneumaticInstrumentMonthMethaneEmissionOverridesLoader,
-                    CreatedPneumaticInstrumentsLoader, UpdatedPneumaticInstrumentChangesLoader,
+                    CreatedPneumaticInstrumentsLoader,
+                    UpdatedPneumaticInstrumentEmissionRatesLoader,
                     UpdatedPneumaticInstrumentMonthHoursLoader,
                     UpdatedPneumaticInstrumentMonthMethaneEmissionOverridesLoader,
                     UpdatedPneumaticInstrumentsLoader,
@@ -182,24 +183,24 @@ impl User {
         Ok(result)
     }
 
-    async fn created_pneumatic_device_changes(
+    async fn created_pneumatic_instrument_emission_rates(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticInstrumentChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<CreatedPneumaticInstrumentChangesLoader>>();
-        let pneumatic_device_changes = loader.load_one(self.id).await?;
-        let result = pneumatic_device_changes.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticInstrumentEmissionRate>, Error> {
+        let loader = ctx.get_loader::<DataLoader<CreatedPneumaticInstrumentEmissionRatesLoader>>();
+        let pneumatic_instrument_emission_rates = loader.load_one(self.id).await?;
+        let result = pneumatic_instrument_emission_rates.unwrap_or(vec![]);
 
         Ok(result)
     }
 
-    async fn updated_pneumatic_device_changes(
+    async fn updated_pneumatic_instrument_emission_rates(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<PneumaticInstrumentChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<UpdatedPneumaticInstrumentChangesLoader>>();
-        let pneumatic_device_changes = loader.load_one(self.id).await?;
-        let result = pneumatic_device_changes.unwrap_or(vec![]);
+    ) -> Result<Vec<PneumaticInstrumentEmissionRate>, Error> {
+        let loader = ctx.get_loader::<DataLoader<UpdatedPneumaticInstrumentEmissionRatesLoader>>();
+        let pneumatic_instrument_emission_rates = loader.load_one(self.id).await?;
+        let result = pneumatic_instrument_emission_rates.unwrap_or(vec![]);
 
         Ok(result)
     }

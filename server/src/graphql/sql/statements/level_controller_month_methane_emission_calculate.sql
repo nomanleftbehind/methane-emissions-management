@@ -128,7 +128,7 @@ FROM
                                                                                         pimh.hours_on / COUNT(pi.id) OVER (PARTITION BY pi.id, pi.month),
                                                                                         0
                                                                                     ) as hours_on,
-                                                                                    COALESCE(pichg.rate, 0) as rate
+                                                                                    COALESCE(lcer.rate, 0) as rate
                                                                                 FROM
                                                                                     (
                                                                                         SELECT
@@ -155,24 +155,24 @@ FROM
                                                                                     AND pimh.month = pi.month
                                                                                     LEFT OUTER JOIN (
                                                                                         SELECT
-                                                                                            pichg.level_controller_id,
-                                                                                            pichg.date as from_date,
+                                                                                            lcer.level_controller_id,
+                                                                                            lcer.date as from_date,
                                                                                             COALESCE(
                                                                                                 (
-                                                                                                    LEAD(pichg.date) OVER (
-                                                                                                        PARTITION BY pichg.level_controller_id
+                                                                                                    LEAD(lcer.date) OVER (
+                                                                                                        PARTITION BY lcer.level_controller_id
                                                                                                         ORDER BY
-                                                                                                            pichg.date
+                                                                                                            lcer.date
                                                                                                     ) - INTERVAL '1 day'
                                                                                                 )::date,
                                                                                                 CURRENT_DATE
                                                                                             ) as to_date,
-                                                                                            pichg.rate
+                                                                                            lcer.rate
                                                                                         FROM
-                                                                                            level_controller_change pichg
-                                                                                    ) pichg ON pichg.level_controller_id = pi.id
-                                                                                    AND pi.date BETWEEN pichg.from_date
-                                                                                    AND pichg.to_date
+                                                                                            level_controller_emission_rate lcer
+                                                                                    ) lcer ON lcer.level_controller_id = pi.id
+                                                                                    AND pi.date BETWEEN lcer.from_date
+                                                                                    AND lcer.to_date
                                                                             ) pimme
                                                                     ) pimme
                                                                 UNION

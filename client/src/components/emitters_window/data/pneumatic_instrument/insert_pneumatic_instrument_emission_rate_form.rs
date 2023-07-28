@@ -1,8 +1,8 @@
 use crate::{
     models::{
-        mutations::pneumatic_instrument::insert_pneumatic_instrument_change::{
-            InsertPneumaticInstrumentChangeInput,
-            Variables as VariablesInsertPneumaticInstrumentChange,
+        mutations::pneumatic_instrument::insert_pneumatic_instrument_emission_rate::{
+            InsertPneumaticInstrumentEmissionRateInput,
+            Variables as VariablesInsertPneumaticInstrumentEmissionRate,
         },
         NaiveDateTime,
     },
@@ -19,16 +19,16 @@ use yew::{
 
 #[derive(PartialEq, Properties)]
 pub struct Props {
-    pub handle_insert_pneumatic_instrument_change:
-        Callback<VariablesInsertPneumaticInstrumentChange>,
+    pub handle_insert_pneumatic_instrument_emission_rate:
+        Callback<VariablesInsertPneumaticInstrumentEmissionRate>,
     pub close_insert_form: Callback<()>,
     pub pneumatic_instrument_id: Rc<Uuid>,
 }
 
-#[function_component(InsertPneumaticInstrumentChangeForm)]
-pub fn insert_pneumatic_instrument_change_form(
+#[function_component(InsertPneumaticInstrumentEmissionRateForm)]
+pub fn insert_pneumatic_instrument_emission_rate_form(
     Props {
-        handle_insert_pneumatic_instrument_change,
+        handle_insert_pneumatic_instrument_emission_rate,
         close_insert_form,
         pneumatic_instrument_id,
     }: &Props,
@@ -60,8 +60,8 @@ pub fn insert_pneumatic_instrument_change_form(
     let disabled = !(date.is_some() && rate.is_some());
 
     let onsubmit = {
-        let handle_insert_pneumatic_instrument_change =
-            handle_insert_pneumatic_instrument_change.clone();
+        let handle_insert_pneumatic_instrument_emission_rate =
+            handle_insert_pneumatic_instrument_emission_rate.clone();
         let close_insert_form = close_insert_form.clone();
         let pneumatic_instrument_id = pneumatic_instrument_id.clone();
 
@@ -69,15 +69,15 @@ pub fn insert_pneumatic_instrument_change_form(
             e.prevent_default();
 
             if let (Some(rate), Some(date)) = (rate, date) {
-                let variables = VariablesInsertPneumaticInstrumentChange {
-                    insert_pneumatic_instrument_change_input:
-                        InsertPneumaticInstrumentChangeInput {
+                let variables = VariablesInsertPneumaticInstrumentEmissionRate {
+                    insert_pneumatic_instrument_emission_rate_input:
+                        InsertPneumaticInstrumentEmissionRateInput {
                             pneumatic_instrument_id: *pneumatic_instrument_id,
                             date,
                             rate,
                         },
                 };
-                handle_insert_pneumatic_instrument_change.emit(variables);
+                handle_insert_pneumatic_instrument_emission_rate.emit(variables);
                 close_insert_form.emit(());
             }
         })
@@ -85,7 +85,7 @@ pub fn insert_pneumatic_instrument_change_form(
 
     html! {
         <form {onsubmit} class={classes!("insert-form", "emitter-cell")}>
-            <fieldset class={classes!("pneumatic-instrument-change-form", "center")}>
+            <fieldset class={classes!("pneumatic-instrument-emission-rate-form", "center")}>
                 <button class={classes!("entry-button")} style="grid-row: 1; grid-column: 1;" type="submit" {disabled}>{"✓"}</button>
                 <input type="date" style="grid-row: 1; grid-column: 2;" onchange={onchange_date}/>
                 // oninput event occurs immediately after the content has been changed, while onchange occurs when the element loses focus.

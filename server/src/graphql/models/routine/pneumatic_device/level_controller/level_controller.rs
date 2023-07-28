@@ -3,8 +3,8 @@ use super::{
         super::super::{month_methane_emission::MonthMethaneEmission, site::Site, user::User},
         DeviceManufacturer,
     },
-    LevelControllerActuationFrequency, LevelControllerChange,
-    LevelControllerControlledCharacterization,
+    LevelControllerActuationFrequency, LevelControllerControlledCharacterization,
+    LevelControllerEmissionRate,
 };
 use super::{LevelControllerMonthHours, LevelControllerMonthMethaneEmissionOverride};
 use crate::graphql::{
@@ -14,8 +14,8 @@ use crate::graphql::{
         routine::pneumatic_device::{
             level_controller::{
                 LevelControllerActuationFrequenciesByLevelControllerLoader,
-                LevelControllerChangesByLevelControllerLoader,
                 LevelControllerControlledCharacterizationsByLevelControllerLoader,
+                LevelControllerEmissionRatesByLevelControllerLoader,
                 LevelControllerMonthHoursByLevelControllerLoader,
                 LevelControllerMonthMethaneEmissionOverridesByLevelControllerLoader,
             },
@@ -89,13 +89,14 @@ impl LevelController {
         Ok(result)
     }
 
-    async fn level_controller_changes(
+    async fn level_controller_emission_rates(
         &self,
         ctx: &Context<'_>,
-    ) -> Result<Vec<LevelControllerChange>, Error> {
-        let loader = ctx.get_loader::<DataLoader<LevelControllerChangesByLevelControllerLoader>>();
-        let level_controller_changes = loader.load_one(self.id).await?;
-        let result = level_controller_changes.unwrap_or(vec![]);
+    ) -> Result<Vec<LevelControllerEmissionRate>, Error> {
+        let loader =
+            ctx.get_loader::<DataLoader<LevelControllerEmissionRatesByLevelControllerLoader>>();
+        let level_controller_emission_rates = loader.load_one(self.id).await?;
+        let result = level_controller_emission_rates.unwrap_or(vec![]);
 
         Ok(result)
     }

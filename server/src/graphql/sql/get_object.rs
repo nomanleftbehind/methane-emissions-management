@@ -2,12 +2,12 @@ use crate::graphql::models::{
     compressor::Compressor,
     pneumatic_device::{
         ControllerMonthHours, ControllerMonthVent, ControllerMonthVentOverride, NonLevelController,
-        NonLevelControllerChange,
+        NonLevelControllerEmissionRate,
     },
     GetObject, GetObjectInput, TankFarm,
 };
 use common::GetObjectVariant::{
-    CompressorByFacilityId, ControllerByFacilityId, ControllerChangeByControllerId,
+    CompressorByFacilityId, ControllerByFacilityId, ControllerEmissionRateByControllerId,
     ControllerMonthHoursByControllerId, ControllerMonthVentByControllerId,
     ControllerMonthVentOverrideByControllerId, TankFarmByFacilityId,
 };
@@ -33,7 +33,7 @@ pub async fn get_object(
             ),
             compressors: None,
             tank_farms: None,
-            controller_changes: None,
+            controller_emission_rates: None,
             controller_month_hours: None,
             controller_month_vent_override: None,
             controller_month_vent: None,
@@ -50,7 +50,7 @@ pub async fn get_object(
                 .await?,
             ),
             tank_farms: None,
-            controller_changes: None,
+            controller_emission_rates: None,
             controller_month_hours: None,
             controller_month_vent_override: None,
             controller_month_vent: None,
@@ -67,19 +67,19 @@ pub async fn get_object(
                 .fetch_all(pool)
                 .await?,
             ),
-            controller_changes: None,
+            controller_emission_rates: None,
             controller_month_hours: None,
             controller_month_vent_override: None,
             controller_month_vent: None,
         },
-        ControllerChangeByControllerId => GetObject {
+        ControllerEmissionRateByControllerId => GetObject {
             compressors: None,
             controllers: None,
             tank_farms: None,
-            controller_changes: Some(
+            controller_emission_rates: Some(
                 query_as!(
-                    NonLevelControllerChange,
-                    "SELECT * FROM controller_changes WHERE controller_id = $1 ORDER BY id",
+                    NonLevelControllerEmissionRate,
+                    "SELECT * FROM controller_emission_rates WHERE controller_id = $1 ORDER BY id",
                     id
                 )
                 .fetch_all(pool)
@@ -93,7 +93,7 @@ pub async fn get_object(
             compressors: None,
             controllers: None,
             tank_farms: None,
-            controller_changes: None,
+            controller_emission_rates: None,
             controller_month_hours: Some(
                 query_as!(
                     ControllerMonthHours,
@@ -110,7 +110,7 @@ pub async fn get_object(
             compressors: None,
             controllers: None,
             tank_farms: None,
-            controller_changes: None,
+            controller_emission_rates: None,
             controller_month_hours: None,
             controller_month_vent_override: None,
             controller_month_vent: Some(
@@ -127,7 +127,7 @@ pub async fn get_object(
             compressors: None,
             controllers: None,
             tank_farms: None,
-            controller_changes: None,
+            controller_emission_rates: None,
             controller_month_hours: None,
             controller_month_vent_override: Some(
                 query_as!(

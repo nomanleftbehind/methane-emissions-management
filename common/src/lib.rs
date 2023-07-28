@@ -230,7 +230,7 @@ pub enum GetObjectVariant {
     PneumaticInstrumentByFacilityId,
     CompressorByFacilityId,
     StorageTankByFacilityId,
-    PneumaticInstrumentChangeByPneumaticInstrumentId,
+    PneumaticInstrumentEmissionRateByPneumaticInstrumentId,
     PneumaticInstrumentMonthHoursByPneumaticInstrumentId,
     PneumaticInstrumentMonthMethaneEmissionOverrideByPneumaticInstrumentId,
     PneumaticInstrumentMonthMethaneEmissionByPneumaticInstrumentId,

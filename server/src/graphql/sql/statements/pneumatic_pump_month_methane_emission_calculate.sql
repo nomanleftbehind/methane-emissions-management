@@ -127,7 +127,7 @@ FROM
                                                                                         pimh.hours_on / COUNT(pi.id) OVER (PARTITION BY pi.id, pi.month),
                                                                                         0
                                                                                     ) as hours_on,
-                                                                                    COALESCE(pichg.rate, 0) as rate
+                                                                                    COALESCE(pper.rate, 0) as rate
                                                                                 FROM
                                                                                     (
                                                                                         SELECT
@@ -151,24 +151,24 @@ FROM
                                                                                     AND pimh.month = pi.month
                                                                                     LEFT OUTER JOIN (
                                                                                         SELECT
-                                                                                            pichg.pneumatic_pump_id,
-                                                                                            pichg.date as from_date,
+                                                                                            pper.pneumatic_pump_id,
+                                                                                            pper.date as from_date,
                                                                                             COALESCE(
                                                                                                 (
-                                                                                                    LEAD(pichg.date) OVER (
-                                                                                                        PARTITION BY pichg.pneumatic_pump_id
+                                                                                                    LEAD(pper.date) OVER (
+                                                                                                        PARTITION BY pper.pneumatic_pump_id
                                                                                                         ORDER BY
-                                                                                                            pichg.date
+                                                                                                            pper.date
                                                                                                     ) - INTERVAL '1 day'
                                                                                                 )::date,
                                                                                                 CURRENT_DATE
                                                                                             ) as to_date,
-                                                                                            pichg.rate
+                                                                                            pper.rate
                                                                                         FROM
-                                                                                            pneumatic_pump_change pichg
-                                                                                    ) pichg ON pichg.pneumatic_pump_id = pi.id
-                                                                                    AND pi.date BETWEEN pichg.from_date
-                                                                                    AND pichg.to_date
+                                                                                            pneumatic_pump_emission_rate pper
+                                                                                    ) pper ON pper.pneumatic_pump_id = pi.id
+                                                                                    AND pi.date BETWEEN pper.from_date
+                                                                                    AND pper.to_date
                                                                             ) pimme
                                                                     ) pimme
                                                                 UNION

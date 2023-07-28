@@ -12,7 +12,7 @@ use uuid::Uuid;
 
 #[derive(SimpleObject, Clone, FromRow, Debug)]
 #[graphql(complex)]
-pub struct PneumaticPumpChange {
+pub struct PneumaticPumpEmissionRate {
     pub id: Uuid,
     pub pneumatic_pump_id: Uuid,
     pub date: NaiveDate,
@@ -25,7 +25,7 @@ pub struct PneumaticPumpChange {
 }
 
 #[ComplexObject]
-impl PneumaticPumpChange {
+impl PneumaticPumpEmissionRate {
     async fn created_by(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let loader = ctx.get_loader::<DataLoader<UserLoader>>();
         let created_by = loader.load_one(self.created_by_id).await;

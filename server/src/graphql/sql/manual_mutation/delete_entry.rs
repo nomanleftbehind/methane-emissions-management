@@ -4,18 +4,18 @@ use common::DeleteEntryVariant::{
     CompressorControlledCharacterization, CompressorEmissionSurvey, CompressorMonthHours,
     CompressorSeal, CompressorSealMonthMethaneEmissionOverride, CompressorSealTest,
     DeviceManufacturer, Facility, GasAnalysis, LevelController, LevelControllerActuationFrequency,
-    LevelControllerChange, LevelControllerControlDeviceInactivity,
-    LevelControllerControlledCharacterization, LevelControllerMonthHours,
-    LevelControllerMonthMethaneEmissionOverride, PneumaticInstrument, PneumaticInstrumentChange,
+    LevelControllerControlDeviceInactivity, LevelControllerControlledCharacterization,
+    LevelControllerEmissionRate, LevelControllerMonthHours,
+    LevelControllerMonthMethaneEmissionOverride, PneumaticInstrument,
     PneumaticInstrumentControlDeviceInactivity, PneumaticInstrumentControlledCharacterization,
-    PneumaticInstrumentMonthHours, PneumaticInstrumentMonthMethaneEmissionOverride, PneumaticPump,
-    PneumaticPumpChange, PneumaticPumpControlDeviceInactivity,
-    PneumaticPumpControlledCharacterization, PneumaticPumpMonthHours,
-    PneumaticPumpMonthMethaneEmissionOverride, Site, StorageTank, StorageTankChange,
-    StorageTankControlDeviceInactivity, StorageTankControlledCharacterization,
-    StorageTankEmissionSurvey, StorageTankGasInSolutionFactorCalculated,
-    StorageTankMonthLiquidHydrocarbonEntering, StorageTankMonthMethaneEmissionOverride,
-    SurveyEquipment,
+    PneumaticInstrumentEmissionRate, PneumaticInstrumentMonthHours,
+    PneumaticInstrumentMonthMethaneEmissionOverride, PneumaticPump,
+    PneumaticPumpControlDeviceInactivity, PneumaticPumpControlledCharacterization,
+    PneumaticPumpEmissionRate, PneumaticPumpMonthHours, PneumaticPumpMonthMethaneEmissionOverride,
+    Site, StorageTank, StorageTankChange, StorageTankControlDeviceInactivity,
+    StorageTankControlledCharacterization, StorageTankEmissionSurvey,
+    StorageTankGasInSolutionFactorCalculated, StorageTankMonthLiquidHydrocarbonEntering,
+    StorageTankMonthMethaneEmissionOverride, SurveyEquipment,
 };
 use sqlx::{query, Error, PgPool};
 
@@ -34,8 +34,11 @@ pub async fn delete_entry(
         GasAnalysis => query!("DELETE FROM gas_analysis WHERE id = $1", id,),
         // Pneumatic Instrument
         PneumaticInstrument => query!("DELETE FROM pneumatic_instrument WHERE id = $1", id,),
-        PneumaticInstrumentChange => {
-            query!("DELETE FROM pneumatic_instrument_change WHERE id = $1", id,)
+        PneumaticInstrumentEmissionRate => {
+            query!(
+                "DELETE FROM pneumatic_instrument_emission_rate WHERE id = $1",
+                id,
+            )
         }
         PneumaticInstrumentControlledCharacterization => query!(
             "DELETE FROM pneumatic_instrument_controlled_characterization WHERE id = $1",
@@ -63,8 +66,11 @@ pub async fn delete_entry(
                 id,
             )
         }
-        LevelControllerChange => {
-            query!("DELETE FROM level_controller_change WHERE id = $1", id,)
+        LevelControllerEmissionRate => {
+            query!(
+                "DELETE FROM level_controller_emission_rate WHERE id = $1",
+                id,
+            )
         }
         LevelControllerControlledCharacterization => query!(
             "DELETE FROM level_controller_controlled_characterization WHERE id = $1",
@@ -83,8 +89,8 @@ pub async fn delete_entry(
         ),
         // Pneumatic Pump
         PneumaticPump => query!("DELETE FROM pneumatic_pump WHERE id = $1", id,),
-        PneumaticPumpChange => {
-            query!("DELETE FROM pneumatic_pump_change WHERE id = $1", id,)
+        PneumaticPumpEmissionRate => {
+            query!("DELETE FROM pneumatic_pump_emission_rate WHERE id = $1", id,)
         }
         PneumaticPumpControlledCharacterization => query!(
             "DELETE FROM pneumatic_pump_controlled_characterization WHERE id = $1",
