@@ -14,6 +14,7 @@
   --user-info-column-width: repeat(2, 14rem 13rem);
   --pneumatic-instrument-grid-template-columns: repeat(2, 2.7rem) repeat(4, 10rem) repeat(2, var(--date-column-width)) 14rem;
   --pneumatic-instrument-emission-rate-grid-template-columns: 2.7rem var(--date-column-width) 8rem;
+  --pneumatic-instrument-month-hours-grid-template-columns: 2.7rem var(--date-column-width) 7rem;
 
   --spacer-1: .25rem;
   --spacer-2: .5rem;

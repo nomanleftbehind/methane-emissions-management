@@ -1,7 +1,9 @@
 use crate::{
     components::emitters_window::data::{
         emitter_sidebar::EmitterSidebar,
-        pneumatic_instrument::PneumaticInstrumentEmissionRatesComponent,
+        pneumatic_instrument::{
+            PneumaticInstrumentEmissionRatesComponent, PneumaticInstrumentMonthHoursComponent,
+        },
     },
     pages::ModalVariant,
 };
@@ -47,6 +49,8 @@ pub fn object_data_component(
                     <div class={classes!("emitter-data-main")}>
                         if sidebar_item == SidebarItem::PneumaticInstrumentEmissionRate {
                             <PneumaticInstrumentEmissionRatesComponent {id} {modal_variant_handle}/>
+                        } else if sidebar_item == SidebarItem::PneumaticInstrumentMonthHours {
+                            <PneumaticInstrumentMonthHoursComponent {id} {modal_variant_handle}/>
                         }
                     </div>
                 }

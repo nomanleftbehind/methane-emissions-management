@@ -39,3 +39,7 @@
 .pneumatic-instrument-emission-rate-form {
   grid-template-columns: var(--pneumatic-instrument-emission-rate-grid-template-columns);
 }
+
+.pneumatic-instrument-month-hours-form {
+  grid-template-columns: var(--pneumatic-instrument-month-hours-grid-template-columns);
+}

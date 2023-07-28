@@ -20,3 +20,12 @@ pub struct GetPneumaticInstruments;
     variables_derives = "Debug, PartialEq, Clone"
 )]
 pub struct GetPneumaticInstrumentEmissionRates;
+
+#[derive(GraphQLQuery, Debug)]
+#[graphql(
+    schema_path = "./graphql/schema.json",
+    query_path = "./graphql/queries.graphql",
+    response_derives = "Debug, Clone, PartialEq",
+    variables_derives = "Debug, PartialEq, Clone"
+)]
+pub struct GetPneumaticInstrumentMonthHours;

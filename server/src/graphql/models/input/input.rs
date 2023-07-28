@@ -1,5 +1,4 @@
-use super::super::validator::MonthBeginningValidator;
-use crate::graphql::models::validator::MonthRangeValidator;
+use crate::graphql::models::validator::{MonthBeginningValidator, MonthRangeValidator};
 use async_graphql::InputObject;
 use chrono::{NaiveDate, NaiveDateTime};
 use common::{
@@ -83,6 +82,14 @@ pub struct InsertPneumaticInstrumentEmissionRateInput {
     pub pneumatic_instrument_id: Uuid,
     pub date: NaiveDate,
     pub rate: f64,
+}
+
+#[derive(InputObject, Debug)]
+pub struct InsertPneumaticInstrumentMonthHoursInput {
+    pub pneumatic_instrument_id: Uuid,
+    #[graphql(validator(custom = "MonthBeginningValidator"))]
+    pub month: NaiveDate,
+    pub hours_on: f64,
 }
 
 #[derive(InputObject, Debug)]

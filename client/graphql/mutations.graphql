@@ -29,3 +29,7 @@ mutation InsertPneumaticInstrument($insertPneumaticInstrumentInput: InsertPneuma
 mutation InsertPneumaticInstrumentEmissionRate($insertPneumaticInstrumentEmissionRateInput: InsertPneumaticInstrumentEmissionRateInput!) {
   insertPneumaticInstrumentEmissionRate(insertPneumaticInstrumentEmissionRateInput: $insertPneumaticInstrumentEmissionRateInput)
 }
+
+mutation InsertPneumaticInstrumentMonthHours($insertPneumaticInstrumentMonthHoursInput: InsertPneumaticInstrumentMonthHoursInput!) {
+  insertPneumaticInstrumentMonthHours(insertPneumaticInstrumentMonthHoursInput: $insertPneumaticInstrumentMonthHoursInput)
+}
