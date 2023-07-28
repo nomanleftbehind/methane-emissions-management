@@ -16,6 +16,7 @@ pub struct LevelControllerChange {
     pub id: Uuid,
     pub level_controller_id: Uuid,
     pub date: NaiveDate,
+    /// standard cubic meters per hour of natural gas
     pub rate: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,

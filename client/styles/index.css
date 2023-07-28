@@ -104,6 +104,7 @@ table {
 
 .emitter-data-main .sticky {
   z-index: 2;
+  background-color: rgb(78, 158, 148);
 }
 
 .sticky:first-child {

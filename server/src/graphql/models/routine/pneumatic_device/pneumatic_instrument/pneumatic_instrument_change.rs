@@ -17,6 +17,7 @@ pub struct PneumaticInstrumentChange {
     pub id: Uuid,
     pub pneumatic_instrument_id: Uuid,
     pub date: NaiveDate,
+    /// standard cubic meters per hour of natural gas
     pub rate: f64,
     pub created_by_id: Uuid,
     pub created_at: NaiveDateTime,

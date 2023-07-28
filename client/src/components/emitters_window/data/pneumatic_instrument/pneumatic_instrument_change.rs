@@ -209,7 +209,7 @@ pub fn pneumatic_instrument_changes(
                 <div class={classes!("emitters", "pneumatic-instrument-changes")}>
                     <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
                     <div class={classes!("sticky")} style={gen_grid_style(2, 1)}>{ "Date" }</div>
-                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Rate" }</div>
+                    <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Rate (m³/hr)" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Created By" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Created At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Updated By" }</div>
