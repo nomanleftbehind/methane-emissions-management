@@ -25,8 +25,8 @@ model User {
 
   pneumaticInstrumentCreatedBy                             PneumaticInstrument[]                             @relation("pneumaticInstrumentCreatedBy")
   pneumaticInstrumentUpdatedBy                             PneumaticInstrument[]                             @relation("pneumaticInstrumentUpdatedBy")
-  pneumaticInstrumentChangeCreatedBy                       PneumaticInstrumentChange[]                       @relation("pneumaticInstrumentChangeCreatedBy")
-  pneumaticInstrumentChangeUpdatedBy                       PneumaticInstrumentChange[]                       @relation("pneumaticInstrumentChangeUpdatedBy")
+  pneumaticInstrumentEmissionRateCreatedBy                 PneumaticInstrumentEmissionRate[]                 @relation("pneumaticInstrumentEmissionRateCreatedBy")
+  pneumaticInstrumentEmissionRateUpdatedBy                 PneumaticInstrumentEmissionRate[]                 @relation("pneumaticInstrumentEmissionRateUpdatedBy")
   pneumaticInstrumentControlledCharacterizationCreatedBy   PneumaticInstrumentControlledCharacterization[]   @relation("pneumaticInstrumentControlledCharacterizationCreatedBy")
   pneumaticInstrumentControlledCharacterizationUpdatedBy   PneumaticInstrumentControlledCharacterization[]   @relation("pneumaticInstrumentControlledCharacterizationUpdatedBy")
   pneumaticInstrumentControlDeviceInactivityCreatedBy      PneumaticInstrumentControlDeviceInactivity[]      @relation("pneumaticInstrumentControlDeviceInactivityCreatedBy")
@@ -38,8 +38,8 @@ model User {
 
   levelControllerCreatedBy                             LevelController[]                             @relation("levelControllerCreatedBy")
   levelControllerUpdatedBy                             LevelController[]                             @relation("levelControllerUpdatedBy")
-  levelControllerChangeCreatedBy                       LevelControllerChange[]                       @relation("levelControllerChangeCreatedBy")
-  levelControllerChangeUpdatedBy                       LevelControllerChange[]                       @relation("levelControllerChangeUpdatedBy")
+  levelControllerEmissionRateCreatedBy                 LevelControllerEmissionRate[]                 @relation("levelControllerEmissionRateCreatedBy")
+  levelControllerEmissionRateUpdatedBy                 LevelControllerEmissionRate[]                 @relation("levelControllerEmissionRateUpdatedBy")
   levelControllerActuationFrequencyCreatedBy           LevelControllerActuationFrequency[]           @relation("levelControllerActuationFrequencyCreatedBy")
   levelControllerActuationFrequencyUpdatedBy           LevelControllerActuationFrequency[]           @relation("levelControllerActuationFrequencyUpdatedBy")
   levelControllerControlledCharacterizationCreatedBy   LevelControllerControlledCharacterization[]   @relation("levelControllerControlledCharacterizationCreatedBy")
@@ -53,8 +53,8 @@ model User {
 
   pneumaticPumpCreatedBy                             PneumaticPump[]                             @relation("pneumaticPumpCreatedBy")
   pneumaticPumpUpdatedBy                             PneumaticPump[]                             @relation("pneumaticPumpUpdatedBy")
-  pneumaticPumpChangeCreatedBy                       PneumaticPumpChange[]                       @relation("pneumaticPumpChangeCreatedBy")
-  pneumaticPumpChangeUpdatedBy                       PneumaticPumpChange[]                       @relation("pneumaticPumpChangeUpdatedBy")
+  pneumaticPumpEmissionRateCreatedBy                 PneumaticPumpEmissionRate[]                 @relation("pneumaticPumpEmissionRateCreatedBy")
+  pneumaticPumpEmissionRateUpdatedBy                 PneumaticPumpEmissionRate[]                 @relation("pneumaticPumpEmissionRateUpdatedBy")
   pneumaticPumpControlledCharacterizationCreatedBy   PneumaticPumpControlledCharacterization[]   @relation("pneumaticPumpControlledCharacterizationCreatedBy")
   pneumaticPumpControlledCharacterizationUpdatedBy   PneumaticPumpControlledCharacterization[]   @relation("pneumaticPumpControlledCharacterizationUpdatedBy")
   pneumaticPumpControlDeviceInactivityCreatedBy      PneumaticPumpControlDeviceInactivity[]      @relation("pneumaticPumpControlDeviceInactivityCreatedBy")
@@ -238,7 +238,7 @@ model PneumaticInstrument {
   serialNumber                 String?                                           @map("serial_number")
   startDate                    DateTime                                          @map("start_date") @db.Date
   endDate                      DateTime?                                         @map("end_date") @db.Date
-  changes                      PneumaticInstrumentChange[]
+  emissionRates                PneumaticInstrumentEmissionRate[]
   controlledCharacterizations  PneumaticInstrumentControlledCharacterization[]
   monthHours                   PneumaticInstrumentMonthHours[]
   monthMethaneEmissionOverride PneumaticInstrumentMonthMethaneEmissionOverride[]
@@ -252,21 +252,21 @@ model PneumaticInstrument {
   @@map("pneumatic_instrument")
 }
 
-model PneumaticInstrumentChange {
+model PneumaticInstrumentEmissionRate {
   id                    String              @id @default(uuid()) @db.Uuid
   pneumaticInstrument   PneumaticInstrument @relation(fields: [pneumaticInstrumentId], references: [id])
   pneumaticInstrumentId String              @map("pneumatic_instrument_id") @db.Uuid
   date                  DateTime            @db.Date
   rate                  Float
-  createdBy             User                @relation("pneumaticInstrumentChangeCreatedBy", fields: [createdById], references: [id])
+  createdBy             User                @relation("pneumaticInstrumentEmissionRateCreatedBy", fields: [createdById], references: [id])
   createdById           String              @map("created_by_id") @db.Uuid
   createdAt             DateTime            @default(now()) @map("created_at")
-  updatedBy             User                @relation("pneumaticInstrumentChangeUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy             User                @relation("pneumaticInstrumentEmissionRateUpdatedBy", fields: [updatedById], references: [id])
   updatedById           String              @map("updated_by_id") @db.Uuid
   updatedAt             DateTime            @updatedAt @map("updated_at")
 
   @@unique([pneumaticInstrumentId, date])
-  @@map("pneumatic_instrument_change")
+  @@map("pneumatic_instrument_emission_rate")
 }
 
 model PneumaticInstrumentControlledCharacterization {
@@ -353,7 +353,7 @@ model LevelController {
   serialNumber                 String?                                       @map("serial_number")
   startDate                    DateTime                                      @map("start_date") @db.Date
   endDate                      DateTime?                                     @map("end_date") @db.Date
-  changes                      LevelControllerChange[]
+  emissionRates                LevelControllerEmissionRate[]
   actuationFrequencies         LevelControllerActuationFrequency[]
   controlledCharacterizations  LevelControllerControlledCharacterization[]
   monthHours                   LevelControllerMonthHours[]
@@ -368,21 +368,21 @@ model LevelController {
   @@map("level_controller")
 }
 
-model LevelControllerChange {
+model LevelControllerEmissionRate {
   id                String          @id @default(uuid()) @db.Uuid
   levelController   LevelController @relation(fields: [levelControllerId], references: [id])
   levelControllerId String          @map("level_controller_id") @db.Uuid
   date              DateTime        @db.Date
   rate              Float
-  createdBy         User            @relation("levelControllerChangeCreatedBy", fields: [createdById], references: [id])
+  createdBy         User            @relation("levelControllerEmissionRateCreatedBy", fields: [createdById], references: [id])
   createdById       String          @map("created_by_id") @db.Uuid
   createdAt         DateTime        @default(now()) @map("created_at")
-  updatedBy         User            @relation("levelControllerChangeUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy         User            @relation("levelControllerEmissionRateUpdatedBy", fields: [updatedById], references: [id])
   updatedById       String          @map("updated_by_id") @db.Uuid
   updatedAt         DateTime        @updatedAt @map("updated_at")
 
   @@unique([levelControllerId, date])
-  @@map("level_controller_change")
+  @@map("level_controller_emission_rate")
 }
 
 model LevelControllerActuationFrequency {
@@ -486,7 +486,7 @@ model PneumaticPump {
   serialNumber                 String?                                     @map("serial_number")
   startDate                    DateTime                                    @map("start_date") @db.Date
   endDate                      DateTime?                                   @map("end_date") @db.Date
-  changes                      PneumaticPumpChange[]
+  emissionRates                PneumaticPumpEmissionRate[]
   controlledCharacterizations  PneumaticPumpControlledCharacterization[]
   monthHours                   PneumaticPumpMonthHours[]
   monthMethaneEmissionOverride PneumaticPumpMonthMethaneEmissionOverride[]
@@ -500,21 +500,21 @@ model PneumaticPump {
   @@map("pneumatic_pump")
 }
 
-model PneumaticPumpChange {
+model PneumaticPumpEmissionRate {
   id              String        @id @default(uuid()) @db.Uuid
   pneumaticPump   PneumaticPump @relation(fields: [pneumaticPumpId], references: [id])
   pneumaticPumpId String        @map("pneumatic_pump_id") @db.Uuid
   date            DateTime      @db.Date
   rate            Float
-  createdBy       User          @relation("pneumaticPumpChangeCreatedBy", fields: [createdById], references: [id])
+  createdBy       User          @relation("pneumaticPumpEmissionRateCreatedBy", fields: [createdById], references: [id])
   createdById     String        @map("created_by_id") @db.Uuid
   createdAt       DateTime      @default(now()) @map("created_at")
-  updatedBy       User          @relation("pneumaticPumpChangeUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy       User          @relation("pneumaticPumpEmissionRateUpdatedBy", fields: [updatedById], references: [id])
   updatedById     String        @map("updated_by_id") @db.Uuid
   updatedAt       DateTime      @updatedAt @map("updated_at")
 
   @@unique([pneumaticPumpId, date])
-  @@map("pneumatic_pump_change")
+  @@map("pneumatic_pump_emission_rate")
 }
 
 model PneumaticPumpControlledCharacterization {
