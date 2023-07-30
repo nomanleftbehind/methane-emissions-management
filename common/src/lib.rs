@@ -224,6 +224,27 @@ impl Display for UpdateFieldValueEnum {
     }
 }
 
+#[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::OneofObject))]
+#[derive(Clone, PartialEq, Debug)]
+pub enum InsertFieldValueEnum {
+    // StringValue(Option<String>),
+    // IntegerValue(Option<i64>),
+    FloatValue(Option<f64>),
+    // UuidValue(Option<Uuid>),
+    DateValue(Option<NaiveDate>),
+    // NaiveDateTimeValue(Option<NaiveDateTime>),
+    // BoolValue(Option<bool>),
+    // FacilityTypeValue(Option<FacilityType>),
+    // SiteTypeValue(Option<SiteType>),
+    // PneumaticInstrumentTypeValue(Option<PneumaticInstrumentType>),
+    // CompressorTypeValue(Option<CompressorType>),
+    // ControlDeviceValue(Option<ControlDevice>),
+    // ControlDeviceInactivityReasonValue(Option<ControlDeviceInactivityReason>),
+    // SealTypeValue(Option<SealType>),
+    // CompressorSealTestingPointValue(Option<CompressorSealTestingPoint>),
+    // CalculationMethodValue(Option<CalculationMethod>),
+}
+
 #[cfg_attr(not(target_arch = "wasm32"), derive(async_graphql::Enum))]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum GetObjectVariant {

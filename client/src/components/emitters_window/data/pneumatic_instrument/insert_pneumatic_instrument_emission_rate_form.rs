@@ -1,13 +1,10 @@
-use crate::{
-    models::{
-        mutations::pneumatic_instrument::insert_pneumatic_instrument_emission_rate::{
-            InsertPneumaticInstrumentEmissionRateInput,
-            Variables as VariablesInsertPneumaticInstrumentEmissionRate,
-        },
-        NaiveDateTime,
+use crate::models::{
+    mutations::pneumatic_instrument::insert_pneumatic_instrument_emission_rate::{
+        InsertPneumaticInstrumentEmissionRateInput, Variables,
     },
-    utils::console_log,
+    NaiveDateTime,
 };
+use common::InsertFieldValueEnum::{DateValue, FloatValue};
 use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
@@ -19,8 +16,7 @@ use yew::{
 
 #[derive(PartialEq, Properties)]
 pub struct Props {
-    pub handle_insert_pneumatic_instrument_emission_rate:
-        Callback<VariablesInsertPneumaticInstrumentEmissionRate>,
+    pub handle_insert_pneumatic_instrument_emission_rate: Callback<Variables>,
     pub close_insert_form: Callback<()>,
     pub pneumatic_instrument_id: Rc<Uuid>,
 }
@@ -33,43 +29,78 @@ pub fn insert_pneumatic_instrument_emission_rate_form(
         pneumatic_instrument_id,
     }: &Props,
 ) -> Html {
-    let input_date_handle = use_state_eq(|| None);
-    let input_rate_handle = use_state_eq(|| None);
+    let input_date_handle = use_state_eq(|| DateValue(None));
+    let input_rate_handle = use_state_eq(|| FloatValue(None));
 
-    let date = *input_date_handle;
-    let rate = *input_rate_handle;
+    let date = (*input_date_handle).clone();
+    let rate = (*input_rate_handle).clone();
 
-    let onchange_date = Callback::from(move |e: Event| {
-        let input: HtmlInputElement = e.target_unchecked_into();
-        let input_value = input.value_as_number();
-        let date = (!input_value.is_nan()).then(|| {
-            NaiveDateTime::from_timestamp_millis(input_value as i64)
-                .expect_throw("Unable to convert i64 to NaiveDateTime.")
-                .date()
-        });
-        input_date_handle.set(date);
-    });
+    let onchange_date = {
+        let input_date_handle = input_date_handle.clone();
+        let date = date.clone();
+        Callback::from(move |e: Event| {
+            let input: HtmlInputElement = e.target_unchecked_into();
+            match date {
+                DateValue(_) => {
+                    let input_value = input.value_as_number();
+                    input_date_handle.set(DateValue((!input_value.is_nan()).then(|| {
+                        NaiveDateTime::from_timestamp_millis(input_value as i64)
+                            .expect_throw("Unable to convert i64 to NaiveDateTime.")
+                            .date()
+                    })));
+                }
+                FloatValue(_) => {
+                    let input_value = input.value_as_number();
+                    input_date_handle.set(FloatValue((!input_value.is_nan()).then(|| input_value)));
+                }
+            }
+        })
+    };
 
-    let oninput_rate = Callback::from(move |e: InputEvent| {
-        let input: HtmlInputElement = e.target_unchecked_into();
-        let input_value = input.value_as_number();
-        console_log!("value: {}", input_value);
-        input_rate_handle.set(Some(input_value));
-    });
+    let oninput_rate = {
+        let input_rate_handle = input_rate_handle.clone();
+        let rate = rate.clone();
+        Callback::from(move |e: InputEvent| {
+            let input: HtmlInputElement = e.target_unchecked_into();
+            match rate {
+                DateValue(_) => {
+                    let input_value = input.value_as_number();
+                    input_rate_handle.set(DateValue((!input_value.is_nan()).then(|| {
+                        NaiveDateTime::from_timestamp_millis(input_value as i64)
+                            .expect_throw("Unable to convert i64 to NaiveDateTime.")
+                            .date()
+                    })));
+                }
+                FloatValue(_) => {
+                    let input_value = input.value_as_number();
+                    input_rate_handle.set(FloatValue((!input_value.is_nan()).then(|| input_value)));
+                }
+            }
+        })
+    };
 
-    let disabled = !(date.is_some() && rate.is_some());
+    let disabled = match (&date, &rate) {
+        (DateValue(Some(_)), FloatValue(Some(_))) => false,
+        _ => true,
+    };
+
+    // !(date.is_some() && rate.is_some());
 
     let onsubmit = {
         let handle_insert_pneumatic_instrument_emission_rate =
             handle_insert_pneumatic_instrument_emission_rate.clone();
         let close_insert_form = close_insert_form.clone();
         let pneumatic_instrument_id = pneumatic_instrument_id.clone();
+        // let date = date.clone();
+        // let rate = rate.clone();
 
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
+            let date = date.clone();
+            let rate = rate.clone();
 
-            if let (Some(rate), Some(date)) = (rate, date) {
-                let variables = VariablesInsertPneumaticInstrumentEmissionRate {
+            if let (DateValue(Some(date)), FloatValue(Some(rate))) = (date, rate) {
+                let variables = Variables {
                     insert_pneumatic_instrument_emission_rate_input:
                         InsertPneumaticInstrumentEmissionRateInput {
                             pneumatic_instrument_id: *pneumatic_instrument_id,
