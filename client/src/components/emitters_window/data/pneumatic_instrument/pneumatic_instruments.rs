@@ -98,7 +98,7 @@ pub fn pneumatic_instruments(
         facility_id.clone(),
     );
 
-    let handle_insert_pneumatic_instrument = {
+    let handle_insert = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
         let modal_variant_handle = modal_variant_handle.clone();
         Callback::from(move |variables: VariablesInsertPneumaticInstrument| {
@@ -231,7 +231,7 @@ pub fn pneumatic_instruments(
                     <div class={classes!("sticky")} style={gen_grid_style(13, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(14, 1)}>{ "ID" }</div>
                     if insert_form_is_open {
-                        <InsertPneumaticInstrumentForm {facility_id} {close_insert_form} {handle_insert_pneumatic_instrument} {modal_variant_handle} />
+                        <InsertPneumaticInstrumentForm {facility_id} {close_insert_form} {handle_insert} {modal_variant_handle} />
                     }
                     { for pneumatic_instruments_iter }
                 </div>

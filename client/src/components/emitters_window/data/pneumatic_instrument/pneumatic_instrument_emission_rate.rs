@@ -221,7 +221,7 @@ pub fn pneumatic_instrument_emission_rates(
                     <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
                     if insert_form_is_open {
-                        <InsertPneumaticInstrumentEmissionRateForm pneumatic_instrument_id={id} {close_insert_form} {handle_insert_pneumatic_instrument_emission_rate} />
+                        <InsertPneumaticInstrumentEmissionRateForm pneumatic_instrument_id={id} {close_insert_form} handle_insert={handle_insert_pneumatic_instrument_emission_rate} modal_variant_handle={None} />
                     }
                     { for pneumatic_instrument_emission_rates_iter }
                 </div>

@@ -86,7 +86,7 @@ pub fn pneumatic_instrument_month_hours(
     //     object_variant.clone(),
     // );
 
-    let handle_insert_pneumatic_instrument_month_hours = {
+    let handle_insert = {
         let number_of_updated_fields_handle = number_of_updated_fields_handle.clone();
         let modal_variant_handle = modal_variant_handle.clone();
         Callback::from(
@@ -217,7 +217,7 @@ pub fn pneumatic_instrument_month_hours(
                     <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "Updated At" }</div>
                     <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "ID" }</div>
                     if insert_form_is_open {
-                        <InsertPneumaticInstrumentMonthHoursForm pneumatic_instrument_id={id} {close_insert_form} {handle_insert_pneumatic_instrument_month_hours} />
+                        <InsertPneumaticInstrumentMonthHoursForm pneumatic_instrument_id={id} {close_insert_form} {handle_insert} modal_variant_handle={None}/>
                     }
                     { for pneumatic_instrument_month_hours_iter }
                 </div>
