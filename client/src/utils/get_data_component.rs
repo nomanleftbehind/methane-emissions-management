@@ -1,15 +1,22 @@
 macro_rules! get_data_component {
     (component_name: $component_name:ident,
     id: $id:ident,
-    get_data_input: ($get_data:ident, $get_data_variable:ident, $get_data_input:ident, $get_data_input_type:ident, $get_data_by:path, $query:ident, $get_data_response:ident),
-    insert_input: ($insert_variable:ident, $insert_query:ident, $insert_response_data:ident, $insert_response_data_field:ident)
+    class: $class:literal,
+    get_data_input: (
+        $get_data:ident,
+        $get_data_variable:ident,
+        $get_data_input:ident,
+        $get_data_input_type:ident,
+        $get_data_by:path,
+        $query:ident,
+        $get_data_response:ident
+    ),
+    insert_input: ($insert_variable:ident, $insert_query:ident, $insert_response_data:ident, $insert_response_data_field:ident, $insert_form_component:ident),
+    data_row: $data_row:ident,
+    column_names: $($column_name:literal),*,
+    column_start: $column_start:literal
     ) => {
 
-
-        use super::{
-            insert_pneumatic_instrument_form::InsertPneumaticInstrumentForm,
-            pneumatic_instrument_row::PneumaticInstrumentRowComponent,
-        };
         use crate::{
             components::emitters_window::data::insert_entry_button::InsertEntryButton,
             hooks::{lazy_query, use_query_with_deps, QueryResponse},
@@ -201,31 +208,19 @@ macro_rules! get_data_component {
                     }),
                     ..
                 } => {
-                    let get_data_iter = $get_data.into_iter().enumerate().map(|(mut row_num, pneumatic_instrument)| {
+                    let get_data_iter = $get_data.into_iter().enumerate().map(|(mut row_num, $data_row)| {
                         row_num = (row_num + 2) * 2 - 1;
                         html! {
-                            <PneumaticInstrumentRowComponent {row_num} {modal_variant_handle} {pneumatic_instrument} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
+                            <PneumaticInstrumentRowComponent {row_num} {modal_variant_handle} {$data_row} handle_update_field={handle_update_field.clone()} handle_delete_entry={handle_delete_entry.clone()} />
                         }
                     });
 
                     html! {
-                        <div class={classes!("emitters", "pneumatic-instruments")}>
+                        <div class={classes!("emitters", $class)}>
                             <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
-                            <div class={classes!("sticky")} style={gen_grid_style(2, 1)}/>
-                            <div class={classes!("sticky")} style={gen_grid_style(3, 1)}>{ "Type" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(4, 1)}>{ "Manufacturer" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(5, 1)}>{ "Model" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(6, 1)}>{ "Serial Number" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(7, 1)}>{ "StartDate" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(8, 1)}>{ "End Date" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(9, 1)}>{ "Site" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(10, 1)}>{ "Created By" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(11, 1)}>{ "Created At" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(12, 1)}>{ "Updated By" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(13, 1)}>{ "Updated At" }</div>
-                            <div class={classes!("sticky")} style={gen_grid_style(14, 1)}>{ "ID" }</div>
+                            { [$($column_name),*].into_iter().enumerate().map(|(col_num, col)| html! { <div class={classes!("sticky")} style={gen_grid_style(col_num + $column_start, 1)}>{ col }</div> }).collect::<Html>() }
                             if insert_form_is_open {
-                                <InsertPneumaticInstrumentForm {$id} {close_insert_form} {handle_insert} {modal_variant_handle} />
+                                <$insert_form_component {$id} {close_insert_form} {handle_insert} {modal_variant_handle} />
                             }
                             { for get_data_iter }
                         </div>

@@ -214,6 +214,11 @@ pub fn pneumatic_instruments(
                 }
             });
 
+            let fg = ["Type", "Manufacturer",].into_iter().enumerate().map(|(mut col_num, col)| {
+                col_num += 1;
+                html! { <div class={classes!("sticky")} style={gen_grid_style(col_num, 1)}>{ col }</div> }
+            }).collect::<Html>();
+
             html! {
                 <div class={classes!("emitters", "pneumatic-instruments")}>
                     <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
