@@ -9,16 +9,14 @@ macro_rules! row_component {
         data_row_fields: (
             $(
                 (
-                    field: $field:ident,
                     update_field_callback: $update_field_callback:ident($($update_field_variant:path)?),
                     dropdown_selection_callback: $dropdown_selection_callback:ident($($dropdown_selection_variant:path, $dropdown_selection_id_callback:ident($($dropdown_selection_id:ident)?))?),
-                    value: ($value_variant:path, $value_callback:ident($($value_nested_field:ident)?)),
+                    value: ($value_variant:path, $field:ident, $value_callback:ident($($value_nested_field:ident)?)),
                     display_value: $display_value_callback:ident($($display_value_variant:path, $display_value_sub_field:ident, $display_value_nested_field:ident)?)
                 )
             ),* $(,)?
         )
     ) => {
-
         use crate::{
             components::emitters_window::{
                 data::{
@@ -71,34 +69,12 @@ macro_rules! row_component {
             let $data_row = $data_row.clone();
             let $id = $data_row.$id;
 
-            // let $($display_value_sub_field = $data_row.$display_value_sub_field.map(|s| s.name);)*
-            // let manufacturer = $data_row.manufacturer.map(|m| m.manufacturer);
-            // let created_by = $data_row.created_by.map(|cb| cb.email);
-            // let updated_by = $data_row.updated_by.map(|ub| ub.email);
-
-
-
             let sidebar_items = vec![
                 PneumaticInstrumentEmissionRate,
                 PneumaticInstrumentMonthHours,
                 PneumaticInstrumentMonthMethaneEmissionOverride,
                 PneumaticInstrumentMonthMethaneEmission,
             ];
-
-
-        //     let a = [$(
-        //         (
-        //             $update_field_callback!($(handle_update_field, $update_field_variant)?),
-        //             $dropdown_selection_callback!($($dropdown_selection_variant, $dropdown_selection_id_callback, $($data_row, $dropdown_selection_id)?, modal_variant_handle)?),
-        //             $value_variant($data_row.$field),
-        //             $display_value_callback!($($display_value_variant, $data_row, $display_value_sub_field, $display_value_nested_field)?)
-        //         )
-        //     ),*].into_iter().enumerate().map(|(col_num, (edit_field, dropdown_selection, value, display_value))| html! { <Entry id={$id} {row_num} col_num={col_num + $column_start}
-        //     {edit_field}
-        //     {dropdown_selection}
-        //     {value}
-        //     {display_value}
-        // /> }).collect::<Html>();
 
             html! {
                 <>
