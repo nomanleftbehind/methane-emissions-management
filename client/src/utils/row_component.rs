@@ -5,14 +5,15 @@ macro_rules! row_component {
         data_row: $data_row:ident,
         data_row_type: $data_row_type:ident,
         column_start: $column_start:literal,
+        delete_entry_variant: $delete_entry_variant:path,
         data_row_fields: (
             $(
                 (
                     field: $field:ident,
-                    edit_field_callback: $edit_field_callback:ident($($update_field_variant:path)?),
-                    dropdown_selection_callback: $dropdown_selection_callback:ident($($dropdown_selection_variant:path, $dropdown_selection_id_callback:ident, $($dropdown_selection_id:ident)?)?),
-                    value: $value:path,
-                    display_value: $display_value_callback:ident($($display_value:path, $sub_field:ident, $nested_field:ident)?)
+                    update_field_callback: $update_field_callback:ident($($update_field_variant:path)?),
+                    dropdown_selection_callback: $dropdown_selection_callback:ident($($dropdown_selection_variant:path, $dropdown_selection_id_callback:ident($($dropdown_selection_id:ident)?))?),
+                    value: ($value_variant:path, $value_callback:ident($($value_nested_field:ident)?)),
+                    display_value: $display_value_callback:ident($($display_value_variant:path, $display_value_sub_field:ident, $display_value_nested_field:ident)?)
                 )
             ),* $(,)?
         )
@@ -70,7 +71,7 @@ macro_rules! row_component {
             let $data_row = $data_row.clone();
             let $id = $data_row.$id;
 
-            // let $($sub_field = $data_row.$sub_field.map(|s| s.name);)*
+            // let $($display_value_sub_field = $data_row.$display_value_sub_field.map(|s| s.name);)*
             // let manufacturer = $data_row.manufacturer.map(|m| m.manufacturer);
             // let created_by = $data_row.created_by.map(|cb| cb.email);
             // let updated_by = $data_row.updated_by.map(|ub| ub.email);
@@ -84,31 +85,41 @@ macro_rules! row_component {
                 PneumaticInstrumentMonthMethaneEmission,
             ];
 
-            let a = [$(
-                (
-                    $edit_field_callback!($(handle_update_field, $update_field_variant)?),
-                    $dropdown_selection_callback!($($dropdown_selection_variant, $dropdown_selection_id_callback, $($data_row, $dropdown_selection_id)?, modal_variant_handle)?),
-                    $value($data_row.$field),
-                    $display_value_callback!($($display_value, $data_row, $sub_field, $nested_field)?)
-                )
-            ),*].into_iter().enumerate().map(|(col_num, (edit_field, dropdown_selection, value, display_value))| html! { <Entry id={$id} {row_num} col_num={col_num + $column_start}
-            edit_field={edit_field}
-            dropdown_selection={dropdown_selection}
-            value={value}
-            display_value={display_value}
-        /> }).collect::<Html>();
+
+        //     let a = [$(
+        //         (
+        //             $update_field_callback!($(handle_update_field, $update_field_variant)?),
+        //             $dropdown_selection_callback!($($dropdown_selection_variant, $dropdown_selection_id_callback, $($data_row, $dropdown_selection_id)?, modal_variant_handle)?),
+        //             $value_variant($data_row.$field),
+        //             $display_value_callback!($($display_value_variant, $data_row, $display_value_sub_field, $display_value_nested_field)?)
+        //         )
+        //     ),*].into_iter().enumerate().map(|(col_num, (edit_field, dropdown_selection, value, display_value))| html! { <Entry id={$id} {row_num} col_num={col_num + $column_start}
+        //     {edit_field}
+        //     {dropdown_selection}
+        //     {value}
+        //     {display_value}
+        // /> }).collect::<Html>();
 
             html! {
                 <>
-                    <DeleteEntryComponent id={$id} {row_num} col_num={1} delete_entry_variant={DeleteEntryVariant::PNEUMATIC_INSTRUMENT} handle_delete_entry={handle_delete_entry.clone()} />
+                    <DeleteEntryComponent id={$id} {row_num} col_num={1} delete_entry_variant={$delete_entry_variant} handle_delete_entry={handle_delete_entry.clone()} />
                     <ExpandDataComponent {row_num} col_num={2} {expanded} {handle_expand_data} />
-                //     {[$(($edit_field_callback!(handle_update_field, $update_field_variant), $dropdown_selection_callback!($dropdown_selection_variant, $($dropdown_selection_id)?, $dropdown_selection_id_callback, $data_row, modal_variant_handle))),*].into_iter().enumerate().map(|(col_num, (edit_field, dropdown_selection))| html! { <Entry id={$id} {row_num} col_num={col_num + $column_start}
-                //     edit_field={edit_field}
-                //     dropdown_selection={dropdown_selection}
-                //     value={PneumaticInstrumentTypeValue($data_row.type_)}
-                // /> }).collect::<Html>()}
+                    {
+                        [
+                            $(
+                                (
+                                    $update_field_callback!($(handle_update_field, $update_field_variant)?),
+                                    $dropdown_selection_callback!($($dropdown_selection_variant, $dropdown_selection_id_callback, $($data_row, $dropdown_selection_id)?, modal_variant_handle)?),
+                                    $value_callback!($value_variant, $data_row, $field, $($value_nested_field)?),
+                                    $display_value_callback!($($display_value_variant, $data_row, $display_value_sub_field, $display_value_nested_field)?)
+                                )
+                            ),*
+                        ].into_iter().enumerate().map(|(col_num, (edit_field, dropdown_selection, value, display_value))| html! {
+                            <Entry id={$id} {row_num} col_num={col_num + $column_start} {edit_field} {dropdown_selection} {value} {display_value} />
+                        }).collect::<Html>()
+                    }
                     // <Entry {id} {row_num} col_num={3}
-                    //     edit_field={$edit_field_callback!(handle_update_field, $update_field_variant)}
+                    //     edit_field={$update_field_callback!(handle_update_field, $update_field_variant)}
                     //     dropdown_selection={$dropdown_selection_callback!($dropdown_selection_variant, $dropdown_selection_id, $dropdown_selection_id_callback, modal_variant_handle)}
                     //     value={PneumaticInstrumentTypeValue(pneumatic_instrument.type_)}
                     // />
@@ -133,9 +144,9 @@ macro_rules! row_component {
                     // <Entry {id} {row_num} col_num={12} value={OptionStringValue(updated_by)} />
                     // <Entry {id} {row_num} col_num={13} value={NaiveDateTimeValue(pneumatic_instrument.updated_at)} />
                     // <Entry {id} {row_num} col_num={14} value={UuidValue(id)} />
-                    // if expanded {
-                    //     <ObjectDataComponent {id} {sidebar_items} {modal_variant_handle} row_num={row_num + 1} col_num={14} />
-                    // }
+                    if expanded {
+                        <ObjectDataComponent id={$id} {sidebar_items} {modal_variant_handle} row_num={row_num + 1} col_num={count_fields!($($field)*) + $column_start - 1} />
+                    }
                 </>
             }
         }
@@ -144,7 +155,7 @@ macro_rules! row_component {
     };
 }
 
-macro_rules! edit_field_callback {
+macro_rules! update_field_callback {
     ($handle_update_field:ident, $update_field_variant:path) => {
         Some(EditFieldProp {
             handle_update_field: $handle_update_field.clone(),
@@ -178,10 +189,21 @@ macro_rules! dropdown_selection_id_callback {
     };
 }
 
+macro_rules! value_callback {
+    ($value_variant:path, $data_row:ident, $field:ident, $value_nested_field:ident) => {
+        $value_variant($data_row.$field.map(|field| field.$value_nested_field))
+    };
+    ($value_variant:path, $data_row:ident, $field:ident, ) => {
+        $value_variant($data_row.$field)
+    };
+}
+
 macro_rules! display_value_callback {
-    ($display_value:path, $data_row:ident, $sub_field:ident, $nested_field:ident) => {
-        Some($display_value(
-            $data_row.$sub_field.map(|field| field.$nested_field),
+    ($display_value_variant:path, $data_row:ident, $display_value_sub_field:ident, $display_value_nested_field:ident) => {
+        Some($display_value_variant(
+            $data_row
+                .$display_value_sub_field
+                .map(|field| field.$display_value_nested_field),
         ))
     };
     () => {
@@ -189,12 +211,16 @@ macro_rules! display_value_callback {
     };
 }
 
-pub(crate) use row_component;
+macro_rules! count_fields {
+    () => { 0 };
+    ($odd:ident $($a:ident $b:ident)*) => { (count_fields!($($a)*) << 1) | 1 };
+    ($($a:ident $even:ident)*) => { count_fields!($($a)*) << 1 };
+}
 
-pub(crate) use edit_field_callback;
-
-pub(crate) use dropdown_selection_callback;
-
-pub(crate) use dropdown_selection_id_callback;
-
+pub(crate) use count_fields;
 pub(crate) use display_value_callback;
+pub(crate) use dropdown_selection_callback;
+pub(crate) use dropdown_selection_id_callback;
+pub(crate) use row_component;
+pub(crate) use update_field_callback;
+pub(crate) use value_callback;

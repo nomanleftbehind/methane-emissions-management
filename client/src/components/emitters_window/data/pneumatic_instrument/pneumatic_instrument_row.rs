@@ -8,8 +8,8 @@ use common::{
         PneumaticInstrumentMonthMethaneEmission, PneumaticInstrumentMonthMethaneEmissionOverride,
     },
     UpdateFieldValueEnum::{
-        NaiveDateTimeValue, NaiveDateValue, OptionNaiveDateValue, OptionStringValue,
-        PneumaticInstrumentTypeValue, UuidValue,
+        NaiveDateValue, OptionNaiveDateValue, OptionStringValue, PneumaticInstrumentTypeValue,
+        StringValue, UuidValue,
     },
 };
 
@@ -19,33 +19,62 @@ id: id,
 data_row: pneumatic_instrument,
 data_row_type: GetPneumaticInstrumentsGetPneumaticInstruments,
 column_start: 3,
+delete_entry_variant: DeleteEntryVariant::PNEUMATIC_INSTRUMENT,
 data_row_fields: (
         (
             field: type_,
-            edit_field_callback: edit_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_TYPE),
-            dropdown_selection_callback: dropdown_selection_callback(DropdownSelectionVariant::PNEUMATIC_INSTRUMENT_TYPE, dropdown_selection_id_callback, ),
-            value: PneumaticInstrumentTypeValue,
+            update_field_callback: update_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_TYPE),
+            dropdown_selection_callback: dropdown_selection_callback(DropdownSelectionVariant::PNEUMATIC_INSTRUMENT_TYPE, dropdown_selection_id_callback()),
+            value: (PneumaticInstrumentTypeValue, value_callback()),
             display_value: display_value_callback()
         ),
         (
             field: manufacturer_id,
-            edit_field_callback: edit_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_MANUFACTURER_ID),
-            dropdown_selection_callback: dropdown_selection_callback(DropdownSelectionVariant::DEVICE_MANUFACTURER_ID, dropdown_selection_id_callback, site_id),
-            value: UuidValue,
+            update_field_callback: update_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_MANUFACTURER_ID),
+            dropdown_selection_callback: dropdown_selection_callback(DropdownSelectionVariant::DEVICE_MANUFACTURER_ID, dropdown_selection_id_callback()),
+            value: (UuidValue, value_callback()),
             display_value: display_value_callback(OptionStringValue, manufacturer, manufacturer)
         ),
         (
             field: model,
-            edit_field_callback: edit_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_MODEL),
+            update_field_callback: update_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_MODEL),
             dropdown_selection_callback: dropdown_selection_callback(),
-            value: OptionStringValue,
+            value: (OptionStringValue, value_callback()),
             display_value: display_value_callback()
         ),
         (
             field: serial_number,
-            edit_field_callback: edit_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_SERIAL_NUMBER),
+            update_field_callback: update_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_SERIAL_NUMBER),
             dropdown_selection_callback: dropdown_selection_callback(),
-            value: OptionStringValue,
+            value: (OptionStringValue, value_callback()),
+            display_value: display_value_callback()
+        ),
+        (
+            field: start_date,
+            update_field_callback: update_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_START_DATE),
+            dropdown_selection_callback: dropdown_selection_callback(),
+            value: (NaiveDateValue, value_callback()),
+            display_value: display_value_callback()
+        ),
+        (
+            field: end_date,
+            update_field_callback: update_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_END_DATE),
+            dropdown_selection_callback: dropdown_selection_callback(),
+            value: (OptionNaiveDateValue, value_callback()),
+            display_value: display_value_callback()
+        ),
+        (
+            field: site_id,
+            update_field_callback: update_field_callback(UpdateFieldVariant::PNEUMATIC_INSTRUMENT_SITE_ID),
+            dropdown_selection_callback: dropdown_selection_callback(DropdownSelectionVariant::SITE_ID, dropdown_selection_id_callback()),
+            value: (UuidValue, value_callback()),
+            display_value: display_value_callback(OptionStringValue, site, name)
+        ),
+        (
+            field: created_by,
+            update_field_callback: update_field_callback(),
+            dropdown_selection_callback: dropdown_selection_callback(),
+            value: (OptionStringValue, value_callback(email)),
             display_value: display_value_callback()
         ),
     )
@@ -56,6 +85,7 @@ data_row_fields: (
 // dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::PNEUMATIC_INSTRUMENT_TYPE, id: None, modal_variant_handle: modal_variant_handle.clone()}}
 // value={PneumaticInstrumentTypeValue(pneumatic_instrument.type_)}
 // />
+
 // <Entry {id} {row_num} col_num={4}
 // edit_field={EditFieldProp {handle_update_field: handle_update_field.clone(), update_field_variant: UpdateFieldVariant::PNEUMATIC_INSTRUMENT_MANUFACTURER_ID}}
 // dropdown_selection={DropdownSelectionProp {variant: DropdownSelectionVariant::DEVICE_MANUFACTURER_ID, id: None, modal_variant_handle: modal_variant_handle.clone()}}
