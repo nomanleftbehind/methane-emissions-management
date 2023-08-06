@@ -65,6 +65,9 @@ macro_rules! insert_form {
                 <form {onsubmit} class={classes!("insert-form", "emitter-cell")}>
                     <fieldset class={classes!($class, "center")}>
                         <button class={classes!("entry-button")} style="grid-row: 1; grid-column: 1;" type="submit" {disabled}>{"✓"}</button>
+                        // { [$($input_html_callback, $id, $onchange, modal_variant_handle),*].into_iter().enumerate().map(|(col_num, (input_html_callback, id, onchange, modal_variant_handle))| {
+                        //     input_html_callback(id, col_num, onchange, modal_variant_handle)
+                        // }).collect::<Html>() }
                         { [$($input_html_callback!($id, $grid_column, $onchange, modal_variant_handle)),*].into_iter().collect::<Html>() }
                     </fieldset>
                 </form>
