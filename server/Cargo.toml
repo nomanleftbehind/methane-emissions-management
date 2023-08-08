@@ -1,8 +1,8 @@
 [package]
 name = "methane_emissions_management_server"
-version = "1.0.0"
+version = "0.1.0"
 edition = "2021"
-authors = ["Doma Sucic <domagoj.sucic1@gmail.com>"]
+authors = ["Doma Sucic <doma.nmlb@gmail.com>"]
 license = "MIT/Apache-2.0"
 
 [lib]
@@ -44,6 +44,7 @@ sqlx = { version = "0.6", default-features = false, features = [
     "postgres",
     "chrono",
     "uuid",
+    "offline"
 ] }
 tokio = "1.21.0"
 tracing = "0.1"
@@ -69,8 +70,6 @@ yew = { version = "0.20", features = ["ssr"] }
 clap = { version = "4.1", features = ["derive"] }
 methane_emissions_management_client = { path = "../client", features = ["ssr"] }
 actix-files = "0.6"
-actix-identity = "0.5"
-actix-session = { version = "0.7", features = ["redis-rs-session"] }
 futures = { version = "0.3", features = ["std"], default-features = false }
 strum = "0.25"
 strum_macros = "0.25"

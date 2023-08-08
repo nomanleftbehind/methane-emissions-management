@@ -131,22 +131,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "actix-identity"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1224c9f9593dc27c9077b233ce04adedc1d7febcfc35ee9f53ea3c24df180bec"
-dependencies = [
- "actix-service",
- "actix-session",
- "actix-utils",
- "actix-web",
- "anyhow",
- "futures-core",
- "serde",
- "tracing",
-]
-
-[[package]]
 name = "actix-macros"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -206,25 +190,6 @@ dependencies = [
  "futures-core",
  "paste",
  "pin-project-lite",
-]
-
-[[package]]
-name = "actix-session"
-version = "0.7.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43da8b818ae1f11049a4d218975345fe8e56ce5a5f92c11f972abcff5ff80e87"
-dependencies = [
- "actix-service",
- "actix-utils",
- "actix-web",
- "anyhow",
- "async-trait",
- "derive_more",
- "rand 0.8.5",
- "redis 0.21.7",
- "serde",
- "serde_json",
- "tracing",
 ]
 
 [[package]]
@@ -804,7 +769,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba82ce101e6cde598074604ef4a882bdd6b3a283baff446ae73ae2727c242452"
 dependencies = [
  "async-session",
- "redis 0.20.2",
+ "redis",
 ]
 
 [[package]]
@@ -1559,6 +1524,9 @@ name = "either"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "encoding"
@@ -2678,19 +2646,16 @@ dependencies = [
  "wasm-logger",
  "web-sys",
  "yew",
- "yew-hooks",
  "yew-router",
 ]
 
 [[package]]
 name = "methane_emissions_management_server"
-version = "1.0.0"
+version = "0.1.0"
 dependencies = [
  "actix",
  "actix-cors",
  "actix-files",
- "actix-identity",
- "actix-session",
  "actix-web",
  "actix-web-flash-messages",
  "actix-web-lab",
@@ -3304,27 +3269,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "redis"
-version = "0.21.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "152f3863635cbb76b73bc247845781098302c6c9ad2060e1a9a7de56840346b6"
-dependencies = [
- "arc-swap",
- "async-trait",
- "bytes",
- "combine 4.6.6",
- "futures",
- "futures-util",
- "itoa 1.0.9",
- "percent-encoding",
- "pin-project-lite",
- "ryu",
- "tokio",
- "tokio-util 0.7.8",
- "url",
-]
-
-[[package]]
 name = "redox_syscall"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3822,9 +3766,12 @@ dependencies = [
  "dotenvy",
  "either",
  "heck",
+ "hex",
  "once_cell",
  "proc-macro2",
  "quote",
+ "serde",
+ "serde_json",
  "sha2 0.10.7",
  "sqlx-core",
  "sqlx-rt",
@@ -4628,22 +4575,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "yew-macro",
-]
-
-[[package]]
-name = "yew-hooks"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "268e2367720311f19582235f5c021702d6be8ded13b7ee8dcacc71019d055d15"
-dependencies = [
- "gloo 0.8.1",
- "js-sys",
- "log",
- "serde",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "yew",
 ]
 
 [[package]]

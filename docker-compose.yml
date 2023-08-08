@@ -1,0 +1,30 @@
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api.todo
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://postgres:${POSTGRES_PASSWORD}@localhost:5432/emissions
+    ports: 
+      - "8081:8081"
+
+  db:
+    image: "postgres:15.2-alpine"
+    restart: always
+    container_name: db.todo
+    ports:
+      - "5435:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=emissions
+
+volumes:
+  db:
+    driver: local

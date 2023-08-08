@@ -2,13 +2,13 @@
 name = "methane_emissions_management_client"
 version = "0.1.0"
 edition = "2021"
+authors = ["Doma Sucic <doma.nmlb@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 
 [dependencies]
 yew-router = "0.17.0"
-yew-hooks = "0.2"
 gloo = "0.9"
 gloo-net = "0.3"
 serde = { version = "1.0", features = ["derive"] }
