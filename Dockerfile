@@ -25,9 +25,17 @@ RUN trunk build --release client/index.html
 RUN cargo build --release --bin methane_emissions_management_server
 
 # Create a new stage with a minimal image
-FROM scratch
-COPY --from=builder /app/target/release/methane_emissions_management_server /methane_emissions_management_server
-COPY --from=builder /app/client/dist /client/dist
+FROM debian:bullseye-slim
+WORKDIR /app
+COPY --from=builder /app/target/release/methane_emissions_management_server methane_emissions_management_server
+COPY --from=builder /app/client/dist client/dist
+COPY configuration configuration
 
-ENTRYPOINT ["/methane_emissions_management_server"]
+# RUN apt-get update && apt install -y openssl
+
+# CMD ["ls", "-la"]
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
+# CMD ["./methane_emissions_management_server/methane_emissions_management_server", "--dir client/dist"]
+ENV APP_ENVIRONMENT production
+ENTRYPOINT ["./methane_emissions_management_server", "--dir", "client/dist"]
 EXPOSE 8081
