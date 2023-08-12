@@ -73,7 +73,7 @@ jobs:
     - name: Copy docker-compose.yml to droplet
       run: |
         ls -la
-        sshpass -v -p "${{ secrets.DROPLET_PASSWORD }}" scp -o StrictHostKeyChecking=no docker-compose.yml root@${{ vars.DROPLET_IP }}:~
+        sshpass -v -p '${{ secrets.DROPLET_PASSWORD }}' scp -o StrictHostKeyChecking=no docker-compose.yml root@${{ vars.DROPLET_IP }}:~
 
     - name: Deploy
       uses: appleboy/ssh-action@master
