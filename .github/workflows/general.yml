@@ -52,8 +52,6 @@ jobs:
         set: |
           *.cache-from=type=gha
           *.cache-to=type=gha,mode=max
-        tags: |
-          nomanleftbehind/methane-emissions-management:tagname
 
   deploy:
     needs: build
