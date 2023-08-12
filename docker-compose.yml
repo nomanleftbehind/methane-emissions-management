@@ -1,6 +1,7 @@
 version: '3'
 services:
   api:
+    image: nomanleftbehind/methane-emissions-management
     build:
       context: .
       dockerfile: Dockerfile
