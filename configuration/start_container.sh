@@ -6,11 +6,11 @@ application:\n\
   hmac_secret: \"super-long-and-secret-random-key-needed-to-verify-message-integrity\"\n\
   session_cookie_name: \"emissionsapp_session\"\n\
 database:\n\
-  host: \""${POSTGRES_HOST}\""\n\
+  host: \"db\"\n\
   port: 5432\n\
   username: \""${POSTGRES_USER}\""\n\
   password: \""${POSTGRES_PASSWORD}\""\n\
-  database_name: \"emissions\"\n\
+  database_name: \""${POSTGRES_DB}\""\n\
   require_ssl: false\n\
 fdc_database:\n\
   host: \"localhost\"\n\
