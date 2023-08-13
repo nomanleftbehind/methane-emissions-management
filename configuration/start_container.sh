@@ -1,7 +1,6 @@
 #!/bin/sh
-echo -e "\
+echo "\
 application:\n\
-  fuck: 5
   port: 8081\n\
   host: 0.0.0.0\n\
   hmac_secret: \"super-long-and-secret-random-key-needed-to-verify-message-integrity\"\n\
@@ -30,3 +29,5 @@ email_client:\n\
   authorization_token: \"my-secret-token\"\n\
   timeout_milliseconds: 10000\n\
 redis_uri: \"redis://127.0.0.1:6379\"" > configuration/base.yaml
+
+./methane_emissions_management_server --dir client/dist

@@ -34,8 +34,6 @@ COPY configuration configuration
 # RUN apt-get update && apt install -y openssl
 
 # CMD ["ls", "-la"]
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
-# CMD ["./methane_emissions_management_server/methane_emissions_management_server", "--dir client/dist"]
 ENV APP_ENVIRONMENT production
-ENTRYPOINT ["./methane_emissions_management_server", "--dir", "client/dist"]
+ENTRYPOINT ["/bin/bash", "-c", "configuration/start_container.sh"]
 EXPOSE 8081

@@ -1,6 +1,7 @@
 .env
 dist
 target
+db
 
 /configuration/base.yaml
 /prisma
