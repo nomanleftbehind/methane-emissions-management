@@ -79,7 +79,7 @@ jobs:
       with:
         host: ${{ secrets.DROPLET_IP }}
         username: root
-        key: ${{ secrets.DIGITAL_OCEAN_TOKEN }}
+        password: ${{ secrets.DROPLET_PASSWORD }}
         script: |
           cd ~
           export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
