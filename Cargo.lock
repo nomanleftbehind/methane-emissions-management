@@ -2679,7 +2679,6 @@ dependencies = [
  "http",
  "itertools 0.11.0",
  "log",
- "methane_emissions_management_client",
  "rand 0.8.5",
  "secrecy",
  "serde",

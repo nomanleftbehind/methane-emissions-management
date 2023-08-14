@@ -4,7 +4,7 @@ use chrono::{NaiveDate, NaiveDateTime};
 use common::{
     CalculationMethod, CompressorSealTestingPoint, CompressorType, ControlDevice,
     ControlDeviceInactivityReason, DeleteEntryVariant, DropdownSelectionVariant, FacilityType,
-    GetObjectVariant, MonthMethaneEmissionsByVariant, PneumaticInstrumentEmissionRatesByVariant,
+    GetObjectVariant, MonthMethaneEmissionsByVariant, PneumaticInstrumentSubtableByVariant,
     PneumaticInstrumentType, PneumaticInstrumentsByVariant, SealType, SiteType, UpdateFieldVariant,
 };
 use uuid::Uuid;
@@ -93,6 +93,15 @@ pub struct InsertPneumaticInstrumentMonthHoursInput {
 }
 
 #[derive(InputObject, Debug)]
+pub struct InsertPneumaticInstrumentControlledCharacterizationInput {
+    pub pneumatic_instrument_id: Uuid,
+    pub start_date: NaiveDate,
+    pub end_date: Option<NaiveDate>,
+    pub control_device: ControlDevice,
+    pub comment: Option<String>,
+}
+
+#[derive(InputObject, Debug)]
 pub struct InsertCompressorInput {
     pub site_id: Uuid,
     pub fdc_rec_id: String,
@@ -131,8 +140,8 @@ pub struct GetPneumaticInstrumentsInput {
 }
 
 #[derive(InputObject, Debug)]
-pub struct GetPneumaticInstrumentEmissionRatesInput {
-    pub by: PneumaticInstrumentEmissionRatesByVariant,
+pub struct GetPneumaticInstrumentSubtableInput {
+    pub by: PneumaticInstrumentSubtableByVariant,
     pub id: Uuid,
 }
 

@@ -52,7 +52,7 @@ query GetPneumaticInstruments($getPneumaticInstrumentsInput: GetPneumaticInstrum
   }
 }
 
-query GetPneumaticInstrumentEmissionRates($getPneumaticInstrumentEmissionRatesInput: GetPneumaticInstrumentEmissionRatesInput!) {
+query GetPneumaticInstrumentEmissionRates($getPneumaticInstrumentEmissionRatesInput: GetPneumaticInstrumentSubtableInput!) {
   getPneumaticInstrumentEmissionRates(getPneumaticInstrumentEmissionRatesInput: $getPneumaticInstrumentEmissionRatesInput) {
     id
     pneumaticInstrumentId
@@ -69,7 +69,7 @@ query GetPneumaticInstrumentEmissionRates($getPneumaticInstrumentEmissionRatesIn
   }
 }
 
-query GetPneumaticInstrumentMonthHours($getPneumaticInstrumentMonthHoursInput: GetPneumaticInstrumentEmissionRatesInput!) {
+query GetPneumaticInstrumentMonthHours($getPneumaticInstrumentMonthHoursInput: GetPneumaticInstrumentSubtableInput!) {
   getPneumaticInstrumentMonthHours(getPneumaticInstrumentMonthHoursInput: $getPneumaticInstrumentMonthHoursInput) {
     id
     pneumaticInstrumentId

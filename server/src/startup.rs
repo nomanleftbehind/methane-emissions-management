@@ -7,7 +7,7 @@ use crate::{
         queries::full_query,
     },
     routes::{graphql, graphql_playground},
-    ssr_render::ssr_render,
+    // ssr_render::ssr_render,
     MssqlFdcClient,
 };
 use actix_cors::Cors;
@@ -15,10 +15,10 @@ use actix_web::{cookie::Key, dev::Server, middleware::Logger, web, App, HttpServ
 use actix_web_flash_messages::{storage::CookieMessageStore, FlashMessagesFramework};
 use async_graphql::{EmptySubscription, Schema};
 use async_redis_session::RedisSessionStore;
-use clap::Parser;
+// use clap::Parser;
 use secrecy::{ExposeSecret, Secret};
 use sqlx::{postgres::PgPoolOptions, PgPool};
-use std::{net::TcpListener, path::PathBuf, sync::Arc};
+use std::{net::TcpListener, /*path::PathBuf,*/ sync::Arc};
 use tiberius::Client;
 use tokio::{net::TcpStream, sync::Mutex};
 use tokio_util::compat::TokioAsyncWriteCompatExt;
@@ -88,12 +88,12 @@ pub struct ApplicationBaseUrl(pub String);
 #[derive(Clone)]
 pub struct HmacSecret(pub Secret<String>);
 
-#[derive(Parser, Debug)]
-struct Opt {
-    /// the "dist" created by trunk directory to be served for hydration.
-    #[clap(short, long)]
-    dir: PathBuf,
-}
+// #[derive(Parser, Debug)]
+// struct Opt {
+//     /// the "dist" created by trunk directory to be served for hydration.
+//     #[clap(short, long)]
+//     dir: PathBuf,
+// }
 
 pub async fn run(
     listener: TcpListener,
@@ -143,11 +143,11 @@ pub async fn run(
         schema_builder.finish()
     };
 
-    log::info!("starting HTTP server on port 8080");
-    log::info!("GraphiQL playground: http://localhost:8080/graphiql");
+    log::info!("starting HTTP server on port 8081");
+    log::info!("GraphiQL playground: http://localhost:8081/graphiql");
 
-    let opts = Opt::parse();
-    let dir_data = web::Data::new(opts.dir.clone());
+    // let opts = Opt::parse();
+    // let dir_data = web::Data::new(opts.dir.clone());
 
     let server = HttpServer::new(move || {
         let cors = Cors::permissive();
@@ -155,15 +155,15 @@ pub async fn run(
         App::new()
             .wrap(message_framework.clone())
             .app_data(web::Data::new(schema.clone()))
-            .app_data(dir_data.clone())
+            // .app_data(dir_data.clone())
             .app_data(session_cookie_name_secret_atomic.clone())
             .app_data(session_manager_atomic.clone())
             .service(graphql)
             .service(graphql_playground)
-            .service(web::resource("/").route(web::get().to(ssr_render)))
-            .service(web::resource("/users").route(web::get().to(ssr_render)))
-            .service(web::resource("/register").route(web::get().to(ssr_render)))
-            .service(actix_files::Files::new("/", opts.dir.clone()))
+            // .service(web::resource("/").route(web::get().to(ssr_render)))
+            // .service(web::resource("/users").route(web::get().to(ssr_render)))
+            // .service(web::resource("/register").route(web::get().to(ssr_render)))
+            // .service(actix_files::Files::new("/", opts.dir.clone()))
             .wrap(cors)
             .wrap(Logger::default())
     })

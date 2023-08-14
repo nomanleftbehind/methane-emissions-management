@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
+use strum_macros::{Display, EnumIter, EnumString};
 
 /// Type representing equipment used to control vent gas as described in AER Manual 015 section [`1.1.2`](https://static.aer.ca/prd/documents/manuals/Manual015.pdf#page=10).
 #[cfg_attr(
@@ -7,20 +8,14 @@ use std::fmt::Display;
     derive(async_graphql::Enum, sqlx::Type),
     sqlx(type_name = "control_device", rename_all = "SCREAMING_SNAKE_CASE")
 )]
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
+#[derive(
+    Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize, EnumString, Display, EnumIter,
+)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[strum(serialize_all = "title_case")]
 pub enum ControlDevice {
     Flare,
     VapourRecoveryUnit,
-}
-
-impl Display for ControlDevice {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ControlDevice::Flare => write!(f, "Flare"),
-            ControlDevice::VapourRecoveryUnit => write!(f, "Vapour Recovery Unit"),
-        }
-    }
 }
 
 /// Type representing reason for periods of inactivity of equipment used to control vent gas, rendering emissions from controlled emission sources nonroutine or fugitive during those periods as described in AER Manual 015 section [`1.1.2`](https://static.aer.ca/prd/documents/manuals/Manual015.pdf#page=10).

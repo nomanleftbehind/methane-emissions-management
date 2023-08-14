@@ -3643,6 +3643,37 @@
                 {
                   "defaultValue": null,
                   "description": null,
+                  "name": "insertPneumaticInstrumentControlledCharacterizationInput",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "InsertPneumaticInstrumentControlledCharacterizationInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "insertPneumaticInstrumentControlledCharacterization",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
                   "name": "monthRange",
                   "type": {
                     "kind": "NON_NULL",
@@ -3988,7 +4019,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "GetPneumaticInstrumentEmissionRatesInput",
+                      "name": "GetPneumaticInstrumentSubtableInput",
                       "ofType": null
                     }
                   }
@@ -4027,7 +4058,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "GetPneumaticInstrumentEmissionRatesInput",
+                      "name": "GetPneumaticInstrumentSubtableInput",
                       "ofType": null
                     }
                   }
@@ -4049,6 +4080,45 @@
                     "ofType": {
                       "kind": "OBJECT",
                       "name": "PneumaticInstrumentMonthHours",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "getPneumaticInstrumentControlledCharacterizationsInput",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "GetPneumaticInstrumentSubtableInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "getPneumaticInstrumentControlledCharacterizations",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "PneumaticInstrumentControlledCharacterization",
                       "ofType": null
                     }
                   }
@@ -4875,7 +4945,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "ENUM",
-                  "name": "PneumaticInstrumentEmissionRatesByVariant",
+                  "name": "PneumaticInstrumentSubtableByVariant",
                   "ofType": null
                 }
               }
@@ -4897,7 +4967,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "GetPneumaticInstrumentEmissionRatesInput",
+          "name": "GetPneumaticInstrumentSubtableInput",
           "possibleTypes": null
         },
         {
@@ -5107,6 +5177,79 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "InsertEntryInput",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "pneumaticInstrumentId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "UUID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "startDate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "NaiveDate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "endDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "NaiveDate",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "controlDevice",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "ControlDevice",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "comment",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "InsertPneumaticInstrumentControlledCharacterizationInput",
           "possibleTypes": null
         },
         {
@@ -8375,35 +8518,6 @@
         },
         {
           "description": null,
-          "enumValues": [
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "PNEUMATIC_INSTRUMENT_ID"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "CREATED_BY_ID"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "UPDATED_BY_ID"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "PneumaticInstrumentEmissionRatesByVariant",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
           "enumValues": null,
           "fields": [
             {
@@ -8762,6 +8876,35 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "PneumaticInstrumentMonthMethaneEmissionOverride",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PNEUMATIC_INSTRUMENT_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CREATED_BY_ID"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "UPDATED_BY_ID"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "PneumaticInstrumentSubtableByVariant",
           "possibleTypes": null
         },
         {

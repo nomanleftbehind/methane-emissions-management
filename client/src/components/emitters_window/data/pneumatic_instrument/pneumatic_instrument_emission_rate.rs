@@ -25,8 +25,8 @@ use crate::{
         },
         queries::pneumatic_instrument::{
             get_pneumatic_instrument_emission_rates::{
-                GetPneumaticInstrumentEmissionRatesInput,
-                PneumaticInstrumentEmissionRatesByVariant, ResponseData, Variables,
+                GetPneumaticInstrumentSubtableInput, PneumaticInstrumentSubtableByVariant,
+                ResponseData, Variables,
             },
             GetPneumaticInstrumentEmissionRates,
         },
@@ -70,11 +70,10 @@ pub fn pneumatic_instrument_emission_rates(
 
     let get_pneumatic_instrument_emission_rates = {
         let variables = Variables {
-            get_pneumatic_instrument_emission_rates_input:
-                GetPneumaticInstrumentEmissionRatesInput {
-                    id: **id,
-                    by: PneumaticInstrumentEmissionRatesByVariant::PNEUMATIC_INSTRUMENT_ID,
-                },
+            get_pneumatic_instrument_emission_rates_input: GetPneumaticInstrumentSubtableInput {
+                id: **id,
+                by: PneumaticInstrumentSubtableByVariant::PNEUMATIC_INSTRUMENT_ID,
+            },
         };
         use_query_with_deps::<GetPneumaticInstrumentEmissionRates, _>(
             variables,

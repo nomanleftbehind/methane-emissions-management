@@ -68,7 +68,7 @@ tokio-util = { version = "0.7", features = ["compat"] }
 common = { path = "../common" }
 yew = { version = "0.20", features = ["ssr"] }
 clap = { version = "4.1", features = ["derive"] }
-methane_emissions_management_client = { path = "../client", features = ["ssr"] }
+# methane_emissions_management_client = { path = "../client", features = ["ssr"] }
 actix-files = "0.6"
 futures = { version = "0.3", features = ["std"], default-features = false }
 strum = "0.25"

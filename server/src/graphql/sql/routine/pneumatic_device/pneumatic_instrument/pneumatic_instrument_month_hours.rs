@@ -1,8 +1,8 @@
 use crate::graphql::models::{
-    input::{GetPneumaticInstrumentEmissionRatesInput, InsertPneumaticInstrumentMonthHoursInput},
+    input::{GetPneumaticInstrumentSubtableInput, InsertPneumaticInstrumentMonthHoursInput},
     routine::pneumatic_device::pneumatic_instrument::PneumaticInstrumentMonthHours,
 };
-use common::PneumaticInstrumentEmissionRatesByVariant::{
+use common::PneumaticInstrumentSubtableByVariant::{
     CreatedById, PneumaticInstrumentId, UpdatedById,
 };
 use sqlx::{query, query_as, Error, PgPool};
@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 pub async fn get_pneumatic_instrument_month_hours(
     pool: &PgPool,
-    GetPneumaticInstrumentEmissionRatesInput { by, id }: GetPneumaticInstrumentEmissionRatesInput,
+    GetPneumaticInstrumentSubtableInput { by, id }: GetPneumaticInstrumentSubtableInput,
 ) -> Result<Vec<PneumaticInstrumentMonthHours>, Error> {
     match by {
         PneumaticInstrumentId => query_as!(
