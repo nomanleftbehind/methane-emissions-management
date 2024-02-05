@@ -33,7 +33,7 @@ log = "0.4"
 
 actix-web-flash-messages = { version = "0.4", features = ["cookies"] }
 anyhow = "1"
-config = "0.13"
+config = "0.14"
 itertools = "0.12"
 secrecy = { version = "0.8", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
@@ -71,5 +71,5 @@ clap = { version = "4.1", features = ["derive"] }
 # methane_emissions_management_client = { path = "../client", features = ["ssr"] }
 actix-files = "0.6"
 futures = { version = "0.3", features = ["std"], default-features = false }
-strum = "0.25"
-strum_macros = "0.25"
+strum = "0.26"
+strum_macros = "0.26"
