@@ -86,7 +86,7 @@ impl FdcDatabaseSettings {
         config.port(self.port);
         config.authentication(AuthMethod::sql_server(
             &self.username,
-            &self.password.expose_secret(),
+            self.password.expose_secret(),
         ));
 
         if self.trust_certificate {
@@ -113,7 +113,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
             configuration_directory.join("base.yaml"),
         ))
         .add_source(config::File::from(
-            configuration_directory.join(&environment_filename),
+            configuration_directory.join(environment_filename),
         ))
         // Add in settings from environment variables (with a prefix of APP and '__' as separator)
         // E.g. `APP_APPLICATION__PORT=5001 would set `Settings.application.port`

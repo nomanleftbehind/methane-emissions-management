@@ -79,9 +79,7 @@ pub async fn get_mssql_fdc_client(configuration: &FdcDatabaseSettings) -> Option
     let config = configuration.create();
     let tcp = TcpStream::connect(config.get_addr()).await.ok()?;
     tcp.set_nodelay(true).ok()?;
-    let client = Client::connect(config, tcp.compat_write()).await.ok();
-
-    client
+    Client::connect(config, tcp.compat_write()).await.ok()
 }
 
 pub struct ApplicationBaseUrl(pub String);
@@ -95,6 +93,7 @@ pub struct HmacSecret(pub Secret<String>);
 //     dir: PathBuf,
 // }
 
+#[allow(clippy::too_many_arguments)]
 pub async fn run(
     listener: TcpListener,
     db_pool: PgPool,
