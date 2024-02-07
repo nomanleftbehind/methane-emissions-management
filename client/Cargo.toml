@@ -24,8 +24,8 @@ gloo-timers = "0.2.6"
 wasm-bindgen = "0.2"
 common = { path = "../common" }
 wasm-logger = "0.2"
-strum = "0.25"
-strum_macros = "0.25"
+strum = "0.26"
+strum_macros = "0.26"
 
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
