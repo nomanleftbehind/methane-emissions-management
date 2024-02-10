@@ -845,7 +845,7 @@ dependencies = [
  "futures-core",
  "futures-io",
  "futures-lite",
- "gloo-timers",
+ "gloo-timers 0.2.6",
  "kv-log-macro",
  "log",
  "memchr",
@@ -2208,7 +2208,7 @@ dependencies = [
  "gloo-net 0.3.1",
  "gloo-render",
  "gloo-storage",
- "gloo-timers",
+ "gloo-timers 0.2.6",
  "gloo-utils 0.1.7",
  "gloo-worker 0.2.1",
 ]
@@ -2227,7 +2227,7 @@ dependencies = [
  "gloo-net 0.3.1",
  "gloo-render",
  "gloo-storage",
- "gloo-timers",
+ "gloo-timers 0.2.6",
  "gloo-utils 0.1.7",
  "gloo-worker 0.3.0",
 ]
@@ -2366,6 +2366,18 @@ name = "gloo-timers"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b995a66bb87bebce9a0f4a95aed01daca4872c050bfcb21653361c03bc35e5c"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "js-sys",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "gloo-timers"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbb143cf96099802033e0d4f4963b19fd2e0b728bcf076cd9cf7f6634f092994"
 dependencies = [
  "futures-channel",
  "futures-core",
@@ -2938,8 +2950,16 @@ dependencies = [
 name = "leptos-client"
 version = "0.1.0"
 dependencies = [
+ "common",
  "console_error_panic_hook",
+ "gloo-net 0.5.0",
+ "gloo-timers 0.3.0",
+ "graphql_client",
  "leptos",
+ "serde",
+ "serde_json",
+ "uuid",
+ "web-sys",
 ]
 
 [[package]]
@@ -3215,7 +3235,7 @@ dependencies = [
  "futures",
  "gloo 0.9.0",
  "gloo-net 0.3.1",
- "gloo-timers",
+ "gloo-timers 0.2.6",
  "graphql_client",
  "log",
  "serde",
