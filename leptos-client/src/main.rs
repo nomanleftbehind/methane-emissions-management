@@ -1,18 +1,12 @@
-use crate::build_request::build_request;
-use crate::error::AppError;
+use crate::utils::{console_log, load_data};
 use common::Role;
-use graphql_client::{GraphQLQuery, Response};
+use graphql_client::GraphQLQuery;
 use leptos::*;
-use serde_json::json;
 
-mod console_log;
-pub(crate) use console_log::console_log;
-pub mod build_request;
-pub mod error;
+pub mod utils;
 
 /// `UUID` is a custom scalar type defined in schema, so we have to provide matching Rust type.
 pub type UUID = uuid::Uuid;
-// use serde::Deserialize;
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -24,109 +18,77 @@ pub type UUID = uuid::Uuid;
 )]
 pub struct GetUsers;
 
-// use gloo_timers::future::TimeoutFuture;
-
-// use crate::models::queries::user::{
-//     get_users::{ResponseData, Variables},
-//     GetUsers,
-// };
-
-// Here we define an async function
-// This could be anything: a network request, database read, etc.
-// Here, we just multiply a number by 10
-async fn load_data<Q>(variables: Q::Variables) -> Result<Q::ResponseData, AppError>
-where
-    Q: GraphQLQuery,
-    Q::Variables: 'static,
-    Q::ResponseData: Clone + std::fmt::Debug + 'static,
-{
-    let request_body = Q::build_query(variables);
-    let request_json = &json!(request_body);
-    let request = build_request(request_json).await;
-
-    let response_data = match request {
-        Ok(response) => {
-            // json method cannot be called in build_request() function because response type has to implement Deserialize trait which compiler cannot infer.
-            let json = response
-                .json::<Response<Q::ResponseData>>()
-                .await
-                .map_err(AppError::from);
-            match json {
-                Ok(response) => response.data.ok_or_else(|| {
-                    response
-                        .errors
-                        .map_or_else(|| "Unknown error.".into(), |e| e.into())
-                }),
-                Err(error) => Err(error),
-            }
-        }
-        Err(error) => Err(error),
-    };
-
-    console_log!("response_body: {:?}", response_data);
-
-    response_data
-}
-
 #[component]
 fn App() -> impl IntoView {
     // this count is our synchronous, local state
     let (count, set_count) = create_signal(0);
 
     // create_resource takes two arguments after its scope
-    // let async_data = create_resource(
-    //     // the first is the "source signal"
-    //     count,
-    //     // the second is the loader
-    //     // it takes the source signal's value as its argument
-    //     // and does some async work
-    //     |value| async move { load_data(value).await },
-    // );
+    let async_data = create_resource(
+        // the first is the "source signal"
+        count,
+        // the second is the loader
+        // it takes the source signal's value as its argument
+        // and does some async work
+        |value| async move {
+            console_log!("count: {:?}", value);
+        },
+    );
     // whenever the source signal changes, the loader reloads
 
     // you can also create resources that only load once
     // just return the unit type () from the source signal
     // that doesn't depend on anything: we just load it once
-    let stable = create_resource(
+    let user_data = create_resource(
         || (),
         |_| async move { load_data::<GetUsers>(get_users::Variables {}).await },
     );
 
-    let y = stable.get();
+    let y = move || match user_data.get() {
+        None => view! { <p>"Loading..."</p> }.into_view(),
+        Some(data) => match data {
+            Ok(u) => view! { <div>u</div> }.into_view(),
+            Err(e) => view! { <div>{e.to_string()}</div> }.into_view(),
+        },
+    };
 
     // we can access the resource values with .get()
     // this will reactively return None before the Future has resolved
     // and update to Some(T) when it has resolved
-    // let async_result = move || {
-    //     async_data
-    //         .get()
-    //         .map(|value| format!("Server returned {value:?}"))
-    //         // This loading state will only show before the first load
-    //         .unwrap_or_else(|| "Loading...".into())
-    // };
+    let async_result = move || {
+        async_data
+            .get()
+            .map(|value| format!("Server returned {value:?}"))
+            // This loading state will only show before the first load
+            .unwrap_or_else(|| "Loading...".into())
+    };
 
     // the resource's loading() method gives us a
     // signal to indicate whether it's currently loading
-    let loading = stable.loading();
+    let loading = user_data.loading();
     let is_loading = move || if loading() { "Loading..." } else { "Idle." };
 
     view! {
-        <button
-            on:click=move |_| {
-                set_count.update(|n| *n += 1);
-            }
-        >
+        <button on:click=move |_| {
+            set_count.update(|n| *n += 1);
+        }>
+
             "Click me"
         </button>
         <p>
-            // <code>"stable"</code>": " {move || stable.get()}
+            <code>"user data"</code>
+            ": "
+            {y}
         </p>
         <p>
-            <code>"count"</code>": " {count}
+            <code>"count"</code>
+            ": "
+            {count}
         </p>
         <p>
-            <code>"async_value"</code>": "
-            // {async_result}
+            <code>"async_value"</code>
+            ": "
+            {async_result}
             <br/>
             {is_loading}
         </p>

@@ -1,4 +1,4 @@
-use crate::error::AppError;
+use super::error::AppError;
 use gloo_net::{
     http::{Request, Response},
     Error,
