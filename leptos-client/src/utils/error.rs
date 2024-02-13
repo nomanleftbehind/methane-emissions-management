@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
-use std::fmt::Display;
+// use std::fmt::Display;
+use thiserror::Error;
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, Error)]
 pub enum AppError {
+    #[error("Not Found")]
     RequestError(String),
 }
 
@@ -30,9 +32,9 @@ impl From<Vec<graphql_client::Error>> for AppError {
     }
 }
 
-impl Display for AppError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let AppError::RequestError(s) = self;
-        write!(f, "{}", s)
-    }
-}
+// impl Display for AppError {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         let AppError::RequestError(s) = self;
+//         write!(f, "{}", s)
+//     }
+// }

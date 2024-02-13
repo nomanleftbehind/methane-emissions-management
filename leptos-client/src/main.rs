@@ -1,5 +1,6 @@
 use crate::{
-    list::{DynamicList, StaticList},
+    // list::{DynamicList, StaticList},
+    list_facilities::ListFacilities,
     models::queries::user::{get_users, GetUsers},
     utils::{app_console_log, load_data},
 };
@@ -84,18 +85,7 @@ fn App() -> impl IntoView {
             <br/>
             {is_loading}
         </p>
-        <h1>"Iteration"</h1>
-        <h2>"Static List"</h2>
-        <p>"Use this pattern if the list itself is static."</p>
-        // Iteration is a very common task in most applications.
-        // So how do you take a list of data and render it in the DOM?
-        // This example will show you the two ways:
-        // 1) for mostly-static lists, using Rust iterators
-        // 2) for lists that grow, shrink, or move items, using <For/>
-        <StaticList length=5/>
-        <h2>"Dynamic List"</h2>
-        <p>"Use this pattern if the rows in your list will change."</p>
-        <DynamicList initial_length=5/>
+        <ListFacilities/>
     }
 }
 

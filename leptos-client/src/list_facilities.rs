@@ -1,20 +1,20 @@
-use leptos::*;
-
 use crate::{
-    models::queries::facility::{all_facilities, AllFacilities},
+    models::queries::facility::{
+        all_facilities::{self, AllFacilitiesAllFacilities},
+        AllFacilities,
+    },
     utils::load_data,
 };
+use leptos::*;
 
-pub fn fetch_example() -> impl IntoView {
-    let (cat_count, set_cat_count) = create_signal(0);
+#[component]
+pub fn list_facilities() -> impl IntoView {
+    let (count, set_count) = create_signal(0);
 
-    // we use local_resource here because
-    // 1) our error type isn't serializable/deserializable
-    // 2) we're not doing server-side rendering in this example anyway
-    //    (during SSR, create_resource will begin loading on the server and resolve on the client)
-    let cats = create_resource(cat_count, |_| async move {
-        load_data::<AllFacilities>(all_facilities::Variables {}).await
-    });
+    let facilities = create_resource(
+        || (),
+        |_| async move { load_data::<AllFacilities>(all_facilities::Variables {}).await },
+    );
 
     let fallback = move |errors: RwSignal<Errors>| {
         let error_list = move || {
@@ -38,35 +38,39 @@ pub fn fetch_example() -> impl IntoView {
     // by displaying nothing for None if the resource is still loading
     // and by using the ErrorBoundary fallback to catch Err(_)
     // so we'll just use `.and_then()` to map over the happy path
-    let cats_view = move || {
-        cats.and_then(|data| {
+    let facilities_view = move || {
+        facilities.and_then(|data| {
             data.all_facilities
                 .iter()
-                .map(|s| view! { <p><img src={s}/></p> })
+                .map(
+                    |AllFacilitiesAllFacilities {
+                         id,
+                         idpa,
+                         name,
+                         type_,
+                     }| {
+                        view! {
+                            <button
+                                class=("sidebar-button", move || count() % 2 == 1)
+                                class:active=move || "a" == "b"
+                                on:click=move |_| set_count.update(|n| *n += 1)
+                            >
+                                {name}
+                            </button>
+                        }
+                    },
+                )
                 .collect_view()
         })
     };
 
     view! {
         <div>
-            <label>
-                "How many cats would you like?"
-                <input
-                    type="number"
-                    prop:value=move || cat_count.get().to_string()
-                    on:input=move |ev| {
-                        let val = event_target_value(&ev).parse::<CatCount>().unwrap_or(0);
-                        set_cat_count(val);
-                    }
-                />
-            </label>
             <Transition fallback=move || {
                 view! { <div>"Loading (Suspense Fallback)..."</div> }
             }>
                 <ErrorBoundary fallback>
-                <div>
-                    {cats_view}
-                </div>
+                    <li class="sidebar-button-container">{facilities_view}</li>
                 </ErrorBoundary>
             </Transition>
         </div>

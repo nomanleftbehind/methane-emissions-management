@@ -18,3 +18,4 @@ web-sys = { vesrion = "0.3", features = ["Document", "HtmlDialogElement"] }
 chrono = { version = "^0.4", features = ["wasmbind", "serde"] }
 console_log = "1"
 log = "0.4"
+thiserror = "1.0"
