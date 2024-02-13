@@ -1,22 +1,14 @@
-use crate::utils::{console_log, load_data};
-use common::Role;
-use graphql_client::GraphQLQuery;
+use crate::{
+    list::{DynamicList, StaticList},
+    models::queries::user::{get_users, GetUsers},
+    utils::{app_console_log, load_data},
+};
 use leptos::*;
 
+pub mod list;
+pub mod list_facilities;
+pub mod models;
 pub mod utils;
-
-/// `UUID` is a custom scalar type defined in schema, so we have to provide matching Rust type.
-pub type UUID = uuid::Uuid;
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "graphql/schema.json",
-    query_path = "graphql/queries.graphql",
-    variables_derives = "PartialEq, Clone, Debug",
-    response_derives = "Debug, Clone, Serialize",
-    extern_enums("Role")
-)]
-pub struct GetUsers;
 
 #[component]
 fn App() -> impl IntoView {
@@ -31,7 +23,7 @@ fn App() -> impl IntoView {
         // it takes the source signal's value as its argument
         // and does some async work
         |value| async move {
-            console_log!("count: {:?}", value);
+            app_console_log!("count: {:?}", value);
         },
     );
     // whenever the source signal changes, the loader reloads
@@ -92,11 +84,25 @@ fn App() -> impl IntoView {
             <br/>
             {is_loading}
         </p>
+        <h1>"Iteration"</h1>
+        <h2>"Static List"</h2>
+        <p>"Use this pattern if the list itself is static."</p>
+        // Iteration is a very common task in most applications.
+        // So how do you take a list of data and render it in the DOM?
+        // This example will show you the two ways:
+        // 1) for mostly-static lists, using Rust iterators
+        // 2) for lists that grow, shrink, or move items, using <For/>
+        <StaticList length=5/>
+        <h2>"Dynamic List"</h2>
+        <p>"Use this pattern if the rows in your list will change."</p>
+        <DynamicList initial_length=5/>
     }
 }
 
 fn main() {
-    leptos::mount_to_body(|| view! { <App/> })
+    _ = console_log::init_with_level(log::Level::Debug);
+    console_error_panic_hook::set_once();
+    leptos::mount_to_body(App)
 }
 
 // #[component]
