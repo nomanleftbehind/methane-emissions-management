@@ -1,16 +1,11 @@
 use crate::{
-    models::queries::facility::{
-        all_facilities::{self, AllFacilitiesAllFacilities},
-        AllFacilities,
-    },
+    models::queries::facility::{all_facilities, AllFacilities},
     utils::load_data,
 };
 use leptos::*;
 
 #[component]
 pub fn list_facilities() -> impl IntoView {
-    let (count, set_count) = create_signal(0);
-
     let facilities = create_resource(
         || (),
         |_| async move { load_data::<AllFacilities>(all_facilities::Variables {}).await },
@@ -34,33 +29,33 @@ pub fn list_facilities() -> impl IntoView {
         }
     };
 
-    // the renderer can handle Option<_> and Result<_> states
-    // by displaying nothing for None if the resource is still loading
-    // and by using the ErrorBoundary fallback to catch Err(_)
-    // so we'll just use `.and_then()` to map over the happy path
+    #[allow(clippy::bind_instead_of_map)]
     let facilities_view = move || {
-        facilities.and_then(|data| {
-            data.all_facilities
-                .iter()
-                .map(
-                    |AllFacilitiesAllFacilities {
-                         id,
-                         idpa,
-                         name,
-                         type_,
-                     }| {
-                        view! {
-                            <button
-                                class=("sidebar-button", move || count() % 2 == 1)
-                                class:active=move || "a" == "b"
-                                on:click=move |_| set_count.update(|n| *n += 1)
-                            >
-                                {name}
-                            </button>
-                        }
-                    },
-                )
-                .collect_view()
+        facilities.get().and_then(|response| match response {
+            Ok(all_facilities::ResponseData { all_facilities }) => Some(
+                view! {
+                    <li class="sidebar-button-container">
+                        <For
+                            each=move || all_facilities.clone()
+                            key=|fac| fac.id
+                            children=|fac| {
+                                view! {
+                                    <button
+                                        class=("sidebar-button", "a" == "b")
+                                        class:active=move || "a" == "b"
+                                    >
+                                        // on:click=move |_| set_count.update(|n| *n += 1)
+                                        {fac.name}
+                                    </button>
+                                }
+                            }
+                        />
+
+                    </li>
+                }
+                .into_any(),
+            ),
+            Err(error) => Some(view! { <p>Not Fallback: {error.to_string()}</p> }.into_any()),
         })
     };
 
@@ -69,9 +64,7 @@ pub fn list_facilities() -> impl IntoView {
             <Transition fallback=move || {
                 view! { <div>"Loading (Suspense Fallback)..."</div> }
             }>
-                <ErrorBoundary fallback>
-                    <li class="sidebar-button-container">{facilities_view}</li>
-                </ErrorBoundary>
+                <ErrorBoundary fallback>{facilities_view}</ErrorBoundary>
             </Transition>
         </div>
     }

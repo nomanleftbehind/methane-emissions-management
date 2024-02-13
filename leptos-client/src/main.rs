@@ -1,5 +1,4 @@
 use crate::{
-    // list::{DynamicList, StaticList},
     list_facilities::ListFacilities,
     models::queries::user::{get_users, GetUsers},
     utils::{app_console_log, load_data},
@@ -61,32 +60,7 @@ fn App() -> impl IntoView {
     let loading = user_data.loading();
     let is_loading = move || if loading() { "Loading..." } else { "Idle." };
 
-    view! {
-        <button on:click=move |_| {
-            set_count.update(|n| *n += 1);
-        }>
-
-            "Click me"
-        </button>
-        <p>
-            <code>"user data"</code>
-            ": "
-            {y}
-        </p>
-        <p>
-            <code>"count"</code>
-            ": "
-            {count}
-        </p>
-        <p>
-            <code>"async_value"</code>
-            ": "
-            {async_result}
-            <br/>
-            {is_loading}
-        </p>
-        <ListFacilities/>
-    }
+    view! { <ListFacilities/> }
 }
 
 fn main() {

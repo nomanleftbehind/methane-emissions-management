@@ -2945,25 +2945,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "leptos-client"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "common",
- "console_error_panic_hook",
- "console_log",
- "gloo-net 0.5.0",
- "graphql_client",
- "leptos",
- "log",
- "serde",
- "serde_json",
- "thiserror",
- "uuid",
- "web-sys",
-]
-
-[[package]]
 name = "leptos_config"
 version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3251,6 +3232,25 @@ dependencies = [
  "web-sys",
  "yew",
  "yew-router",
+]
+
+[[package]]
+name = "methane_emissions_management_leptos_client"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "common",
+ "console_error_panic_hook",
+ "console_log",
+ "gloo-net 0.5.0",
+ "graphql_client",
+ "leptos",
+ "log",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "uuid",
+ "web-sys",
 ]
 
 [[package]]
