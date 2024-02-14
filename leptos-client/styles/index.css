@@ -1,0 +1,128 @@
+:root {
+  --sidebar-width: 15vw;
+  --sidebar-height: calc(100vh - 83px);
+  --background-color: #ffc900;
+  --standard-padding: 0.8vmin;
+  --primary-navbar-color: #b5babe;
+  --secondary-navbar-color: #e8eaed;
+  --outline: .125rem solid var(--outline-color);
+  --outline-color: #e2442f;
+  --sticky-border: 3px solid rgb(0, 0, 0);
+  --id-column-width: 20rem;
+  --date-column-width: 12.5rem;
+  --fdc-rec-id-column-width: 21rem;
+  --user-info-column-width: repeat(2, 14rem 13rem);
+  --pneumatic-instrument-grid-template-columns: repeat(2, 2.7rem) repeat(4, 10rem) repeat(2, var(--date-column-width)) 14rem;
+  --pneumatic-instrument-emission-rate-grid-template-columns: 2.7rem var(--date-column-width) 8rem;
+  --pneumatic-instrument-month-hours-grid-template-columns: 2.7rem var(--date-column-width) 7rem;
+
+  --spacer-1: .25rem;
+  --spacer-2: .5rem;
+  --spacer-3: .75rem;
+  --spacer-4: 1rem;
+  --spacer-5: 1.5rem;
+  --spacer-6: 2rem;
+  --spacer-7: 3rem;
+  --spacer-8: 4rem;
+  --border-radius-1: .25rem;
+  --border-radius-2: .875rem;
+  --border-radius-3: 10rem;
+  --box-shadow-1: .25rem .25rem 0rem var(--primary);
+  --box-shadow-2: .5rem .5rem 0rem var(--primary);
+  --z-index-base: 0;
+  --z-index-overlay: 1;
+  --z-index-above-overlay: 2;
+  --z-index-header: 3;
+  --z-index-menubar: 10;
+  --z-index-modal: 20;
+  --z-index-tooltip: 30;
+  --success: #23a094;
+  --danger: #e2442f;
+  --warning: #ffc900;
+  --info: #90a8ed;
+  --pink: #ff90e8;
+  --purple: #90a8ed;
+  --green: #23a094;
+  --orange: #e2442f;
+  --red: #98282a;
+  --yellow-dark: #ffc900;
+  --yellow: #f1f333;
+  --black: #000000;
+  --gray-500: #78716c;
+  --gray-400: #a8a29e;
+  --gray-300: #d6d3d1;
+  --gray-200: #e7e5e4;
+  --gray-100: #f4f4f0;
+  --gray-050: #fbfbf9;
+  --white: #ffffff;
+  --primary: #000000;
+  --contrast-primary: #ffffff;
+  --accent: #ff90e8;
+  --contrast-accent: #000000;
+  --background: #ffffff;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 1024px;
+  --font-family: Mabry Pro, sans-serif;
+  --border: solid .0625rem currentColor;
+  --border-width: .0625rem;
+  --big-icon-size: 1.5em;
+  --grid-wrap-breakpoint: 31.25rem;
+  --active-bg: #ffffff;
+  --main-stack-width: 28rem;
+  --dynamic-grid: min(100%, calc((31.25rem - 100%)*1000));
+  --disabled-opacity: .3;
+  --form-element-height: 3.125rem;
+  --faded-text-color: rgba(0, 0, 0, .8);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.table-test td,
+th,
+table {
+  border: 1px solid black;
+  padding: 4px;
+  margin: 4px;
+}
+
+.sticky {
+  position: sticky;
+  border-radius: 0px;
+  background: var(--outline-color);
+  color: rgb(0, 0, 0);
+  text-align: center;
+  margin: 0px;
+  z-index: 3;
+  top: 0;
+  box-shadow: .25rem .25rem 0 var(--primary);
+  display: grid;
+  align-content: center;
+}
+
+.emitter-data-main .sticky {
+  z-index: 2;
+  background-color: rgb(78, 158, 148);
+}
+
+.sticky:first-child {
+  margin-left: 0.4rem;
+  border-radius: 0.25rem 0 0 0.25rem;
+  box-shadow: .25rem .25rem 0 var(--primary);
+}
+
+.sticky:has(+ :not(.sticky)),
+.sticky:last-child {
+  margin-right: 0.4rem;
+  border-radius: 0 0.25rem 0.25rem 0;
+  box-shadow: .25rem .25rem 0 var(--primary);
+}
+
+.data-window {
+  display: flex;
+  flex-direction: row;
+  height: var(--sidebar-height);
+}

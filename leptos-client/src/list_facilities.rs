@@ -34,12 +34,12 @@ pub fn list_facilities() -> impl IntoView {
         facilities.get().and_then(|response| match response {
             Ok(all_facilities::ResponseData { all_facilities }) => Some(
                 view! {
-                    <li class="sidebar-button-container">
-                        <For
-                            each=move || all_facilities.clone()
-                            key=|fac| fac.id
-                            children=|fac| {
-                                view! {
+                    <For
+                        each=move || all_facilities.clone()
+                        key=|fac| fac.id
+                        children=|fac| {
+                            view! {
+                                <li class="sidebar-button-container">
                                     <button
                                         class=("sidebar-button", "a" == "b")
                                         class:active=move || "a" == "b"
@@ -47,25 +47,26 @@ pub fn list_facilities() -> impl IntoView {
                                         // on:click=move |_| set_count.update(|n| *n += 1)
                                         {fac.name}
                                     </button>
-                                }
+                                </li>
                             }
-                        />
-
-                    </li>
+                        }
+                    />
                 }
-                .into_any(),
+                .into_view(),
             ),
-            Err(error) => Some(view! { <p>Not Fallback: {error.to_string()}</p> }.into_any()),
+            Err(error) => Some(view! { <p>Not Fallback: {error.to_string()}</p> }.into_view()),
         })
     };
 
     view! {
-        <div>
-            <Transition fallback=move || {
-                view! { <div>"Loading (Suspense Fallback)..."</div> }
-            }>
-                <ErrorBoundary fallback>{facilities_view}</ErrorBoundary>
-            </Transition>
-        </div>
+        <nav class="sidebar" role="navigation">
+            <ol class="sidebar-list">
+                <Transition fallback=move || {
+                    view! { <div>"Loading (Suspense Fallback)..."</div> }
+                }>
+                    <ErrorBoundary fallback>{facilities_view}</ErrorBoundary>
+                </Transition>
+            </ol>
+        </nav>
     }
 }

@@ -1,0 +1,124 @@
+.popover {
+  display: inline-block;
+  position: relative;
+}
+
+.popover>summary {
+  display: revert
+}
+
+.popover[open]:before,
+.popover.expanded:before {
+  content: "";
+  border-left: solid .5rem transparent;
+  border-right: solid .5rem transparent;
+  border-bottom: solid .5rem currentColor;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+[hidden] {
+  display: none;
+}
+
+.popover .dropdown {
+  position: absolute;
+  top: 100%;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: -webkit-fill-available;
+  width: -moz-available;
+  box-shadow: 0.25rem 0.25rem #000;
+  box-shadow: 0.25rem 0.25rem 0 var(--primary);
+  z-index: 30;
+}
+
+.dropdown {
+  position: relative;
+  border: solid 0.0625rem currentColor;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  background-color: #fff;
+  background-color: var(--background);
+  color: #000;
+  color: var(--primary);
+  margin-top: 0.5rem;
+  max-width: calc(100vw - 2rem);
+}
+
+.popover .dropdown>[role=menu]:only-child,
+.popover .dropdown>.stack:only-child {
+  margin: -1rem;
+  border: none;
+}
+
+.nested-menu [role=menu] {
+  display: flex;
+  flex-direction: column;
+  width: 12rem;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  box-shadow: initial;
+}
+
+[role=menu] {
+  background-color: #fff;
+  background-color: var(--background);
+  color: #000;
+  color: var(--primary);
+  padding: 0.5rem 0;
+  border: solid 0.0625rem currentColor;
+  border-radius: 0.25rem;
+  box-shadow: 0.25rem 0.25rem #000;
+  box-shadow: 0.25rem 0.25rem 0 var(--primary);
+}
+
+[role=menu] button {
+  flex-shrink: 0;
+  justify-content: space-between;
+  padding: 1rem;
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  white-space: normal;
+
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+}
+
+[role=menu] button:hover {
+  background-color: #000;
+  background-color: var(--primary);
+  color: #fff;
+  color: var(--contrast-primary)
+}
+
+[role=menu] button[aria-haspopup=menu] {
+  -webkit-text-decoration: none;
+  text-decoration: none
+}
+
+[role=menu] button[aria-haspopup=menu]:after {
+  float: right
+}
+
+[role=menu] [role^=menuitem] {
+  display: block;
+  padding: 0.5rem 1rem;
+  border: none;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+[role=button],
+[role^=menuitem] {
+  cursor: pointer;
+}

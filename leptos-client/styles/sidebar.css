@@ -1,0 +1,99 @@
+.sidebar {
+  background: #f4f4f0;
+  /* border: 1px solid red; */
+  width: var(--sidebar-width);
+  height: var(--sidebar-height);
+  overflow: auto;
+}
+
+.sidebar-list {
+  padding: var(--standard-padding);
+  list-style: none;
+  text-align: center;
+}
+
+.sidebar-button-container {
+  text-align: center;
+  align-content: center;
+  padding: var(--standard-padding);
+}
+
+
+
+.sidebar-button {
+  background-color: #fff;
+  background-color: var(--background);
+  color: #000;
+  color: var(--primary);
+  padding: 1.5rem;
+  height: 100%;
+  width: 100%;
+  font-size: 1rem;
+  line-height: 1.5;
+  --line-height: 1.5rem;
+
+  font-size: .875rem;
+  line-height: 1.3;
+  --line-height: 1.1375rem;
+  text-align: left;
+  align-items: initial;
+  align-content: baseline;
+
+  font-size: 1rem;
+  line-height: 1.5;
+  --line-height: 1.5rem;
+  padding: .75rem 1rem;
+  border: solid .0625rem currentColor;
+  color: currentColor;
+  border-radius: .25rem;
+  font-family: inherit;
+  /* display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, -webkit-max-content);
+  grid-auto-columns: minmax(0, max-content);
+  display: inline-grid; */
+  align-items: center;
+  justify-content: center;
+  /* grid-gap: .5rem;
+  gap: .5rem; */
+  cursor: pointer;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  transition: all .14s ease-out
+}
+
+.sidebar-button>:first-child {
+  height: auto
+}
+
+
+.sidebar-button:hover,
+.sidebar-button.active {
+  transform: translate(-.25rem, -.25rem);
+  box-shadow: .25rem .25rem #000;
+  box-shadow: .25rem .25rem 0 var(--primary);
+}
+
+.sidebar-button.active {
+  background: var(--background-color);
+}
+
+/* .sidebar-button {
+  font-family: 'Darker Grotesque', sans-serif; */
+/* margin: 0 5px; */
+/* background: #b23386;
+  font-size: 12px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 3px solid #000;
+  box-shadow: 5px 5px 0px 0px #000;
+  cursor: pointer;
+  width: 100%;
+}*/
+
+
+
+/*.sidebar-button:active {
+  transform: translateY(4px);
+  box-shadow: 1px 2px 0px 0px #000;
+} */

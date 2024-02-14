@@ -1,0 +1,37 @@
+:modal {
+  border: solid 0.0625rem currentColor;
+  border-radius: 0.25rem;
+  box-shadow: 0.25rem 0.25rem 0 var(--primary);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+dialog div:last-child {
+  padding-top: 0.75rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+dialog button {
+  background-color: var(--primary);
+  color: var(--contrast-primary);
+  border-color: var(--primary);
+  font-size: 1rem;
+  padding: .75rem 1rem;
+  border: solid .0625rem currentColor;
+  border-radius: .25rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all .14s ease-out
+}
+
+dialog button:hover {
+  transform: translate(-.25rem,-.25rem);
+  box-shadow: .25rem .25rem 0 var(--primary);
+  background-color: rgb(184, 230, 248);
+  color: #000;
+  border-color: var(--primary)
+}

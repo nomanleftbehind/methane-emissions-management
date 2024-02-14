@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
-// use std::fmt::Display;
 use thiserror::Error;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, Error)]
 pub enum AppError {
-    #[error("Not Found")]
+    #[error("{0}")]
     RequestError(String),
 }
 
@@ -25,7 +24,7 @@ impl From<Vec<graphql_client::Error>> for AppError {
         Self::RequestError(
             value
                 .into_iter()
-                .map(|e| format!("{:#?}", e.message))
+                .map(|e| e.message)
                 .collect::<Vec<_>>()
                 .join(", "),
         )

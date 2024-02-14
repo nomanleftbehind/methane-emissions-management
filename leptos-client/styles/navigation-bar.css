@@ -1,0 +1,64 @@
+.navigation-bar {
+  display: flex;
+  background-color: #f4f4f0;
+  border-bottom: solid 0.0625rem currentColor;
+}
+
+.navbar-brand {
+  padding: 0 3rem;
+}
+
+.navbar-menu {
+  display: flex;
+  flex-grow: 2;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.navbar-start {
+  display: flex;
+  flex-direction: row;
+}
+
+.navbar-end {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.navbar-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--standard-padding);
+}
+
+.navbar-button {
+  display: inline-block;
+  vertical-align: middle;
+  padding: .5rem .75rem;
+  background-color: #fff;
+  color: #000;
+  border: solid .0625rem #0000;
+  border-radius: 10rem;
+  font-family: inherit;
+  max-width: 100%;
+  min-width: 0;
+  font-size: .875rem;
+  line-height: 1.3;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .14s ease-out;
+}
+
+
+.navbar-button:hover,
+.navbar-button.expanded {
+  transform: translate(-.25rem, -.25rem);
+  box-shadow: .25rem .25rem #000;
+  box-shadow: .25rem .25rem 0 var(--primary);
+  border-color: currentColor;
+}

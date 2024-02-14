@@ -1,0 +1,97 @@
+.emitters-window {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.emitters-navbar {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--secondary-navbar-color);
+}
+
+.emitters-navbar+div {
+  height: 0.5rem;
+  border-bottom: 1px solid #dbdcdd;
+  background-color: #fff;
+}
+
+.emitters {
+  width: 87vw;
+  display: grid;
+  grid-template-rows: 40px min-content;
+  grid-auto-rows: min-content;
+  height: 100%;
+  overflow: auto;
+}
+
+.emitters:not(.pneumatic-instruments, .compressors, .tank-farms) {
+  width: unset;
+}
+
+.pneumatic-instruments {
+  grid-template-columns: var(--pneumatic-instrument-grid-template-columns) var(--user-info-column-width) var(--id-column-width);
+}
+
+.compressors {
+  grid-template-columns: repeat(2, 2.7rem) 11rem 10rem repeat(2, var(--date-column-width)) var(--fdc-rec-id-column-width) var(--user-info-column-width) var(--id-column-width);
+}
+
+.tank-farms {
+  grid-template-columns: repeat(2, 2.7rem) var(--id-column-width) var(--user-info-column-width);
+}
+
+.pneumatic-instrument-emission-rates {
+  grid-template-columns: var(--pneumatic-instrument-emission-rate-grid-template-columns) var(--user-info-column-width) var(--id-column-width);
+}
+
+.pneumatic-instrument-month-hours {
+  grid-template-columns: var(--pneumatic-instrument-month-hours-grid-template-columns) var(--user-info-column-width) var(--id-column-width);
+}
+
+.controller-month-vent-override {
+  grid-template-columns: 2.7rem var(--date-column-width) 8rem var(--user-info-column-width) var(--id-column-width);
+}
+
+.controller-month-vent {
+  grid-template-columns: 2.7rem 8rem repeat(3, 6rem) var(--user-info-column-width) var(--id-column-width);
+}
+
+.emitters-navigation-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  color: #555;
+  position: relative;
+}
+
+.emitters-navigation-button:first-of-type {
+  margin-left: 0.4rem;
+}
+
+.emitters-navbar .emitters-navigation-button {
+  background-color: var(--secondary-navbar-color);
+  margin-top: 0.5rem;
+}
+
+/* Select all buttons that are not active, not being hovered over, and not previous to the one active or being hovering over. */
+.emitters-navigation-button:not(.active, :hover, .emitters-navigation-button:has(+ .active, + :hover))::after {
+  content: "";
+  position: absolute;
+  top: 15%;
+  right: 0;
+  height: 70%;
+  border-right: 1px solid #919598;
+}
+
+
+
+.emitters-navbar .emitters-navigation-button:hover {
+  background-color: #f6f6f8;
+}
+
+.emitters-navbar .emitters-navigation-button.active {
+  background-color: #fff;
+}
