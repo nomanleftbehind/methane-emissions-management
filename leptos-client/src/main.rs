@@ -1,14 +1,11 @@
-use crate::{
+use leptos::*;
+use methane_emissions_management_leptos_client::{
+    console_log,
     list_facilities::ListFacilities,
     models::queries::user::{get_users, GetUsers},
-    utils::{app_console_log, load_data},
+    routes::RouterExample,
+    utils::load_data,
 };
-use leptos::*;
-
-pub mod list;
-pub mod list_facilities;
-pub mod models;
-pub mod utils;
 
 #[component]
 fn App() -> impl IntoView {
@@ -23,7 +20,7 @@ fn App() -> impl IntoView {
         // it takes the source signal's value as its argument
         // and does some async work
         |value| async move {
-            app_console_log!("count: {:?}", value);
+            console_log!("count: {:?}", value);
         },
     );
     // whenever the source signal changes, the loader reloads
@@ -64,9 +61,13 @@ fn App() -> impl IntoView {
 }
 
 fn main() {
+    // _ = console_log::init_with_level(log::Level::Debug);
+    // console_error_panic_hook::set_once();
+    // leptos::mount_to_body(App)
+
     _ = console_log::init_with_level(log::Level::Debug);
     console_error_panic_hook::set_once();
-    leptos::mount_to_body(App)
+    mount_to_body(RouterExample)
 }
 
 // #[component]
