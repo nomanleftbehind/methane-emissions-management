@@ -10,12 +10,12 @@ use leptos_router::*;
 
 #[derive(Params, PartialEq, Clone, Debug)]
 pub struct ContactParams {
-    id: usize,
+    id: String,
 }
 
 #[component]
-pub fn Contact() -> impl IntoView {
-    log!("rendering <Contact/>");
+pub fn PneumaticDevices() -> impl IntoView {
+    log!("rendering <Pneumatic Devices/>");
 
     log!(
         "ExampleContext should be Some(42). It is {:?}",
@@ -23,12 +23,18 @@ pub fn Contact() -> impl IntoView {
     );
 
     on_cleanup(|| {
-        log!("cleaning up <Contact/>");
+        log!("cleaning up <Pneumatic Devices/>");
     });
 
     let params = use_params::<ContactParams>();
+    // let id = move || params.with(|params| params.as_ref().map(|params| params.id));
+    let id = move || params().map(|params| params.id);
+    let r = id();
+    console_log!("{:?}", r);
+
+    let params2 = use_params::<ContactParams>();
     let contact = create_resource(
-        move || params().map(|params| params.id).ok(),
+        move || params2().map(|params| params.id).ok(),
         // any of the following would work (they're identical)
         // move |id| async move { get_contact(id).await }
         // move |id| get_contact(id),

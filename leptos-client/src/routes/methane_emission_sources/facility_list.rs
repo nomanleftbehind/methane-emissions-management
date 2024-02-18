@@ -1,4 +1,9 @@
-use crate::{get_contacts, routes::ExampleContext};
+use crate::{
+    // get_contacts,
+    models::queries::facility::{all_facilities, AllFacilities},
+    routes::ExampleContext,
+    utils::load_data,
+};
 use leptos::{logging::log, *};
 use leptos_router::*;
 
@@ -13,24 +18,57 @@ pub fn FacilityList() -> impl IntoView {
         log!("cleaning up <FacilityList/>");
     });
 
-    let location = use_location();
-    let facilities = create_resource(move || location.search.get(), get_contacts);
-    let facilities = move || {
-        facilities.get().map(|facilities| {
-            // this data doesn't change frequently so we can use .map().collect() instead of a keyed <For/>
-            facilities
-                .into_iter()
-                .map(|contact| {
+    let fallback = move |errors: RwSignal<Errors>| {
+        let error_list = move || {
+            errors.with(|errors| {
+                errors
+                    .iter()
+                    .map(|(_, e)| view! { <li>{e.to_string()}</li> })
+                    .collect_view()
+            })
+        };
+
+        view! {
+            <div class="error">
+                <h2>"Error"</h2>
+                <ul>{error_list}</ul>
+            </div>
+        }
+    };
+
+    // let location = use_location();
+    let facilities = create_resource(
+        // move || location.search.get(),
+        /* get_contacts */
+        || (),
+        |_| async move { load_data::<AllFacilities>(all_facilities::Variables {}).await },
+    );
+    let facility_list = move || {
+        facilities
+            .get()
+            .map(|response| {
+                response.map(|data| {
                     view! {
-                        <li>
-                            <A href=contact.id.to_string()>
-                                <span>{&contact.first_name} " " {&contact.last_name}</span>
-                            </A>
-                        </li>
+                        <nav class="sidebar" role="navigation">
+                            <ul class="sidebar-list">
+                                <For
+                                    each=move || data.all_facilities.clone()
+                                    key=|facility| facility.id
+                                    let:facility
+                                >
+                                    <li class="sidebar-button-container">
+                                        <A href=facility.id.to_string() class="sidebar-button">
+                                            // class=("active", "a" == "b")
+                                            {&facility.name}
+                                        </A>
+                                    </li>
+                                </For>
+                            </ul>
+                        </nav>
                     }
                 })
-                .collect_view()
-        })
+            })
+            .into_view()
     };
 
     view! {
@@ -39,13 +77,7 @@ pub fn FacilityList() -> impl IntoView {
             <Suspense fallback=move || {
                 view! { <p>"Loading facilities..."</p> }
             }>
-                {move || {
-                    view! {
-                        <nav class="sidebar" role="navigation">
-                            <ul class="sidebar-list">{facilities}</ul>
-                        </nav>
-                    }
-                }}
+                <ErrorBoundary fallback>{facility_list}</ErrorBoundary>
             </Suspense>
             <AnimatedOutlet class="outlet" outro="fadeOut" intro="fadeIn"/>
         </div>

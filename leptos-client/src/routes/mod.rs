@@ -5,7 +5,7 @@ mod register;
 pub use about::About;
 pub use register::Register;
 
-use crate::routes::methane_emission_sources::FacilityRoutes;
+use crate::{routes::methane_emission_sources::FacilityList, PneumaticDevices};
 use leptos::*;
 use leptos_router::*;
 
@@ -41,7 +41,10 @@ pub fn RouterExample() -> impl IntoView {
                     outro_back="slideOutBack"
                     intro_back="slideInBack"
                 >
-                    <FacilityRoutes/>
+                    <Route path="" view=FacilityList>
+                        <Route path=":id" view=|| view! { <PneumaticDevices/> }/>
+                        <Route path="/" view=|| view! { <p>"Select a contact."</p> }/>
+                    </Route>
                     <Route path="about" view=|| view! { <About/> }/>
                     <Route path="register" view=|| view! { <Register/> }/>
                     <Route path="redirect-home" view=|| view! { <Redirect path="/"/> }/>
