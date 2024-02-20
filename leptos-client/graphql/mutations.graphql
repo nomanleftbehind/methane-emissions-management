@@ -1,0 +1,35 @@
+mutation Login($loginUserInput: LoginUserInput!) {
+	login(loginUserInput: $loginUserInput) {
+		id
+		email
+    role
+	}
+}
+
+mutation Logout {
+  logout
+}
+
+mutation UpdateField($updateFieldInput: UpdateFieldInput!) {
+  updateField(updateFieldInput: $updateFieldInput)
+}
+
+mutation InsertEntry($insertEntryInput: InsertEntryInput!) {
+  insertEntry(insertEntryInput: $insertEntryInput)
+}
+
+mutation DeleteEntry($deleteEntryInput: DeleteEntryInput!) {
+  deleteEntry(deleteEntryInput: $deleteEntryInput)
+}
+
+mutation InsertPneumaticInstrument($insertPneumaticInstrumentInput: InsertPneumaticInstrumentInput!) {
+  insertPneumaticInstrument(insertPneumaticInstrumentInput: $insertPneumaticInstrumentInput)
+}
+
+mutation InsertPneumaticInstrumentEmissionRate($insertPneumaticInstrumentEmissionRateInput: InsertPneumaticInstrumentEmissionRateInput!) {
+  insertPneumaticInstrumentEmissionRate(insertPneumaticInstrumentEmissionRateInput: $insertPneumaticInstrumentEmissionRateInput)
+}
+
+mutation InsertPneumaticInstrumentMonthHours($insertPneumaticInstrumentMonthHoursInput: InsertPneumaticInstrumentMonthHoursInput!) {
+  insertPneumaticInstrumentMonthHours(insertPneumaticInstrumentMonthHoursInput: $insertPneumaticInstrumentMonthHoursInput)
+}
