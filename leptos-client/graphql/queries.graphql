@@ -24,3 +24,30 @@ query AllFacilities {
     type
   }
 }
+
+query GetPneumaticInstruments($getPneumaticInstrumentsInput: GetPneumaticInstrumentsInput!) {
+  getPneumaticInstruments(getPneumaticInstrumentsInput: $getPneumaticInstrumentsInput) {
+    id
+    siteId
+    site {
+      name
+    }
+    type
+    manufacturerId
+    manufacturer {
+      manufacturer
+    }
+    model
+    serialNumber
+    startDate
+    endDate
+    createdBy {
+      email
+    }
+    createdAt
+    updatedBy {
+      email
+    }
+    updatedAt
+  }
+}
