@@ -13,10 +13,16 @@ pub fn delete_entry(
     #[prop(into)] handle_delete_entry: Callback<Variables>,
 ) -> impl IntoView {
     view! {
-        <div class="emitter-cell" class="center" style:grid-row=row_num style:grid-column=col_num>
+        <div
+            class:emitter-cell=true
+            class:center=true
+            style:grid-row=row_num
+            style:grid-column=col_num
+        >
             <button
                 class="entry-button"
                 on:click=move |_| {
+                    #[allow(unstable_name_collisions)]
                     handle_delete_entry
                         .call(Variables {
                             delete_entry_input: DeleteEntryInput {

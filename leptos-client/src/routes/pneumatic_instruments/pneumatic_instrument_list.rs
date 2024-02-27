@@ -153,25 +153,27 @@ pub fn PneumaticInstruments() -> impl IntoView {
                             // if insert_form_is_open {
                             // <InsertPneumaticInstrumentForm {facility_id} {close_insert_form} {handle_insert} {modal_variant_handle} />
                             // }
-                            // { for pneumatic_instruments_iter }
+
                             <For
-                                each=move || data.get_pneumatic_instruments.clone()
-                                key=|pneumatic_instrument| pneumatic_instrument.id
-                                children=move |pneumatic_instrument| {
-                                    view! {
-                                        <PneumaticInstrumentRow
-                                            row_num=Signal::derive(|| 2)
-                                            pneumatic_instrument=Signal::derive(move || {
-                                                pneumatic_instrument.clone()
-                                            })
-
-                                            handle_delete_entry=handle_delete_entry
-                                        />
-                                    }
+                                each=move || {
+                                    data.get_pneumatic_instruments.clone().into_iter().enumerate()
                                 }
-                            />
 
-                        // </For>
+                                key=|(_, pneumatic_instrument)| pneumatic_instrument.id
+                                let:pneumatic_instrument
+                            >
+                                <PneumaticInstrumentRow
+                                    row_num=Signal::derive(move || {
+                                        (pneumatic_instrument.0 + 2) * 2 - 1
+                                    })
+
+                                    pneumatic_instrument=Signal::derive(move || {
+                                        pneumatic_instrument.1.clone()
+                                    })
+
+                                    handle_delete_entry=handle_delete_entry
+                                />
+                            </For>
                         </div>
                     }
                 })

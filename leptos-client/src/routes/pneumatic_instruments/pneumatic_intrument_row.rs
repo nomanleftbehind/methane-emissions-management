@@ -23,7 +23,7 @@ pub fn pneumatic_instrument_row(
     // let handle_expand_data = Callback::from(move |_| {
     //     expanded_handle.set(!expanded);
     // });
-    let handle_expand_data = set_expanded.set(expanded.with(|e| !e));
+    let handle_expand_data = move || set_expanded.set(expanded.with(|e| !e));
 
     // let pneumatic_instrument = pneumatic_instrument.clone();
     let pneumatic_instrument = pneumatic_instrument.get();
@@ -36,10 +36,15 @@ pub fn pneumatic_instrument_row(
         type_,
         model,
         serial_number,
+        start_date,
+        end_date,
+        created_at,
+        updated_at,
         ..
     } = pneumatic_instrument;
     let site = site.map(|s| s.name);
     let manufacturer = manufacturer.map(|m| m.manufacturer);
+    let end_date = end_date.map(|ed| ed.to_string());
     let created_by = created_by.map(|cb| cb.email);
     let updated_by = updated_by.map(|ub| ub.email);
 
@@ -73,7 +78,28 @@ pub fn pneumatic_instrument_row(
             {serial_number}
         </div>
         <div style:grid-column=7 style:grid-row=row_num>
+            {start_date.to_string()}
+        </div>
+        <div style:grid-column=8 style:grid-row=row_num>
+            {end_date}
+        </div>
+        <div style:grid-column=9 style:grid-row=row_num>
             {site}
+        </div>
+        <div style:grid-column=10 style:grid-row=row_num>
+            {created_by}
+        </div>
+        <div style:grid-column=11 style:grid-row=row_num>
+            {created_at.to_string()}
+        </div>
+        <div style:grid-column=12 style:grid-row=row_num>
+            {updated_by}
+        </div>
+        <div style:grid-column=13 style:grid-row=row_num>
+            {updated_at.to_string()}
+        </div>
+        <div style:grid-column=14 style:grid-row=row_num>
+            {id.to_string()}
         </div>
     }
 }
