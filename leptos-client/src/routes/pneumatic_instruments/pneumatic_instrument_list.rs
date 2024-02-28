@@ -182,10 +182,8 @@ pub fn PneumaticInstruments() -> impl IntoView {
     };
 
     view! {
-        <div class="contact">
-            <Transition fallback=move || {
-                view! { <p>"Loading..."</p> }
-            }>{pneumatic_instrument_display}</Transition>
-        </div>
+        <Transition fallback=move || {
+            view! { <p>"Loading..."</p> }
+        }>{pneumatic_instrument_display}</Transition>
     }
 }

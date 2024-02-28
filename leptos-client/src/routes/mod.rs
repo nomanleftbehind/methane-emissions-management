@@ -1,5 +1,6 @@
 mod about;
 pub mod methane_emission_sources;
+pub mod navigation_bar;
 pub mod pneumatic_instruments;
 mod register;
 
@@ -7,7 +8,7 @@ pub use about::About;
 pub use register::Register;
 
 use crate::routes::{
-    methane_emission_sources::FacilityList,
+    methane_emission_sources::FacilityList, navigation_bar::NavigationBar,
     pneumatic_instruments::pneumatic_instrument_list::PneumaticInstruments,
 };
 use leptos::*;
@@ -25,25 +26,15 @@ pub fn RouterExample() -> impl IntoView {
 
     view! {
         <Router>
-            <nav>
-                // ordinary <a> elements can be used for client-side navigation
-                // using <A> has two effects:
-                // 1) ensuring that relative routing works properly for nested routes
-                // 2) setting the `aria-current` attribute on the current link,
-                // for a11y and styling purposes
-                <A exact=true href="/">
-                    "Home"
-                </A>
-                <A href="about">"About"</A>
-                <A href="register">"Register"</A>
-                <A href="redirect-home">"Redirect to Home"</A>
-            </nav>
+            <NavigationBar/>
             <main class="main">
+                // <div class="data-window">
                 <AnimatedRoutes
                     outro="slideOut"
                     intro="slideIn"
                     outro_back="slideOutBack"
                     intro_back="slideInBack"
+                    class="data-window"
                 >
                     <Route path="" view=FacilityList>
                         <Route path=":id" view=PneumaticInstruments/>
@@ -53,6 +44,7 @@ pub fn RouterExample() -> impl IntoView {
                     <Route path="register" view=|| view! { <Register/> }/>
                     <Route path="redirect-home" view=|| view! { <Redirect path="/"/> }/>
                 </AnimatedRoutes>
+            // </div>
             </main>
         </Router>
     }

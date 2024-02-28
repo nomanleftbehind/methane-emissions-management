@@ -72,14 +72,11 @@ pub fn FacilityList() -> impl IntoView {
     };
 
     view! {
-        <div class="contact-list">
-            <h1>"Facilities"</h1>
-            <Suspense fallback=move || {
-                view! { <p>"Loading facilities..."</p> }
-            }>
-                <ErrorBoundary fallback>{facility_list}</ErrorBoundary>
-            </Suspense>
-            <AnimatedOutlet class="outlet" outro="fadeOut" intro="fadeIn"/>
-        </div>
+        <Suspense fallback=move || {
+            view! { <p>"Loading facilities..."</p> }
+        }>
+            <ErrorBoundary fallback>{facility_list}</ErrorBoundary>
+        </Suspense>
+        <AnimatedOutlet class="emitters-window" outro="fadeOut" intro="fadeIn"/>
     }
 }
