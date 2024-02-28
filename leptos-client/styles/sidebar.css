@@ -21,13 +21,14 @@
 
 
 .sidebar-button {
+  display: inline-block;
   background-color: #fff;
   background-color: var(--background);
   color: #000;
   color: var(--primary);
   padding: 1.5rem;
   height: 100%;
-  width: 100%;
+  /* width: 100%; */
   font-size: 1rem;
   line-height: 1.5;
   --line-height: 1.5rem;
@@ -68,7 +69,7 @@
 
 
 .sidebar-button:hover,
-.sidebar-button.active {
+.sidebar-button[aria-current="page"] {
   transform: translate(-.25rem, -.25rem);
   box-shadow: .25rem .25rem #000;
   box-shadow: .25rem .25rem 0 var(--primary);
@@ -77,6 +78,11 @@
 .sidebar-button.active {
   background: var(--background-color);
 }
+
+.sidebar-button[aria-current="page"] {
+  background: var(--background-color);
+}
+
 
 /* .sidebar-button {
   font-family: 'Darker Grotesque', sans-serif; */

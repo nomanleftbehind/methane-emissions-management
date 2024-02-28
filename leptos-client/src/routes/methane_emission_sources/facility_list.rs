@@ -58,6 +58,7 @@ pub fn FacilityList() -> impl IntoView {
                                 >
                                     <li class="sidebar-button-container">
                                         <A href=facility.id.to_string() class="sidebar-button">
+
                                             // class=("active", "a" == "b")
                                             {&facility.name}
                                         </A>
