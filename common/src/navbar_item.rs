@@ -1,13 +1,13 @@
 use strum_macros::{Display, EnumIter};
 
 #[derive(PartialEq, Clone, Copy, Debug, Display, EnumIter)]
-#[strum(serialize_all = "title_case")]
+#[strum(serialize_all = "lowercase")]
 pub enum Emitter {
-    PneumaticInstrument,
-    LevelController,
-    PneumaticPump,
-    CompressorSeal,
-    StorageTank,
+    PneumaticInstruments,
+    LevelControllers,
+    PneumaticPumps,
+    CompressorSeals,
+    StorageTanks,
 }
 
 #[derive(Copy, Clone, PartialEq, Debug, Display)]

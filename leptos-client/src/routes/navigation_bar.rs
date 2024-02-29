@@ -31,8 +31,8 @@ pub fn navigation_bar() -> impl IntoView {
             <div class="navbar-menu">
                 <div class="navbar-start">
                     <div class="navbar-button-wrapper">
-                        <A exact=true href="/" class="navbar-button">
-                            "Home"
+                        <A exact=true href="sources" class="navbar-button">
+                            "Sources"
                         </A>
                     </div>
                     <div class="navbar-button-wrapper">

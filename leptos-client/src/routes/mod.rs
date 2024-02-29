@@ -8,7 +8,8 @@ pub use about::About;
 pub use register::Register;
 
 use crate::routes::{
-    methane_emission_sources::FacilityList, navigation_bar::NavigationBar,
+    methane_emission_sources::{FacilityList, SourcesNavigationBar},
+    navigation_bar::NavigationBar,
     pneumatic_instruments::pneumatic_instrument_list::PneumaticInstruments,
 };
 use leptos::*;
@@ -36,11 +37,26 @@ pub fn RouterExample() -> impl IntoView {
                     intro_back="slideInBack"
                     class="data-window"
                 >
-                    <Route path="" view=FacilityList>
-                        <Route path=":id" view=PneumaticInstruments/>
-                        <Route path="/" view=|| view! { <p>"Select a contact."</p> }/>
+
+                    <Route path="/sources" view=FacilityList>
+                        <Route path=":id" view=SourcesNavigationBar>
+                            <Route path="" view=|| view! { <p>"Select a source."</p> }/>
+                            <Route path="pneumaticinstruments" view=PneumaticInstruments/>
+                        </Route>
+                        <Route
+                            path=""
+                            view=|| view! { <p>"Select a contact to view more info."</p> }
+                        />
                     </Route>
+                    // <Route path="/sources" view=FacilityList>
+                    // <Route path=":id" view=SourcesNavigationBar>
+                    // <Route path="pneumatic_instruments" view=PneumaticInstruments/>
+                    // <Route path="" view=|| view! { <p>"Select a source."</p> }/>
+                    // </Route>
+                    // <Route path="" view=|| view! { <p>"Select ID"</p> }/>
+                    // </Route>
                     <Route path="about" view=|| view! { <About/> }/>
+                    <Route path="/" view=|| view! { <p>"Home"</p> }/>
                     <Route path="register" view=|| view! { <Register/> }/>
                     <Route path="redirect-home" view=|| view! { <Redirect path="/"/> }/>
                 </AnimatedRoutes>

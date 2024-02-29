@@ -4,7 +4,7 @@ use crate::{
     },
     pages::ModalVariant,
 };
-use common::Emitter::{self, PneumaticInstrument};
+use common::Emitter::{self, PneumaticInstruments};
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::{classes, function_component, html, use_state_eq, Callback, Html, Properties};
@@ -22,7 +22,7 @@ pub fn emitters_window(
         modal_variant_handle,
     }: &Props,
 ) -> Html {
-    let emitter_state = use_state_eq(|| PneumaticInstrument);
+    let emitter_state = use_state_eq(|| PneumaticInstruments);
 
     let emitter = *emitter_state;
 

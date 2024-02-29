@@ -111,7 +111,7 @@ pub fn PneumaticInstruments() -> impl IntoView {
             .map(|response| {
                 response.map(|data| {
                     view! {
-                        <div class:emitters=true class:pneumatic-instruments=true>
+                        // <div class:emitters=true class:pneumatic-instruments=true>
                             // <InsertEntryButton {insert_form_is_open} {toggle_insert_form_is_open}/>
                             <div class="sticky" style:grid-column=2 style:grid-row=1></div>
                             <div class="sticky" style:grid-column=3 style:grid-row=1>
@@ -174,7 +174,7 @@ pub fn PneumaticInstruments() -> impl IntoView {
                                     handle_delete_entry=handle_delete_entry
                                 />
                             </For>
-                        </div>
+                        // </div>
                     }
                 })
             })

@@ -30,10 +30,3 @@ impl From<Vec<graphql_client::Error>> for AppError {
         )
     }
 }
-
-// impl Display for AppError {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         let AppError::RequestError(s) = self;
-//         write!(f, "{}", s)
-//     }
-// }
