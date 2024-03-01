@@ -10,6 +10,22 @@ pub enum Emitter {
     StorageTanks,
 }
 
+impl Emitter {
+    pub fn to_pretty_name(&self) -> String {
+        self.to_string()
+            .split('_')
+            .map(|w| {
+                let mut c = w.chars();
+                match c.next() {
+                    None => String::new(),
+                    Some(lc) => lc.to_uppercase().collect::<String>() + c.as_str(),
+                }
+            })
+            .collect::<Vec<_>>()
+            .join(" ")
+    }
+}
+
 #[derive(Copy, Clone, PartialEq, Debug, Display)]
 #[strum(serialize_all = "title_case")]
 pub enum SidebarItem {
