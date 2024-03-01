@@ -1,3 +1,5 @@
+#![feature(iter_map_windows)]
+
 pub mod components;
 pub mod list_facilities;
 pub mod models;

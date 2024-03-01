@@ -65,6 +65,7 @@
   border-top-right-radius: 0.5rem;
   color: #555;
   position: relative;
+  text-decoration: none;
 }
 
 .emitters-navigation-button:first-of-type {
@@ -77,7 +78,7 @@
 }
 
 /* Select all buttons that are not active, not being hovered over, and not previous to the one active or being hovering over. */
-.emitters-navigation-button:not(.active, :hover, .emitters-navigation-button:has(+ .active, + :hover))::after {
+.emitters-navigation-button:not([aria-current="page"], :hover, .emitters-navigation-button:has(+ [aria-current="page"], + :hover))::after {
   content: "";
   position: absolute;
   top: 15%;
@@ -92,6 +93,6 @@
   background-color: #f6f6f8;
 }
 
-.emitters-navbar .emitters-navigation-button.active {
+.emitters-navbar .emitters-navigation-button[aria-current="page"] {
   background-color: #fff;
 }

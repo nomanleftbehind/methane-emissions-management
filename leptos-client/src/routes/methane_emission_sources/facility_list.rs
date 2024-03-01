@@ -57,9 +57,10 @@ pub fn FacilityList() -> impl IntoView {
                                     let:facility
                                 >
                                     <li class="sidebar-button-container">
-                                        <A href=facility.id.to_string() class="sidebar-button">
-
-                                            // class=("active", "a" == "b")
+                                        <A
+                                            href=format!("{}/pneumatic_instruments", facility.id)
+                                            class="sidebar-button"
+                                        >
                                             {&facility.name}
                                         </A>
                                     </li>

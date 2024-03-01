@@ -41,7 +41,7 @@ pub fn RouterExample() -> impl IntoView {
                     <Route path="/sources" view=FacilityList>
                         <Route path=":id" view=SourcesNavigationBar>
                             <Route path="" view=|| view! { <p>"Select a source."</p> }/>
-                            <Route path="pneumaticinstruments" view=PneumaticInstruments/>
+                            <Route path="pneumatic_instruments" view=PneumaticInstruments/>
                         </Route>
                         <Route
                             path=""
