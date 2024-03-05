@@ -23,7 +23,7 @@ where
                 Ok(response) => response.data.ok_or_else(|| {
                     response
                         .errors
-                        .map_or_else(|| "Unknown error.".into(), |e| e.into())
+                        .map_or_else(|| "Unknown error.".into(), AppError::from)
                 }),
                 Err(error) => Err(error),
             }
