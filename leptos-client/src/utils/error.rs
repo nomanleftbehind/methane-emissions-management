@@ -30,3 +30,9 @@ impl From<Vec<graphql_client::Error>> for AppError {
         )
     }
 }
+
+impl From<&leptos_router::ParamsError> for AppError {
+    fn from(value: &leptos_router::ParamsError) -> Self {
+        Self::RequestError(value.to_string())
+    }
+}

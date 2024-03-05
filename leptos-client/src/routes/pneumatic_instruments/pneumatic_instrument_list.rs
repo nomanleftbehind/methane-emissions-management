@@ -11,7 +11,7 @@ use crate::{
     routes::{
         pneumatic_instruments::pneumatic_intrument_row::PneumaticInstrumentRow, ExampleContext,
     },
-    utils::load_data,
+    utils::{error::AppError, load_data},
 };
 use leptos::{logging::log, *};
 use leptos_router::*;
@@ -38,15 +38,20 @@ pub fn PneumaticInstruments() -> impl IntoView {
     let params = use_params::<PneumaticInstrumentParams>();
 
     let pneumatic_instrument_list = create_resource(
-        move || params().map(|params| params.id).ok(),
+        move || params.with(|p| p.as_ref().map(|p| p.id).map_err(AppError::from)),
         |id| async move {
-            load_data::<GetPneumaticInstruments>(get_pneumatic_instruments::Variables {
-                get_pneumatic_instruments_input: GetPneumaticInstrumentsInput {
-                    by: PneumaticInstrumentsByVariant::FACILITY_ID,
-                    id: id.unwrap(),
-                },
-            })
-            .await
+            match id {
+                Err(e) => Err(e),
+                Ok(id) => {
+                    load_data::<GetPneumaticInstruments>(get_pneumatic_instruments::Variables {
+                        get_pneumatic_instruments_input: GetPneumaticInstrumentsInput {
+                            by: PneumaticInstrumentsByVariant::FACILITY_ID,
+                            id,
+                        },
+                    })
+                    .await
+                }
+            }
         },
     );
 
