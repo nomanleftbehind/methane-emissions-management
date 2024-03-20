@@ -16,7 +16,6 @@ impl PneumaticPumpEmissionRateLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for PneumaticPumpEmissionRateLoader {
     type Value = PneumaticPumpEmissionRate;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedPneumaticPumpEmissionRatesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedPneumaticPumpEmissionRatesLoader {
     type Value = Vec<PneumaticPumpEmissionRate>;
     type Error = async_graphql::Error;
@@ -90,7 +88,6 @@ impl UpdatedPneumaticPumpEmissionRatesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedPneumaticPumpEmissionRatesLoader {
     type Value = Vec<PneumaticPumpEmissionRate>;
     type Error = async_graphql::Error;
@@ -127,7 +124,6 @@ impl PneumaticPumpEmissionRatesByPneumaticPumpLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for PneumaticPumpEmissionRatesByPneumaticPumpLoader {
     type Value = Vec<PneumaticPumpEmissionRate>;
     type Error = async_graphql::Error;

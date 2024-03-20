@@ -16,7 +16,6 @@ impl StorageTankMonthMethaneEmissionOverrideLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankMonthMethaneEmissionOverrideLoader {
     type Value = StorageTankMonthMethaneEmissionOverride;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedStorageTankMonthMethaneEmissionOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedStorageTankMonthMethaneEmissionOverridesLoader {
     type Value = Vec<StorageTankMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;
@@ -96,7 +94,6 @@ impl UpdatedStorageTankMonthMethaneEmissionOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedStorageTankMonthMethaneEmissionOverridesLoader {
     type Value = Vec<StorageTankMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;
@@ -140,7 +137,6 @@ impl StorageTankMonthMethaneEmissionOverridesByStorageTankLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankMonthMethaneEmissionOverridesByStorageTankLoader {
     type Value = Vec<StorageTankMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;

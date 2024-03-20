@@ -16,7 +16,6 @@ impl StorageTankGasInSolutionFactorCalculatedLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankGasInSolutionFactorCalculatedLoader {
     type Value = StorageTankGasInSolutionFactorCalculated;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedStorageTankGasInSolutionFactorsCalculatedLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedStorageTankGasInSolutionFactorsCalculatedLoader {
     type Value = Vec<StorageTankGasInSolutionFactorCalculated>;
     type Error = async_graphql::Error;
@@ -96,7 +94,6 @@ impl UpdatedStorageTankGasInSolutionFactorsCalculatedLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedStorageTankGasInSolutionFactorsCalculatedLoader {
     type Value = Vec<StorageTankGasInSolutionFactorCalculated>;
     type Error = async_graphql::Error;
@@ -140,7 +137,6 @@ impl StorageTankGasInSolutionFactorsCalculatedByStorageTankLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankGasInSolutionFactorsCalculatedByStorageTankLoader {
     type Value = Vec<StorageTankGasInSolutionFactorCalculated>;
     type Error = async_graphql::Error;

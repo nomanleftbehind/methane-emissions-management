@@ -16,7 +16,6 @@ impl StorageTankLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankLoader {
     type Value = StorageTank;
     type Error = async_graphql::Error;
@@ -47,7 +46,6 @@ impl CreatedStorageTanksLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedStorageTanksLoader {
     type Value = Vec<StorageTank>;
     type Error = async_graphql::Error;
@@ -83,7 +81,6 @@ impl UpdatedStorageTanksLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedStorageTanksLoader {
     type Value = Vec<StorageTank>;
     type Error = async_graphql::Error;
@@ -119,7 +116,6 @@ impl SiteStorageTanksLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for SiteStorageTanksLoader {
     type Value = Vec<StorageTank>;
     type Error = async_graphql::Error;

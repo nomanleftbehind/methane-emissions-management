@@ -16,7 +16,6 @@ impl CompressorSealMonthMethaneEmissionOverrideLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorSealMonthMethaneEmissionOverrideLoader {
     type Value = CompressorSealMonthMethaneEmissionOverride;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedCompressorSealMonthMethaneEmissionOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedCompressorSealMonthMethaneEmissionOverridesLoader {
     type Value = Vec<CompressorSealMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;
@@ -96,7 +94,6 @@ impl UpdatedCompressorSealMonthMethaneEmissionOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedCompressorSealMonthMethaneEmissionOverridesLoader {
     type Value = Vec<CompressorSealMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;
@@ -140,7 +137,6 @@ impl CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorSealMonthMethaneEmissionOverridesByCompressorSealLoader {
     type Value = Vec<CompressorSealMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;

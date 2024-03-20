@@ -16,7 +16,6 @@ impl LevelControllerLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerLoader {
     type Value = LevelController;
     type Error = async_graphql::Error;
@@ -47,7 +46,6 @@ impl CreatedLevelControllersLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedLevelControllersLoader {
     type Value = Vec<LevelController>;
     type Error = async_graphql::Error;
@@ -83,7 +81,6 @@ impl UpdatedLevelControllersLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedLevelControllersLoader {
     type Value = Vec<LevelController>;
     type Error = async_graphql::Error;
@@ -119,7 +116,6 @@ impl SiteLevelControllersLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for SiteLevelControllersLoader {
     type Value = Vec<LevelController>;
     type Error = async_graphql::Error;
@@ -155,7 +151,6 @@ impl LevelControllersByManufacturerLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllersByManufacturerLoader {
     type Value = Vec<LevelController>;
     type Error = async_graphql::Error;

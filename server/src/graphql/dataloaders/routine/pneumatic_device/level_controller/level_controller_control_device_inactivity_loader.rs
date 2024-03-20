@@ -16,7 +16,6 @@ impl LevelControllerControlDeviceInactivityLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerControlDeviceInactivityLoader {
     type Value = LevelControllerControlDeviceInactivity;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedLevelControllerControlDeviceInactivitiesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedLevelControllerControlDeviceInactivitiesLoader {
     type Value = Vec<LevelControllerControlDeviceInactivity>;
     type Error = async_graphql::Error;
@@ -101,7 +99,6 @@ impl UpdatedLevelControllerControlDeviceInactivitiesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedLevelControllerControlDeviceInactivitiesLoader {
     type Value = Vec<LevelControllerControlDeviceInactivity>;
     type Error = async_graphql::Error;
@@ -151,7 +148,6 @@ impl LevelControllerControlDeviceInactivitiesByLevelControllerControlledCharacte
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid>
     for LevelControllerControlDeviceInactivitiesByLevelControllerControlledCharacterizationLoader
 {

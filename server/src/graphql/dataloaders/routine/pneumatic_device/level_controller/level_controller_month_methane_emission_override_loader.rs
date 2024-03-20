@@ -16,7 +16,6 @@ impl LevelControllerMonthMethaneEmissionOverrideLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerMonthMethaneEmissionOverrideLoader {
     type Value = LevelControllerMonthMethaneEmissionOverride;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedLevelControllerMonthMethaneEmissionOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedLevelControllerMonthMethaneEmissionOverridesLoader {
     type Value = Vec<LevelControllerMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;
@@ -96,7 +94,6 @@ impl UpdatedLevelControllerMonthMethaneEmissionOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedLevelControllerMonthMethaneEmissionOverridesLoader {
     type Value = Vec<LevelControllerMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;
@@ -140,7 +137,6 @@ impl LevelControllerMonthMethaneEmissionOverridesByLevelControllerLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerMonthMethaneEmissionOverridesByLevelControllerLoader {
     type Value = Vec<LevelControllerMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;

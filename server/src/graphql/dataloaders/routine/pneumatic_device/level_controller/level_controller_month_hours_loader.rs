@@ -16,7 +16,6 @@ impl LevelControllerMonthHoursLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerMonthHoursLoader {
     type Value = LevelControllerMonthHours;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedLevelControllerMonthHoursLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedLevelControllerMonthHoursLoader {
     type Value = Vec<LevelControllerMonthHours>;
     type Error = async_graphql::Error;
@@ -90,7 +88,6 @@ impl UpdatedLevelControllerMonthHoursLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedLevelControllerMonthHoursLoader {
     type Value = Vec<LevelControllerMonthHours>;
     type Error = async_graphql::Error;
@@ -128,7 +125,6 @@ impl LevelControllerMonthHoursByLevelControllerLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerMonthHoursByLevelControllerLoader {
     type Value = Vec<LevelControllerMonthHours>;
     type Error = async_graphql::Error;

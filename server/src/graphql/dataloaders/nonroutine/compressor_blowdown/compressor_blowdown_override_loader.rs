@@ -16,7 +16,6 @@ impl CompressorBlowdownOverrideLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorBlowdownOverrideLoader {
     type Value = CompressorBlowdownOverride;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedCompressorBlowdownOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedCompressorBlowdownOverridesLoader {
     type Value = Vec<CompressorBlowdownOverride>;
     type Error = async_graphql::Error;
@@ -90,7 +88,6 @@ impl UpdatedCompressorBlowdownOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedCompressorBlowdownOverridesLoader {
     type Value = Vec<CompressorBlowdownOverride>;
     type Error = async_graphql::Error;
@@ -128,7 +125,6 @@ impl CompressorBlowdownOverridesByCompressorLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorBlowdownOverridesByCompressorLoader {
     type Value = Vec<CompressorBlowdownOverride>;
     type Error = async_graphql::Error;

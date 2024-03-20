@@ -16,7 +16,6 @@ impl CompressorSealTestLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorSealTestLoader {
     type Value = CompressorSealTest;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedCompressorSealTestsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedCompressorSealTestsLoader {
     type Value = Vec<CompressorSealTest>;
     type Error = async_graphql::Error;
@@ -95,7 +93,6 @@ impl UpdatedCompressorSealTestsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedCompressorSealTestsLoader {
     type Value = Vec<CompressorSealTest>;
     type Error = async_graphql::Error;
@@ -138,7 +135,6 @@ impl CompressorSealTestsByCompressorSealLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorSealTestsByCompressorSealLoader {
     type Value = Vec<CompressorSealTest>;
     type Error = async_graphql::Error;
@@ -181,7 +177,6 @@ impl CompressorSealTestsBySurveyEquipmentLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorSealTestsBySurveyEquipmentLoader {
     type Value = Vec<CompressorSealTest>;
     type Error = async_graphql::Error;

@@ -16,7 +16,6 @@ impl StorageTankChangeLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankChangeLoader {
     type Value = StorageTankChange;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedStorageTankChangesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedStorageTankChangesLoader {
     type Value = Vec<StorageTankChange>;
     type Error = async_graphql::Error;
@@ -94,7 +92,6 @@ impl UpdatedStorageTankChangesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedStorageTankChangesLoader {
     type Value = Vec<StorageTankChange>;
     type Error = async_graphql::Error;
@@ -136,7 +133,6 @@ impl StorageTankChangesByStorageTankLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankChangesByStorageTankLoader {
     type Value = Vec<StorageTankChange>;
     type Error = async_graphql::Error;

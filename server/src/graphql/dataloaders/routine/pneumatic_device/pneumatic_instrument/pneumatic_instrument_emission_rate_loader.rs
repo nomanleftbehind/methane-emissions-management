@@ -16,7 +16,6 @@ impl PneumaticInstrumentEmissionRateLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for PneumaticInstrumentEmissionRateLoader {
     type Value = PneumaticInstrumentEmissionRate;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedPneumaticInstrumentEmissionRatesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedPneumaticInstrumentEmissionRatesLoader {
     type Value = Vec<PneumaticInstrumentEmissionRate>;
     type Error = async_graphql::Error;
@@ -93,7 +91,6 @@ impl UpdatedPneumaticInstrumentEmissionRatesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedPneumaticInstrumentEmissionRatesLoader {
     type Value = Vec<PneumaticInstrumentEmissionRate>;
     type Error = async_graphql::Error;
@@ -131,7 +128,6 @@ impl PneumaticInstrumentEmissionRatesByPneumaticInstrumentLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for PneumaticInstrumentEmissionRatesByPneumaticInstrumentLoader {
     type Value = Vec<PneumaticInstrumentEmissionRate>;
     type Error = async_graphql::Error;

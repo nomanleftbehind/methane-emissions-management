@@ -16,7 +16,6 @@ impl StorageTankControlDeviceInactivityLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankControlDeviceInactivityLoader {
     type Value = StorageTankControlDeviceInactivity;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedStorageTankControlDeviceInactivitiesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedStorageTankControlDeviceInactivitiesLoader {
     type Value = Vec<StorageTankControlDeviceInactivity>;
     type Error = async_graphql::Error;
@@ -100,7 +98,6 @@ impl UpdatedStorageTankControlDeviceInactivitiesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedStorageTankControlDeviceInactivitiesLoader {
     type Value = Vec<StorageTankControlDeviceInactivity>;
     type Error = async_graphql::Error;
@@ -148,7 +145,6 @@ impl StorageTankControlDeviceInactivitiesByStorageTankControlledCharacterization
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid>
     for StorageTankControlDeviceInactivitiesByStorageTankControlledCharacterizationLoader
 {

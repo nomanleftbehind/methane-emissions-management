@@ -16,7 +16,6 @@ impl PneumaticPumpMonthMethaneEmissionOverrideLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for PneumaticPumpMonthMethaneEmissionOverrideLoader {
     type Value = PneumaticPumpMonthMethaneEmissionOverride;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedPneumaticPumpMonthMethaneEmissionOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedPneumaticPumpMonthMethaneEmissionOverridesLoader {
     type Value = Vec<PneumaticPumpMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;
@@ -96,7 +94,6 @@ impl UpdatedPneumaticPumpMonthMethaneEmissionOverridesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedPneumaticPumpMonthMethaneEmissionOverridesLoader {
     type Value = Vec<PneumaticPumpMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;
@@ -140,7 +137,6 @@ impl PneumaticPumpMonthMethaneEmissionOverridesByPneumaticPumpLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for PneumaticPumpMonthMethaneEmissionOverridesByPneumaticPumpLoader {
     type Value = Vec<PneumaticPumpMonthMethaneEmissionOverride>;
     type Error = async_graphql::Error;

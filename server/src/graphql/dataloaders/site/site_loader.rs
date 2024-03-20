@@ -16,7 +16,6 @@ impl SiteLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for SiteLoader {
     type Value = Site;
     type Error = async_graphql::Error;
@@ -50,7 +49,6 @@ impl CreatedSitesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedSitesLoader {
     type Value = Vec<Site>;
     type Error = async_graphql::Error;
@@ -90,7 +88,6 @@ impl UpdatedSitesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedSitesLoader {
     type Value = Vec<Site>;
     type Error = async_graphql::Error;
@@ -130,7 +127,6 @@ impl FacilitySitesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for FacilitySitesLoader {
     type Value = Vec<Site>;
     type Error = async_graphql::Error;

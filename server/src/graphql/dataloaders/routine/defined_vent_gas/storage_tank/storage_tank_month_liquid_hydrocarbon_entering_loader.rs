@@ -16,7 +16,6 @@ impl StorageTankMonthLiquidHydrocarbonEnteringLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankMonthLiquidHydrocarbonEnteringLoader {
     type Value = StorageTankMonthLiquidHydrocarbonEntering;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedStorageTankMonthLiquidHydrocarbonEnteringLoader {
     type Value = Vec<StorageTankMonthLiquidHydrocarbonEntering>;
     type Error = async_graphql::Error;
@@ -96,7 +94,6 @@ impl UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedStorageTankMonthLiquidHydrocarbonEnteringLoader {
     type Value = Vec<StorageTankMonthLiquidHydrocarbonEntering>;
     type Error = async_graphql::Error;
@@ -140,7 +137,6 @@ impl StorageTankMonthLiquidHydrocarbonEnteringByStorageTankLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankMonthLiquidHydrocarbonEnteringByStorageTankLoader {
     type Value = Vec<StorageTankMonthLiquidHydrocarbonEntering>;
     type Error = async_graphql::Error;

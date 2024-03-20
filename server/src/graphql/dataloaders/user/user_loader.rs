@@ -15,7 +15,6 @@ impl UserLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UserLoader {
     type Value = User;
     type Error = async_graphql::Error;

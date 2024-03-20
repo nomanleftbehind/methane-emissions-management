@@ -16,7 +16,6 @@ impl StorageTankControlledCharacterizationLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankControlledCharacterizationLoader {
     type Value = StorageTankControlledCharacterization;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedStorageTankControlledCharacterizationsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedStorageTankControlledCharacterizationsLoader {
     type Value = Vec<StorageTankControlledCharacterization>;
     type Error = async_graphql::Error;
@@ -100,7 +98,6 @@ impl UpdatedStorageTankControlledCharacterizationsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedStorageTankControlledCharacterizationsLoader {
     type Value = Vec<StorageTankControlledCharacterization>;
     type Error = async_graphql::Error;
@@ -148,7 +145,6 @@ impl StorageTankControlledCharacterizationsByStorageTankLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankControlledCharacterizationsByStorageTankLoader {
     type Value = Vec<StorageTankControlledCharacterization>;
     type Error = async_graphql::Error;

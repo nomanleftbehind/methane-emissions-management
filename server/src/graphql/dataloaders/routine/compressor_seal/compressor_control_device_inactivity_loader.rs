@@ -16,7 +16,6 @@ impl CompressorControlDeviceInactivityLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorControlDeviceInactivityLoader {
     type Value = CompressorControlDeviceInactivity;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedCompressorControlDeviceInactivitiesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedCompressorControlDeviceInactivitiesLoader {
     type Value = Vec<CompressorControlDeviceInactivity>;
     type Error = async_graphql::Error;
@@ -100,7 +98,6 @@ impl UpdatedCompressorControlDeviceInactivitiesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedCompressorControlDeviceInactivitiesLoader {
     type Value = Vec<CompressorControlDeviceInactivity>;
     type Error = async_graphql::Error;
@@ -148,7 +145,6 @@ impl CompressorControlDeviceInactivitiesByCompressorControlledCharacterizationLo
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid>
     for CompressorControlDeviceInactivitiesByCompressorControlledCharacterizationLoader
 {

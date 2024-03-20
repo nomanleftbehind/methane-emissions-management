@@ -16,7 +16,6 @@ impl SurveyEquipmentLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for SurveyEquipmentLoader {
     type Value = SurveyEquipment;
     type Error = async_graphql::Error;
@@ -47,7 +46,6 @@ impl CreatedSurveyEquipmentLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedSurveyEquipmentLoader {
     type Value = Vec<SurveyEquipment>;
     type Error = async_graphql::Error;
@@ -84,7 +82,6 @@ impl UpdatedSurveyEquipmentLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedSurveyEquipmentLoader {
     type Value = Vec<SurveyEquipment>;
     type Error = async_graphql::Error;

@@ -16,7 +16,6 @@ impl LevelControllerControlledCharacterizationLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerControlledCharacterizationLoader {
     type Value = LevelControllerControlledCharacterization;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedLevelControllerControlledCharacterizationsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedLevelControllerControlledCharacterizationsLoader {
     type Value = Vec<LevelControllerControlledCharacterization>;
     type Error = async_graphql::Error;
@@ -99,7 +97,6 @@ impl UpdatedLevelControllerControlledCharacterizationsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedLevelControllerControlledCharacterizationsLoader {
     type Value = Vec<LevelControllerControlledCharacterization>;
     type Error = async_graphql::Error;
@@ -148,7 +145,6 @@ impl LevelControllerControlledCharacterizationsByLevelControllerLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerControlledCharacterizationsByLevelControllerLoader {
     type Value = Vec<LevelControllerControlledCharacterization>;
     type Error = async_graphql::Error;

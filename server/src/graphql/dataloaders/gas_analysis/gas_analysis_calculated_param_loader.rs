@@ -16,7 +16,6 @@ impl GasAnalysisCalculatedParamLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for GasAnalysisCalculatedParamLoader {
     type Value = GasAnalysisCalculatedParam;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedGasAnalysisCalculatedParamsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedGasAnalysisCalculatedParamsLoader {
     type Value = Vec<GasAnalysisCalculatedParam>;
     type Error = async_graphql::Error;
@@ -91,7 +89,6 @@ impl UpdatedGasAnalysisCalculatedParamsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedGasAnalysisCalculatedParamsLoader {
     type Value = Vec<GasAnalysisCalculatedParam>;
     type Error = async_graphql::Error;

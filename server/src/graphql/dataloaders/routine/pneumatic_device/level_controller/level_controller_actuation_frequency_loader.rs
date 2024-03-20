@@ -16,7 +16,6 @@ impl LevelControllerActuationFrequencyLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerActuationFrequencyLoader {
     type Value = LevelControllerActuationFrequency;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedLevelControllerActuationFrequenciesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedLevelControllerActuationFrequenciesLoader {
     type Value = Vec<LevelControllerActuationFrequency>;
     type Error = async_graphql::Error;
@@ -95,7 +93,6 @@ impl UpdatedLevelControllerActuationFrequenciesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedLevelControllerActuationFrequenciesLoader {
     type Value = Vec<LevelControllerActuationFrequency>;
     type Error = async_graphql::Error;
@@ -133,7 +130,6 @@ impl LevelControllerActuationFrequenciesByLevelControllerLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerActuationFrequenciesByLevelControllerLoader {
     type Value = Vec<LevelControllerActuationFrequency>;
     type Error = async_graphql::Error;

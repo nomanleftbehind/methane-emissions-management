@@ -16,7 +16,6 @@ impl CompressorMonthHoursLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorMonthHoursLoader {
     type Value = CompressorMonthHours;
     type Error = async_graphql::Error;
@@ -47,7 +46,6 @@ impl CreatedCompressorMonthHoursLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedCompressorMonthHoursLoader {
     type Value = Vec<CompressorMonthHours>;
     type Error = async_graphql::Error;
@@ -85,7 +83,6 @@ impl UpdatedCompressorMonthHoursLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedCompressorMonthHoursLoader {
     type Value = Vec<CompressorMonthHours>;
     type Error = async_graphql::Error;
@@ -123,7 +120,6 @@ impl CompressorMonthHoursByCompressorLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorMonthHoursByCompressorLoader {
     type Value = Vec<CompressorMonthHours>;
     type Error = async_graphql::Error;

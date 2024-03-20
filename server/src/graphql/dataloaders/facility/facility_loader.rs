@@ -16,7 +16,6 @@ impl FacilityLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for FacilityLoader {
     type Value = Facility;
     type Error = async_graphql::Error;
@@ -50,7 +49,6 @@ impl CreatedFacilitiesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedFacilitiesLoader {
     type Value = Vec<Facility>;
     type Error = async_graphql::Error;
@@ -90,7 +88,6 @@ impl UpdatedFacilitiesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedFacilitiesLoader {
     type Value = Vec<Facility>;
     type Error = async_graphql::Error;

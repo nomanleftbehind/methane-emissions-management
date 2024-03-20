@@ -16,7 +16,6 @@ impl CompressorControlledCharacterizationLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorControlledCharacterizationLoader {
     type Value = CompressorControlledCharacterization;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedCompressorControlledCharacterizationsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedCompressorControlledCharacterizationsLoader {
     type Value = Vec<CompressorControlledCharacterization>;
     type Error = async_graphql::Error;
@@ -98,7 +96,6 @@ impl UpdatedCompressorControlledCharacterizationsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedCompressorControlledCharacterizationsLoader {
     type Value = Vec<CompressorControlledCharacterization>;
     type Error = async_graphql::Error;
@@ -146,7 +143,6 @@ impl CompressorControlledCharacterizationsByCompressorLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorControlledCharacterizationsByCompressorLoader {
     type Value = Vec<CompressorControlledCharacterization>;
     type Error = async_graphql::Error;

@@ -16,7 +16,6 @@ impl CompressorEmissionSurveyLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorEmissionSurveyLoader {
     type Value = CompressorEmissionSurvey;
     type Error = async_graphql::Error;
@@ -49,7 +48,6 @@ impl CreatedCompressorEmissionSurveysLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedCompressorEmissionSurveysLoader {
     type Value = Vec<CompressorEmissionSurvey>;
     type Error = async_graphql::Error;
@@ -87,7 +85,6 @@ impl UpdatedCompressorEmissionSurveysLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedCompressorEmissionSurveysLoader {
     type Value = Vec<CompressorEmissionSurvey>;
     type Error = async_graphql::Error;
@@ -125,7 +122,6 @@ impl CompressorEmissionSurveysByCompressorLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorEmissionSurveysByCompressorLoader {
     type Value = Vec<CompressorEmissionSurvey>;
     type Error = async_graphql::Error;
@@ -163,7 +159,6 @@ impl CompressorEmissionSurveysBySurveyEquipmentLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CompressorEmissionSurveysBySurveyEquipmentLoader {
     type Value = Vec<CompressorEmissionSurvey>;
     type Error = async_graphql::Error;

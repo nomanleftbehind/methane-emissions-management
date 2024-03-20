@@ -16,7 +16,6 @@ impl MonthMethaneEmissionLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for MonthMethaneEmissionLoader {
     type Value = MonthMethaneEmission;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedMonthMethaneEmissionsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedMonthMethaneEmissionsLoader {
     type Value = Vec<MonthMethaneEmission>;
     type Error = async_graphql::Error;
@@ -95,7 +93,6 @@ impl UpdatedMonthMethaneEmissionsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedMonthMethaneEmissionsLoader {
     type Value = Vec<MonthMethaneEmission>;
     type Error = async_graphql::Error;
@@ -138,7 +135,6 @@ impl MonthMethaneEmissionsByFacilityLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for MonthMethaneEmissionsByFacilityLoader {
     type Value = Vec<MonthMethaneEmission>;
     type Error = async_graphql::Error;
@@ -181,7 +177,6 @@ impl MonthMethaneEmissionsBySiteLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for MonthMethaneEmissionsBySiteLoader {
     type Value = Vec<MonthMethaneEmission>;
     type Error = async_graphql::Error;
@@ -224,7 +219,6 @@ impl MonthMethaneEmissionsBySourceTableLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for MonthMethaneEmissionsBySourceTableLoader {
     type Value = Vec<MonthMethaneEmission>;
     type Error = async_graphql::Error;

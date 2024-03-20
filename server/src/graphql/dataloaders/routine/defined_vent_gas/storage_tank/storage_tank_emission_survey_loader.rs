@@ -16,7 +16,6 @@ impl StorageTankEmissionSurveyLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankEmissionSurveyLoader {
     type Value = StorageTankEmissionSurvey;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedStorageTankEmissionSurveysLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedStorageTankEmissionSurveysLoader {
     type Value = Vec<StorageTankEmissionSurvey>;
     type Error = async_graphql::Error;
@@ -90,7 +88,6 @@ impl UpdatedStorageTankEmissionSurveysLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedStorageTankEmissionSurveysLoader {
     type Value = Vec<StorageTankEmissionSurvey>;
     type Error = async_graphql::Error;
@@ -128,7 +125,6 @@ impl StorageTankEmissionSurveysByStorageTankLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankEmissionSurveysByStorageTankLoader {
     type Value = Vec<StorageTankEmissionSurvey>;
     type Error = async_graphql::Error;
@@ -167,7 +163,6 @@ impl StorageTankEmissionSurveysBySurveyEquipmentLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for StorageTankEmissionSurveysBySurveyEquipmentLoader {
     type Value = Vec<StorageTankEmissionSurvey>;
     type Error = async_graphql::Error;

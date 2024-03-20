@@ -16,7 +16,6 @@ impl LevelControllerEmissionRateLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerEmissionRateLoader {
     type Value = LevelControllerEmissionRate;
     type Error = async_graphql::Error;
@@ -52,7 +51,6 @@ impl CreatedLevelControllerEmissionRatesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedLevelControllerEmissionRatesLoader {
     type Value = Vec<LevelControllerEmissionRate>;
     type Error = async_graphql::Error;
@@ -91,7 +89,6 @@ impl UpdatedLevelControllerEmissionRatesLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedLevelControllerEmissionRatesLoader {
     type Value = Vec<LevelControllerEmissionRate>;
     type Error = async_graphql::Error;
@@ -129,7 +126,6 @@ impl LevelControllerEmissionRatesByLevelControllerLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for LevelControllerEmissionRatesByLevelControllerLoader {
     type Value = Vec<LevelControllerEmissionRate>;
     type Error = async_graphql::Error;

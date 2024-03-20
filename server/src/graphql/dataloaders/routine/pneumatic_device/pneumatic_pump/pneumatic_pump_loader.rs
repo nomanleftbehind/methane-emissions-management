@@ -16,7 +16,6 @@ impl PneumaticPumpLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for PneumaticPumpLoader {
     type Value = PneumaticPump;
     type Error = async_graphql::Error;
@@ -47,7 +46,6 @@ impl CreatedPneumaticPumpsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedPneumaticPumpsLoader {
     type Value = Vec<PneumaticPump>;
     type Error = async_graphql::Error;
@@ -83,7 +81,6 @@ impl UpdatedPneumaticPumpsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedPneumaticPumpsLoader {
     type Value = Vec<PneumaticPump>;
     type Error = async_graphql::Error;
@@ -119,7 +116,6 @@ impl SitePneumaticPumpsLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for SitePneumaticPumpsLoader {
     type Value = Vec<PneumaticPump>;
     type Error = async_graphql::Error;
@@ -155,7 +151,6 @@ impl PneumaticPumpsByManufacturerLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for PneumaticPumpsByManufacturerLoader {
     type Value = Vec<PneumaticPump>;
     type Error = async_graphql::Error;

@@ -18,7 +18,7 @@ actix-cors = "0.7"
 actix-web = "4"
 actix-web-lab = "0.20"
 
-async-graphql = { version = "7", features = [
+async-graphql = { version = "7.0.3", features = [
     "default",
     "dataloader",
     "time",
@@ -26,7 +26,7 @@ async-graphql = { version = "7", features = [
     "uuid",
     "chrono",
 ] }
-async-graphql-actix-web = "7"
+async-graphql-actix-web = "7.0.3"
 
 env_logger = "0.11"
 log = "0.4"
@@ -46,7 +46,7 @@ sqlx = { version = "0.7", default-features = false, features = [
     "uuid",
     # "offline"
 ] }
-tokio = "1.21.0"
+tokio = { version = "1.36.0", features = ["rt-multi-thread"] }
 tracing = "0.1"
 uuid = { version = "1.1", features = ["serde", "v4"] }
 anymap = "0.12.1"
@@ -56,15 +56,14 @@ rand = { version = "0.8", features = ["std_rng"] }
 serde_json = "1"
 sha2 = "0.10"
 hmac = { version = "0.12", features = ["std"] }
-base64 = "0.21"
+base64 = "0.22"
 async-session = "3.0.0"
 async-redis-session = "0.2.2"
-async-trait = "0.1.51"
 futures-util = "0.3"
 http = "1"
 chrono = "0.4.22"
 tiberius = { version = "0.12", features = ["chrono"] }
-tokio-util = { version = "0.7", features = ["compat"] }
+tokio-util = { version = "0.7.10", features = ["compat"] }
 common = { path = "../common" }
 # yew = { version = "0.20", features = ["ssr"] }
 clap = { version = "4.1", features = ["derive"] }

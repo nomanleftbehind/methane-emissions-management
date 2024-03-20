@@ -16,7 +16,6 @@ impl DeviceManufacturerLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for DeviceManufacturerLoader {
     type Value = DeviceManufacturer;
     type Error = async_graphql::Error;
@@ -47,7 +46,6 @@ impl CreatedDeviceManufacturersLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for CreatedDeviceManufacturersLoader {
     type Value = Vec<DeviceManufacturer>;
     type Error = async_graphql::Error;
@@ -84,7 +82,6 @@ impl UpdatedDeviceManufacturersLoader {
     }
 }
 
-#[async_trait::async_trait]
 impl Loader<Uuid> for UpdatedDeviceManufacturersLoader {
     type Value = Vec<DeviceManufacturer>;
     type Error = async_graphql::Error;
